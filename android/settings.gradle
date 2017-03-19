@@ -1,0 +1,3 @@
+rootProject.name = 'LuachAndroid'
+
+include ':app'
