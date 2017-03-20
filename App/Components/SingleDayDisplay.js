@@ -1,36 +1,39 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
+import Utils from '../Code/JCal/Utils';
 
 export default class SingleDayDisplay extends Component {
     render() {
         const jd = this.props.jdate,
             location = this.props.location,
+            dailyInfos = jd.getHolidays(location.Israel),
+            dailyInfoText = dailyInfos.length ? <Text>{dailyInfos.join('\n')}</Text> : null,
             suntimes = jd.getSunriseSunset(location),
-            sunrise = suntimes.sunrise.hour + ':' + suntimes.sunrise.minute,
-            sunset = suntimes.sunset.hour + ':' + suntimes.sunset.minute;
+            sunrise = Utils.getTimeString(suntimes.sunrise),
+            sunset = Utils.getTimeString(suntimes.sunset);
         return (
             <View>
-                <Text>
-                    {jd.toString()}</Text>
-                <Text style={styles.test}>{location.Name}
-                </Text>
-                <Text>
-                    {jd.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
-                <Text>
-                    {'Sun Rises at ' + sunrise}</Text>
-                <Text>
-                    {'Sun sets at ' + sunset}</Text>
+                <Text style={styles.date}>{new Date().toDateString() + ', ' + jd.toString(true)}</Text>
+                {dailyInfoText}
+                <Text>{'Sedra of the week: ' + jd.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
+                <Text style={styles.location}>{'Zmanim for ' + location.Name}</Text>
+                <Text>{'Sun Rises at ' + sunrise}</Text>
+                <Text>{'Sun sets at ' + sunset}</Text>
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    test: {
-        fontSize: 30,
-        textAlign: 'center',
-        margin: 10,
-        color: '#ff0000',
+    date: {
+        fontSize: 15,
+        color: '#008800',
+        fontWeight: 'bold'
+    }
+    ,
+    location: {
+        marginTop: 10,
+        color: '#880000',
         fontWeight: 'bold'
     },
 });

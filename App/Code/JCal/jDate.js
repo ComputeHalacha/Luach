@@ -28,7 +28,7 @@ var yearCache = [];
  *  new jDate( { year: 5776, month: 4, day: 5, abs: 122548708 } ) - same as new jDate(jewishYear, jewishMonth, jewishDay, absoluteDate)
  *****************************************************************************************************************************/
 export default class jDate {
-    constructor(arg, month, day, abs) {    
+    constructor(arg, month, day, abs) {
 
         //The day of the Jewish Month
         this.Day = NaN;
@@ -49,6 +49,12 @@ export default class jDate {
             else {
                 throw new Error('jDate constructor: The given Date is not a valid javascript Date');
             }
+        }
+        else if (arg instanceof 'Array' && arg.length >= 3) {
+            this.Day = arg[0];
+            this.Month = arg[1];
+            this.Year = arg[2];
+            this.Abs = (arg.length > 3 && arg[3]) || jDate.absJd(this.Year, this.Month, this.Day);
         }
         else if (Utils.isString(arg)) {
             var d = new Date(arg);
@@ -211,8 +217,8 @@ export default class jDate {
     }
 
     //Returns the current Jewish date in the format: Thursday Kislev 3 5776
-    toString() {
-        return Utils.dowEng[this.getDayOfWeek()] + ' ' +
+    toString(hideDayOfWeek) {
+        return (hideDayOfWeek ? '' : Utils.dowEng[this.getDayOfWeek()] + ' ') +
             Utils.jMonthsEng[this.Month] + ' ' +
             this.Day.toString() + ' ' +
             this.Year.toString();
@@ -463,7 +469,7 @@ export default class jDate {
             return 30;
         }
     }
-    
+
     //Elapsed days since creation of the world until Rosh Hashana of the given year
     static tDays(year) {
         /*As this function is called many times, often on the same year for all types of calculations, 

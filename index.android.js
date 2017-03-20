@@ -1,25 +1,27 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import { AppRegistry, StyleSheet, Text, View } from 'react-native';
 import SingleDayDisplay from './App/Components/SingleDayDisplay';
-import { Button } from 'react-native-elements'
 import jDate from './App/Code/JCal/jDate';
 import Location from './App/Code/JCal/Location';
 
 export default class LuachAndroid extends Component {
+  constructor (props)  {
+      super(props)
+     this.state = { selectedTab: 'profile'};   
+  }
+
+  changeTab (selectedTab) {
+    this.setState({selectedTab})
+  }
   render() {
     const location = Location.getJerusalem();
+    const { selectedTab } = this.state;
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Jewish Date Informtaion
         </Text>
-        <SingleDayDisplay jdate={jDate.toJDate()} location={location} />
+        <SingleDayDisplay jdate={jDate.toJDate(5777, 7, 22)} location={location} />
         <Text style={styles.instructions}>
           {'\n\n'}
           This is a test...
@@ -27,12 +29,7 @@ export default class LuachAndroid extends Component {
           Double tap R on your keyboard to reload,{'\n'}
           Shake or press menu button for dev menu
         </Text>
-        <Button
-          raised
-          icon={{ name: 'cached' }}
-          title='RAISED WITH ICON' />
-      </View>
-    );
+      </View>);
   }
 }
 
