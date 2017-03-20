@@ -19,7 +19,7 @@ export default class LuachAndroid extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Jewish Date Informtaion
+          Jewish Date Informtaion---
         </Text>
         <SingleDayDisplay jdate={jDate.toJDate(5777, 7, 22)} location={location} />
         <Text style={styles.instructions}>

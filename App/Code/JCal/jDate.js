@@ -50,7 +50,7 @@ export default class jDate {
                 throw new Error('jDate constructor: The given Date is not a valid javascript Date');
             }
         }
-        else if (arg instanceof 'Array' && arg.length >= 3) {
+        else if (arg instanceof Array && arg.length >= 3) {
             this.Day = arg[0];
             this.Month = arg[1];
             this.Year = arg[2];

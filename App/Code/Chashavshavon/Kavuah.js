@@ -3,11 +3,12 @@ import Utils from '../JCal/Utils';
 import NightDay from './NightDay';
 
 export default class Kavuah {
-    constructor(kavuaType, settingEntry, specialInterval, cancelsOnahBeinunis) {
+    constructor(kavuaType, settingEntry, specialInterval, cancelsOnahBeinunis, notKavuahSetter) {
         this.kavuaType = kavuaType;
         this.settingEntry = settingEntry;
         this.specialInterval = specialInterval;
         this.cancelsOnahBeinunis = !!cancelsOnahBeinunis;
+        this.notKavuahSetter = !!notKavuahSetter;
         this.active = true;
     }
     toString() {
