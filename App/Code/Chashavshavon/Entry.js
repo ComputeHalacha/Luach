@@ -3,7 +3,7 @@ export default class Entry {
     constructor(onah, haflaga) {
         this.onah = onah;
         if (haflaga instanceof Entry) {
-            //The previous entry was supplied
+            //If the previous entry was supplied i the haflaga argument
             this.haflaga = haflaga.onah.jdate.diffDays(this.onah.jdate) + 1;
         }
         else {
