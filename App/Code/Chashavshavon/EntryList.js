@@ -1,7 +1,9 @@
+import jDate from '../JCal/jDate';
 import Entry from './Entry';
 import Onah from './Onah';
 import Settings from './Settings';
 import NightDay from './NightDay';
+import ProblemOnah from './ProblemOnah';
 
 export default class EntryList {
     constructor(settings) {
@@ -29,15 +31,15 @@ export default class EntryList {
         //Property Setting "numberMonthsAheadToWarn"
         for (let entry of this.list.filter(en => en.active)) {
             if (!cancelOnahBeinenis) {
-                probOnahs.concat(this.getOnahBeinunisProblemOnahs(entry));
+                probOnahs = [...probOnahs, ...this.getOnahBeinunisProblemOnahs(entry)];
             }
-            probOnahs.concat(this.getEntryDependentKavuahProblemOnahs(entry, kavuahList));
+            probOnahs = [...probOnahs, ...this.getEntryDependentKavuahProblemOnahs(entry, kavuahList)];
         }
 
         //Get the onahs that need to be kept for Kavuahs of yom hachodesh, sirug,
         //dilug (from projected day - not actual entry)
         //and other Kavuahs that are not dependent on the actual entry list
-        probOnahs.concat(this.getIndependentKavuahProblemOnahs(kavuahList));
+        probOnahs = [...probOnahs, ...this.getIndependentKavuahProblemOnahs(kavuahList)];
 
         return probOnahs;
     }
@@ -102,15 +104,13 @@ export default class EntryList {
             }
             else {
                 //First we look for a proceeding entry where the haflagah is longer than this one
-                DateTime longerHaflagah = (from e in Entry.EntryList
-                where e.DateTime > entry.DateTime &&
-                    e.Interval > entry.Interval
-                select e.DateTime).FirstOrDefault();
-
-                //If no such entry was found, we keep on going...
-                if (longerHaflagah == DateTime.MinValue) {
-                    longerHaflagah = Program.HebrewCalendar.AddMonths(Program.Today,
-                        Properties.Settings.Default.NumberMonthsAheadToWarn);
+                let longerHaflaga = this.list.find(e => e.onah.jdate.Abs > entry.onah.jdate.Abs && e.haflaga > onah.haflaga);
+                if (!!longerHaflagah) {
+                    longerHaflaga = longerHaflaga.onah.jdate;
+                }
+                else {
+                    //If no such entry was found, we keep on going...
+                    longerHaflagah = new jDate().addMonths(this.settings.numberMonthsAheadToWarn);
                 }
 
                 //TODO:How to cheshbon out the Shach (or rather not like the Shach).
@@ -118,16 +118,16 @@ export default class EntryList {
 
                 //First the theoretical problems - not based on real entries
                 //We get the first problem Onah
-                Onah on = entry.AddDays(entry.Interval - 1);
+                let onah = new ProblemOnah(entry.onah.jdate.addDays(entry.haflaga - 1),
+                        entry.nightDay,
+                        "Yom Haflaga (" + entry.haflaga.toString() + ")");
                 //We don't flag the "שלא נתבטלה" for the first one, so we keep track
-                bool isFirst = true;
-                while (on.DateTime < longerHaflagah) {
-                    on.Name = "יום הפלגה (" + entry.Interval + ")";
+                let isFirst = true;
+                while (onah.Abs < longerHaflagah.Abs) {
                     if (!isFirst) {
-                        on.Name += " שלא נתבטלה";
+                        onah.Name += " which was never overided";
                     }
-                    on.IsIgnored = cancelOnahBeinenis;
-                    this.ProblemOnas.Add(on);
+                    onahs.push[onah];
                     if (Properties.Settings.Default.ShowOhrZeruah) {
                         Onah ooz = Onah.GetPreviousOnah(on);
                         ooz.Name = "או\"ז של " + on.Name;

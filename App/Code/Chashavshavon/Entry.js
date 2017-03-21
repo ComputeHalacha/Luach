@@ -13,7 +13,7 @@ export default class Entry {
     }
     isSameEntry(entry) {
         return this.onah.isSameOnah(entry.Onah) &&
-            this.haflaga === entry.haflaga && 
+            this.haflaga === entry.haflaga &&
             this.active === entry.active;
     }
 }
