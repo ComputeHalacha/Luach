@@ -1,6 +1,6 @@
-import { firstMatch } from '../GeneralUtils';
 import Utils from './Utils.js';
 import jDate from './jDate.js';
+import { isValidDate } from '../GeneralUtils';
 
 /* Computes the daily Zmanim for any single date at any location.
  * The astronomical and mathematical calculations were directly adapted from the excellent
@@ -18,13 +18,13 @@ export default class Zmanim {
         else if (date instanceof String) {
             date = new Date(date);
         }
-        if (!(date instanceof Date)) {
+        if ((!(date instanceof Date)) || !isValidDate(date)) {
             throw new Error('Zmanim.getSunTimes: supplied date parameter cannot be converted to a Date');
         }
         //undefined value defaults to true
         considerElevation = considerElevation !== false;
 
-        var sunrise, sunset, day = Zmanim.dayOfYear(date),
+        let sunrise, sunset, day = Zmanim.dayOfYear(date),
             zeninthDeg = 90, zenithMin = 50, lonHour = 0, longitude = 0, latitude = 0,
             cosLat = 0, sinLat = 0, cosZen = 0, sinDec = 0, cosDec = 0,
             xmRise = 0, xmSet = 0, xlRise = 0, xlSet = 0, aRise = 0, aSet = 0, ahrRise = 0, ahrSet = 0,
@@ -90,7 +90,7 @@ export default class Zmanim {
     }
 
     static getChatzos(date, location) {
-        var sunTimes = Zmanim.getSunTimes(date, location, false),
+        const sunTimes = Zmanim.getSunTimes(date, location, false),
             rise = sunTimes.sunrise,
             set = sunTimes.sunset;
 
@@ -98,7 +98,7 @@ export default class Zmanim {
             return { hour: NaN, minute: NaN };
         }
 
-        var riseMinutes = (rise.hour * 60) + rise.minute,
+        const riseMinutes = (rise.hour * 60) + rise.minute,
             setMinutes = (set.hour * 60) + set.minute,
             chatz = parseInt((setMinutes - riseMinutes) / 2);
 
@@ -106,7 +106,7 @@ export default class Zmanim {
     }
 
     static getShaaZmanis(date, location, offset) {
-        var sunTimes = Zmanim.getSunTimes(date, location, false),
+        let sunTimes = Zmanim.getSunTimes(date, location, false),
             rise = sunTimes.sunrise,
             set = sunTimes.sunset;
 
@@ -119,24 +119,24 @@ export default class Zmanim {
             set = Utils.addMinutes(set, offset);
         }
 
-        var riseMinutes = (rise.hour * 60) + rise.minute,
+        const riseMinutes = (rise.hour * 60) + rise.minute,
             setMinutes = (set.hour * 60) + set.minute;
 
         return (setMinutes - riseMinutes) / 12;
     }
 
     static getCandleLighting(date, location) {
-        var set = Zmanim.getSunTimes(date, location).sunset;
+        const set = Zmanim.getSunTimes(date, location).sunset;
 
         if (!location.Israel) {
             return Utils.addMinutes(set, -18);
         }
 
-        var special = [{ names: ['jerusalem', 'yerush', 'petach', 'petah', 'petak'], min: 40 },
+        const special = [{ names: ['jerusalem', 'yerush', 'petach', 'petah', 'petak'], min: 40 },
         { names: ['haifa', 'chaifa', 'be\'er sheva', 'beersheba'], min: 22 }],
             loclc = location.Name.toLowerCase(),
-            city = firstMatch(special, sp => {
-                return firstMatch(sp.names, spi => {
+            city = special.find(sp => {
+                return sp.names.find(spi => {
                     return loclc.indexOf(spi) > -1;
                 });
             });
@@ -161,7 +161,7 @@ export default class Zmanim {
     }
 
     static dayOfYear(date) {
-        var monCount = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366];
+        const monCount = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366];
         if ((date.getMonth() + 1 > 2) && (Zmanim.isSecularLeapYear(date.getYear()))) {
             return monCount[date.getMonth() + 1] + date.getDate() + 1;
         }
@@ -191,7 +191,7 @@ export default class Zmanim {
     }
 
     static timeAdj(time, date, location) {
-        var hour, min;
+        let hour, min;
 
         if (time < 0) {
             time += 24;
@@ -199,7 +199,7 @@ export default class Zmanim {
         hour = parseInt(time);
         min = parseInt(parseInt((time - hour) * 60 + 0.5));
 
-        var inCurrTZ = location.UTCOffset === Utils.currUtcOffset();
+        const inCurrTZ = location.UTCOffset === Utils.currUtcOffset();
         if (inCurrTZ && Utils.isDateDST(date)) {
             hour++;
         }

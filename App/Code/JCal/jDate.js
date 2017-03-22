@@ -1,4 +1,4 @@
-import { isString, isNumber, has, firstMatch, isValidDate } from '../GeneralUtils';
+import { isString, isNumber, has, isValidDate } from '../GeneralUtils';
 import Dafyomi from './Dafyomi.js';
 import Utils from './Utils.js';
 import Sedra from './Sedra.js';
@@ -475,7 +475,7 @@ export default class jDate {
     static tDays(year) {
         /*As this function is called many times, often on the same year for all types of calculations,
         we save a list of years with their elapsed values.*/
-        var cached = firstMatch(yearCache, y => y.year === year);
+        var cached = yearCache.find(y => y.year === year);
         //If this year was already calculated and cached, then we return the cached value.
         if (cached) {
             return cached.elapsed;
