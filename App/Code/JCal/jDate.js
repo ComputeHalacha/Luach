@@ -1,3 +1,4 @@
+import { isString, isNumber, has, firstMatch, isValidDate } from '../GeneralUtils';
 import Dafyomi from './Dafyomi.js';
 import Utils from './Utils.js';
 import Sedra from './Sedra.js';
@@ -43,7 +44,7 @@ export default class jDate {
             this.fromAbs(jDate.absSd(new Date()));
         }
         else if (arg instanceof Date) {
-            if (arg.isvalid()) {
+            if (isValidDate(arg)) {
                 this.fromAbs(jDate.absSd(arg));
             }
             else {
@@ -56,16 +57,16 @@ export default class jDate {
             this.Year = arg[2];
             this.Abs = (arg.length > 3 && arg[3]) || jDate.absJd(this.Year, this.Month, this.Day);
         }
-        else if (Utils.isString(arg)) {
+        else if (isString(arg)) {
             var d = new Date(arg);
-            if (d.isvalid()) {
+            if (isValidDate(d)) {
                 this.fromAbs(jDate.absSd(d));
             }
             else {
                 throw new Error('jDate constructor: The given string "' + arg + '" cannot be parsed into a Date');
             }
         }
-        else if (Utils.isNumber(arg)) {
+        else if (isNumber(arg)) {
             //if no other arguments were supplied, we assume that the supplied number is an absolute date
             if (arguments.length === 1) {
                 this.fromAbs(arg);
@@ -80,7 +81,7 @@ export default class jDate {
             }
         }
         //If arg is an object that has a "year" property that contains a valid value...
-        else if (typeof arg === 'object' && Utils.isNumber(arg.year)) {
+        else if (typeof arg === 'object' && isNumber(arg.year)) {
             this.Day = arg.day || 1;
             this.Month = arg.month || 7;
             this.Year = arg.year;
@@ -90,14 +91,14 @@ export default class jDate {
 
     //Sets the current Jewish date from the given absolute date
     fromAbs(absolute) {
-        var date = jDate.fromAbs(absolute);
-        this.Year = date.year;
-        this.Month = date.month;
-        this.Day = date.day;
+        const ymd = jDate.fromAbs(absolute);
+        this.Year = ymd.year;
+        this.Month = ymd.month;
+        this.Day = ymd.day;
         this.Abs = absolute;
     }
 
-    //Returns a valid javascript Date object that represents the Gregorian date 
+    //Returns a valid javascript Date object that represents the Gregorian date
     //that starts at midnight of the current Jewish date
     getDate() {
         var dt = new Date(2000, 0, 1); // 1/1/2000 is absolute date 730120
@@ -167,7 +168,7 @@ export default class jDate {
         return new jDate(year, month, day);
     }
 
-    //Gets the number of days separating this Jewish Date and the given one. 
+    //Gets the number of days separating this Jewish Date and the given one.
     //If the given date is before this one, the number will be negative.
     diffDays(jd) {
         return jd.Abs - this.Abs;
@@ -250,13 +251,13 @@ export default class jDate {
     hasEiruvTavshilin(israel) {
         var dow = this.getDayOfWeek();
         //No Eiruv Tavshilin ever on Sunday, Monday, Tuesday, Friday or Shabbos
-        return (![0, 1, 2, 5, 6].has(dow)) &&
+        return (!has(dow, 0, 1, 2, 5, 6)) &&
             //Erev Yomtov (we already ruled out Erev Shabbos)
             this.hasCandleLighting() &&
             //Not erev yom kippur
             this.Day !== 9 &&
             //Erev rosh hashana on Wednesday OR erev yomtov in Chu"l on wednesday or Thursday OR erev yomtov in Israel on Thursday
-            (this.Month === 6 || ((!israel) && [3, 4].has(dow)) || (israel && dow === 4));
+            (this.Month === 6 || ((!israel) && has(dow, 3, 4)) || (israel && dow === 4));
     }
 
     //Does the current Jewish date have candle lighting before sunset?
@@ -271,10 +272,10 @@ export default class jDate {
             return false;
         }
 
-        return (this.Month === 1 && [14, 20].has(this.Day)) ||
+        return (this.Month === 1 && has(this.Day, 14, 20)) ||
             (this.Month === 3 && this.Day === 5) ||
             (this.Month === 6 && this.Day === 29) ||
-            (this.Month === 7 && [9, 14, 21].has(this.Day));
+            (this.Month === 7 && has(this.Day, 9, 14, 21));
     }
 
     //Gets the candle lighting time for the current Jewish date for the given Location object.
@@ -338,25 +339,25 @@ export default class jDate {
 
 
     /***************************************************************************************************************
-    *  Converts its argument/s to a Jewish Date. 
-    *  Samples of use: 
-    *    To get the current Jewish Date: jDate.toJDate(new Date()). 
-    *    To print out the current date in English: jDate.toJDate(new Date()).toString() 
+    *  Converts its argument/s to a Jewish Date.
+    *  Samples of use:
+    *    To get the current Jewish Date: jDate.toJDate(new Date()).
+    *    To print out the current date in English: jDate.toJDate(new Date()).toString()
     *    To print out the current date in Hebrew: jDate.toJDate(new Date()).toStringHeb()
-    *  
+    *
     *  Arguments to the jDate.toJDate function can be one of the following:
     *  jDate.toJDate() - Sets the Jewish Date for the current system date
     *  jDate.toJDate(Date) - Sets to the Jewish date on the given Javascript Date object
     *  jDate.toJDate("January 1 2045") - Accepts any valid Javascript Date string (uses string constructor of Date object)
     *  jDate.toJDate(jewishYear, jewishMonth, jewishDay) - Months start at 1. Nissan is month 1 Adara Sheini is 13.
     *  jDate.toJDate(jewishYear, jewishMonth) - Same as above, with Day defaulting to 1
-    *  jDate.toJDate(jewishYear) - sets to the first day of Rosh Hashana on the given year 
+    *  jDate.toJDate(jewishYear) - sets to the first day of Rosh Hashana on the given year
     *  jDate.toJDate( { year: 5776, month: 4, day: 5 } ) - Months start at 1. Nissan is month 1 Adara Sheini is 13.
     *  jDate.toJDate( { year: 5776, month: 4 } ) - Same as above, with Day defaulting to 1
     *  jDate.toJDate( { year: 5776 } ) - sets to the first day of Rosh Hashana on the given year
     *  jDate.toJDate(jewishYear, jewishMonth, jewishDay, absoluteDate) - Most efficient. Needs no calculations at all. The absoluteDate is the number of days elapsed since the theoretical date Sunday, December 31, 0001 BCE.
     *  jDate.toJDate( { year: 5776, month: 4, day: 5, abs: 122548708 } ) - same as jDate.toJDate(jewishYear, jewishMonth, jewishDay, absoluteDate)
-     
+
     ****************************************************************************************************************/
     static toJDate(arg, month, day, abs) {
         if (arguments.length === 0) {
@@ -365,7 +366,7 @@ export default class jDate {
         // If just the year is set, then the date is set to Rosh Hashana of that year.
         // In the above scenario, we can't just pass the args along, as the constructor will treat it as an absolute date.
         //...and that folks, is actually the whole point of this function...
-        else if (Utils.isNumber(arg) && arguments.length === 1) {
+        else if (isNumber(arg) && arguments.length === 1) {
             return new jDate(arg, 7, 1);
         }
         else {
@@ -373,7 +374,7 @@ export default class jDate {
         }
     }
 
-    //Calculate the Jewish date at the given absolute date
+    //Calculate the Jewish year, month and day for the given absolute date
     static fromAbs(absDay) {
         //To save on calculations, start with a few years before date
         var year = 3761 + parseInt(absDay / (absDay > 0 ? 366 : 300)),
@@ -392,7 +393,7 @@ export default class jDate {
         // Calculate the day by subtraction.
         day = (absDay - jDate.absJd(year, month, 1) + 1);
 
-        return { year: year, month: month, day: day };
+        return { year, month, day };
     }
 
     //Gets the absolute date of the given javascript Date object
@@ -472,11 +473,9 @@ export default class jDate {
 
     //Elapsed days since creation of the world until Rosh Hashana of the given year
     static tDays(year) {
-        /*As this function is called many times, often on the same year for all types of calculations, 
+        /*As this function is called many times, often on the same year for all types of calculations,
         we save a list of years with their elapsed values.*/
-        var cached = yearCache.first(function (y) {
-            return y.year === year;
-        });
+        var cached = firstMatch(yearCache, y => y.year === year);
         //If this year was already calculated and cached, then we return the cached value.
         if (cached) {
             return cached.elapsed;
@@ -505,7 +504,7 @@ export default class jDate {
         }
 
         // A day is added if Rosh HaShanah would occur on Sunday, Friday or Wednesday,
-        if ([0, 3, 5].has(altDay % 7)) {
+        if (has(altDay % 7, 0, 3, 5)) {
             altDay += 1;
         }
 
@@ -606,7 +605,7 @@ export default class jDate {
         if (dayOfWeek !== 6 && (!israel) && secDate.getMonth() == 11) {
             var sday = secDate.getDate();
             //The three possible dates for starting vt"u are the 5th, 6th and 7th of December
-            if ([5, 6, 7].has(sday)) {
+            if (has(sday, 5, 6, 7)) {
                 var nextYearIsLeap = jDate.isJdLeapY(jYear + 1);
                 //If next year is not a leap year, then vst"u starts on the 5th.
                 //If next year is a leap year than vst"u starts on the 6th.
@@ -630,7 +629,7 @@ export default class jDate {
                     list.push(israel ?
                         (!hebrew ? "Pesach - Chol HaMoed" : "פסח - חול המועד") :
                         (!hebrew ? "Pesach - Second Day" : "פסח - יום שני"));
-                else if ([17, 18, 19].has(jDay))
+                else if (has(jDay, 17, 18, 19))
                     list.push(!hebrew ? "Pesach - Chol Ha'moed" : "פסח - חול המועד");
                 else if (jDay === 20)
                     list.push(!hebrew ? "Pesach - Chol Ha'moed - Erev Yomtov" : "פסח - חול המועד - ערב יו\"ט");
@@ -679,7 +678,7 @@ export default class jDate {
                     list.push(!hebrew ? "Tu B'Av" : "ט\"ו באב");
                 break;
             case 6: //Ellul
-                if (dayOfWeek === 0 && [21, 22, 24, 26].has(jDay))
+                if (dayOfWeek === 0 && has(jDay, 21, 22, 24, 26))
                     list.push(!hebrew ? "Selichos" : "מתחילים סליחות");
                 else if (jDay === 29)
                     list.push(!hebrew ? "Erev Rosh Hashana" : "ערב ראש השנה");
@@ -705,7 +704,7 @@ export default class jDate {
                     list.push(israel ?
                         (!hebrew ? "Sukkos - Chol HaMoed" : "סוכות - חול המועד") :
                         (!hebrew ? "Sukkos - Second Day" : "יום שני - חג הסוכות"));
-                else if ([17, 18, 19, 20].has(jDay))
+                else if (has(jDay, 17, 18, 19, 20))
                     list.push(!hebrew ? "Sukkos - Chol HaMoed" : "סוכות - חול המועד");
                 else if (jDay === 21)
                     list.push(!hebrew ? "Hoshana Rabba - Erev Yomtov" : "הושענא רבה - ערב יו\"ט");

@@ -1,3 +1,4 @@
+import { firstMatch } from '../GeneralUtils';
 import Utils from './Utils.js';
 import jDate from './jDate.js';
 
@@ -134,8 +135,8 @@ export default class Zmanim {
         var special = [{ names: ['jerusalem', 'yerush', 'petach', 'petah', 'petak'], min: 40 },
         { names: ['haifa', 'chaifa', 'be\'er sheva', 'beersheba'], min: 22 }],
             loclc = location.Name.toLowerCase(),
-            city = special.first(function (sp) {
-                return sp.names.first(function (spi) {
+            city = firstMatch(special, sp => {
+                return firstMatch(sp.names, spi => {
                     return loclc.indexOf(spi) > -1;
                 });
             });

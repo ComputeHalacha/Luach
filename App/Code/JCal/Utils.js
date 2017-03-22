@@ -1,44 +1,6 @@
 /// <reference path="Zmanim.js" />
 "use strict";
 
-//Returns whether or not the string contains the given substring
-String.prototype.has = function (text) {
-    return !!~this.indexOf(text); //A cute trick: bitwise NOT turns -1 into 0
-};
-
-//Returns whether or not the array contains the given item
-Array.prototype.has = function (item) {
-    return !!~this.indexOf(item); //A cute trick: bitwise NOT turns -1 into 0
-};
-
-//Calls the given comparer function for each item in the array.
-//The first item encountered for which the comparer returns truthy is returned.
-Array.prototype.first = function (comparer) {
-    for (var i = 0; i < this.length; i++) {
-        if (comparer(this[i])) {
-            return this[i];
-        }
-    }
-};
-
-//Get first instance of the given item in the given array.
-//Search uses strict comparison operator (===) unless we are dealing with strings and caseSensitive is falsey.
-//Note: for non-caseSensitive searches, returns the original array item if a match is found.
-Array.prototype.getFirst = function (item, caseSensitive) {
-    for (var i = 0; i < this.length; i++) {
-        if ((!caseSensitive) && Utils.isString(item) && Utils.isString(this[i]) && item.toLowerCase() === this[i].toLowerCase()) {
-            return this[i];
-        }
-        else if (this[i] === item) {
-            return this[i];
-        }
-    }
-};
-
-//Checks a Date object if it represents a valid date or not
-Date.prototype.isvalid = function () {
-    return (!isNaN(this.valueOf()));
-};
 
 export default function Utils() { }
 Utils.jMonthsEng = ["", "Nissan", "Iyar", "Sivan", "Tamuz", "Av", "Ellul", "Tishrei", "Cheshvan", "Kislev", "Teves", "Shvat", "Adar", "Adar Sheini"];
@@ -51,16 +13,6 @@ Utils.jtd = ['י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ'];
 Utils.jhd = ['ק', 'ר', 'ש', 'ת'];
 Utils.jsnum = ["", "אחד", "שנים", "שלשה", "ארבעה", "חמשה", "ששה", "שבעה", "שמונה", "תשעה"];
 Utils.jtnum = ["", "עשר", "עשרים", "שלושים", "ארבעים"];
-
-//Returns true if thing is an instance of either a string primitive or String object
-Utils.isString = function (thing) {
-    return (typeof thing === 'string' || thing instanceof String);
-};
-
-//Returns true if thing is an instance of either a number primitive or Number object
-Utils.isNumber = function (thing) {
-    return (typeof thing === 'number' || thing instanceof Number);
-};
 
 //Gets the Jewish representation of a number (365 = שס"ה)
 //Minimum number is 1 and maximum is 9999.
