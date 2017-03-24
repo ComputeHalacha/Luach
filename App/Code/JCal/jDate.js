@@ -105,12 +105,13 @@ export default class jDate {
         dt.setDate((this.Abs - 730120) + 1);
         return dt;
     }
-
     //The day of the week for the current Jewish date. Sunday is 0 and Shabbos is 6
     getDayOfWeek() {
         return Math.abs(this.Abs % 7);
     }
-
+    get DayOfWeek() {
+        return this.getDayOfWeek();
+    }
     //Returns a new Jewish date represented by adding the given number of days to the current Jewish date
     addDays(days) {
         return new jDate(this.Abs + days);

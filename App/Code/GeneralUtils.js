@@ -13,14 +13,15 @@ function isValidDate(dt) {
     return (!isNaN(dt.valueOf()));
 };
 
-//Returns whether or not the given, array, arguments or string contains the given item or substring
+//Returns whether or not the given, array, string, or argument list contains the given item or substring.
+//This function is awfully similar to Array.includes, but has the added plus of accepting any number or type of arguments.
 function has(o, ...arr) {
     if (arr.length === 1 && (arr[0] instanceof Array || isString(arr[0]))) {
-        return !!~arr[0].indexOf(o); //A cute trick: bitwise NOT turns -1 into 0
+        return arr[0].includes(o);
     }
     else {
-        return !!~arr.indexOf(o);
+        return arr.includes(o);
     }
 };
 
-export {isString, isNumber, has, isValidDate };
+export { isString, isNumber, has, isValidDate };
