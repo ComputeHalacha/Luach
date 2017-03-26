@@ -7,7 +7,7 @@ import Location from './App/Code/JCal/Location';
 export default class LuachAndroid extends Component {
   constructor (props)  {
       super(props)
-     this.state = { selectedTab: 'profile'};   
+     this.state = { selectedTab: 'profile'};
   }
 
   changeTab (selectedTab) {
@@ -21,7 +21,7 @@ export default class LuachAndroid extends Component {
         <Text style={styles.welcome}>
           Jewish Date Informtaion---
         </Text>
-        <SingleDayDisplay jdate={jDate.toJDate(5777, 7, 22)} location={location} />
+        <SingleDayDisplay jdate={new jDate()} location={location} />
         <Text style={styles.instructions}>
           {'\n\n'}
           This is a test...
