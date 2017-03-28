@@ -8,7 +8,7 @@ import Zmanim from "./Zmanim.js";
 //Keeps a "repository" of years that have had their elapsed days previously calculated. Format: { year:5776, elapsed:2109283 }
 var yearCache = [];
 
-/******************************************************************************************************************************
+/**
  *  Represents a single day in the Jewish Calendar.
  *
  *  Many of the date conversion algorithms are based on the C code which was translated from Lisp
@@ -89,7 +89,7 @@ export default class jDate {
         }
     }
 
-    //Sets the current Jewish date from the given absolute date
+    /**Sets the current Jewish date from the given absolute date*/
     fromAbs(absolute) {
         const ymd = jDate.fromAbs(absolute);
         this.Year = ymd.year;
@@ -98,25 +98,26 @@ export default class jDate {
         this.Abs = absolute;
     }
 
-    //Returns a valid javascript Date object that represents the Gregorian date
-    //that starts at midnight of the current Jewish date
+    /**Returns a valid javascript Date object that represents the Gregorian date
+    that starts at midnight of the current Jewish date.*/
     getDate() {
         var dt = new Date(2000, 0, 1); // 1/1/2000 is absolute date 730120
         dt.setDate((this.Abs - 730120) + 1);
         return dt;
     }
-
-    //The day of the week for the current Jewish date. Sunday is 0 and Shabbos is 6
+    /**The day of the week for the current Jewish date. Sunday is 0 and Shabbos is 6.*/
     getDayOfWeek() {
         return Math.abs(this.Abs % 7);
     }
-
-    //Returns a new Jewish date represented by adding the given number of days to the current Jewish date
+    /**The day of the week for the current Jewish date. Sunday is 0 and Shabbos is 6.*/
+    get DayOfWeek() {
+        return this.getDayOfWeek();
+    }
+    /**Returns a new Jewish date represented by adding the given number of days to the current Jewish date.*/
     addDays(days) {
         return new jDate(this.Abs + days);
     }
-
-    //Returns a new Jewish date represented by adding the given number of Jewish Months to the current Jewish date
+    /**Returns a new Jewish date represented by adding the given number of Jewish Months to the current Jewish date.*/
     addMonths(months) {
         var year = this.Year,
             month = this.Month,
@@ -148,7 +149,7 @@ export default class jDate {
         return new jDate(year, month, day);
     }
 
-    //Returns a new Jewish date represented by adding the given number of Jewish Years to the current Jewish date
+    /**Returns a new Jewish date represented by adding the given number of Jewish Years to the current Jewish date.*/
     addYears(years) {
         var year = this.Year + years,
             month = this.Month,
@@ -168,16 +169,20 @@ export default class jDate {
         return new jDate(year, month, day);
     }
 
-    //Gets the number of days separating this Jewish Date and the given one.
-    //If the given date is before this one, the number will be negative.
+    /**Gets the number of days separating this Jewish Date and the given one.
+     *
+     * If the given date is before this one, the number will be negative.*/
     diffDays(jd) {
         return jd.Abs - this.Abs;
     }
 
-    //Gets the number of months separating this Jewish Date and the given one.
-    //Ignores the Day property:
-    //jDate.toJDate(5777, 6, 29).diffMonths(jDate.toJDate(5778, 7, 1)) will return 1 even though they are a day apart.
-    //If the given date is before this one, the number will be negative.
+    /**Gets the number of months separating this Jewish Date and the given one.
+     *
+     * Ignores the Day property:
+     *
+     * jDate.toJDate(5777, 6, 29).diffMonths(jDate.toJDate(5778, 7, 1)) will return 1 even though they are a day apart.
+     *
+     * If the given date is before this one, the number will be negative.*/
     diffMonths(jd) {
         var month = jd.Month,
             year = jd.Year,
@@ -209,15 +214,18 @@ export default class jDate {
         return months;
     }
 
-    //Gets the number of years separating this Jewish Date and the given one.
-    //Ignores the Day and Month properties:
-    //jDate.toJDate(5777, 6, 29).diffYears(jDate.toJDate(5778, 7, 1)) will return 1 even though they are a day apart.
-    //If the given date is before this one, the number will be negative.
+    /**Gets the number of years separating this Jewish Date and the given one.
+     *
+     * Ignores the Day and Month properties:
+     *
+     * jDate.toJDate(5777, 6, 29).diffYears(jDate.toJDate(5778, 7, 1)) will return 1 even though they are a day apart.
+     *
+     * If the given date is before this one, the number will be negative.*/
     diffYears(jd) {
         return jd.Year - this.Year;
     }
 
-    //Returns the current Jewish date in the format: Thursday Kislev 3 5776
+    /**Returns the current Jewish date in the format: Thursday Kislev 3 5776.*/
     toString(hideDayOfWeek) {
         return (hideDayOfWeek ? '' : Utils.dowEng[this.getDayOfWeek()] + ' ') +
             Utils.jMonthsEng[this.Month] + ' ' +
@@ -225,7 +233,7 @@ export default class jDate {
             this.Year.toString();
     }
 
-    //Returns the current Jewish date in the format: יום חמישי כ"א כסלו תשע"ו
+    /**Returns the current Jewish date in the format: יום חמישי כ"א כסלו תשע"ו.*/
     toStringHeb() {
         return Utils.dowHeb[this.getDayOfWeek()] + ' ' +
             Utils.toJNum(this.Day) + ' ' +
@@ -233,7 +241,7 @@ export default class jDate {
             Utils.toJNum(this.Year % 1000);
     }
 
-    //Gets the day of the omer for the current Jewish date. If the date is not during sefira, 0 is returned.
+    /**Gets the day of the omer for the current Jewish date. If the date is not during sefira, 0 is returned.*/
     getDayOfOmer() {
         var dayOfOmer = 0;
         if ((this.Month == 1 && this.Day > 15) || this.Month == 2 || (this.Month == 3 && this.Day < 6)) {
@@ -242,12 +250,12 @@ export default class jDate {
         return dayOfOmer;
     }
 
-    //Gets an array[string] of holidays, fasts and any other special specifications for the current Jewish date.
+    /**Gets an array[string] of holidays, fasts and any other special specifications for the current Jewish date.*/
     getHolidays(israel, hebrew) {
         return jDate.getHoldidays(this, israel, hebrew);
     }
 
-    //Is the current Jewish Date the day before a yomtov that contains a Friday?
+    /**Is the current Jewish Date the day before a yomtov that contains a Friday?*/
     hasEiruvTavshilin(israel) {
         var dow = this.getDayOfWeek();
         //No Eiruv Tavshilin ever on Sunday, Monday, Tuesday, Friday or Shabbos
@@ -260,9 +268,9 @@ export default class jDate {
             (this.Month === 6 || ((!israel) && has(dow, 3, 4)) || (israel && dow === 4));
     }
 
-    //Does the current Jewish date have candle lighting before sunset?
+    /**Does the current Jewish date have candle lighting before sunset?*/
     hasCandleLighting() {
-        var dow = this.getDayOfWeek();
+        const dow = this.getDayOfWeek();
 
         if (dow === 5) {
             return true;
@@ -278,7 +286,7 @@ export default class jDate {
             (this.Month === 7 && has(this.Day, 9, 14, 21));
     }
 
-    //Gets the candle lighting time for the current Jewish date for the given Location object.
+    /**Gets the candle lighting time for the current Jewish date for the given Location object.*/
     getCandleLighting(location) {
         if (!location) {
             throw new Error('To get sunrise and sunset, the location needs to be supplied');
@@ -291,18 +299,19 @@ export default class jDate {
         }
     }
 
-    //Get the sedra of the week for the current Jewish date
+    /**Get the sedra of the week for the current Jewish date.*/
     getSedra(israel) {
         return new Sedra(this, israel);
     }
 
-    //Get the sedra of the week for the current Jewish date
+    /**Get the sedra of the week for the current Jewish date.*/
     getPirkeiAvos(israel) {
         return new PirkeiAvos(this, israel);
     }
 
-    //gets sunrise and sunset time for the current Jewish date at the given Location.
-    //Return format: { sunrise: { hour: 6, minute: 18 }, sunset: { hour: 19, minute: 41 } }
+    /**Gets sunrise and sunset time for the current Jewish date at the given Location.
+     *
+     * Return format: {sunrise: {hour: 6, minute: 18}, sunset: {hour: 19, minute: 41}}*/
     getSunriseSunset(location) {
         if (!location) {
             throw new Error('To get sunrise and sunset, the location needs to be supplied');
@@ -310,8 +319,9 @@ export default class jDate {
         return Zmanim.getSunTimes(this, location);
     }
 
-    //Gets Chatzos for both the day and the night for the current Jewish date at the given Location.
-    //Return format: { hour: 11, minute: 48 }
+    /**Gets Chatzos for both the day and the night for the current Jewish date at the given Location.
+     *
+     *Return format: {hour: 11, minute: 48}*/
     getChatzos(location) {
         if (!location) {
             throw new Error('To get Chatzos, the location needs to be supplied');
@@ -319,7 +329,7 @@ export default class jDate {
         return Zmanim.getChatzos(this, location);
     }
 
-    //Gets the length of a single Sha'a Zmanis in minutes for the current Jewish date at the given Location.
+    /**Gets the length of a single Sha'a Zmanis in minutes for the current Jewish date at the given Location.*/
     getShaaZmanis(location, offset) {
         if (!location) {
             throw new Error('To get the Shaa Zmanis, the location needs to be supplied');
@@ -327,18 +337,18 @@ export default class jDate {
         return Zmanim.getShaaZmanis(this, location, offset);
     }
 
-    // Returns the daily daf in English. For example: Sukkah, Daf 3
+    /**Returns the daily daf in English. For example: Sukkah, Daf 3.*/
     getDafyomi() {
         return Dafyomi.toString(this);
     }
 
-    //Gets the daily daf in Hebrew. For example: 'סוכה דף כ.
+    /**Gets the daily daf in Hebrew. For example: 'סוכה דף כ.*/
     getDafyomiHeb() {
         return Dafyomi.toStringHeb(this);
     }
 
 
-    /***************************************************************************************************************
+    /**
     *  Converts its argument/s to a Jewish Date.
     *  Samples of use:
     *    To get the current Jewish Date: jDate.toJDate(new Date()).
@@ -357,7 +367,6 @@ export default class jDate {
     *  jDate.toJDate( { year: 5776 } ) - sets to the first day of Rosh Hashana on the given year
     *  jDate.toJDate(jewishYear, jewishMonth, jewishDay, absoluteDate) - Most efficient. Needs no calculations at all. The absoluteDate is the number of days elapsed since the theoretical date Sunday, December 31, 0001 BCE.
     *  jDate.toJDate( { year: 5776, month: 4, day: 5, abs: 122548708 } ) - same as jDate.toJDate(jewishYear, jewishMonth, jewishDay, absoluteDate)
-
     ****************************************************************************************************************/
     static toJDate(arg, month, day, abs) {
         if (arguments.length === 0) {
@@ -374,7 +383,7 @@ export default class jDate {
         }
     }
 
-    //Calculate the Jewish year, month and day for the given absolute date
+    /**Calculate the Jewish year, month and day for the given absolute date.*/
     static fromAbs(absDay) {
         //To save on calculations, start with a few years before date
         var year = 3761 + parseInt(absDay / (absDay > 0 ? 366 : 300)),
@@ -396,7 +405,7 @@ export default class jDate {
         return { year, month, day };
     }
 
-    //Gets the absolute date of the given javascript Date object
+    /**Gets the absolute date of the given javascript Date object.*/
     static absSd(date) {
         var year = date.getFullYear(),
             month = date.getMonth() + 1,
@@ -413,7 +422,7 @@ export default class jDate {
             + parseInt((year - 1) / 400));   // ...plus prior years divisible by 400
     };
 
-    //Calculate the absolute date for the given Jewish Date
+    /**Calculate the absolute date for the given Jewish Date.*/
     static absJd(year, month, day) {
         var dayInYear = day; // Days so far this month.
         if (month < 7) { // Before Tishrei, so add days in prior months this year before and after Nissan.
@@ -439,9 +448,10 @@ export default class jDate {
         return dayInYear + (jDate.tDays(year) + (-1373429));
     }
 
-    //The number of days in the given Gregorian Month.
-    //Note: For the month parameter, January should be 1 and December should be 12
-    //This is unlike Javascripts getMonth() function which returns 0 for January and 11 for December.
+    /**The number of days in the given Gregorian Month.
+     *
+     * Note: For the month parameter, January should be 1 and December should be 12.
+     * This is unlike Javascripts getMonth() function which returns 0 for January and 11 for December.*/
     static daysSMonth(month, year) {
         switch (month) {
             case 2:
@@ -459,7 +469,7 @@ export default class jDate {
         }
     };
 
-    //The number of days in the given Jewish Month
+    /**The number of days in the given Jewish Month.*/
     static daysJMonth(year, month) {
         if ((month == 2) || (month == 4) || (month == 6) || ((month == 8) &&
             (!jDate.isLongCheshvan(year))) || ((month == 9) && jDate.isShortKislev(year)) || (month == 10) || ((month == 12) &&
@@ -471,7 +481,7 @@ export default class jDate {
         }
     }
 
-    //Elapsed days since creation of the world until Rosh Hashana of the given year
+    /**Elapsed days since creation of the world until Rosh Hashana of the given year*/
     static tDays(year) {
         /*As this function is called many times, often on the same year for all types of calculations,
         we save a list of years with their elapsed values.*/
@@ -514,12 +524,12 @@ export default class jDate {
         return altDay;
     }
 
-    //Number of days in the given Jewish Year
+    /**Number of days in the given Jewish Year.*/
     static daysJYear(year) {
         return ((jDate.tDays(year + 1)) - (jDate.tDays(year)));
     }
 
-    //Number of days in the given Jewish Month. Nissan is 1 and Adar Sheini is 13.
+    /**Number of days in the given Jewish Month. Nissan is 1 and Adar Sheini is 13.*/
     static daysJMonth(year, month) {
         if ((month == 2) || (month == 4) || (month == 6) || ((month == 8) &&
             (!jDate.isLongCheshvan(year))) || ((month == 9) && jDate.isShortKislev(year)) || (month == 10) || ((month == 12) &&
@@ -531,27 +541,27 @@ export default class jDate {
         }
     }
 
-    //Does Cheshvan for the given Jewish Year have 30 days?
+    /**Does Cheshvan for the given Jewish Year have 30 days?*/
     static isLongCheshvan(year) {
         return (jDate.daysJYear(year) % 10) == 5;
     }
 
-    //Does Kislev for the given Jewish Year have 29 days?
+    /**Does Kislev for the given Jewish Year have 29 days?*/
     static isShortKislev(year) {
         return (jDate.daysJYear(year) % 10) == 3;
     }
 
-    //Does the given Jewish Year have 13 months?
+    /**Does the given Jewish Year have 13 months?*/
     static isJdLeapY(year) {
         return (((7 * year) + 1) % 19) < 7;
     }
 
-    //Number of months in Jewish Year
+    /**Number of months in Jewish Year.*/
     static monthsJYear(year) {
         return jDate.isJdLeapY(year) ? 13 : 12;
     }
 
-    //Gets an Array[String] of holidays, fasts and any other special specifications for the given Jewish date.
+    /**Gets an Array[String] of holidays, fasts and any other special specifications for the given Jewish date.*/
     static getHoldidays(jd, israel, hebrew) {
         var list = [],
             jYear = jd.Year,
