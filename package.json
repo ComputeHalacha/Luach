@@ -10,6 +10,7 @@
     "react": "15.4.2",
     "react-native": "0.42.3",
     "react-native-elements": "^0.10.0",
+    "react-native-sqlite-storage": "^3.2.2",
     "react-native-vector-icons": "^4.0.0"
   },
   "devDependencies": {

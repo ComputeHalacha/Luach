@@ -1,6 +1,9 @@
-import Onah from './Onah.js';
+import Onah from './Onah';
+import NightDay from './NightDay';
+import JDate from '../JCal/jDate';
+
 export default class Entry {
-    constructor(onah, haflaga, noKavuahList) {
+    constructor(onah, haflaga, noKavuahList, entryId) {
         this.onah = onah;
         if (haflaga instanceof Entry) {
             //If the previous entry was supplied i the haflaga argument
@@ -11,6 +14,7 @@ export default class Entry {
         }
         //A list of kavuahs that are NOT to be flagged if this Entry is the potential settingEntry.
         this.noKavuahList = noKavuahList || [];
+        this.entryId = entryId;
     }
     isSameEntry(entry) {
         return this.onah.isSameOnah(entry.Onah) &&
@@ -33,5 +37,56 @@ export default class Entry {
     }
     get dayOfWeek() {
         return this.date.DayOfWeek;
+    }
+    async toDatabase() {
+        if (this.entryId) {
+            await DataUtils.executeSql(`UPDATE entries SET dateAbs=?, day=?, haflaga=? WHERE entryId=?`,
+                [this.date.Abs, this.nightDay === NightDay.Day, this.haflaga, this.entryId])
+                .then(() => {
+                    console.log(`Updated Entry Id ${this.entryId.toString()}`);
+                })
+                .catch(error => {
+                    console.warn(`Error trying to update entry id ${this.entryId.toString()} to the database.`);
+                    console.error(error);
+                });
+        }
+        else {
+            await DataUtils.executeSql(`INSERT INTO entries (dateAbs, day, haflaga) VALUES (?, ?, ?);SELECT last_insert_rowid() AS entryId FROM entries;`,
+                [this.date.Abs, this.nightDay === NightDay.Day, this.haflaga])
+                .then(results => {
+                    if (results.length > 0) {
+                        this.entryId = results[0].entryId;
+                    }
+                    else {
+                        console.warn(`Entry Id was not returned from the database.`);
+                    }
+                })
+                .catch(error => {
+                    console.warn(`Error trying to insert entry into the database.`);
+                    console.error(error);
+                });
+        }
+    }
+    static async fromDatabase(entryId) {
+        let entry;
+        if (!entryId) {
+            throw 'entryId is missing';
+        }
+        await DataUtils.executeSql(`SELECT * from entries WHERE entryId=?`, [entryId])
+            .then(results => {
+                if (results.length > 0) {
+                    const e = results[0];
+                    entry = new Entry(new Onah(new JDate(e.dateAb), (e.day ? NightDay.Day : NightDay.Night)),
+                        e.haflaga);
+                }
+                else {
+                    console.warn(`Entry Id ${entryId.toString()} was not found in the database.`);
+                }
+            })
+            .catch(error => {
+                console.warn(`Error trying to get entry id ${entryId.toString()} from the database.`);
+                console.error(error);
+            });
+        return entry;
     }
 }

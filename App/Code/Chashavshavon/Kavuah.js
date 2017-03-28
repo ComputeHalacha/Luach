@@ -1,9 +1,11 @@
 import KavuahType from './KavuahType';
 import Utils from '../JCal/Utils';
 import NightDay from './NightDay';
+import Entry from './Entry';
+import DataUtils from '../Data/DataUtils';
 
 export default class Kavuah {
-    constructor(kavuaType, settingEntry, specialNumber, cancelsOnahBeinunis, active) {
+    constructor(kavuaType, settingEntry, specialNumber, cancelsOnahBeinunis, active, kavuahId) {
         this.kavuaType = kavuaType;
         //The third entry  - the one that created the chazakah.
         this.settingEntry = settingEntry;
@@ -19,6 +21,7 @@ export default class Kavuah {
         this.cancelsOnahBeinunis = !!cancelsOnahBeinunis;
         //Defaults to true
         this.active = typeof active !== 'undefined' ? !!active : true;
+        this.kavuahId = kavuahId;
     }
     toString() {
         let txt = this.settingEntry.nightDay === NightDay.Night ? "Nighttime " : "Daytime ";
@@ -57,6 +60,36 @@ export default class Kavuah {
         return this.kavuaType === kavuah.kavuaType &&
             this.settingEntry.onah.isSameOnah(kavuah.settingEntry.onah) &&
             this.specialNumber === kavuah.specialNumber;
+    }
+    static async fromDatabase(kavuahId) {
+        let kavuah;
+        if (!kavuahId) {
+            throw 'kavuahId is missing';
+        }
+        await DataUtils.executeSql(`SELECT * from kavuahs WHERE kavuahId=?`, [kavuahId])
+            .then(results => {
+                if (results.length > 0) {
+                    const k = results[0],
+                        settingEntry = Entry.fromDatabase(k.settingEntryId);
+                    kavuah = new Kavuah(k.kavuahType,
+                        settingEntry,
+                        k.specialNumber,
+                        k.cancelsOnahBeinunis,
+                        k.active,
+                        kavuahId);
+                    if (k.ignore) {
+                        settingEntry.noKavuahList.push[kavuah];
+                    }
+                }
+                else {
+                    console.warn(`Kavuah Id ${kavuahId.toString()} was not found in the database.`);
+                }
+            })
+            .catch(error => {
+                console.warn(`Error trying to get kavuah id ${kavuahId.toString()} from the database.`);
+                console.error(error);
+            });
+        return kavuah;
     }
     //Works out all possible Kavuahs from the given list of entries
     static getKavuahSuggestionList(entryList) {
