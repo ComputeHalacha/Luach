@@ -2,7 +2,7 @@ import { has, isNumber } from '../GeneralUtils';
 import jDate from '../JCal/jDate';
 import Entry from './Entry';
 import Onah from './Onah';
-import Settings from './Settings';
+import Settings from '../Settings';
 import NightDay from './NightDay';
 import ProblemOnah from './ProblemOnah';
 import KavuahType from './KavuahType';
@@ -96,7 +96,7 @@ export default class EntryList {
         //Day Thirty ***************************************************************
         const thirty = new ProblemOnah(entry.date.addDays(29),
             entry.nightDay,
-            "Day Thirty");
+            "Thirtieth Day");
         onahs.push(thirty);
         this.add24HourOnah(thirty, onahs);
         this.addOhrZarua(thirty, onahs);
@@ -104,18 +104,18 @@ export default class EntryList {
         //Day Thirty One ***************************************************************
         const thirtyOne = new ProblemOnah(entry.date.addDays(30),
             entry.nightDay,
-            "Day Thirty One");
+            "Thirty First Day");
         onahs.push(thirtyOne);
         this.add24HourOnah(thirtyOne, onahs);
         this.addOhrZarua(thirtyOne, onahs);
 
         //Haflagah **********************************************************************
         if (entry.haflaga) {
-            if (!settings.keepLongerHaflagah) {
+            if (!this.settings.keepLongerHaflagah) {
                 const haflaga = new ProblemOnah(entry.date.addDays(entry.haflaga - 1),
                     entry.nightDay,
                     `Yom Haflagah (${entry.haflaga.toString()})`);
-                probOnahs.push(haflaga);
+                onahs.push(haflaga);
                 this.addOhrZarua(haflaga, onahs);
             }
             else {
@@ -205,7 +205,7 @@ export default class EntryList {
 
         return onahs;
     }
-    getIndependentKavuahProblemOnahs(entry, kavuahList) {
+    getIndependentKavuahProblemOnahs(kavuahList) {
         const onahs = [];
 
         //Kavuahs of Yom Hachodesh and Sirug

@@ -2,7 +2,7 @@ import NightDay from './NightDay';
 
 export default class Onah {
     constructor(jdate, nightDay) {
-        this.jdate = jd;
+        this.jdate = jdate;
         this.nightDay = nightDay;
     }
     isSameOnah(onah) {

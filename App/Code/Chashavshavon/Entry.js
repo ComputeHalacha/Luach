@@ -1,12 +1,13 @@
 import Onah from './Onah';
 import NightDay from './NightDay';
 import JDate from '../JCal/jDate';
+import DataUtils from '../Data/DataUtils';
 
 export default class Entry {
     constructor(onah, haflaga, entryId) {
         this.onah = onah;
         if (haflaga instanceof Entry) {
-            //If the previous entry was supplied i the haflaga argument
+            //If the previous entry was supplied as the haflaga argument
             this.haflaga = haflaga.onah.jdate.diffDays(this.onah.jdate) + 1;
         }
         else {
@@ -17,6 +18,9 @@ export default class Entry {
     isSameEntry(entry) {
         return this.onah.isSameOnah(entry.Onah) &&
             this.haflaga === entry.haflaga
+    }
+    toString() {
+        return `The ${this.nightDay === NightDay.Night ? 'night' : 'day'} of ${this.date.toString()} [Haflaga of ${this.haflaga.toString()}]`;
     }
     get nightDay() {
         return this.onah.nightDay;

@@ -6,61 +6,91 @@ import jDate from './App/Code/JCal/jDate';
 import Location from './App/Code/JCal/Location';
 import Kavuah from './App/Code/Chashavshavon/Kavuah';
 import EntryList from './App/Code/Chashavshavon/EntryList';
+import Entry from './App/Code/Chashavshavon/Entry';
+import Onah from './App/Code/Chashavshavon/Onah';
+import AppData from './App/Code/Data/AppData';
 
 export default class LuachAndroid extends Component {
   constructor (props) {
-    super(props)
-    this.state = { locations: [], entryList: null, kavuahs: [] };
+    super(props);
+    /*const e1 = new Entry(new Onah(jDate.toJDate().addDays(-60), NightDay.Night), 28);
+    e1.toDatabase().then(() => {
+      const e2 = new Entry(new Onah(jDate.toJDate().addDays(-32), NightDay.Night), e1);
+      e2.toDatabase().catch(error => console.error(error));
+    }).catch(error => console.error(error));*/
+    this.state = { listName: 'NO LIST LOADED', currLocation: {}, locations: [], entries: [], kavuahs: [], problems: [] };
   }
-  renderProgressEntry(entry) {
+  componentWillMount() {
+    this.setState({
+      currLocation: AppData.Settings.location,
+      entries: AppData.EntryList.list.map(e => e.toString()),
+      kavuahs: AppData.KavuahList.map(k => k.toString()),
+      problems: AppData.ProblemEntries.map(po => po.toString())
+    });
+  }
+  renderListItem(item) {
     return (<View style={styles.li}>
       <View>
-        <Text style={styles.liText}>{entry}</Text>
+        <Text style={styles.liText}>{item}</Text>
       </View>
     </View>)
   }
   fillLocations() {
     Location.searchLocations('new').then(list =>
-      this.setState({ locations: list.map(l => l.Name) }));
+      this.setState({ locations: list.map(l => l.Name), listName: 'LOCATIONS' }));
   }
   fillEntries() {
-    EntryList.fromDatabase().then(list =>
-      this.setState({ entryList: list }));
+    this.setState({ listName: 'ENTRIES' });
   }
   fillKavuahs() {
-    if (!this.state.entryList) {
-      throw 'EntryList must be retrived before Kavuah list';
-    }
-    Kavuah.getAll(this.state.entryList).then(list =>
-      this.setState({ kavuahs: list }));
+    this.setState({ listName: 'KAVUAHS' });
+  }
+  fillProblems() {
+    this.setState({ listName: 'PROBLEMS' });
   }
   render() {
-    const location = Location.getJerusalem(),
-      ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => { row1 !== row2; } });
-
+    const ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => { row1 !== row2; } });
+    let list = [];
+    switch (this.state.listName) {
+      case 'LOCATIONS':
+        list = this.state.locations;
+        break;
+      case 'ENTRIES':
+        list = this.state.entries;
+        break;
+      case 'KAVUAHS':
+        list = this.state.kavuahs;
+        break;
+      case 'PROBLEMS':
+        list = this.state.problems;
+        break;
+    }
     return (
       <View style={styles.container}>
         <View style={styles.toolbar}>
           <Text style={styles.toolbarButton} onPress={this.fillLocations.bind(this)}>
-            Fill Locations
+            Locations
                 </Text>
           <Text style={styles.toolbarButton} onPress={this.fillEntries.bind(this)}>
-            Fill Entries
+            Entries
                 </Text>
           <Text style={styles.toolbarButton} onPress={this.fillKavuahs.bind(this)}>
-            Fill Kavuahs
+            Kavuahs
+                </Text>
+          <Text style={styles.toolbarButton} onPress={this.fillProblems.bind(this)}>
+            Problems
                 </Text>
         </View>
 
         <Text style={styles.welcome}>
           Jewish Date Informtaion---
         </Text>
-        <SingleDayDisplay jdate={new jDate()} location={location} />
-        <Text>{'\n\n'}</Text>
+        <SingleDayDisplay jdate={new jDate()} location={this.state.currLocation} />
+        <Text>{this.state.listName}</Text>
         <ListView
           enableEmptySections={true}
-          dataSource={ds.cloneWithRows(this.state.locations)}
-          renderRow={this.renderProgressEntry}
+          dataSource={ds.cloneWithRows(list)}
+          renderRow={this.renderListItem}
           style={styles.liContainer} />
         <Text style={styles.instructions}>
           {'\n\n'}
@@ -105,7 +135,7 @@ const styles = StyleSheet.create({
   },
   liText: {
     color: '#333',
-    fontSize: 17,
+    fontSize: 13,
     fontWeight: '400',
     marginBottom: -3.5,
     marginTop: -3.5,

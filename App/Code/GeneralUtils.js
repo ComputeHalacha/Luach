@@ -25,4 +25,20 @@ function has(o, ...arr) {
     }
 };
 
-export { isString, isNumber, has, isValidDate };
+/**Returns the default value only if the param value is undefined or null.
+ *
+ * Otherwise, the original param value is returned.
+ *
+ * This is very useful for boolean, string and integer parameters
+ * where we want to keep false, "" and 0 if they were supplied.
+ */
+function setDefault(paramValue, defValue) {
+    if (typeof paramValue === 'undefined' || paramValue === null) {
+        return defValue;
+    }
+    else {
+        return paramValue;
+    }
+}
+
+export { isString, isNumber, has, isValidDate, setDefault };

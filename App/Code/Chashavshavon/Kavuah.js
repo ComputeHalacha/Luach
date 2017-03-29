@@ -3,6 +3,8 @@ import Utils from '../JCal/Utils';
 import NightDay from './NightDay';
 import Entry from './Entry';
 import DataUtils from '../Data/DataUtils';
+import EntryList from './EntryList';
+import { setDefault } from '../GeneralUtils';
 
 export default class Kavuah {
     constructor(kavuaType, settingEntry, specialNumber, cancelsOnahBeinunis, active, ignore, kavuahId) {
@@ -19,8 +21,7 @@ export default class Kavuah {
         this.specialNumber = specialNumber;
         //Does this Kavuah cancel the onah beinunis?
         this.cancelsOnahBeinunis = !!cancelsOnahBeinunis;
-        //Defaults to true
-        this.active = typeof active !== 'undefined' ? !!active : true;
+        this.active = setDefault(active, true);
         this.ignore = !!ignore;
         this.kavuahId = kavuahId;
     }
@@ -118,8 +119,11 @@ export default class Kavuah {
     }
     /**Gets all Kavuahs from the database.
      *
-     * `entries`: A list of entries where the settingEntry can be found.*/
+     * `entries`: An EntryList instance or an Array of entries where the settingEntry can be found.*/
     static async getAll(entries) {
+        if (entries instanceof EntryList) {
+            entries = entries.list;
+        }
         let list = [];
         await DataUtils.executeSql(`SELECT * from kavuahs`)
             .then(results => {
