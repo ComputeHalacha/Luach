@@ -5,7 +5,7 @@ import Entry from './Entry';
 import DataUtils from '../Data/DataUtils';
 
 export default class Kavuah {
-    constructor(kavuaType, settingEntry, specialNumber, cancelsOnahBeinunis, active, kavuahId) {
+    constructor(kavuaType, settingEntry, specialNumber, cancelsOnahBeinunis, active, ignore, kavuahId) {
         this.kavuaType = kavuaType;
         //The third entry  - the one that created the chazakah.
         this.settingEntry = settingEntry;
@@ -21,6 +21,7 @@ export default class Kavuah {
         this.cancelsOnahBeinunis = !!cancelsOnahBeinunis;
         //Defaults to true
         this.active = typeof active !== 'undefined' ? !!active : true;
+        this.ignore = !!ignore;
         this.kavuahId = kavuahId;
     }
     toString() {
@@ -61,6 +62,81 @@ export default class Kavuah {
             this.settingEntry.onah.isSameOnah(kavuah.settingEntry.onah) &&
             this.specialNumber === kavuah.specialNumber;
     }
+    get isInDatabase() {
+        return !!this.kavuahId;
+    }
+    async toDatabase() {
+        if (!this.settingEntry.entryId) {
+            throw 'The settingEntry does not have an entryId. A kavuah can not be saved in the database before its setting entry is saved.';
+        }
+        const params = [
+            this.kavuaType,
+            this.settingEntry.entryId,
+            this.specialNumber,
+            this.cancelsOnahBeinunis,
+            this.active,
+            this.ignore];
+        if (this.isInDatabase) {
+            await DataUtils.executeSql(`UPDATE kavuahs SET
+                    kavuahType = ?,
+                    settingEntryId = ?,
+                    specialNumber = ?,
+                    cancelsOnahBeinunis = ?,
+                    active = ?,
+                    [ignore] = ?
+                WHERE kavuahId = ?`, [...params, this.kavuahId])
+                .then(() => {
+                    console.log(`Updated Kavuah Id ${this.kavuahId.toString()}`);
+                })
+                .catch(error => {
+                    console.warn(`Error trying to update kavuah id ${this.kavuahId.toString()} to the database.`);
+                    console.error(error);
+                });
+        }
+        else {
+            await DataUtils.executeSql(`INSERT INTO kavuahs (
+                        kavuahType,
+                        settingEntryId,
+                        specialNumber,
+                        cancelsOnahBeinunis,
+                        active,
+                        [ignore]) VALUES (?, ?, ?, ?, ?, ?);
+                    SELECT last_insert_rowid() AS kavuahId FROM kavuahs;`, params)
+                .then(results => {
+                    if (results.length > 0) {
+                        this.kavuahId = results[0].kavuahId;
+                    }
+                    else {
+                        console.warn(`Kavuah Id was not returned from the database.`);
+                    }
+                })
+                .catch(error => {
+                    console.warn(`Error trying to insert Kavuah into the database.`);
+                    console.error(error);
+                });
+        }
+    }
+    /**Gets all Kavuahs from the database.
+     *
+     * `entries`: A list of entries where the settingEntry can be found.*/
+    static async getAll(entries) {
+        let list = [];
+        await DataUtils.executeSql(`SELECT * from kavuahs`)
+            .then(results => {
+                list = results.map(k => new Kavuah(k.kavuahType,
+                    settingEntry = entries.find(e => e.entryId === k.settingEntryId),
+                    k.specialNumber,
+                    k.cancelsOnahBeinunis,
+                    k.active,
+                    k.ignore,
+                    kavuahId));
+            })
+            .catch(error => {
+                console.warn(`Error trying to get all kavuahs from the database.`);
+                console.error(error);
+            });
+        return list;
+    }
     static async fromDatabase(kavuahId) {
         let kavuah;
         if (!kavuahId) {
@@ -76,10 +152,8 @@ export default class Kavuah {
                         k.specialNumber,
                         k.cancelsOnahBeinunis,
                         k.active,
+                        k.ignore,
                         kavuahId);
-                    if (k.ignore) {
-                        settingEntry.noKavuahList.push[kavuah];
-                    }
                 }
                 else {
                     console.warn(`Kavuah Id ${kavuahId.toString()} was not found in the database.`);
@@ -93,8 +167,9 @@ export default class Kavuah {
     }
     //Works out all possible Kavuahs from the given list of entries
     static getKavuahSuggestionList(entryList) {
-        const kavuahList = [],
-            queue = [];
+        let kavuahList = [];
+        const queue = [];
+
         for (let entry of entryList) {
             //First we work out those Kavuahs that are not dependent on their entries being 3 in a row
             kavuahList = kavuahList.concat(Kavuah.getDayOfMonthKavuah(entry, entryList))
@@ -132,11 +207,7 @@ export default class Kavuah {
             const thirdFind = entryList.find(en =>
                 en.onah.nightDay === entry.onah.nightDay && en.date.Abs === thirdMonth.Abs);
             if (thirdFind) {
-                const kavuah = new Kavuah(KavuahType.DayOfMonth, thirdFind, thirdMonth.Day, true);
-                //If the "NoKavuah" list for the 3rd entry does not include this "find",
-                if (!thirdFind.noKavuahList.some(k => k.isMatchingKavuah(kavuah))) {
-                    list.push(kavuah);
-                }
+                list.push(new Kavuah(KavuahType.DayOfMonth, thirdFind, thirdMonth.Day, true));
             }
         }
         return list;
@@ -162,11 +233,7 @@ export default class Kavuah {
                     thirdMonth.Month === en.month &&
                     thirdMonth.Year === en.year);
             if (finalFind) {
-                const kavuah = new Kavuah(KavuahType.DilugDayOfMonth, finalFind, dilugDays, false);
-                //If the "NoKavuah" list for the 3rd entry does not include this "find",
-                if (!finalFind.noKavuahList.some(k => k.isMatchingKavuah(kavuah))) {
-                    list.push(kavuah);
-                }
+                list.push(new Kavuah(KavuahType.DilugDayOfMonth, finalFind, dilugDays, false));
             }
         }
         return list;
@@ -193,11 +260,7 @@ export default class Kavuah {
                     en.nightDay === entry.nightDay &&
                     en.date.Abs === nextDate.Abs);
                 if (secondFind) {
-                    const kavuah = new Kavuah(KavuahType.DayOfWeek, secondFind, interval, false);
-                    //If the "NoKavuah" list for the 3rd entry does not include this "find",
-                    if (!secondFind.noKavuahList.some(k => k.isMatchingKavuah(kavuah))) {
-                        list.push(kavuah);
-                    }
+                    list.push(new Kavuah(KavuahType.DayOfWeek, secondFind, interval, false));
                 }
             }
         }
@@ -208,11 +271,7 @@ export default class Kavuah {
         //We simply compare the intervals between the entries. If they are the same, we have a Kavuah
         if ((threeEntries[0].haflaga === threeEntries[1].haflaga) &&
             (threeEntries[1].haflaga === threeEntries[2].haflaga)) {
-            const kavuah = new Kavuah(KavuahType.Haflagah, threeEntries[2], threeEntries[2].haflaga, true);
-            //If the "NoKavuah" list for the 3rd entry does not include this "find",
-            if (!threeEntries[2].noKavuahList.some(k => k.isMatchingKavuah(kavuah))) {
-                list.push(kavuah);
-            }
+            list.push(new Kavuah(KavuahType.Haflagah, threeEntries[2], threeEntries[2].haflaga, true));
         }
         return list;
     }
@@ -229,11 +288,8 @@ export default class Kavuah {
             (threeEntries[0].day === threeEntries[1].day) &&
             (threeEntries[1].day === threeEntries[2].day) &&
             threeEntries[1].date.diffMonths(threeEntries[2].date) === monthDiff) {
-            const kavuah = new Kavuah(KavuahType.Sirug, threeEntries[2], monthDiff, true);
-            //If the "NoKavuah" list for the 3rd entry does not include this "find"
-            if (!threeEntries[2].noKavuahList.some(k => k.isMatchingKavuah(kavuah))) {
-                list.push(kavuah);
-            }
+            //Add the kavuah
+            list.push(new Kavuah(KavuahType.Sirug, threeEntries[2], monthDiff, true));
         }
         return list;
     }
@@ -246,11 +302,7 @@ export default class Kavuah {
 
         //If the "Dilug" is 0 it will be a regular Kavuah of Haflagah but not a Dilug one
         if (haflagaDiff1 > 0 && haflagaDiff1 === haflagaDiff2) {
-            const kavuah = new Kavuah(KavuahType.DilugHaflaga, threeEntries[2], haflagaDiff1, false);
-            //If the "NoKavuah" list for the 3rd entry does not include this "find"
-            if (!threeEntries[2].noKavuahList.some(k => k.isMatchingKavuah(kavuah))) {
-                list.push(kavuah);
-            }
+            list.push(new Kavuah(KavuahType.DilugHaflaga, threeEntries[2], haflagaDiff1, false));
         }
         return list;
     }

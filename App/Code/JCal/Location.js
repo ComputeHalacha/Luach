@@ -1,4 +1,3 @@
-import LocationList from './locations.json';
 import DataUtils from '../Data/DataUtils';
 
 /**Represents a geographic Location. Needed for calculating Zmanim.

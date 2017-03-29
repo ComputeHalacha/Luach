@@ -7,6 +7,7 @@ import NightDay from './NightDay';
 import ProblemOnah from './ProblemOnah';
 import KavuahType from './KavuahType';
 import Kavuah from './Kavuah';
+import DataUtils from '../Data/DataUtils';
 
 const today = new jDate();
 
@@ -15,6 +16,24 @@ export default class EntryList {
         this.list = entryList || [];
         this.settings = settings || new Settings();
         this.stopWarningDate = today.addMonths(this.settings.numberMonthsAheadToWarn);
+    }
+    static async fromDatabase(settings) {
+        const entryList = new EntryList(settings);
+        await DataUtils.executeSql(`SELECT * from entries ORDER BY dateAbs, day`)
+            .then(results => {
+                if (results.length > 0) {
+                    entryList.list = results.map(e =>
+                        new Entry(
+                            new Onah(new jDate(e.dateAbs), e.day ? NightDay.Day : NightDay.Night),
+                            e.haflaga,
+                            e.entryId));
+                }
+            })
+            .catch(error => {
+                console.warn(`Error trying to get all entries from the database.`);
+                console.error(error);
+            });
+        return entryList;
     }
     add(e, afterwards) {
         if (!e instanceof Entry) {
@@ -52,8 +71,8 @@ export default class EntryList {
         }
     }
     getProblemOnahs(kavuahList) {
-        const probOnahs = [],
-            cancelOnahBeinenis = kavuahList.some(k => k.active && k.cancelsOnahBeinunis);
+        let probOnahs = [];
+        const cancelOnahBeinenis = kavuahList.some(k => k.active && k.cancelsOnahBeinunis);
 
         //A list of Onahs that need to be kept. This first list is worked out from the list of Entries.
         //Problem Onahs are searched for from the date of each entry until the number of months specified in the

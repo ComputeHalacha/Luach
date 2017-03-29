@@ -3,7 +3,7 @@ import NightDay from './NightDay';
 import JDate from '../JCal/jDate';
 
 export default class Entry {
-    constructor(onah, haflaga, noKavuahList, entryId) {
+    constructor(onah, haflaga, entryId) {
         this.onah = onah;
         if (haflaga instanceof Entry) {
             //If the previous entry was supplied i the haflaga argument
@@ -12,8 +12,6 @@ export default class Entry {
         else {
             this.haflaga = haflaga;
         }
-        //A list of kavuahs that are NOT to be flagged if this Entry is the potential settingEntry.
-        this.noKavuahList = noKavuahList || [];
         this.entryId = entryId;
     }
     isSameEntry(entry) {
@@ -38,8 +36,11 @@ export default class Entry {
     get dayOfWeek() {
         return this.date.DayOfWeek;
     }
+    get isInDatabase() {
+        return !!this.entryId;
+    }
     async toDatabase() {
-        if (this.entryId) {
+        if (this.isInDatabase) {
             await DataUtils.executeSql(`UPDATE entries SET dateAbs=?, day=?, haflaga=? WHERE entryId=?`,
                 [this.date.Abs, this.nightDay === NightDay.Day, this.haflaga, this.entryId])
                 .then(() => {

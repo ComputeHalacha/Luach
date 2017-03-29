@@ -4,12 +4,13 @@ import './App/Code/initAndroid';
 import SingleDayDisplay from './App/Components/SingleDayDisplay';
 import jDate from './App/Code/JCal/jDate';
 import Location from './App/Code/JCal/Location';
-//import DataUtils from './App/Code/Data/DataUtils';
+import Kavuah from './App/Code/Chashavshavon/Kavuah';
+import EntryList from './App/Code/Chashavshavon/EntryList';
 
 export default class LuachAndroid extends Component {
   constructor (props) {
     super(props)
-    this.state = { locations: [] };
+    this.state = { locations: [], entryList: null, kavuahs: [] };
   }
   renderProgressEntry(entry) {
     return (<View style={styles.li}>
@@ -22,6 +23,17 @@ export default class LuachAndroid extends Component {
     Location.searchLocations('new').then(list =>
       this.setState({ locations: list.map(l => l.Name) }));
   }
+  fillEntries() {
+    EntryList.fromDatabase().then(list =>
+      this.setState({ entryList: list }));
+  }
+  fillKavuahs() {
+    if (!this.state.entryList) {
+      throw 'EntryList must be retrived before Kavuah list';
+    }
+    Kavuah.getAll(this.state.entryList).then(list =>
+      this.setState({ kavuahs: list }));
+  }
   render() {
     const location = Location.getJerusalem(),
       ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => { row1 !== row2; } });
@@ -30,7 +42,13 @@ export default class LuachAndroid extends Component {
       <View style={styles.container}>
         <View style={styles.toolbar}>
           <Text style={styles.toolbarButton} onPress={this.fillLocations.bind(this)}>
-            Fill Donations
+            Fill Locations
+                </Text>
+          <Text style={styles.toolbarButton} onPress={this.fillEntries.bind(this)}>
+            Fill Entries
+                </Text>
+          <Text style={styles.toolbarButton} onPress={this.fillKavuahs.bind(this)}>
+            Fill Kavuahs
                 </Text>
         </View>
 
