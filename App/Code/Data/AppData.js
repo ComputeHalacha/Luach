@@ -1,29 +1,45 @@
 import DataUtils from './DataUtils';
-import Settings from '../Settings';
-import Kavuah from '../Chashavshavon/Kavuah';
-import EntryList from '../Chashavshavon/EntryList';
-
-if (!global.AppData) {
-    global.AppData = new AppData();
-}
 
 export default class AppData {
-    constructor() {
-        this.Settings = await Settings.fromDatabase();
-        this.EntryList = await EntryList.fromDatabase(this.Settings);
-        this.KavuahList = await Kavuah.getAll(this.EntryList);
-        this.ProblemEntries = this.EntryList.getProblemOnahs(this.KavuahList);
+    constructor(settings, entryList, kavuahList, problemEntries) {
+        this.Settings = settings;
+        this.EntryList = entryList;
+        this.KavuahList = kavuahList;
+        this.ProblemEntries = problemEntries;
     }
-    static Settings() {
-        return global.AppData.Settings;
+    static async getAppData() {
+        if (!global.AppData) {
+            await AppData.fromDatabase().then(ad => {
+                global.AppData = ad;
+            });
+        }
+        return global.AppData;
     }
-    static EntryList() {
-        return global.AppData.EntryList;
-    }
-    static KavuahList() {
-        return global.AppData.KavuahList;
-    }
-    static ProblemEntries() {
-        return global.AppData.ProblemEntries;
+    static async fromDatabase() {
+        let settings, entryList, kavuahList, problemEntries;
+
+        await DataUtils.SettingsFromDatabase()
+            .then(s => settings = s)
+            .catch(error => {
+                console.warn(`Error running SettingsFromDatabase.`);
+                console.error(error);
+            });
+        await DataUtils.EntryListFromDatabase(settings)
+            .then(e => entryList = e)
+            .catch(error => {
+                console.warn(`Error running EntryListFromDatabase.`);
+                console.error(error);
+            });
+        await DataUtils.GetAllKavuahs(entryList)
+            .then(k => {
+                kavuahList = k;
+                problemEntries = entryList.getProblemOnahs(kavuahList);
+            })
+            .catch(error => {
+                console.warn(`Error running GetAllKavuahs.`);
+                console.error(error);
+            });
+
+        return new AppData(settings, entryList, kavuahList, problemEntries);
     }
 }

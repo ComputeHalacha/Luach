@@ -7,7 +7,6 @@ import NightDay from './NightDay';
 import ProblemOnah from './ProblemOnah';
 import KavuahType from './KavuahType';
 import Kavuah from './Kavuah';
-import DataUtils from '../Data/DataUtils';
 
 const today = new jDate();
 
@@ -16,24 +15,6 @@ export default class EntryList {
         this.list = entryList || [];
         this.settings = settings || new Settings();
         this.stopWarningDate = today.addMonths(this.settings.numberMonthsAheadToWarn);
-    }
-    static async fromDatabase(settings) {
-        const entryList = new EntryList(settings);
-        await DataUtils.executeSql(`SELECT * from entries ORDER BY dateAbs, day`)
-            .then(results => {
-                if (results.length > 0) {
-                    entryList.list = results.map(e =>
-                        new Entry(
-                            new Onah(new jDate(e.dateAbs), e.day ? NightDay.Day : NightDay.Night),
-                            e.haflaga,
-                            e.entryId));
-                }
-            })
-            .catch(error => {
-                console.warn(`Error trying to get all entries from the database.`);
-                console.error(error);
-            });
-        return entryList;
     }
     add(e, afterwards) {
         if (!e instanceof Entry) {
@@ -88,13 +69,27 @@ export default class EntryList {
         //and other Kavuahs that are not dependent on the actual entry list
         probOnahs = [...probOnahs, ...this.getIndependentKavuahProblemOnahs(kavuahList)];
 
+        //Sort problem onahs by chronological order
+        probOnahs.sort((a, b) => {
+            if (a.jdate.Abs < b.jdate.Abs) {
+                return -1;
+            }
+            else if (a.jdate.Abs > b.jdate.Abs) {
+                return 1;
+            }
+            else {
+                return a.nightDay - b.nightDay;
+            }
+        });
+
         return probOnahs;
     }
     getOnahBeinunisProblemOnahs(entry) {
         const onahs = [];
 
         //Day Thirty ***************************************************************
-        const thirty = new ProblemOnah(entry.date.addDays(29),
+        const thirty = new ProblemOnah(
+            entry.date.addDays(29),
             entry.nightDay,
             "Thirtieth Day");
         onahs.push(thirty);
@@ -102,7 +97,8 @@ export default class EntryList {
         this.addOhrZarua(thirty, onahs);
 
         //Day Thirty One ***************************************************************
-        const thirtyOne = new ProblemOnah(entry.date.addDays(30),
+        const thirtyOne = new ProblemOnah(
+            entry.date.addDays(30),
             entry.nightDay,
             "Thirty First Day");
         onahs.push(thirtyOne);
@@ -110,17 +106,17 @@ export default class EntryList {
         this.addOhrZarua(thirtyOne, onahs);
 
         //Haflagah **********************************************************************
-        if (entry.haflaga) {
-            if (!this.settings.keepLongerHaflagah) {
-                const haflaga = new ProblemOnah(entry.date.addDays(entry.haflaga - 1),
-                    entry.nightDay,
-                    `Yom Haflagah (${entry.haflaga.toString()})`);
-                onahs.push(haflaga);
-                this.addOhrZarua(haflaga, onahs);
-            }
-            else {
+        if (entry.haflaga > 0) {
+            const haflaga = new ProblemOnah(
+                entry.date.addDays(entry.haflaga - 1),
+                entry.nightDay,
+                `Yom Haflagah (${entry.haflaga.toString()})`);
+            onahs.push(haflaga);
+            this.addOhrZarua(haflaga, onahs);
+
+            if (this.settings.keepLongerHaflagah) {
                 //First we look for a proceeding entry where the haflagah is longer than this one
-                const longerHaflaga = this.list.find(e => e.date.Abs > entry.date.Abs && e.haflaga > longHaflaga.haflaga),
+                const longerHaflaga = this.list.find(e => e.date.Abs > entry.date.Abs && e.haflaga > entry.haflaga),
                     longerHaflagaDate = longerHaflaga ?
                         longerHaflaga.date :
                         //If no such entry was found, we keep on going...
@@ -131,7 +127,8 @@ export default class EntryList {
 
                 //First the theoretical problems - not based on real entries
                 //We get the first problem Onah
-                let longHaflaga = new ProblemOnah(entry.date.addDays(entry.haflaga - 1),
+                let longHaflaga = new ProblemOnah(
+                    entry.date.addDays(entry.haflaga - 1),
                     entry.nightDay,
                     "Yom Haflaga (" + entry.haflaga.toString() + ")");
                 //We don't flag the "which was never overided" for the first one, so we keep track
@@ -145,16 +142,18 @@ export default class EntryList {
                     this.addOhrZarua(longHaflaga, onahs);
 
                     isFirst = false;
-                    longHaflaga = new ProblemOnah(longHaflaga.date.addDays(entry.haflaga - 1),
+                    longHaflaga = new ProblemOnah(
+                        longHaflaga.date.addDays(entry.haflaga - 1),
                         entry.nightDay,
                         "Yom Haflaga (" + entry.haflaga.toString() + ")");
                 }
 
                 //Now for the non-overided haflagah from the actual entries
                 for (let en of this.list.filter(e =>
-                    en.date.Abs > entry.date.Abs && en.date.Abs < longerHaflagaDate.Abs)) {
-                    longHaflaga = new ProblemOnah(entry.date.addDays(entry.haflaga - 1),
-                        entry.nightDay,
+                    e.date.Abs > entry.date.Abs && e.date.Abs < longerHaflagaDate.Abs)) {
+                    longHaflaga = new ProblemOnah(
+                        en.date.addDays(entry.haflaga - 1),
+                        en.nightDay,
                         "Yom Haflaga (" + entry.haflaga.toString() + ") which was never overrided");
                     onahs.push[longHaflaga];
                     this.addOhrZarua(longHaflaga, onahs);
@@ -170,7 +169,8 @@ export default class EntryList {
         //Kavuah Haflagah - with or without Maayan Pasuach
         for (let kavuah of kavuahList.filter(k => k.active &&
             (k.kavuahType === KavuahType.Haflagah || k.kavuahType === KavuahType.HaflagaMaayanPasuach))) {
-            const kavuahHaflaga = new ProblemOnah(entry.date.addDays(kavuah.settingEntry.haflaga - 1),
+            const kavuahHaflaga = new ProblemOnah(
+                entry.date.addDays(kavuah.settingEntry.haflaga - 1),
                 kavuah.settingEntry.dayNight,
                 "Kavuah of " + kavuah.toString());
             onahs.push(kavuahHaflaga);
@@ -226,7 +226,9 @@ export default class EntryList {
         for (let kavuah of kavuahList.filter(k => k.active && k.kavuahType === KavuahType.DayOfWeek)) {
             let dt = kavuah.settingEntryonah.jdate.addDays(kavuah.specialNumber);
             while (dt.Abs <= this.stopWarningDate.Abs) {
-                const o = new ProblemOnah(dt, kavuah.settingEntry.nightDay,
+                const o = new ProblemOnah(
+                    dt,
+                    kavuah.settingEntry.nightDay,
                     "Kavuah for " + kavuah.ToString());
                 onahs.push(o);
                 this.addOhrZarua(o, onahs);
@@ -245,7 +247,10 @@ export default class EntryList {
                     if (dtNext.Month !== dt.Month || dtNext.Abs > this.stopWarningDate.Abs) {
                         break;
                     }
-                    const o = new ProblemOnah(dtNext, kavuah.settingEntry.nightDay,
+                    const o = new ProblemOnah(
+                        dtNext,
+                        kavuah.settingEntry.
+                            nightDay,
                         "Kavuah for " + kavuah.toString());
                     onahs.push(o);
                     this.addOhrZarua(o, onahs);
@@ -263,7 +268,9 @@ export default class EntryList {
                     if (dt.Abs > this.stopWarningDate.Abs) {
                         break;
                     }
-                    const o = new ProblemOnah(dt, kavuah.settingEntry.nightDay,
+                    const o = new ProblemOnah(
+                        dt,
+                        kavuah.settingEntry.nightDay,
                         "Kavuah by theoretical calculation for " + kavuah.ToString());
                     onahs.push(o);
                     this.addOhrZarua(o, onahs);
@@ -275,7 +282,8 @@ export default class EntryList {
     }
     add24HourOnah(probOnah, probList) {
         if (this.settings.onahBeinunis24Hours) {
-            probList.push(new ProblemOnah(probOnah.date,
+            probList.push(new ProblemOnah(
+                probOnah.jdate,
                 probOnah.nightDay === NightDay.Day ? NightDay.Night : NightDay.Day,
                 probOnah.name));
         }
@@ -284,7 +292,8 @@ export default class EntryList {
         //If the user wants to see keep the Ohr Zarua  - the previous onah
         if (this.settings.showOhrZeruah) {
             const ohrZarua = probOnah.previous;
-            probList.push(new ProblemOnah(ohrZarua.jdate,
+            probList.push(new ProblemOnah(
+                ohrZarua.jdate,
                 ohrZarua.nightDay,
                 "Ohr Zarua of " + probOnah.name));
         }

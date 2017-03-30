@@ -19,14 +19,19 @@ export default class LuachAndroid extends Component {
       e2.toDatabase().catch(error => console.error(error));
     }).catch(error => console.error(error));*/
     this.state = { listName: 'NO LIST LOADED', currLocation: {}, locations: [], entries: [], kavuahs: [], problems: [] };
+    AppData.getAppData().then(ad => {
+      this.setState({
+        currLocation: ad.Settings.location,
+        entries: ad.EntryList.list.map(e => e.toString()),
+        kavuahs: ad.KavuahList.map(k => k.toString()),
+        problems: ad.ProblemEntries.map(po => po.toString())
+      });
+      console.log('554 - AppData retreived from database:');
+      console.log(ad);
+    });
   }
   componentWillMount() {
-    this.setState({
-      currLocation: AppData.Settings.location,
-      entries: AppData.EntryList.list.map(e => e.toString()),
-      kavuahs: AppData.KavuahList.map(k => k.toString()),
-      problems: AppData.ProblemEntries.map(po => po.toString())
-    });
+
   }
   renderListItem(item) {
     return (<View style={styles.li}>

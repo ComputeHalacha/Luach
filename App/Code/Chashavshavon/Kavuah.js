@@ -2,7 +2,6 @@ import KavuahType from './KavuahType';
 import Utils from '../JCal/Utils';
 import NightDay from './NightDay';
 import Entry from './Entry';
-import DataUtils from '../Data/DataUtils';
 import EntryList from './EntryList';
 import { setDefault } from '../GeneralUtils';
 
@@ -63,113 +62,10 @@ export default class Kavuah {
             this.settingEntry.onah.isSameOnah(kavuah.settingEntry.onah) &&
             this.specialNumber === kavuah.specialNumber;
     }
-    get isInDatabase() {
+    get hasId() {
         return !!this.kavuahId;
     }
-    async toDatabase() {
-        if (!this.settingEntry.entryId) {
-            throw 'The settingEntry does not have an entryId. A kavuah can not be saved in the database before its setting entry is saved.';
-        }
-        const params = [
-            this.kavuaType,
-            this.settingEntry.entryId,
-            this.specialNumber,
-            this.cancelsOnahBeinunis,
-            this.active,
-            this.ignore];
-        if (this.isInDatabase) {
-            await DataUtils.executeSql(`UPDATE kavuahs SET
-                    kavuahType = ?,
-                    settingEntryId = ?,
-                    specialNumber = ?,
-                    cancelsOnahBeinunis = ?,
-                    active = ?,
-                    [ignore] = ?
-                WHERE kavuahId = ?`, [...params, this.kavuahId])
-                .then(() => {
-                    console.log(`Updated Kavuah Id ${this.kavuahId.toString()}`);
-                })
-                .catch(error => {
-                    console.warn(`Error trying to update kavuah id ${this.kavuahId.toString()} to the database.`);
-                    console.error(error);
-                });
-        }
-        else {
-            await DataUtils.executeSql(`INSERT INTO kavuahs (
-                        kavuahType,
-                        settingEntryId,
-                        specialNumber,
-                        cancelsOnahBeinunis,
-                        active,
-                        [ignore]) VALUES (?, ?, ?, ?, ?, ?);
-                    SELECT last_insert_rowid() AS kavuahId FROM kavuahs;`, params)
-                .then(results => {
-                    if (results.length > 0) {
-                        this.kavuahId = results[0].kavuahId;
-                    }
-                    else {
-                        console.warn(`Kavuah Id was not returned from the database.`);
-                    }
-                })
-                .catch(error => {
-                    console.warn(`Error trying to insert Kavuah into the database.`);
-                    console.error(error);
-                });
-        }
-    }
-    /**Gets all Kavuahs from the database.
-     *
-     * `entries`: An EntryList instance or an Array of entries where the settingEntry can be found.*/
-    static async getAll(entries) {
-        if (entries instanceof EntryList) {
-            entries = entries.list;
-        }
-        let list = [];
-        await DataUtils.executeSql(`SELECT * from kavuahs`)
-            .then(results => {
-                list = results.map(k => new Kavuah(k.kavuahType,
-                    settingEntry = entries.find(e => e.entryId === k.settingEntryId),
-                    k.specialNumber,
-                    k.cancelsOnahBeinunis,
-                    k.active,
-                    k.ignore,
-                    kavuahId));
-            })
-            .catch(error => {
-                console.warn(`Error trying to get all kavuahs from the database.`);
-                console.error(error);
-            });
-        return list;
-    }
-    static async fromDatabase(kavuahId) {
-        let kavuah;
-        if (!kavuahId) {
-            throw 'kavuahId is missing';
-        }
-        await DataUtils.executeSql(`SELECT * from kavuahs WHERE kavuahId=?`, [kavuahId])
-            .then(results => {
-                if (results.length > 0) {
-                    const k = results[0],
-                        settingEntry = Entry.fromDatabase(k.settingEntryId);
-                    kavuah = new Kavuah(k.kavuahType,
-                        settingEntry,
-                        k.specialNumber,
-                        k.cancelsOnahBeinunis,
-                        k.active,
-                        k.ignore,
-                        kavuahId);
-                }
-                else {
-                    console.warn(`Kavuah Id ${kavuahId.toString()} was not found in the database.`);
-                }
-            })
-            .catch(error => {
-                console.warn(`Error trying to get kavuah id ${kavuahId.toString()} from the database.`);
-                console.error(error);
-            });
-        return kavuah;
-    }
-    //Works out all possible Kavuahs from the given list of entries
+   //Works out all possible Kavuahs from the given list of entries
     static getKavuahSuggestionList(entryList) {
         let kavuahList = [];
         const queue = [];

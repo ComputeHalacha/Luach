@@ -9,8 +9,10 @@ export default class SingleDayDisplay extends Component {
             dailyInfos = jd.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length ? <Text>{dailyInfos.join('\n')}</Text> : null,
             suntimes = jd.getSunriseSunset(location),
-            sunrise = Utils.getTimeString(suntimes.sunrise),
-            sunset = Utils.getTimeString(suntimes.sunset);
+            sunrise = suntimes && suntimes.sunrise ?
+                Utils.getTimeString(suntimes.sunrise) : 'Sun does not rise',
+            sunset = suntimes && suntimes.sunset ?
+                Utils.getTimeString(suntimes.sunset) : 'Sun does not set';
         return (
             <View>
                 <Text style={styles.date}>{new Date().toDateString() + ', ' + jd.toString(true)}</Text>

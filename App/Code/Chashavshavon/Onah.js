@@ -2,6 +2,9 @@ import NightDay from './NightDay';
 
 export default class Onah {
     constructor(jdate, nightDay) {
+        if (!jdate) {
+            throw 'jdate must be supplied.'
+        }
         this.jdate = jdate;
         this.nightDay = nightDay;
     }
