@@ -1,35 +1,33 @@
-/// <reference path="Zmanim.js" />
-"use strict";
-
+'use strict';
 
 export default function Utils() { }
-Utils.jMonthsEng = ["", "Nissan", "Iyar", "Sivan", "Tamuz", "Av", "Ellul", "Tishrei", "Cheshvan", "Kislev", "Teves", "Shvat", "Adar", "Adar Sheini"];
-Utils.jMonthsHeb = ["", "ניסן", "אייר", "סיון", "תמוז", "אב", "אלול", "תשרי", "חשון", "כסלו", "טבת", "שבט", "אדר", "אדר שני"];
-Utils.sMonthsEng = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-Utils.dowEng = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Erev Shabbos", "Shabbos Kodesh"];
-Utils.dowHeb = ["יום ראשון", "יום שני", "יום שלישי", "יום רביעי", "יום חמישי", "ערב שבת קודש", "שבת קודש"];
+Utils.jMonthsEng = ['', 'Nissan', 'Iyar', 'Sivan', 'Tamuz', 'Av', 'Ellul', 'Tishrei', 'Cheshvan', 'Kislev', 'Teves', 'Shvat', 'Adar', 'Adar Sheini'];
+Utils.jMonthsHeb = ['', 'ניסן', 'אייר', 'סיון', 'תמוז', 'אב', 'אלול', 'תשרי', 'חשון', 'כסלו', 'טבת', 'שבט', 'אדר', 'אדר שני'];
+Utils.sMonthsEng = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+Utils.dowEng = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Erev Shabbos', 'Shabbos Kodesh'];
+Utils.dowHeb = ['יום ראשון', 'יום שני', 'יום שלישי', 'יום רביעי', 'יום חמישי', 'ערב שבת קודש', 'שבת קודש'];
 Utils.jsd = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט'];
 Utils.jtd = ['י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ'];
 Utils.jhd = ['ק', 'ר', 'ש', 'ת'];
-Utils.jsnum = ["", "אחד", "שנים", "שלשה", "ארבעה", "חמשה", "ששה", "שבעה", "שמונה", "תשעה"];
-Utils.jtnum = ["", "עשר", "עשרים", "שלושים", "ארבעים"];
+Utils.jsnum = ['', 'אחד', 'שנים', 'שלשה', 'ארבעה', 'חמשה', 'ששה', 'שבעה', 'שמונה', 'תשעה'];
+Utils.jtnum = ['', 'עשר', 'עשרים', 'שלושים', 'ארבעים'];
 
 //Gets the Jewish representation of a number (365 = שס"ה)
 //Minimum number is 1 and maximum is 9999.
 Utils.toJNum = function (number) {
     if (number < 1) {
-        throw new Error("Min value is 1");
+        throw new Error('Min value is 1');
     }
 
     if (number > 9999) {
-        throw new Error("Max value is 9999");
+        throw new Error('Max value is 9999');
     }
 
     var n = number,
         retval = '';
 
     if (n >= 1000) {
-        retval += Utils.jsd[parseInt((n - (n % 1000)) / 1000) - 1] + "'";
+        retval += Utils.jsd[parseInt((n - (n % 1000)) / 1000) - 1] + '\'';
         n = n % 1000;
     }
 
@@ -44,10 +42,10 @@ Utils.toJNum = function (number) {
     }
 
     if (n == 15) {
-        retval += "טו";
+        retval += 'טו';
     }
     else if (n == 16) {
-        retval += "טז";
+        retval += 'טז';
     }
     else {
         if (n > 9) {
@@ -58,10 +56,10 @@ Utils.toJNum = function (number) {
         }
     }
     if (number > 999 && (number % 1000 < 10)) {
-        retval = "'" + retval;
+        retval = '\'' + retval;
     }
     else if (retval.length > 1) {
-        retval = (retval.slice(0, -1) + "\"" + retval[retval.length - 1]);
+        retval = (retval.slice(0, -1) + '"' + retval[retval.length - 1]);
     }
     return retval;
 };
@@ -69,18 +67,18 @@ Utils.toJNum = function (number) {
 //Add two character suffix to number. e.g. 21st, 102nd, 93rd, 500th
 Utils.toSuffixed = function (num) {
     var t = num.toString(),
-        suffix = "th";
+        suffix = 'th';
     if (t.length === 1 || (t[t.length - 2] !== '1')) {
         switch (t[t.length - 1]) {
-            case '1':
-                suffix = "st";
-                break;
-            case '2':
-                suffix = "nd";
-                break;
-            case '3':
-                suffix = "rd";
-                break;
+        case '1':
+            suffix = 'st';
+            break;
+        case '2':
+            suffix = 'nd';
+            break;
+        case '3':
+            suffix = 'rd';
+            break;
         }
     }
     return t + suffix;
@@ -138,15 +136,15 @@ Utils.totalMinutes = function (time) {
 //The argument needs to be an object in the format {hour : 23, minute :42 }
 //if army is falsey, the returned string will be: 11:42 PM otherwise it will be 23:42
 Utils.getTimeString = function (hm, army) {
-    if (!!army) {
-        return (hm.hour.toString() + ":" +
-            (hm.minute < 10 ? "0" + hm.minute.toString() : hm.minute.toString()));
+    if (army) {
+        return (hm.hour.toString() + ':' +
+            (hm.minute < 10 ? '0' + hm.minute.toString() : hm.minute.toString()));
     }
     else {
         return (hm.hour <= 12 ? (hm.hour == 0 ? 12 : hm.hour) : hm.hour - 12).toString() +
-            ":" +
-            (hm.minute < 10 ? "0" + hm.minute.toString() : hm.minute.toString()) +
-            (hm.hour < 12 ? " AM" : " PM");
+            ':' +
+            (hm.minute < 10 ? '0' + hm.minute.toString() : hm.minute.toString()) +
+            (hm.hour < 12 ? ' AM' : ' PM');
     }
 };
 
@@ -186,7 +184,7 @@ Utils.isUSA_DST = function (date) {
     //DST starts at 2 AM on the second Sunday in March
     else if (month === 3) { //March
         //Gets day of week on March 1st
-        var firstDOW = Utils.getSdDOW(year, 3, 1),
+        const firstDOW = Utils.getSdDOW(year, 3, 1),
             //Gets date of second Sunday
             targetDate = firstDOW == 0 ? 8 : ((7 - (firstDOW + 7) % 7)) + 8;
 
@@ -196,7 +194,7 @@ Utils.isUSA_DST = function (date) {
     else //dt.Month == 11 / November
     {
         //Gets day of week on November 1st
-        var firstDOW = Utils.getSdDOW(year, 11, 1),
+        const firstDOW = Utils.getSdDOW(year, 11, 1),
             //Gets date of first Sunday
             targetDate = firstDOW === 0 ? 1 : ((7 - (firstDOW + 7) % 7)) + 1;
 
@@ -230,7 +228,7 @@ Utils.isIsrael_DST = function (date) {
         var lastSunday = 31 - Utils.getSdDOW(year, 10, 31);
         return (day < lastSunday || (day === lastSunday && hour < 2));
     }
-}
+};
 
 //The current time in Israel - determined by the current users system time and time zone offset
 Utils.getSdNowInIsrael = function () {

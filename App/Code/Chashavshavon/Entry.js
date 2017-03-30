@@ -1,6 +1,4 @@
-import Onah from './Onah';
 import NightDay from './NightDay';
-import JDate from '../JCal/jDate';
 
 export default class Entry {
     constructor(onah, haflaga, entryId) {
@@ -16,7 +14,7 @@ export default class Entry {
     }
     isSameEntry(entry) {
         return this.onah.isSameOnah(entry.Onah) &&
-            this.haflaga === entry.haflaga
+            this.haflaga === entry.haflaga;
     }
     toString() {
         let str = `${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'} of ${this.date.toString()}`;

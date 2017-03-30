@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "eslint": "^3.18.0",
     "react": "15.4.2",
     "react-native": "0.42.3",
     "react-native-elements": "^0.10.0",
@@ -14,8 +15,12 @@
     "react-native-vector-icons": "^4.0.0"
   },
   "devDependencies": {
+    "babel-eslint": "^7.2.1",
     "babel-jest": "19.0.0",
     "babel-preset-react-native": "1.9.1",
+    "eslint": "^3.18.0",
+    "eslint-plugin-react": "^6.10.3",
+    "eslint-plugin-react-native": "^2.3.1",
     "jest": "19.0.2",
     "react-test-renderer": "15.4.2"
   },

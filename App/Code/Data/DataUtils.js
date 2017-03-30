@@ -16,7 +16,7 @@ export default class DataUtils {
 
     static async SettingsFromDatabase() {
         let settings;
-        await DataUtils._executeSql(`SELECT * from settings`)
+        await DataUtils._executeSql('SELECT * from settings')
             .then(async results => {
                 const dbSet = results[0],
                     location = await DataUtils.LocationFromDatabase(dbSet.locationId);
@@ -30,14 +30,14 @@ export default class DataUtils {
                     dbSet.cheshbonKavuahByCheshbon);
             })
             .catch(error => {
-                console.warn(`Error trying to get settings from the database.`);
+                console.warn('Error trying to get settings from the database.');
                 console.error(error);
             });
         return settings;
     }
     static async EntryListFromDatabase(settings) {
         const entryList = new EntryList(settings);
-        await DataUtils._executeSql(`SELECT * from entries ORDER BY dateAbs, day`)
+        await DataUtils._executeSql('SELECT * from entries ORDER BY dateAbs, day')
             .then(results => {
                 if (results.length > 0) {
                     for (let e of results) {
@@ -51,7 +51,7 @@ export default class DataUtils {
                 }
             })
             .catch(error => {
-                console.warn(`Error trying to get all entries from the database.`);
+                console.warn('Error trying to get all entries from the database.');
                 console.error(error);
             });
         return entryList;
@@ -61,7 +61,7 @@ export default class DataUtils {
         if (!locationId) {
             throw 'LocationId parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
         }
-        await DataUtils._queryLocations(`locationId=?`, [locationId]).then(ls => {
+        await DataUtils._queryLocations('locationId=?', [locationId]).then(ls => {
             if (ls.length > 0) {
                 location = ls[0];
             }
@@ -78,7 +78,7 @@ export default class DataUtils {
         if (!search) {
             throw 'Search parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
         }
-        return await DataUtils._queryLocations(`name || IFNULL(heb, '') LIKE ?`, [`%${search}%`]);
+        return await DataUtils._queryLocations('name || IFNULL(heb, \'\') LIKE ?', [`%${search}%`]);
     }
     /**Gets all Kavuahs from the database.
      *
@@ -88,18 +88,18 @@ export default class DataUtils {
             entries = entries.list;
         }
         let list = [];
-        await DataUtils._executeSql(`SELECT * from kavuahs`)
+        await DataUtils._executeSql('SELECT * from kavuahs')
             .then(results => {
                 list = results.map(k => new Kavuah(k.kavuahType,
-                    settingEntry = entries.find(e => e.entryId === k.settingEntryId),
+                    k.settingEntry = entries.find(e => e.entryId === k.settingEntryId),
                     k.specialNumber,
                     k.cancelsOnahBeinunis,
                     k.active,
                     k.ignore,
-                    kavuahId));
+                    k.kavuahId));
             })
             .catch(error => {
-                console.warn(`Error trying to get all kavuahs from the database.`);
+                console.warn('Error trying to get all kavuahs from the database.');
                 console.error(error);
             });
         return list;
@@ -150,18 +150,18 @@ export default class DataUtils {
                         kavuah.kavuahId = results[0].kavuahId;
                     }
                     else {
-                        console.warn(`Kavuah Id was not returned from the database.`);
+                        console.warn('Kavuah Id was not returned from the database.');
                     }
                 })
                 .catch(error => {
-                    console.warn(`Error trying to insert kavuah into the database.`);
+                    console.warn('Error trying to insert kavuah into the database.');
                     console.error(error);
                 });
         }
     }
     static async EntryToDatabase(entry) {
         if (entry.hasId) {
-            await DataUtils._executeSql(`UPDATE entries SET dateAbs=?, day=? WHERE entryId=?`,
+            await DataUtils._executeSql('UPDATE entries SET dateAbs=?, day=? WHERE entryId=?',
                 [entry.date.Abs, entry.nightDay === NightDay.Day, entry.entryId])
                 .then(() => {
                     console.log(`Updated Entry Id ${entry.entryId.toString()}`);
@@ -180,11 +180,11 @@ export default class DataUtils {
                         entry.entryId = results[0].entryId;
                     }
                     else {
-                        console.warn(`Entry Id was not returned from the database.`);
+                        console.warn('Entry Id was not returned from the database.');
                     }
                 })
                 .catch(error => {
-                    console.warn(`Error trying to insert entry into the database.`);
+                    console.warn('Error trying to insert entry into the database.');
                     console.error(error);
                 });
         }
@@ -196,7 +196,7 @@ export default class DataUtils {
         For example, if the whereClause is "name=? and israel=?", then values should be: ['Natanya', true].*/
     static async _queryLocations(whereClause, values) {
         const list = [];
-        await DataUtils._executeSql(`SELECT * FROM locations ${!!whereClause ? ' WHERE ' + whereClause : ''} ORDER BY name`, values)
+        await DataUtils._executeSql(`SELECT * FROM locations ${whereClause ? ' WHERE ' + whereClause : ''} ORDER BY name`, values)
             .then(results => {
                 console.log('442 - Results returned from db  - in _queryLocations');
                 for (let l of results) {
@@ -217,7 +217,7 @@ export default class DataUtils {
         const resultsList = [];
         let db;
 
-        await SQLite.openDatabase({ name: "luachAndroidDB", createFromLocation: '~data/luachAndroidDB.sqlite' })
+        await SQLite.openDatabase({ name: 'luachAndroidDB', createFromLocation: '~data/luachAndroidDB.sqlite' })
             .then(async database => {
                 db = database;
                 console.log('0120 - database is open. Starting transaction...');
@@ -232,7 +232,7 @@ export default class DataUtils {
                         console.log(`0122 - sql executed successfully - ${results.rowsAffected.toString()} rows affected`);
                     }
                     else {
-                        console.log(`0123 - sql executed successfully - Results information is not available`);
+                        console.log('0123 - sql executed successfully - Results information is not available');
                     }
                 });
                 /*await db.transaction(async tx => {
@@ -259,7 +259,7 @@ export default class DataUtils {
                     DataUtils._closeDatabase(db);
                 });*/
             }).catch(error => {
-                console.warn("0124 - error opening database");
+                console.warn('0124 - error opening database');
                 console.error(error);
                 DataUtils._closeDatabase(db);
             });
@@ -267,15 +267,15 @@ export default class DataUtils {
         return resultsList;
     }
     static _closeDatabase(db) {
-        if (!!db) {
-            db.close().then((status) => {
-                console.log("130 -  Database is now CLOSED");
+        if (db) {
+            db.close().then(status => {
+                console.log('130 -  Database is now CLOSED');
             }).catch((error) => {
-                console.warn("131 - error closing database");
+                console.warn('131 - error closing database');
             });
         }
         else {
-            console.warn("132 - db variable is not a database object");
+            console.warn('132 - db variable is not a database object');
         }
     }
 }

@@ -42,19 +42,19 @@ export default class Molad {
             str += Utils.dowEng[dow];
         }
         else if (dow === 6 && isNight) {
-            str += "Motzai Shabbos,";
+            str += 'Motzai Shabbos,';
         }
         else if (dow === 5 && isNight) {
-            str += "Shabbos Night,";
+            str += 'Shabbos Night,';
         }
         else {
-            str += Utils.dowEng[dow] + (isNight ? " Night" : "");
+            str += Utils.dowEng[dow] + (isNight ? ' Night' : '');
         }
-        str += " " + Utils.getTimeString(molad.time) + " and " +
-            molad.chalakim.toString() + " Chalakim";
+        str += ' ' + Utils.getTimeString(molad.time) + ' and ' +
+            molad.chalakim.toString() + ' Chalakim';
 
         return str;
-    };
+    }
 
     // Returns the time of the molad as a string in the format: ליל שני 20:33 12 חלקים
     // The molad is always in Jerusalem so we use the Jerusalem sunset times
@@ -67,17 +67,17 @@ export default class Molad {
             str = '';
 
         if (dow === 6) {
-            str += (isNight ? "מוצאי שב\"ק" : "יום שב\"ק");
+            str += (isNight ? 'מוצאי שב"ק' : 'יום שב"ק');
         }
         else if (dow === 5) {
-            str += (isNight ? "ליל שב\"ק" : "ערב שב\"ק");
+            str += (isNight ? 'ליל שב"ק' : 'ערב שב"ק');
         }
         else {
-            str += (isNight ? "ליל" : "יום") +
-                Utils.dowHeb[dow].replace("יום", "");
+            str += (isNight ? 'ליל' : 'יום') +
+                Utils.dowHeb[dow].replace('יום', '');
         }
-        str += " " + Utils.getTimeString(molad.time, true) + " " +
-            molad.chalakim.toString() + " חלקים";
+        str += ' ' + Utils.getTimeString(molad.time, true) + ' ' +
+            molad.chalakim.toString() + ' חלקים';
 
         return str;
     }

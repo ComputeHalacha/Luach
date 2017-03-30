@@ -1,8 +1,6 @@
 import KavuahType from './KavuahType';
 import Utils from '../JCal/Utils';
 import NightDay from './NightDay';
-import Entry from './Entry';
-import EntryList from './EntryList';
 import { setDefault } from '../GeneralUtils';
 
 export default class Kavuah {
@@ -25,32 +23,32 @@ export default class Kavuah {
         this.kavuahId = kavuahId;
     }
     toString() {
-        let txt = this.settingEntry.nightDay === NightDay.Night ? "Nighttime " : "Daytime ";
+        let txt = this.settingEntry.nightDay === NightDay.Night ? 'Nighttime ' : 'Daytime ';
         switch (this.kavuaType) {
-            case KavuahType.Haflagah:
-                txt += `every ${this.settingEntry.haflaga.toString()} days`;
-                break;
-            case KavuahType.DayOfMonth:
-                txt = `the ${Utils.toSuffixed(this.settingEntry.day)} day of the Jewish Month`;
-                break;
-            case KavuahType.DayOfWeek:
-                txt += `${Utils.dowEng[this.settingEntry.date.getDayOfWeek()]} every ${Utils.toSuffixed(this.specialNumber)} week`;
-                break;
-            case KavuahType.Sirug:
-                txt += `the ${Utils.toSuffixed(this.settingEntry.day)} day of every ${Utils.toSuffixed(this.specialNumber)} month`;
-                break;
-            case Chashavshavon.KavuahType.HaflagaMaayanPasuach:
-                txt += `every ${this.settingEntry.specialNumber.toString()} days (through Ma'ayan Pasuach)`;
-                break;
-            case Chashavshavon.KavuahType.DayOfMonthMaayanPasuach:
-                txt += `the ${Utils.toSuffixed(this.specialNumber)} day of the Jewish Month (through Ma'ayan Pasuach)`;
-                break;
-            case KavuahType.DilugHaflaga:
-                txt += `following the interval pattern of ${this.specialNumber < 0 ? "-" : "+"} ${Math.Abs(this.specialNumber).toString()} days`;
-                break;
-            case KavuahType.DilugDayOfMonth:
-                txt += `for days of the month following the interval pattern of ${this.specialNumber < 0 ? "-" : "+"} ${Math.Abs(this.specialNumber).toString()} days`;
-                break;
+        case KavuahType.Haflagah:
+            txt += `every ${this.settingEntry.haflaga.toString()} days`;
+            break;
+        case KavuahType.DayOfMonth:
+            txt = `the ${Utils.toSuffixed(this.settingEntry.day)} day of the Jewish Month`;
+            break;
+        case KavuahType.DayOfWeek:
+            txt += `${Utils.dowEng[this.settingEntry.date.getDayOfWeek()]} every ${Utils.toSuffixed(this.specialNumber)} week`;
+            break;
+        case KavuahType.Sirug:
+            txt += `the ${Utils.toSuffixed(this.settingEntry.day)} day of every ${Utils.toSuffixed(this.specialNumber)} month`;
+            break;
+        case KavuahType.HaflagaMaayanPasuach:
+            txt += `every ${this.settingEntry.specialNumber.toString()} days (through Ma'ayan Pasuach)`;
+            break;
+        case KavuahType.DayOfMonthMaayanPasuach:
+            txt += `the ${Utils.toSuffixed(this.specialNumber)} day of the Jewish Month (through Ma'ayan Pasuach)`;
+            break;
+        case KavuahType.DilugHaflaga:
+            txt += `following the interval pattern of ${this.specialNumber < 0 ? '-' : '+'} ${Math.Abs(this.specialNumber).toString()} days`;
+            break;
+        case KavuahType.DilugDayOfMonth:
+            txt += `for days of the month following the interval pattern of ${this.specialNumber < 0 ? '-' : '+'} ${Math.Abs(this.specialNumber).toString()} days`;
+            break;
         }
         if (!this.active) {
             txt += ' [INACTIVE]';
@@ -89,9 +87,9 @@ export default class Kavuah {
                 queue[0].nightDay === queue[1].nightDay &&
                 queue[1].nightDay === queue[2].nightDay) {
 
-                kavuahList = kavuahList.concat(getHaflagahKavuah(queue))
-                    .concat(getSirugKavuah(queue))
-                    .concat(getDilugHaflagahKavuah(queue));
+                kavuahList = kavuahList.concat(Kavuah.getHaflagahKavuah(queue))
+                    .concat(Kavuah.getSirugKavuah(queue))
+                    .concat(Kavuah.getDilugHaflagahKavuah(queue));
             }
         }
         return kavuahList;

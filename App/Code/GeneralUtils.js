@@ -1,17 +1,17 @@
 /**Returns true if thing is an instance of either a string primitive or String object.*/
 function isString(thing) {
     return (typeof thing === 'string' || thing instanceof String);
-};
+}
 
 /**Returns true if thing is an instance of either a number primitive or Number object.*/
 function isNumber(thing) {
     return (typeof thing === 'number' || thing instanceof Number);
-};
+}
 
 /**Checks a Date object if it represents a valid date or not.*/
 function isValidDate(dt) {
     return (!isNaN(dt.valueOf()));
-};
+}
 
 /**Returns whether or not the given, array, string, or argument list contains the given item or substring.
  *
@@ -23,7 +23,7 @@ function has(o, ...arr) {
     else {
         return arr.includes(o);
     }
-};
+}
 
 /**Returns the default value only if the param value is undefined or null.
  *

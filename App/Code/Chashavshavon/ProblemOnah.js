@@ -4,7 +4,7 @@ import NightDay from './NightDay';
 export default class ProblemOnah extends Onah {
     constructor(jdate, nightDay, name) {
         if (!jdate) {
-            throw 'jdate must be supplied.'
+            throw 'jdate must be supplied.';
         }
         super(jdate, nightDay);
         this.name = name;

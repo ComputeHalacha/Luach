@@ -15,13 +15,13 @@ async function requestLocationPermission() {
                 'message': 'The Luach Android App needs access to your general location ' +
                 'in order to determine the correct Zmanim.'
             }
-        )
+        );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log("You can use the location")
+            console.log('You can use the location');
         } else {
-            console.log("location permission denied")
+            console.log('location permission denied');
         }
     } catch (err) {
-        console.warn(err)
+        console.warn(err);
     }
 }

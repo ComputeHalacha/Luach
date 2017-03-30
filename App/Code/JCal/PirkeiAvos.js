@@ -1,7 +1,6 @@
-﻿import Utils from './Utils.js';
-import jDate from './jDate.js';
+﻿import jDate from './jDate.js';
 
-"use strict";
+'use strict';
 
 /****************************************************************************************************************
  * Computes the Perek/Prakim of the week for the given Shabbos.
@@ -15,8 +14,7 @@ export default function PirkeiAvos(jd, israel) {
         return [];
     }
 
-    var jYear = jd.Year,
-        jMonth = jd.Month,
+    var jMonth = jd.Month,
         jDay = jd.Day;
 
     //Pirkei Avos is from after Pesach until Rosh Hashana
@@ -27,11 +25,11 @@ export default function PirkeiAvos(jd, israel) {
             (!(jMonth === 5 && jDay === 9))))) {
         return [PirkeiAvos.get1stPerek(jd, israel)];
     }
-        //Ellul can have multiple prakim
+    //Ellul can have multiple prakim
     else if (jMonth === 6) {
         return PirkeiAvos.ellul(jd, israel);
     }
-        //No Pirkei Avos
+    //No Pirkei Avos
     else {
         return [];
     }
@@ -67,7 +65,6 @@ PirkeiAvos.get1stPerek = function (jd, israel) {
 PirkeiAvos.ellul = function (jd, israel) {
     var prakim,
         jYear = jd.Year,
-        jMonth = jd.Month,
         jDay = jd.Day,
         //The fist day of Ellul.
         //The year/month/day/absoluteDay constructor for JewishDateMicro is used for efficiency.
@@ -79,103 +76,103 @@ PirkeiAvos.ellul = function (jd, israel) {
         cShb = jDay === shabbos1Day ? 1 : parseInt((jDay - shabbos1Day) / 7) + 1;
 
     switch (PirkeiAvos.get1stPerek(shabbos1Date, israel)) {
+    case 1:
+        switch (cShb) {
         case 1:
-            switch (cShb) {
-                case 1:
-                    prakim = [1];
-                    break;
-                case 2:
-                    prakim = [2];
-                    break;
-                case 3:
-                    prakim = [3, 4];
-                    break;
-                case 4:
-                    prakim = [5, 6];
-                    break;
-            }
+            prakim = [1];
             break;
         case 2:
-            switch (cShb) {
-                case 1:
-                    prakim = [2];
-                    break;
-                case 2:
-                    prakim = [3];
-                    break;
-                case 3:
-                    prakim = [4];
-                    break;
-                case 4:
-                    prakim = [5, 6];
-                    break;
-            }
+            prakim = [2];
             break;
         case 3:
-            switch (cShb) {
-                case 1:
-                    prakim = [3];
-                    break;
-                case 2:
-                    prakim = [4];
-                    break;
-                case 3:
-                    prakim = [5];
-                    break;
-                case 4:
-                    prakim = [6];
-                    break;
-            }
+            prakim = [3, 4];
             break;
         case 4:
-            //This can only happen in Chutz La'aretz
-            switch (cShb) {
-                case 1:
-                    prakim = [4, 5];
-                    break;
-                case 2:
-                    prakim = [6, 1];
-                    break;
-                case 3:
-                    prakim = [2, 3];
-                    break;
-                case 4:
-                    prakim = [4, 5, 6];
-                    break;
-            }
+            prakim = [5, 6];
             break;
-        case 5:
-            switch (cShb) {
-                case 1:
-                    prakim = [5, 6];
-                    break;
-                case 2:
-                    prakim = [1, 2];
-                    break;
-                case 3:
-                    prakim = [3, 4];
-                    break;
-                case 4:
-                    prakim = [5, 6];
-                    break;
-            }
+        }
+        break;
+    case 2:
+        switch (cShb) {
+        case 1:
+            prakim = [2];
             break;
-        case 6:
-            switch (cShb) {
-                case 1:
-                    prakim = [6];
-                    break;
-                case 2:
-                    prakim = [1, 2];
-                    break;
-                case 3:
-                    prakim = [3, 4];
-                    break;
-                case 4:
-                    prakim = [5, 6];
-                    break;
-            }
+        case 2:
+            prakim = [3];
             break;
+        case 3:
+            prakim = [4];
+            break;
+        case 4:
+            prakim = [5, 6];
+            break;
+        }
+        break;
+    case 3:
+        switch (cShb) {
+        case 1:
+            prakim = [3];
+            break;
+        case 2:
+            prakim = [4];
+            break;
+        case 3:
+            prakim = [5];
+            break;
+        case 4:
+            prakim = [6];
+            break;
+        }
+        break;
+    case 4:
+        //This can only happen in Chutz La'aretz
+        switch (cShb) {
+        case 1:
+            prakim = [4, 5];
+            break;
+        case 2:
+            prakim = [6, 1];
+            break;
+        case 3:
+            prakim = [2, 3];
+            break;
+        case 4:
+            prakim = [4, 5, 6];
+            break;
+        }
+        break;
+    case 5:
+        switch (cShb) {
+        case 1:
+            prakim = [5, 6];
+            break;
+        case 2:
+            prakim = [1, 2];
+            break;
+        case 3:
+            prakim = [3, 4];
+            break;
+        case 4:
+            prakim = [5, 6];
+            break;
+        }
+        break;
+    case 6:
+        switch (cShb) {
+        case 1:
+            prakim = [6];
+            break;
+        case 2:
+            prakim = [1, 2];
+            break;
+        case 3:
+            prakim = [3, 4];
+            break;
+        case 4:
+            prakim = [5, 6];
+            break;
+        }
+        break;
     }
 
     return prakim || [];
