@@ -12,7 +12,8 @@ export default class SingleDayDisplay extends Component {
             sunrise = suntimes && suntimes.sunrise ?
                 Utils.getTimeString(suntimes.sunrise) : 'Sun does not rise',
             sunset = suntimes && suntimes.sunset ?
-                Utils.getTimeString(suntimes.sunset) : 'Sun does not set';
+                Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
+            problems = this.props.problems.map(po => <Text>{po.toString() + '.'}</Text>);
         return (
             <View>
                 <Text style={styles.date}>{new Date().toDateString() + ', ' + jd.toString(true)}</Text>
@@ -20,7 +21,8 @@ export default class SingleDayDisplay extends Component {
                 <Text>{'Sedra of the week: ' + jd.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
                 <Text style={styles.location}>{'Zmanim for ' + location.Name}</Text>
                 <Text>{'Sun Rises at ' + sunrise}</Text>
-                <Text>{'Sun sets at ' + sunset}</Text>
+                <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
+                {problems}
             </View>
         );
     }

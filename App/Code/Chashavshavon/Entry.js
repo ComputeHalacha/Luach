@@ -19,7 +19,11 @@ export default class Entry {
             this.haflaga === entry.haflaga
     }
     toString() {
-        return `The ${this.nightDay === NightDay.Night ? 'night' : 'day'} of ${this.date.toString()} [Haflaga of ${this.haflaga.toString()}]`;
+        let str = `${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'} of ${this.date.toString()}`;
+        if (this.haflaga) {
+            str += ` [Haflaga of ${this.haflaga.toString()}]`;
+        }
+        return str;
     }
     get nightDay() {
         return this.onah.nightDay;

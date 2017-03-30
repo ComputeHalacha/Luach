@@ -3,12 +3,8 @@ import { AppRegistry, StyleSheet, Text, View, ListView } from 'react-native';
 import './App/Code/initAndroid';
 import SingleDayDisplay from './App/Components/SingleDayDisplay';
 import jDate from './App/Code/JCal/jDate';
-import Location from './App/Code/JCal/Location';
-import Kavuah from './App/Code/Chashavshavon/Kavuah';
-import EntryList from './App/Code/Chashavshavon/EntryList';
-import Entry from './App/Code/Chashavshavon/Entry';
-import Onah from './App/Code/Chashavshavon/Onah';
 import AppData from './App/Code/Data/AppData';
+import DataUtils from './App/Code/Data/DataUtils';
 
 export default class LuachAndroid extends Component {
   constructor (props) {
@@ -18,13 +14,14 @@ export default class LuachAndroid extends Component {
       const e2 = new Entry(new Onah(jDate.toJDate().addDays(-32), NightDay.Night), e1);
       e2.toDatabase().catch(error => console.error(error));
     }).catch(error => console.error(error));*/
-    this.state = { listName: 'NO LIST LOADED', currLocation: {}, locations: [], entries: [], kavuahs: [], problems: [] };
+    this.state = { appData: {ProblemOnahs:[]}, currDate: new jDate(), listName: 'NO LIST LOADED', currLocation: {}, locations: [], entries: [], kavuahs: [], problems: [] };
     AppData.getAppData().then(ad => {
       this.setState({
+        appData: ad,
         currLocation: ad.Settings.location,
-        entries: ad.EntryList.list.map(e => e.toString()),
-        kavuahs: ad.KavuahList.map(k => k.toString()),
-        problems: ad.ProblemEntries.map(po => po.toString())
+        entries: ad.EntryList.list.map(e => e.toString() + '.'),
+        kavuahs: ad.KavuahList.map(k => k.toString() + '.'),
+        problems: ad.ProblemOnahs.map(po => po.toString() + '.')
       });
       console.log('554 - AppData retreived from database:');
       console.log(ad);
@@ -41,7 +38,7 @@ export default class LuachAndroid extends Component {
     </View>)
   }
   fillLocations() {
-    Location.searchLocations('new').then(list =>
+    DataUtils.SearchLocations('new').then(list =>
       this.setState({ locations: list.map(l => l.Name), listName: 'LOCATIONS' }));
   }
   fillEntries() {
@@ -54,7 +51,8 @@ export default class LuachAndroid extends Component {
     this.setState({ listName: 'PROBLEMS' });
   }
   render() {
-    const ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => { row1 !== row2; } });
+    const ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => { row1 !== row2; } }),
+      currProbs = this.state.appData.ProblemOnahs.filter(po => po.jdate.Abs === this.state.currDate.Abs);
     let list = [];
     switch (this.state.listName) {
       case 'LOCATIONS':
@@ -90,7 +88,7 @@ export default class LuachAndroid extends Component {
         <Text style={styles.welcome}>
           Jewish Date Informtaion---
         </Text>
-        <SingleDayDisplay jdate={new jDate()} location={this.state.currLocation} />
+        <SingleDayDisplay jdate={this.state.currDate} location={this.state.currLocation} problems={currProbs} />
         <Text>{this.state.listName}</Text>
         <ListView
           enableEmptySections={true}

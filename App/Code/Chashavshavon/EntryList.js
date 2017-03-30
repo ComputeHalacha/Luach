@@ -295,7 +295,7 @@ export default class EntryList {
             probList.push(new ProblemOnah(
                 ohrZarua.jdate,
                 ohrZarua.nightDay,
-                "Ohr Zarua of " + probOnah.name));
+                "Ohr Zarua of the " + probOnah.name));
         }
     }
     getKavuahSuggestions() {

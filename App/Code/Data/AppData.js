@@ -1,11 +1,11 @@
 import DataUtils from './DataUtils';
 
 export default class AppData {
-    constructor(settings, entryList, kavuahList, problemEntries) {
+    constructor(settings, entryList, kavuahList, problemOnahs) {
         this.Settings = settings;
         this.EntryList = entryList;
         this.KavuahList = kavuahList;
-        this.ProblemEntries = problemEntries;
+        this.ProblemOnahs = problemOnahs;
     }
     static async getAppData() {
         if (!global.AppData) {
@@ -16,7 +16,7 @@ export default class AppData {
         return global.AppData;
     }
     static async fromDatabase() {
-        let settings, entryList, kavuahList, problemEntries;
+        let settings, entryList, kavuahList, problemOnahs;
 
         await DataUtils.SettingsFromDatabase()
             .then(s => settings = s)
@@ -33,13 +33,13 @@ export default class AppData {
         await DataUtils.GetAllKavuahs(entryList)
             .then(k => {
                 kavuahList = k;
-                problemEntries = entryList.getProblemOnahs(kavuahList);
+                problemOnahs = entryList.getProblemOnahs(kavuahList);
             })
             .catch(error => {
                 console.warn(`Error running GetAllKavuahs.`);
                 console.error(error);
             });
 
-        return new AppData(settings, entryList, kavuahList, problemEntries);
+        return new AppData(settings, entryList, kavuahList, problemOnahs);
     }
 }

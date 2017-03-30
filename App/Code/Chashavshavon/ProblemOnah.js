@@ -10,6 +10,10 @@ export default class ProblemOnah extends Onah {
         this.name = name;
     }
     toString() {
-        return `The ${this.nightDay === NightDay.Night ? 'night' : 'day'} of ${this.jdate.toString()} is the ${this.name}`;
+        const goyDate = this.nightDay === NightDay.Night ?
+            this.jdate.addDays(-1).getDate() : this.jdate.getDate();
+        return `The ${this.nightDay === NightDay.Night ? 'night' : 'day'} of ` +
+            goyDate.toLocaleDateString('en-US', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'}) +
+            ` - ${this.jdate.toString(true, true)} is the ${this.name}`;
     }
 }

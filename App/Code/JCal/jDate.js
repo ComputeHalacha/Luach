@@ -225,11 +225,12 @@ export default class jDate {
         return jd.Year - this.Year;
     }
 
-    /**Returns the current Jewish date in the format: Thursday Kislev 3 5776.*/
-    toString(hideDayOfWeek) {
-        return (hideDayOfWeek ? '' : Utils.dowEng[this.getDayOfWeek()] + ' ') +
+    /**Returns the current Jewish date in the format: Thursday, the 3rd of Kislev 5776.*/
+    toString(hideDayOfWeek, dontCapitalize) {
+        return (hideDayOfWeek ? (!!dontCapitalize ? 't' : 'T') : Utils.dowEng[this.getDayOfWeek()] + ', t') +
+            'he ' +
+            Utils.toSuffixed(this.Day) + ' of ' +
             Utils.jMonthsEng[this.Month] + ' ' +
-            this.Day.toString() + ' ' +
             this.Year.toString();
     }
 
