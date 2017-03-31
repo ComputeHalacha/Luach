@@ -50,6 +50,11 @@ export default class EntryList {
             afterwards();
         }
     }
+    /**Returns the list entries sorted chronologically reversed - the most recent first. */
+    get descending() {
+        //clone the list, reverse it and return it. (cloning is because reverse is in-place)
+        return this.list.map(e => e).reverse();
+    }
     getProblemOnahs(kavuahList) {
         let probOnahs = [];
         const cancelOnahBeinenis = kavuahList.some(k => k.active && k.cancelsOnahBeinunis);
