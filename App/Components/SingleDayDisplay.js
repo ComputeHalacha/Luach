@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import Utils from '../Code/JCal/Utils';
+import JDate from '../Code/JCal/jDate';
+import Location from '../Code/JCal/Location'
 
 export default class SingleDayDisplay extends Component {
     render() {
-        const jd = this.props.jdate,
-            location = this.props.location,
+        const jd = this.props.jdate || new JDate(),
+            location = this.props.location || Location.getJerusalem(),
             dailyInfos = jd.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length ? <Text>{dailyInfos.join('\n')}</Text> : null,
             suntimes = jd.getSunriseSunset(location),
@@ -13,7 +15,8 @@ export default class SingleDayDisplay extends Component {
                 Utils.getTimeString(suntimes.sunrise) : 'Sun does not rise',
             sunset = suntimes && suntimes.sunset ?
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
-            problems = this.props.problems.map(po => <Text>{po.toString() + '.'}</Text>);
+            problems = this.props.problems || [],
+            problemText = problems.map(po => <Text>{po.toString() + '.'}</Text>);
         return (
             <View>
                 <Text style={styles.date}>{new Date().toDateString() + ', ' + jd.toString(true)}</Text>
@@ -22,7 +25,7 @@ export default class SingleDayDisplay extends Component {
                 <Text style={styles.location}>{'Zmanim for ' + location.Name}</Text>
                 <Text>{'Sun Rises at ' + sunrise}</Text>
                 <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
-                {problems}
+                {problemText}
             </View>
         );
     }

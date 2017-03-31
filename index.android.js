@@ -7,101 +7,100 @@ import AppData from './App/Code/Data/AppData';
 import DataUtils from './App/Code/Data/DataUtils';
 
 export default class LuachAndroid extends Component {
-    constructor (props) {
-        super(props);
-        /*const e1 = new Entry(new Onah(jDate.toJDate().addDays(-60), NightDay.Night), 28);
-        e1.toDatabase().then(() => {
-          const e2 = new Entry(new Onah(jDate.toJDate().addDays(-32), NightDay.Night), e1);
-          e2.toDatabase().catch(error => console.error(error));
-        }).catch(error => console.error(error));*/
-        this.state = { appData: { ProblemOnahs: [] }, currDate: new jDate(), listName: 'NO LIST LOADED', currLocation: {}, locations: [], entries: [], kavuahs: [], problems: [] };
-        AppData.getAppData().then(ad => {
-          this.setState({
-            appData: ad,
-            currLocation: ad.Settings.location,
-            entries: ad.EntryList.list.map(e => e.toString() + '.'),
-            kavuahs: ad.KavuahList.map(k => k.toString() + '.'),
-            problems: ad.ProblemOnahs.map(po => po.toString() + '.')
-          });
-          console.log('554 - AppData retreived from database:');
-          console.log(ad);
-        });
-    }
-    componentWillMount() {
+  constructor (props) {
+    super(props);
+    /*const e1 = new Entry(new Onah(jDate.toJDate().addDays(-60), NightDay.Night), 28);
+    e1.toDatabase().then(() => {
+      const e2 = new Entry(new Onah(jDate.toJDate().addDays(-32), NightDay.Night), e1);
+      e2.toDatabase().catch(error => console.error(error));
+    }).catch(error => console.error(error));*/
+    this.state = {
+      appData: null,
+      currDate: new jDate(),
+      currLocation: null,
+      listName: '',
+      listItems: []
+    };
+    AppData.getAppData().then(ad => {
+      this.setState({
+        appData: ad,
+        currLocation: ad.Settings.location
+      });
+      this.fillEntries();
+      console.log('0554 - AppData retreived from database:');
+      console.log(ad);
+    });
+  }
+  componentWillMount() {
 
+  }
+  renderListItem(item) {
+    return (<View style={styles.li}>
+      <View>
+        <Text style={styles.liText}>{item}</Text>
+      </View>
+    </View>);
+  }
+  fillLocations() {
+    DataUtils.SearchLocations('new').then(list =>
+      this.setState({ listItems: list.map(l => l.Name), listName: 'LOCATIONS' }));
+  }
+  fillEntries() {
+    if (this.state.appData) {
+      const li = this.state.appData.EntryList.list.map(e => e.toString() + '.');
+      this.setState({ listItems: li, listName: 'ENTRIES' });
     }
-    renderListItem(item) {
-      return (<View style={styles.li}>
-        <View>
-          <Text style={styles.liText}>{item}</Text>
+  }
+  fillKavuahs() {
+    if (this.state.appData) {
+      const li = this.state.appData.KavuahList.map(k => k.toString() + '.');
+      this.setState({ listItems: li, listName: 'KAVUAHS' });
+    }
+  }
+  fillProblems() {
+    if (this.state.appData) {
+      const li = this.state.appData.ProblemOnahs.map(po => po.toString() + '.');
+      this.setState({ listItems: li, listName: 'PROBLEMS' });
+    }
+  }
+  render() {
+    const ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => { row1 !== row2; } }),
+      currProbs = this.state.appData && this.state.appData.ProblemOnahs.filter(po =>
+        po.jdate.Abs === this.state.currDate.Abs);
+    return (
+      <View style={styles.container}>
+        <View style={styles.toolbar}>
+          <Text style={styles.toolbarButton} onPress={this.fillLocations.bind(this)}>
+            Locations
+                  </Text>
+          <Text style={styles.toolbarButton} onPress={this.fillEntries.bind(this)}>
+            Entries
+                  </Text>
+          <Text style={styles.toolbarButton} onPress={this.fillKavuahs.bind(this)}>
+            Kavuahs
+                  </Text>
+          <Text style={styles.toolbarButton} onPress={this.fillProblems.bind(this)}>
+            Problems
+                  </Text>
         </View>
-      </View>);
-    }
-    fillLocations() {
-      DataUtils.SearchLocations('new').then(list =>
-        this.setState({ locations: list.map(l => l.Name), listName: 'LOCATIONS' }));
-    }
-    fillEntries() {
-      this.setState({ listName: 'ENTRIES' });
-    }
-    fillKavuahs() {
-      this.setState({ listName: 'KAVUAHS' });
-    }
-    fillProblems() {
-      this.setState({ listName: 'PROBLEMS' });
-    }
-    render() {
-      const ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => { row1 !== row2; } }),
-        currProbs = this.state.appData.ProblemOnahs.filter(po => po.jdate.Abs === this.state.currDate.Abs);
-      let list = [];
-      switch (this.state.listName) {
-        case 'LOCATIONS':
-          list = this.state.locations;
-          break;
-        case 'ENTRIES':
-          list = this.state.entries;
-          break;
-        case 'KAVUAHS':
-          list = this.state.kavuahs;
-          break;
-        case 'PROBLEMS':
-          list = this.state.problems;
-          break;
-      }
-      return (
-        <View style={styles.container}>
-          <View style={styles.toolbar}>
-            <Text style={styles.toolbarButton} onPress={this.fillLocations.bind(this)}>
-              Locations
-                  </Text>
-            <Text style={styles.toolbarButton} onPress={this.fillEntries.bind(this)}>
-              Entries
-                  </Text>
-            <Text style={styles.toolbarButton} onPress={this.fillKavuahs.bind(this)}>
-              Kavuahs
-                  </Text>
-            <Text style={styles.toolbarButton} onPress={this.fillProblems.bind(this)}>
-              Problems
-                  </Text>
-          </View>
 
-          <Text style={styles.welcome}>
-            Jewish Date Informtaion---
+        <Text style={styles.welcome}>
+          Jewish Date Informtaion---
           </Text>
-          <SingleDayDisplay jdate={this.state.currDate} location={this.state.currLocation} problems={currProbs} />
-          <Text>{this.state.listName}</Text>
-          <ListView
-            enableEmptySections={true}
-            dataSource={ds.cloneWithRows(list)}
-            renderRow={this.renderListItem}
-            style={styles.liContainer} />
-          <Text style={styles.instructions}>
-            {'\n\n'}
-            Double tap R on your keyboard to reload,{'\n'}
-            Shake or press menu button for dev menu
+        <SingleDayDisplay jdate={this.state.currDate} location={this.state.currLocation} problems={currProbs} />
+        <Text>{this.state.listName}</Text>
+        <ListView
+          enableEmptySections={true}
+          dataSource={ds.cloneWithRows(this.state.listItems)}
+          renderRow={this.renderListItem}
+          style={styles.liContainer} />
+        <Text style={styles.instructions}>
+          {'\n\n'}
+          Double tap R on your keyboard to reload,{'\n'}
+          Shake or press menu button for dev menu
           </Text>
-        </View>);
-    }
+      </View>);
+  }
 }
 
 const styles = StyleSheet.create({
