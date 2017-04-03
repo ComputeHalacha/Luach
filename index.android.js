@@ -80,7 +80,7 @@ export default class LuachAndroid extends React.Component {
     * Recalculates the problem onahs for the state AppData object and returns it.
     * This should be done after updating settings, entries or kavuahs.
     */
-    static recalulateProbs() {
+    recalulateProbs() {
         const appData = this.state.appData;
         if (appData) {
             const elist = appData.EntryList,
