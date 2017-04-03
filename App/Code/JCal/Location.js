@@ -35,6 +35,6 @@ export default class Location {
     }
     /**Gets the Location for Jerusalem.*/
     static getJerusalem() {
-        return new Location("Jerusalem", true, 31.78, -35.22, 2, 800);
+        return new Location('Jerusalem', true, 31.78, -35.22, 2, 800, 40, 28);
     }
 }

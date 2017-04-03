@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import Utils from '../Code/JCal/Utils';
 import JDate from '../Code/JCal/jDate';
-import Location from '../Code/JCal/Location'
+import Location from '../Code/JCal/Location';
+import ProblemOnah from '../Code/Chashavshavon/ProblemOnah';
 
+/**
+ * Display a single jewish date.
+ */
 export default class SingleDayDisplay extends Component {
     render() {
         const jd = this.props.jdate || new JDate(),
@@ -16,7 +20,7 @@ export default class SingleDayDisplay extends Component {
             sunset = suntimes && suntimes.sunset ?
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
             problems = this.props.problems || [],
-            problemText = problems.map(po => <Text>{po.toString() + '.'}</Text>);
+            problemText = problems.map(po => <Text>{`  * ${po.toString()}\n`}</Text>);
         return (
             <View>
                 <Text style={styles.date}>{new Date().toDateString() + ', ' + jd.toString(true)}</Text>

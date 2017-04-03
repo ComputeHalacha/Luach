@@ -1,7 +1,8 @@
 import DataUtils from './DataUtils';
 
 export default class AppData {
-    constructor(settings, entryList, kavuahList, problemOnahs) {
+    constructor(locations, settings, entryList, kavuahList, problemOnahs) {
+        this.Locations = locations;
         this.Settings = settings;
         this.EntryList = entryList;
         this.KavuahList = kavuahList;
@@ -16,10 +17,17 @@ export default class AppData {
         return global.AppData;
     }
     static async fromDatabase() {
-        let settings, entryList, kavuahList, problemOnahs;
-
-        await DataUtils.SettingsFromDatabase()
-            .then(s => settings = s)
+        let locations, settings, entryList, kavuahList, problemOnahs;
+        await DataUtils.GetAllLocations()
+            .then(async l => {
+                locations = l;
+                await DataUtils.SettingsFromDatabase(locations)
+                    .then(s => settings = s)
+                    .catch(error => {
+                        console.warn(`Error running SettingsFromDatabase.`);
+                        console.error(error);
+                    });
+            })
             .catch(error => {
                 console.warn(`Error running SettingsFromDatabase.`);
                 console.error(error);
@@ -40,6 +48,6 @@ export default class AppData {
                 console.error(error);
             });
 
-        return new AppData(settings, entryList, kavuahList, problemOnahs);
+        return new AppData(locations, settings, entryList, kavuahList, problemOnahs);
     }
 }

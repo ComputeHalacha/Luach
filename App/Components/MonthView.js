@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import {Grid, Col, Row} from 'react-native-elements/src';
-import Utils from '../Code/JCal/Utils';
-import JDate from '../Code/JCal/jDate';
-import Location from '../Code/JCal/Location';
+import { StyleSheet, Text } from 'react-native';
+import { Grid, Col, Row } from 'react-native-elements/src';
 
 export default class MonthView extends Component {
     render() {

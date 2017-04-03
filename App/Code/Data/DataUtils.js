@@ -14,12 +14,14 @@ SQLite.enablePromise(true);
 
 export default class DataUtils {
 
-    static async SettingsFromDatabase() {
+    static async SettingsFromDatabase(locations) {
         let settings;
         await DataUtils._executeSql('SELECT * from settings')
             .then(async results => {
                 const dbSet = results[0],
-                    location = await DataUtils.LocationFromDatabase(dbSet.locationId);
+                    location = locations ?
+                        locations.find(l => l.locationId === dbSet.locationId) :
+                        await DataUtils.LocationFromDatabase(dbSet.locationId);
                 settings = new Settings(
                     location,
                     dbSet.showOhrZeruah,
@@ -34,6 +36,29 @@ export default class DataUtils {
                 console.error(error);
             });
         return settings;
+    }
+    static async SettingsToDatabase(settings) {
+        await DataUtils._executeSql(`UPDATE settings SET
+            locationId=?,
+            showOhrZeruah=?,
+            onahBeinunis24Hours=?,
+            numberMonthsAheadToWarn=?,
+            keepLongerHaflagah=?,
+            cheshbonKavuahByActualEntry=?,
+            cheshbonKavuahByCheshbon=?`,
+            [
+                (settings.location && settings.location.locationId) || 28, //Jerusalem is 28
+                settings.showOhrZeruah,
+                settings.onahBeinunis24Hours,
+                settings.numberMonthsAheadToWarn,
+                settings.keepLongerHaflagah,
+                settings.cheshbonKavuahByActualEntry,
+                settings.cheshbonKavuahByCheshbon
+            ])
+            .catch(error => {
+                console.warn('Error trying to enter settings into the database.');
+                console.error(error);
+            });
     }
     static async EntryListFromDatabase(settings) {
         const entryList = new EntryList(settings);

@@ -1,5 +1,6 @@
-import Location from './JCal/Location'
-import { isNumber, setDefault } from './GeneralUtils';
+import Location from './JCal/Location';
+import { setDefault } from './GeneralUtils';
+import DataUtils from './Data/DataUtils';
 
 export default class Settings {
     constructor(location, showOhrZeruah, onahBeinunis24Hours, numberMonthsAheadToWarn, keepLongerHaflagah, cheshbonKavuahByActualEntry, cheshbonKavuahByCheshbon) {
@@ -10,5 +11,8 @@ export default class Settings {
         this.keepLongerHaflagah = !!keepLongerHaflagah;
         this.cheshbonKavuahByActualEntry = setDefault(cheshbonKavuahByActualEntry, true);
         this.cheshbonKavuahByCheshbon = setDefault(cheshbonKavuahByCheshbon, true);
+    }
+    save() {
+        DataUtils.SettingsToDatabase(this);
     }
 }
