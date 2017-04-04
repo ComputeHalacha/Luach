@@ -14,6 +14,8 @@ export default class LuachAndroid extends React.Component {
     constructor (props) {
         super(props);
 
+        //DataUtils._executeSql('INSERT INTO Entries(dateAbs, day) VALUES(736088, 0)').then(a => console.log('INSERTED ID = ' + a.id.toString()));
+
         this.state = {
             appData: null,
             currDate: new jDate(),

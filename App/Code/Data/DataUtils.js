@@ -18,7 +18,7 @@ export default class DataUtils {
         let settings;
         await DataUtils._executeSql('SELECT * from settings')
             .then(async results => {
-                const dbSet = results[0],
+                const dbSet = results.list[0],
                     location = locations ?
                         locations.find(l => l.locationId === dbSet.locationId) :
                         await DataUtils.LocationFromDatabase(dbSet.locationId);
@@ -64,8 +64,8 @@ export default class DataUtils {
         const entryList = new EntryList(settings);
         await DataUtils._executeSql('SELECT * from entries ORDER BY dateAbs, day')
             .then(results => {
-                if (results.length > 0) {
-                    for (let e of results) {
+                if (results.list.length > 0) {
+                    for (let e of results.list) {
                         const onah = new Onah(new jDate(e.dateAbs), e.day ? NightDay.Day : NightDay.Night);
                         entryList.add(new Entry(onah, e.entryId));
                     }
@@ -112,7 +112,7 @@ export default class DataUtils {
         let list = [];
         await DataUtils._executeSql('SELECT * from kavuahs')
             .then(results => {
-                list = results.map(k => new Kavuah(k.kavuahType,
+                list = results.list.map(k => new Kavuah(k.kavuahType,
                     k.settingEntry = entries.find(e => e.entryId === k.settingEntryId),
                     k.specialNumber,
                     k.cancelsOnahBeinunis,
@@ -164,17 +164,9 @@ export default class DataUtils {
                         cancelsOnahBeinunis,
                         active,
                         [ignore])
-                    VALUES (?,?,?,?,?,?);
-                    SELECT last_insert_rowid() AS kavuahId FROM kavuahs;`,
+                    VALUES (?,?,?,?,?,?)`,
                 [params])
-                .then(results => {
-                    if (results.length > 0) {
-                        kavuah.kavuahId = results[0].kavuahId;
-                    }
-                    else {
-                        console.warn('Kavuah Id was not returned from the database.');
-                    }
-                })
+                .then(results => kavuah.kavuahId = results.id)
                 .catch(error => {
                     console.warn('Error trying to insert kavuah into the database.');
                     console.error(error);
@@ -194,17 +186,9 @@ export default class DataUtils {
                 });
         }
         else {
-            await DataUtils.executeSql(`INSERT INTO entries (dateAbs, day) VALUES (?, ?);
-                SELECT last_insert_rowid() AS entryId FROM entries;`,
+            await DataUtils._executeSql('INSERT INTO entries (dateAbs, day) VALUES (?, ?)',
                 [entry.date.Abs, entry.nightDay === NightDay.Day])
-                .then(results => {
-                    if (results.length > 0) {
-                        entry.entryId = results[0].entryId;
-                    }
-                    else {
-                        console.warn('Entry Id was not returned from the database.');
-                    }
-                })
+                .then(results => entry.entryId = results.id)
                 .catch(error => {
                     console.warn('Error trying to insert entry into the database.');
                     console.error(error);
@@ -221,7 +205,7 @@ export default class DataUtils {
         await DataUtils._executeSql(`SELECT * FROM locations ${whereClause ? ' WHERE ' + whereClause : ''} ORDER BY name`, values)
             .then(results => {
                 console.log('442 - Results returned from db  - in _queryLocations');
-                for (let l of results) {
+                for (let l of results.list) {
                     list.push(new Location(
                         l.name,
                         l.israel,
@@ -235,8 +219,14 @@ export default class DataUtils {
             });
         return list;
     }
+    /**
+     * Executes sql on the database. promise resolves with an object { list: ResultsArray, id: LastInsertedRowId }
+     * @param {*} sql 
+     * @param {*} values 
+     */
     static async _executeSql(sql, values) {
         const resultsList = [];
+        let insertId;
         let db;
 
         await SQLite.openDatabase({ name: 'luachAndroidDB', createFromLocation: '~data/luachAndroidDB.sqlite' })
@@ -255,6 +245,9 @@ export default class DataUtils {
                     }
                     else {
                         console.log('0123 - sql executed successfully - Results information is not available');
+                    }
+                    if (!!results && results.length) {
+                        insertId = results[0].insertId;
                     }
                 });
                 /*await db.transaction(async tx => {
@@ -286,7 +279,7 @@ export default class DataUtils {
                 DataUtils._closeDatabase(db);
             });
 
-        return resultsList;
+        return { list: resultsList, id: insertId };
     }
     static _closeDatabase(db) {
         if (db) {
