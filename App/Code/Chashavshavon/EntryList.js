@@ -15,14 +15,20 @@ export default class EntryList {
         this.settings = settings || new Settings();
         this.stopWarningDate = today.addMonths(this.settings.numberMonthsAheadToWarn);
     }
+    /**
+     * Add an Entry to the list.
+     * In most cases, calulateHaflagas should be called after changing the list.
+     * @param {*} e
+     * @param {*} afterwards
+     */
     add(e, afterwards) {
         if (!(e instanceof Entry)) {
             throw 'Only objects of type Entry can be added to the EntryList';
         }
         else {
             if (!this.list.some(entry => entry.isSameEntry(e))) {
-                //push returns the new length of the array, so -1 gives us the current items index.
-                const index = this.list.push(e) - 1;
+                this.list.push(e);
+                const index = this.list.indexOf(e);
                 if (afterwards instanceof Function) {
                     afterwards(e, index);
                 }
@@ -30,6 +36,12 @@ export default class EntryList {
             }
         }
     }
+    /**
+     * Remove the given entry from the list
+     * In most cases, calulateHaflagas should be called after changing the list.
+     * @param {*} arg
+     * @param {*} afterwards
+     */
     remove(arg, afterwards) {
         let removed = false;
         if (isNumber(arg) && arg >= 0 && arg < this.list.length) {
@@ -50,10 +62,47 @@ export default class EntryList {
             afterwards();
         }
     }
-    /**Returns the list entries sorted chronologically reversed - the most recent first. */
+    /**
+     * Returns the list of entries sorted chronologically reversed - the most recent first.
+     */
     get descending() {
-        //clone the list, reverse it and return it. (cloning is because reverse is in-place)
+        //First assure the the list is sorted correctly.
+        this.sortList();
+        //Clone the list, reverse it and return it. (cloning is because reverse is in-place)
         return this.list.slice().reverse();
+    }
+    /**
+     * Sorts the list chronologically.
+     * This is nessesary in order to calculate the haflagas correctly.
+     */
+    sortList() {
+        this.list.sort((a, b) => {
+            if (a.date.Abs < b.date.Abs) {
+                return -1;
+            }
+            else if (a.date.Abs > b.date.Abs) {
+                return 1;
+            }
+            else {
+                return a.nightDay - b.nightDay;
+            }
+        });
+    }
+    /**
+     * Calculates the haflagas for all the entries in the list.
+     */
+    calulateHaflagas() {
+        this.sortList();
+        for (let i = 0; i < this.list.length; i++) {
+            const entry = this.list[i];
+            if (i === 0) {
+                entry.haflaga = 0;
+            }
+            else {
+                const prev = this.list[i - 1];
+                entry.haflaga = prev.date.diffDays(entry.date) - 1;
+            }
+        }
     }
     getProblemOnahs(kavuahList) {
         let probOnahs = [];

@@ -1,20 +1,19 @@
 import NightDay from './NightDay';
 
 export default class Entry {
-    constructor(onah, haflaga, entryId) {
+    /**
+     * A single sighting/period.
+     * @param {Onah} onah - the onah of this entry
+     * @param {Number} entryId - the entryId
+     * @param {Number} haflaga - The haflaga between this entry and the previous one.
+     */
+    constructor(onah, entryId, haflaga) {
         this.onah = onah;
-        if (haflaga instanceof Entry) {
-            //If the previous entry was supplied as the haflaga argument
-            this.haflaga = haflaga.onah.jdate.diffDays(this.onah.jdate) + 1;
-        }
-        else {
-            this.haflaga = haflaga;
-        }
         this.entryId = entryId;
+        this.haflaga = haflaga;
     }
     isSameEntry(entry) {
-        return this.onah.isSameOnah(entry.Onah) &&
-            this.haflaga === entry.haflaga;
+        return this.onah.isSameOnah(entry.onah);
     }
     toString() {
         let str = `${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'} of ${this.date.toString()}`;

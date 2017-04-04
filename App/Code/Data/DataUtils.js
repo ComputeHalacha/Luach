@@ -67,12 +67,9 @@ export default class DataUtils {
                 if (results.length > 0) {
                     for (let e of results) {
                         const onah = new Onah(new jDate(e.dateAbs), e.day ? NightDay.Day : NightDay.Night);
-                        entryList.list.push(new Entry(
-                            onah,
-                            entryList.list.length > 0 ?
-                                entryList.list[entryList.list.length - 1].onah.jdate.diffDays(onah.jdate) - 1 : 0,
-                            e.entryId));
+                        entryList.add(new Entry(onah, e.entryId));
                     }
+                    entryList.calulateHaflagas();
                 }
             })
             .catch(error => {
