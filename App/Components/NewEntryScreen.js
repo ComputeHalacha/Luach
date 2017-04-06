@@ -21,7 +21,7 @@ export default class NewEntry extends React.Component {
             currTime = { hour: dt.getHours(), minute: dt.getMinutes() },
             isNight = Utils.totalMinutes(Utils.timeDiff(currTime, shkia)) >= 0;
 
-        this.appData = appData;
+        this.state = { appData: appData };
         this.jdate = jdate,
             this.location = location;
         this.nightDay = isNight ? NightDay.Night : NightDay.Day;
@@ -31,9 +31,12 @@ export default class NewEntry extends React.Component {
         const onah = new Onah(this.jdate, this.nightDay),
             entry = new Entry(onah);
         DataUtils.EntryToDatabase(entry).then(() => {
-            this.appData.EntryList.add(entry);
-            this.appData.EntryList.calulateHaflagas();
-            this.navigate('Entries', { appData: this.appData });
+            const appData = this.state.appData,
+                entryList = appData.EntryList;
+            entryList.add(entry);
+            entryList.calulateHaflagas();
+            this.setState({ appData: appData });
+            this.navigate('Entries', { appData: this.state.appData });
         }
         ).catch(error => {
             console.warn('Error trying to add entry to the database.');
