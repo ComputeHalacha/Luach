@@ -30,9 +30,9 @@ export default class jDate {
     *  new jDate(jewishYear, jewishMonth, jewishDay, absoluteDate) - Most efficient constructor. Needs no calculations at all.
     *  new jDate( { year: 5776, month: 4, day: 5, abs: 122548708 } ) - same as new jDate(jewishYear, jewishMonth, jewishDay, absoluteDate)
     * @param {*} arg
-    * @param {number} month 
-    * @param {number} day 
-    * @param {number} abs 
+    * @param {number} month
+    * @param {number} day
+    * @param {number} abs
     */
     constructor(arg, month, day, abs) {
         //The day of the Jewish Month
@@ -62,7 +62,7 @@ export default class jDate {
             this.Abs = (arg.length > 3 && arg[3]) || jDate.absJd(this.Year, this.Month, this.Day);
         }
         else if (isString(arg)) {
-            var d = new Date(arg);
+            const d = new Date(arg);
             if (isValidDate(d)) {
                 this.fromAbs(jDate.absSd(d));
             }
@@ -105,7 +105,7 @@ export default class jDate {
     /**Returns a valid javascript Date object that represents the Gregorian date
     that starts at midnight of the current Jewish date.*/
     getDate() {
-        var dt = new Date(2000, 0, 1); // 1/1/2000 is absolute date 730120
+        const dt = new Date(2000, 0, 1); // 1/1/2000 is absolute date 730120
         dt.setDate((this.Abs - 730120) + 1);
         return dt;
     }
@@ -123,12 +123,12 @@ export default class jDate {
     }
     /**Returns a new Jewish date represented by adding the given number of Jewish Months to the current Jewish date.*/
     addMonths(months) {
-        var year = this.Year,
+        let year = this.Year,
             month = this.Month,
             day = this.Day,
             miy = jDate.monthsJYear(year);
 
-        for (var i = 0; i < Math.abs(months); i++) {
+        for (let i = 0; i < Math.abs(months); i++) {
             if (months > 0) {
                 month += 1;
                 if (month > miy) {
@@ -155,7 +155,7 @@ export default class jDate {
 
     /**Returns a new Jewish date represented by adding the given number of Jewish Years to the current Jewish date.*/
     addYears(years) {
-        var year = this.Year + years,
+        let year = this.Year + years,
             month = this.Month,
             day = this.Day;
 
@@ -188,7 +188,7 @@ export default class jDate {
      *
      * If the given date is before this one, the number will be negative.*/
     diffMonths(jd) {
-        var month = jd.Month,
+        let month = jd.Month,
             year = jd.Year,
             months = 0;
 
@@ -248,7 +248,7 @@ export default class jDate {
 
     /**Gets the day of the omer for the current Jewish date. If the date is not during sefira, 0 is returned.*/
     getDayOfOmer() {
-        var dayOfOmer = 0;
+        let dayOfOmer = 0;
         if ((this.Month == 1 && this.Day > 15) || this.Month == 2 || (this.Month == 3 && this.Day < 6)) {
             dayOfOmer = this.diffDays(new jDate(this.Year, 1, 15));
         }
@@ -262,7 +262,7 @@ export default class jDate {
 
     /**Is the current Jewish Date the day before a yomtov that contains a Friday?*/
     hasEiruvTavshilin(israel) {
-        var dow = this.getDayOfWeek();
+        let dow = this.getDayOfWeek();
         //No Eiruv Tavshilin ever on Sunday, Monday, Tuesday, Friday or Shabbos
         return (!has(dow, 0, 1, 2, 5, 6)) &&
             //Erev Yomtov (we already ruled out Erev Shabbos)
@@ -391,7 +391,7 @@ export default class jDate {
     /**Calculate the Jewish year, month and day for the given absolute date.*/
     static fromAbs(absDay) {
         //To save on calculations, start with a few years before date
-        var year = 3761 + parseInt(absDay / (absDay > 0 ? 366 : 300)),
+        let year = 3761 + parseInt(absDay / (absDay > 0 ? 366 : 300)),
             month,
             day;
 
@@ -412,11 +412,11 @@ export default class jDate {
 
     /**Gets the absolute date of the given javascript Date object.*/
     static absSd(date) {
-        var year = date.getFullYear(),
+        let year = date.getFullYear(),
             month = date.getMonth() + 1,
             numberOfDays = date.getDate(); // days this month
         // add days in prior months this year
-        for (var i = month - 1; i > 0; i--) {
+        for (let i = month - 1; i > 0; i--) {
             numberOfDays += jDate.daysSMonth(i, year);
         }
 
@@ -429,9 +429,9 @@ export default class jDate {
 
     /**Calculate the absolute date for the given Jewish Date.*/
     static absJd(year, month, day) {
-        var dayInYear = day; // Days so far this month.
+        let dayInYear = day; // Days so far this month.
         if (month < 7) { // Before Tishrei, so add days in prior months this year before and after Nissan.
-            var m = 7;
+            let m = 7;
             while (m <= (jDate.monthsJYear(year))) {
                 dayInYear += jDate.daysJMonth(year, m);
                 m++;
@@ -443,7 +443,7 @@ export default class jDate {
             }
         }
         else { // Add days in prior months this year
-            var m = 7;
+            let m = 7;
             while (m < month) {
                 dayInYear += jDate.daysJMonth(year, m);
                 m++;
@@ -490,13 +490,13 @@ export default class jDate {
     static tDays(year) {
         /*As this function is called many times, often on the same year for all types of calculations,
         we save a list of years with their elapsed values.*/
-        var cached = yearCache.find(y => y.year === year);
+        const cached = yearCache.find(y => y.year === year);
         //If this year was already calculated and cached, then we return the cached value.
         if (cached) {
             return cached.elapsed;
         }
 
-        var months = parseInt((235 * parseInt((year - 1) / 19)) + // Leap months this cycle
+        let months = parseInt((235 * parseInt((year - 1) / 19)) + // Leap months this cycle
             (12 * ((year - 1) % 19)) +                        // Regular months in this cycle.
             (7 * ((year - 1) % 19) + 1) / 19),                // Months in complete cycles so far.
             parts = 204 + 793 * (months % 1080),
@@ -568,7 +568,7 @@ export default class jDate {
 
     /**Gets an Array[String] of holidays, fasts and any other special specifications for the given Jewish date.*/
     static getHoldidays(jd, israel, hebrew) {
-        var list = [],
+        const list = [],
             jYear = jd.Year,
             jMonth = jd.Month,
             jDay = jd.Day,
@@ -611,17 +611,17 @@ export default class jDate {
                 list.push(!hebrew ? 'Shabbos Mevarchim' : 'מברכים החודש');
         }
         if (jDay === 30) {
-            var monthIndex = (jMonth === 12 && !isLeapYear) || jMonth === 13 ? 1 : jMonth + 1;
+            const monthIndex = (jMonth === 12 && !isLeapYear) || jMonth === 13 ? 1 : jMonth + 1;
             list.push(!hebrew ? 'Rosh Chodesh ' + Utils.jMonthsEng[monthIndex] : 'ראש חודש ' + Utils.jMonthsHeb[monthIndex]);
         } else if (jDay === 1 && jMonth != 7) {
             list.push(!hebrew ? 'Rosh Chodesh ' + Utils.jMonthsEng[jMonth] : 'ראש חודש ' + Utils.jMonthsHeb[jMonth]);
         }
         //V'sain Tal U'Matar in Chutz La'aretz is according to the secular date
         if (dayOfWeek !== 6 && (!israel) && secDate.getMonth() == 11) {
-            var sday = secDate.getDate();
+            const sday = secDate.getDate();
             //The three possible dates for starting vt"u are the 5th, 6th and 7th of December
             if (has(sday, 5, 6, 7)) {
-                var nextYearIsLeap = jDate.isJdLeapY(jYear + 1);
+                const nextYearIsLeap = jDate.isJdLeapY(jYear + 1);
                 //If next year is not a leap year, then vst"u starts on the 5th.
                 //If next year is a leap year than vst"u starts on the 6th.
                 //If the 5th or 6th were shabbos than vst"u starts on Sunday.
@@ -802,7 +802,7 @@ export default class jDate {
         }
         //If it is during Sefiras Ha'omer
         if ((jMonth === 1 && jDay > 15) || jMonth === 2 || (jMonth === 3 && jDay < 6)) {
-            var dayOfSefirah = jd.getDayOfOmer();
+            const dayOfSefirah = jd.getDayOfOmer();
             if (dayOfSefirah > 0) {
                 list.push(!hebrew ? 'Sefiras Ha\'omer - Day ' + dayOfSefirah.toString() : 'ספירת העומר - יום ' + dayOfSefirah.toString());
             }

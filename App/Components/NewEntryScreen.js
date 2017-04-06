@@ -1,41 +1,47 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { ScrollView, View, StyleSheet, Text, Button, Picker } from 'react-native';
 import Entry from '../Code/Chashavshavon/Entry';
 import NightDay from '../Code/Chashavshavon/NightDay';
-import JDate from '../Code/JCal/jDate';
 import Utils from '../Code/JCal/Utils';
 import Location from '../Code/JCal/Location';
 import Onah from '../Code/Chashavshavon/Onah';
 import DataUtils from '../Code/Data/DataUtils';
 
 export default class NewEntry extends React.Component {
+    static navigationOptions = {
+        title: 'New Entry'
+    };
+
     constructor(props) {
         super(props);
-
-        const dt = new Date(),
-            jd = new JDate(dt),
-            shkia = jd.getSunriseSunset(this.props.location || Location.getJerusalem()).sunset(),
+        const navigation = this.props.navigation,
+            { jdate, location, appData } = navigation.state.params,
+            dt = new Date(),
+            shkia = jdate.getSunriseSunset(location || Location.getJerusalem()).sunset,
             currTime = { hour: dt.getHours(), minute: dt.getMinutes() },
             isNight = Utils.totalMinutes(Utils.timeDiff(currTime, shkia)) >= 0;
 
-        this.day = jd.Day;
-        this.month = jd.Month;
-        this.year = jd.Year;
+        this.appData = appData;
+        this.jdate = jdate,
+            this.location = location;
         this.nightDay = isNight ? NightDay.Night : NightDay.Day;
+        this.navigate = navigation.navigate;
     }
     addEntry() {
-        const jdate = new JDate(this.year, this.month, this.day),
-            onah = new Onah(jdate, this.nightDay),
+        const onah = new Onah(this.jdate, this.nightDay),
             entry = new Entry(onah);
-        DataUtils.EntryToDatabase(entry).then(() =>
-            this.props.afterAdd(entry)
+        DataUtils.EntryToDatabase(entry).then(() => {
+            this.appData.EntryList.add(entry);
+            this.appData.EntryList.calulateHaflagas();
+            this.navigate('Entries', { appData: this.appData });
+        }
         ).catch(error => {
             console.warn('Error trying to add entry to the database.');
             console.error(error);
         });
     }
     render() {
-        const lastYear = this.year - 1,
+        const lastYear = this.jdate.Year - 1,
             twoYearsBack = lastYear - 1,
             daysOfMonth = [];
         for (let i = 1; i < 31; i++) {
@@ -46,8 +52,8 @@ export default class NewEntry extends React.Component {
             <View style={styles.formRow}>
                 <Text style={styles.label}>Day</Text>
                 <Picker style={styles.picker}
-                    selectedValue={this.day}
-                    onValueChange={value => this.day = value}>
+                    selectedValue={this.jdate.Day}
+                    onValueChange={value => this.jdate.Day = value}>
                     {daysOfMonth.map(d =>
                         <Picker.Item label={d.toString()} value={d} key={d} />
                     )}
@@ -56,8 +62,8 @@ export default class NewEntry extends React.Component {
             <View style={styles.formRow}>
                 <Text style={styles.label}>Month</Text>
                 <Picker style={styles.picker}
-                    selectedValue={this.month}
-                    onValueChange={value => this.month = value}>
+                    selectedValue={this.jdate.Month}
+                    onValueChange={value => this.jdate.Month = value}>
                     {Utils.jMonthsEng.map((m, i) =>
                         <Picker.Item label={m || 'Choose a Month'} value={i} key={i} />
                     )}
@@ -66,9 +72,9 @@ export default class NewEntry extends React.Component {
             <View style={styles.formRow}>
                 <Text style={styles.label}>Year</Text>
                 <Picker style={styles.picker}
-                    selectedValue={this.year}
-                    onValueChange={value => this.year = value}>
-                    <Picker.Item label={this.year.toString()} value={this.year} key={this.year} />
+                    selectedValue={this.jdate.Year}
+                    onValueChange={value => this.jdate.Year = value}>
+                    <Picker.Item label={this.jdate.Year.toString()} value={this.jdate.Year} key={this.jdate.Year} />
                     <Picker.Item label={lastYear.toString()} value={lastYear} key={lastYear} />
                     <Picker.Item label={twoYearsBack.toString()} value={twoYearsBack} key={twoYearsBack} />
                 </Picker>
@@ -84,7 +90,7 @@ export default class NewEntry extends React.Component {
             </View>
             <Text>{'\n'}</Text>
             <View style={styles.formRow}>
-                <Button title='Add Entry' onPress={this.addEntry} />
+                <Button title='Add Entry' onPress={this.addEntry.bind(this)} />
             </View>
         </ScrollView>;
     }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text } from 'react-native';
-import { Grid, Col, Row } from 'react-native-elements/src';
+import { Grid, Col, Row } from 'react-native-elements';
 
 export default class MonthView extends Component {
     render() {

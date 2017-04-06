@@ -22,7 +22,7 @@ export default class ProblemOnah extends Onah {
      * @param {*} [ProblemOnah]
      */
     static getProbsForDate(jdate, probOnahList) {
-        return (probOnahList && probOnahList.length && probOnahList.filter(po =>
-            po.jdate.Abs === jdate.Abs) || []);
+        return probOnahList && probOnahList.length && probOnahList.filter(po =>
+            po.jdate.Abs === jdate.Abs);
     }
 }

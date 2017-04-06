@@ -3,12 +3,17 @@ import { ScrollView, View, StyleSheet, Text, Picker, Switch } from 'react-native
 import Location from '../Code/JCal/Location';
 import { setDefault } from '../Code/GeneralUtils';
 
-export default class ChangeSettings extends Component {
+export default class SettingsScreen extends Component {
+    static navigationOptions = {
+        title: 'Settings',
+    };
     constructor(props) {
         super(props);
+        const { params } = this.props.navigation.state,
+            appData = params.appData;
         this.state = {
-            settings: {},
-            locations: []
+            settings: appData.Settings || {},
+            locations: appData.Locations || []
         };
     }
     update(name, value) {

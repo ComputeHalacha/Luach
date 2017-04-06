@@ -221,8 +221,8 @@ export default class DataUtils {
     }
     /**
      * Executes sql on the database. promise resolves with an object { list: ResultsArray, id: LastInsertedRowId }
-     * @param {*} sql 
-     * @param {*} values 
+     * @param {*} sql
+     * @param {*} values
      */
     static async _executeSql(sql, values) {
         const resultsList = [];
