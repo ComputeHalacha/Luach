@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ListView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, ListView } from 'react-native';
 import { List, ListItem } from 'react-native-elements';
 import SingleDayDisplay from './SingleDayDisplay';
 import jDate from '../Code/JCal/jDate';
@@ -26,7 +26,10 @@ export default class HomeScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        const daysList = [HomeScreen.today.addDays(-1), HomeScreen.today, HomeScreen.today.addDays(1)];
+        const daysList = [
+            HomeScreen.today.addDays(-1),
+            HomeScreen.today,
+            HomeScreen.today.addDays(1)];
         this.state = {
             daysList: daysList,
             appData: null,
@@ -40,6 +43,7 @@ export default class HomeScreen extends React.Component {
                 currLocation: ad.Settings.location
             });
             this._listView.scrollTo({ x: 260, y: 0 });
+
         });
         this.navigate = this.props.navigation.navigate;
     }
@@ -108,13 +112,16 @@ export default class HomeScreen extends React.Component {
         });
     }
     listScroll() {
-        if (this._listView.scrollProperties.offset < 200) {
+        const { offset } = this._listView.scrollProperties;
+        if (offset < 40) {
             const daysList = this.state.daysList;
             daysList.unshift(daysList[0].addDays(-1));
             this.setState({
                 daysList: daysList,
                 dataSource: ds.cloneWithRows(daysList)
-            });
+            }, () =>
+                    this._listView.scrollTo({ x: offset + 260, y: 0, animate: false })
+            );
         }
     }
     renderDay(day) {
@@ -125,10 +132,6 @@ export default class HomeScreen extends React.Component {
             isToday={HomeScreen.today.Abs === day.Abs}
             appData={this.state.appData}
             navigate={this.navigate} />);
-    }
-    componentDidMount() {
-        console.log('IN componentDidMount');
-
     }
     render() {
         const menuList = [
@@ -155,33 +158,37 @@ export default class HomeScreen extends React.Component {
 
         ];
         return (
-            <View style={{ flex: 1 }}>
+            <ScrollView style={{ flex: 1 }}>
                 <View contentContainerStyle={styles.container}>
                     <ListView
                         ref={listView => this._listView = listView}
                         horizontal
                         initialListSize={3}
                         pageSize={3}
+                        removeClippedSubviews
                         renderRow={this.renderDay.bind(this)}
                         dataSource={this.state.dataSource}
                         onEndReached={this.addDays.bind(this)}
-                        onScroll={this.listScroll.bind(this)} />
+                        onScroll={this.listScroll.bind(this)}
+                    />
                 </View>
-                <List>
-                    {menuList.map((item, i) => (
-                        <ListItem
-                            key={i}
-                            title={item.title}
-                            leftIcon={{ name: item.icon }}
-                            onPress={item.onPress}
-                            containerStyle={{}} />
-                    ))}
-                </List>
+                <ScrollView>
+                    <List>
+                        {menuList.map((item, i) => (
+                            <ListItem
+                                key={i}
+                                title={item.title}
+                                leftIcon={{ name: item.icon }}
+                                onPress={item.onPress}
+                                containerStyle={{}} />
+                        ))}
+                    </List>
+                </ScrollView>
                 <View style={styles.footer}>
                     <Text style={styles.footerText}>
                         DO NOT depend halachically upon this application</Text>
                 </View>
-            </View>);
+            </ScrollView>);
     }
 }
 

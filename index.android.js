@@ -7,7 +7,7 @@ import KavuahScreen from './App/Components/KavuahScreen';
 import EntryScreen from './App/Components/EntryScreen';
 import FlaggedDatesScreen from './App/Components/FlaggedDatesScreen';
 import NewEntryScreen from './App/Components/NewEntryScreen';
-import TEST from './App/Components/TEST';
+/*import TEST from './App/Components/TEST';*/
 
 AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
     /*TEST:{screen: TEST},*/

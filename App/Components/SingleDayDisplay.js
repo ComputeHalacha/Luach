@@ -34,7 +34,7 @@ export default class SingleDayDisplay extends Component {
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
             probs = this.props.problems,
             problemText = probs && probs.length ?
-                probs.map(po => <Prob text={po.toString()} />) :
+                probs.map((po, i) => <Prob key={i} text={po.toString()} />) :
                 (<Prob text='There are no Flagged Dates.' />),
             todayText = isToday ? (<Text style={styles.todayText}>TODAY</Text>) : null;
 
@@ -68,7 +68,9 @@ export default class SingleDayDisplay extends Component {
 
 const styles = StyleSheet.create({
     container: {
+        width: 260,
         flex: 1,
+        flexWrap: 'wrap',
         borderWidth: 1,
         borderColor: '#777',
         borderRadius: 6,
