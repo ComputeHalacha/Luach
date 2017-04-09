@@ -1,6 +1,4 @@
-"use strict";
-
-import React, { Component, PropTypes } from "react";
+import React, { Component, PropTypes } from 'react';
 import {
     Dimensions,
     StyleSheet,
@@ -8,20 +6,20 @@ import {
     ScrollView,
     Text,
     TouchableWithoutFeedback
-} from "react-native";
+} from 'react-native';
 
-import styles from "./styles";
+import styles from './styles.js';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 
 export default class Carousel extends Component {
 
-    displayName = "Carousel";
+    displayName = 'Carousel';
 
     static propTypes = {
         pageStyle: PropTypes.object,
         pageWidth: PropTypes.number,
-        children: PropTypes.oneOfType([ PropTypes.arrayOf(PropTypes.node), PropTypes.node ]).isRequired,
+        children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
         initialPage: PropTypes.number,
         containerStyle: PropTypes.object,
         noItemsText: PropTypes.string,
@@ -38,7 +36,7 @@ export default class Carousel extends Component {
         containerStyle: null,
         pageWidth: width - 80,
         sneak: 20,
-        noItemsText: "Sorry, there are currently \n no items available",
+        noItemsText: 'Sorry, there are currently \n no items available',
         transitionDelay: 0,
         currentPage: 0,
         swipeThreshold: 0.5
@@ -67,11 +65,11 @@ export default class Carousel extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        
+
         this.setState({
             currentPage: nextProps.currentPage
         });
-        
+
         this._calculateGap(nextProps);
     }
 
@@ -136,7 +134,7 @@ export default class Carousel extends Component {
     _calculateGap(props) {
         const { sneak, pageWidth } = props;
         if (pageWidth > width) {
-            throw new Error("invalid pageWidth");
+            throw new Error('invalid pageWidth');
         }
         /*
          ------------
@@ -152,7 +150,7 @@ export default class Carousel extends Component {
 
         */
         const gap = (width - (2 * sneak) - pageWidth) / 2;
-        this.setState({gap: gap});
+        this.setState({ gap: gap });
     }
 
     _handleScrollEnd(e) {
@@ -173,12 +171,12 @@ export default class Carousel extends Component {
         }
 
         if (newPage !== currentPage) {
-            this.setState({currentPage: newPage});
+            this.setState({ currentPage: newPage });
         } else {
             this._resetScrollPosition();
         }
 
-    };
+    }
 
     _onPageChange(position) {
         if (this.props.onPageChange) {
@@ -197,7 +195,7 @@ export default class Carousel extends Component {
             },
             page: {
                 width: pageWidth,
-                justifyContent: "center",
+                justifyContent: 'center',
                 marginLeft: gap / 2,
                 marginRight: gap / 2
             }
@@ -208,26 +206,26 @@ export default class Carousel extends Component {
         if (!this.props.children) {
             body = (
                 <TouchableWithoutFeedback>
-                    <View style={ [ styles.page, computedStyles.page, this.props.pageStyle ] }>
-                        <Text style={ styles.noItemsText }>
-                            { this.props.noItemsText }
+                    <View style={[styles.page, computedStyles.page, this.props.pageStyle]}>
+                        <Text style={styles.noItemsText}>
+                            {this.props.noItemsText}
                         </Text>
                     </View>
                 </TouchableWithoutFeedback>
             );
         }
         else {
-            const children = Array.isArray(this.props.children) ? this.props.children : [this.props.children]
+            const children = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
             body = children.map((c, index) => {
                 return (
                     <TouchableWithoutFeedback
-                        key={ index }
-                        onPress={ () => this.setState({currentPage: index}) }
+                        key={index}
+                        onPress={() => this.setState({ currentPage: index })}
                     >
                         <View
-                            style={ [ styles.page, computedStyles.page, this.props.pageStyle ] }
+                            style={[styles.page, computedStyles.page, this.props.pageStyle]}
                         >
-                            { c }
+                            {c}
                         </View>
                     </TouchableWithoutFeedback>
                 );
@@ -235,18 +233,18 @@ export default class Carousel extends Component {
         }
 
         return (
-            <View style={[ styles.container, this.props.containerStyle ]}>
+            <View style={[styles.container, this.props.containerStyle]}>
                 <ScrollView
-                    automaticallyAdjustContentInsets={ false }
+                    automaticallyAdjustContentInsets={false}
                     bounces
-                    contentContainerStyle={ [ computedStyles.scrollView ] }
-                    decelerationRate={ 0.9 }
+                    contentContainerStyle={[computedStyles.scrollView]}
+                    decelerationRate={0.9}
                     horizontal
-                    onScrollEndDrag={ this._handleScrollEnd }
-                    ref={ c => this.scrollView = c }
-                    showsHorizontalScrollIndicator={ false }
+                    onScrollEndDrag={this._handleScrollEnd}
+                    ref={c => this.scrollView = c}
+                    showsHorizontalScrollIndicator={false}
                 >
-                    { body }
+                    {body}
                 </ScrollView>
             </View>
         );

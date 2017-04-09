@@ -9,8 +9,8 @@ export default class SettingsScreen extends Component {
     };
     constructor(props) {
         super(props);
-        const { params } = this.props.navigation.state,
-            appData = params.appData;
+        const { appData, onUpdate } = this.props.navigation.state.params;
+        this.onUpdate = onUpdate;
         this.state = {
             settings: appData.Settings || {},
             locations: appData.Locations || []
@@ -19,7 +19,9 @@ export default class SettingsScreen extends Component {
     update(name, value) {
         const sets = this.state.settings;
         sets[name] = value;
+        sets.save();
         this.setState({ settings: sets });
+        this.onUpdate(sets);
     }
     render() {
         const nums = [];

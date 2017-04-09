@@ -2,13 +2,11 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
-import JDate from '../Code/JCal/jDate';
-import Location from '../Code/JCal/Location';
 
 const Prob = props =>
     (<View style={styles.probView}>
-        <Icon name='flag' />
-        <Text style={styles.probList}>{props.text}</Text>
+        <Icon name='flag' color={props.real ? '#f00' : '#888'} />
+        <Text style={[styles.probList, { color: props.real ? '#f00' : '#888' }]}>{props.text}</Text>
     </View>);
 
 /**
@@ -34,7 +32,7 @@ export default class SingleDayDisplay extends Component {
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
             probs = this.props.problems,
             problemText = probs && probs.length ?
-                probs.map((po, i) => <Prob key={i} text={po.toString()} />) :
+                probs.map((po, i) => <Prob key={i} real={true} text={po.toString()} />) :
                 (<Prob text='There are no Flagged Dates.' />),
             todayText = isToday ? (<Text style={styles.todayText}>TODAY</Text>) : null;
 
@@ -68,7 +66,6 @@ export default class SingleDayDisplay extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        width: 260,
         flex: 1,
         flexWrap: 'wrap',
         borderWidth: 1,

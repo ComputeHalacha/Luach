@@ -100,7 +100,7 @@ export default class EntryList {
             }
             else {
                 const prev = this.list[i - 1];
-                entry.haflaga = prev.date.diffDays(entry.date);
+                entry.haflaga = prev.date.diffDays(entry.date) + 1;
             }
         }
     }

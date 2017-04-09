@@ -1,36 +1,51 @@
 import React, { Component } from 'react';
-import { ScrollView, View, StyleSheet, Text, Picker, Switch } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
+import { List, ListItem, Icon } from 'react-native-elements';
+import JDate from '../Code/JCal/jDate';
+
 
 export default class EntryScreen extends Component {
     static navigationOptions = {
         title: 'Entries',
+        right: <Icon name='add-circle' onPress={this.newEntry} />,
     };
     constructor(props) {
         super(props);
 
         this.navigate = this.props.navigation.navigate;
 
-        const { params } = this.props.navigation.state,
-            appData = params.appData;
+        const { appData, currLocation } = this.props.navigation.state.params;
+
+        this.appData = appData;
+        this.currLocation = currLocation;
         this.state = {
             entryList: appData.EntryList
         };
+        this.newEntry.bind(this);
+    }
+    newEntry() {
+        this.navigate('NewEntry', {
+            jdate: new JDate(),
+            location: this.currLocation,
+            appData: this.appData
+        });
     }
     render() {
         return (
             <ScrollView style={styles.container}>
-                <Text style={styles.header}>Entries</Text>
+                <Icon name='add-circle' onPress={this.newEntry.bind(this)} />
+                <List>
+                    {this.state.entryList.list.map(entry => (
+                        <ListItem
+                            key={entry.entryId}
+                            title={entry.toString()}
+                            leftIcon={{ name: 'list' }} />
+                    ))}
+                </List>
             </ScrollView>);
     }
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#ffffff' },
-    header: {
-        backgroundColor: '#fe9', color: '#977', padding: 5, flex: 1, textAlign: 'center', fontWeight: 'bold', fontSize: 14
-    },
-    formRow: { flex: 1, flexDirection: 'column' },
-    label: { margin: 0, backgroundColor: '#f5f5e8', padding: 10 },
-    picker: { margin: 0 },
-    switch: { margin: 5, alignSelf: 'flex-start' }
+    container: { flex: 1, backgroundColor: '#ffffff' }
 });
