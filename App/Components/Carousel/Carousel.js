@@ -61,7 +61,7 @@ export default class Carousel extends Component {
     }
 
     componentDidMount() {
-        this._resetScrollPosition(false);
+        this._resetScrollPosition();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -109,7 +109,7 @@ export default class Carousel extends Component {
         return React.Children.count(this.props.children);
     }
 
-    _resetScrollPosition(animated = true) {
+    _resetScrollPosition() {
         // in android, you can't scroll directly in componentDidMount
         // (http://stackoverflow.com/questions/33208477/react-native-android-scrollview-scrollto-not-working)
         // however this doesn't work in android for some reason:
@@ -125,7 +125,7 @@ export default class Carousel extends Component {
             this.scrollView.scrollTo({
                 x: this._getPageScrollX(this.state.currentPage),
                 y: 0,
-                animated,
+                animated: false,
             });
             this._scrollTimeout = null;
         }, this.props.transitionDelay);
