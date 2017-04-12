@@ -1,9 +1,19 @@
-import KavuahType from './KavuahType';
 import Utils from '../JCal/Utils';
 import NightDay from './NightDay';
 import { setDefault } from '../GeneralUtils';
 
-export default class Kavuah {
+class KavuahType {
+    static get Haflagah() { return 0; }
+    static get DayOfMonth() { return 1; }
+    static get DayOfWeek() { return 2; }
+    static get Sirug() { return 3; }
+    static get DilugHaflaga() { return 4; }
+    static get DilugDayOfMonth() { return 5; }
+    static get HaflagaMaayanPasuach() { return 6; }
+    static get DayOfMonthMaayanPasuach() { return 7; }
+}
+
+class Kavuah {
     constructor(kavuaType, settingEntry, specialNumber, cancelsOnahBeinunis, active, ignore, kavuahId) {
         this.kavuaType = kavuaType;
         //The third entry  - the one that created the chazakah.
@@ -205,3 +215,5 @@ export default class Kavuah {
         return list;
     }
 }
+
+export {KavuahType, Kavuah};

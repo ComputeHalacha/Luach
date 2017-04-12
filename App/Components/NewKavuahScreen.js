@@ -1,8 +1,7 @@
 import React from 'react';
 import { ScrollView, View, StyleSheet, Text, Picker, Switch } from 'react-native';
 import { Button } from 'react-native-elements';
-import KavuahType from '../Code/Chashavshavon/KavuahType';
-import Kavuah from '../Code/Chashavshavon/Kavuah';
+import {KavuahType, Kavuah} from '../Code/Chashavshavon/Kavuah';
 import DataUtils from '../Code/Data/DataUtils';
 
 export default class NewKavuah extends React.Component {

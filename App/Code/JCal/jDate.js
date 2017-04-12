@@ -105,9 +105,7 @@ export default class jDate {
     /**Returns a valid javascript Date object that represents the Gregorian date
     that starts at midnight of the current Jewish date.*/
     getDate() {
-        const dt = new Date(2000, 0, 1); // 1/1/2000 is absolute date 730120
-        dt.setDate((this.Abs - 730120) + 1);
-        return dt;
+        return jDate.sdFromAbs(this.Abs);
     }
     /**The day of the week for the current Jewish date. Sunday is 0 and Shabbos is 6.*/
     getDayOfWeek() {
@@ -235,6 +233,13 @@ export default class jDate {
             'he ' +
             Utils.toSuffixed(this.Day) + ' of ' +
             Utils.jMonthsEng[this.Month] + ' ' +
+            this.Year.toString();
+    }
+
+    toShortString(showDow) {
+        return ((showDow ? Utils.dowEng[this.getDayOfWeek()] + ' ' : '') +
+            Utils.jMonthsEng[this.Month] + ' ' +
+            this.Day.toString()) + ', ' +
             this.Year.toString();
     }
 
@@ -537,6 +542,15 @@ export default class jDate {
         }
         // Days elapsed before absolute date 1. -  Days in prior years.
         return dayInYear + (jDate.tDays(year) + (-1373429));
+    }
+
+    /**
+     * Gets a javascript date from an absolute date
+     */
+    static sdFromAbs(abs) {
+        const dt = new Date(2000, 0, 1); // 1/1/2000 is absolute date 730120
+        dt.setDate((abs - 730120) + 1);
+        return dt;
     }
 
     /**The number of days in the given Gregorian Month.

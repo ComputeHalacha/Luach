@@ -4,8 +4,7 @@ import Entry from './Entry';
 import Settings from '../Settings';
 import NightDay from './NightDay';
 import ProblemOnah from './ProblemOnah';
-import KavuahType from './KavuahType';
-import Kavuah from './Kavuah';
+import {KavuahType, Kavuah} from './Kavuah';
 
 const today = new jDate();
 

@@ -3,6 +3,7 @@ import { isNumber } from '../GeneralUtils';
 import jDate from '../JCal/jDate';
 import Settings from '../Settings';
 import Location from '../JCal/Location';
+import { UserOccasionType, UserOccasion } from '../JCal/UserOccasion';
 import Entry from '../Chashavshavon/Entry';
 import EntryList from '../Chashavshavon/EntryList';
 import Onah from '../Chashavshavon/Onah';
@@ -101,6 +102,60 @@ export default class DataUtils {
             throw 'Search parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
         }
         return await DataUtils._queryLocations('name || IFNULL(heb, \'\') LIKE ?', [`%${search}%`]);
+    }
+    static async GetAllUserOccasions() {
+        let list = [];
+        await DataUtils._executeSql('SELECT * from occasions')
+            .then(results => {
+                list = results.list.map(o => new UserOccasion(o.title,
+                    o.type,
+                    o.dateAbs,
+                    o.comments,
+                    o.occasionId));
+            })
+            .catch(error => {
+                console.warn('Error trying to get all occasions from the database.');
+                console.error(error);
+            });
+        return list;
+    }
+    static async UserOccasionToDatabase(occasion) {
+        const params = [
+            occasion.title,
+            occasion.occasionType,
+            occasion.dateAbs,
+            occasion.comments
+        ];
+        if (occasion.hasId) {
+            await DataUtils._executeSql(`UPDATE occasions SET
+                    title=?,
+                    type=?,
+                    dateAbs=?,
+                    comments=?
+                WHERE occasionId=?`,
+                [...params, occasion.occasionId])
+                .then(() => {
+                    console.log(`Updated Occasion Id ${occasion.occasionId.toString()}`);
+                })
+                .catch(error => {
+                    console.warn(`Error trying to update Occasion Id ${occasion.occasionId.toString()} to the database.`);
+                    console.error(error);
+                });
+        }
+        else {
+            await DataUtils._executeSql(`INSERT INTO occasions (
+                        title,
+                        type,
+                        dateAbs,
+                        comments)
+                    VALUES (?,?,?,?)`,
+                [params])
+                .then(results => occasion.occasionId = results.id)
+                .catch(error => {
+                    console.warn('Error trying to insert occasion into the database.');
+                    console.error(error);
+                });
+        }
     }
     /**Gets all Kavuahs from the database.
      *
