@@ -7,6 +7,7 @@ import jDate from '../Code/JCal/jDate';
 import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
 import ProblemOnahs from '../Code/Chashavshavon/ProblemOnah';
+import { UserOccasionType, UserOccasion } from '../Code/JCal/UserOccasion';
 
 const { width } = Dimensions.get('window');
 
@@ -23,9 +24,9 @@ export default class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
         const daysList = [
-            { day: HomeScreen.today.addDays(-1), probs: [] },
-            { day: HomeScreen.today, probs: [] },
-            { day: HomeScreen.today.addDays(1), probs: [] }];
+            { day: HomeScreen.today.addDays(-1), probs: [], occasions: [] },
+            { day: HomeScreen.today, probs: [], occasions: [] },
+            { day: HomeScreen.today.addDays(1), probs: [], occasions: [] }];
         this.state = {
             daysList: daysList,
             appData: null,
@@ -34,16 +35,21 @@ export default class HomeScreen extends React.Component {
             pageNumber: 1
         };
         AppData.getAppData().then(ad => {
+            const allOccasions = ad.UserOccasions;
+            for (let day of daysList) {
+                day.occasions = UserOccasion.getOccasionsForDate(day.day, allOccasions);
+            }
             this.setState({
                 appData: ad,
+                daysList: daysList,
                 currLocation: ad.Settings.location
             });
         });
         this.navigate = this.props.navigation.navigate;
     }
     /**
-    * Recalculates the problem onahs for the state AppData object.
-    * This should be done after updating settings, entries or kavuahs.
+    * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
+    * This should be done after updating settings, occasions, entries or kavuahs.
     */
     updateAppData(newSettings) {
         const ad = this.state.appData;
@@ -58,11 +64,13 @@ export default class HomeScreen extends React.Component {
             probs = elist.getProblemOnahs(klist);
         ad.ProblemOnahs = probs;
 
-        //In case the problems have been changed, we need to update the days list
+        //In case the problems or occasions have been changed, we need to update the days list
         const daysList = this.state.daysList,
-            allProbs = this.state.appData.ProblemOnahs;
+            allProbs = this.state.appData.ProblemOnahs,
+            allOccasions = this.state.appData.UserOccasions;
         for (let day of daysList) {
             day.probs = ProblemOnahs.getProbsForDate(day.day, allProbs);
+            day.occasions = UserOccasion.getOccasionsForDate(day.day, allOccasions);
         }
 
         this.setState({
@@ -104,12 +112,13 @@ export default class HomeScreen extends React.Component {
         });
     }
     renderDay(singleDay) {
-        const { day, probs } = singleDay;
+        const { day, probs, occasions } = singleDay;
         return (<SingleDayDisplay
             key={day.Abs}
             jdate={day}
             location={this.state.currLocation || Location.getJerusalem()}
             problems={probs}
+            occasions={occasions}
             isToday={HomeScreen.today.Abs === day.Abs}
             appData={this.state.appData}
             navigate={this.navigate} />);

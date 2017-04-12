@@ -51,6 +51,28 @@ class UserOccasion {
     get hasId() {
         return !!this.occasionId;
     }
+    static getOccasionsForDate(jdate, allOccasions) {
+        return allOccasions.filter(o => {
+            switch (o.occasionType) {
+                case UserOccasionType.OneTime:
+                    return o.dateAbs === jdate.Abs;
+                case UserOccasionType.HebrewDateRecurringYearly:
+                    return o.Month === jDate.Month && o.Day === jdate.Day;
+                case UserOccasionType.HebrewDateRecurringMonthly:
+                    return o.Day === jdate.Day;
+                case UserOccasionType.SecularDateRecurringYearly:
+                case UserOccasionType.SecularDateRecurringMonthly:
+                    const sdate1 = jdate.getDate(),
+                        sdate2 = o.getDate();
+                    if (o.occasionType === UserOccasionType.SecularDateRecurringYearly) {
+                        return sdate1.getMonth() === sdate2.getMonth() && sdate1.getDate() === sdate2.getDate();
+                    }
+                    else {
+                        return sdate1.getDate() === sdate2.getDate();
+                    }
+            }
+        });
+    }
 }
 
 export { UserOccasionType, UserOccasion };

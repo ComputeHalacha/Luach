@@ -38,6 +38,9 @@ export default class SingleDayDisplay extends Component {
             problemText = probs && probs.length ?
                 probs.map((po, i) => <Prob key={i} real={true} text={po.toString()} />) :
                 (<Prob text='There are no Flagged Dates.' />),
+            occasions = this.props.occasions,
+            occasionText = occasions && occasions.length ?
+                occasions.map((o, i) => <Text key={i}>{o.title}</Text>) : null,
             todayText = isToday ? (<Text style={styles.todayText}>TODAY</Text>) : null;
 
         return (
@@ -63,11 +66,14 @@ export default class SingleDayDisplay extends Component {
                         <Text>{'Sun Rises at ' + sunrise}</Text>
                         <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
                         <View>
+                            {occasionText}
+                        </View>
+                        <View>
                             {problemText}
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-                <Button icon={{ name: 'add' }} style={{width:80}} title='New Entry' borderRadius={20} onPress={this.newEntry.bind(this)} />
+                <Button icon={{ name: 'add' }} style={{ width: 80 }} title='New Entry' borderRadius={20} onPress={this.newEntry.bind(this)} />
             </View>
         );
     }
