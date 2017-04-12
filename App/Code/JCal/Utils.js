@@ -109,6 +109,7 @@ Utils.fixHourMinute = function (hm) {
     while (result.minute < 0) {
         result.minute += 60;
         result.hour--;
+
     }
     while (result.minute >= 60) {
         result.minute -= 60;
@@ -141,10 +142,13 @@ Utils.totalMinutes = function (time) {
     return time.hour * 60 + time.minutes;
 };
 
-//Returns the given time in a formatted string.
-//The argument needs to be an object in the format {hour : 23, minute :42 }
-//if army is falsey, the returned string will be: 11:42 PM otherwise it will be 23:42
-Utils.getTimeString = function (hm, army) {
+/** Returns the given time in a formatted string.
+ * The argument needs to be an object in the format {hour : 23, minute :42 }
+ * if army is falsey, the returned string will be: 11:42 PM otherwise it will be 23:42
+ * if roundUp is falsey the numbers will converted to a whole number by rounding down, otherwise, up. */
+Utils.getTimeString = function (hm, army, roundUp) {
+    const round = roundUp ? Math.ceil : Math.floor;
+    hm = { hour: round(hm.hour), minute: round(hm.minute) };
     if (army) {
         return (hm.hour.toString() + ':' +
             (hm.minute < 10 ? '0' + hm.minute.toString() : hm.minute.toString()));

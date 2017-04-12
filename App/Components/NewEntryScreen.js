@@ -1,5 +1,6 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text, Button, Picker } from 'react-native';
+import { ScrollView, View, StyleSheet, Text, Picker } from 'react-native';
+import { Button } from 'react-native-elements';
 import Entry from '../Code/Chashavshavon/Entry';
 import NightDay from '../Code/Chashavshavon/NightDay';
 import Utils from '../Code/JCal/Utils';

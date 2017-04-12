@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
 
@@ -20,6 +20,10 @@ export default class SingleDayDisplay extends Component {
         const { jdate, location, appData, navigate } = this.props;
         navigate('NewEntry', { jdate: jdate, location: location, appData: appData });
     }
+    showDateDetails() {
+        const { jdate, location, navigate } = this.props;
+        navigate('DateDetails', { jdate: jdate, location: location });
+    }
     render() {
         const { jdate, location, isToday } = this.props,
             sdate = jdate.getDate(),
@@ -37,28 +41,33 @@ export default class SingleDayDisplay extends Component {
             todayText = isToday ? (<Text style={styles.todayText}>TODAY</Text>) : null;
 
         return (
-            <View style={[styles.container, this.props.isToday ? { backgroundColor: '#eef' } : null]}>
-                <View style={{ flexDirection: 'row' }}>
-                    <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
-                    {todayText}
-                    <Text style={styles.dateNumHeb}>{Utils.toJNum(jdate.Day)}</Text>
-                </View>
-                <Text style={styles.date}>
-                    <Text style={styles.dateHeb}>
-                        {jdate.toString()}</Text>
-                    <Text>{'\n'}</Text>
-                    <Text style={styles.dateEng}>
-                        {Utils.toStringDate(sdate, true)}</Text>
-                </Text>
-                {dailyInfoText}
-                <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
-                <Text style={styles.location}>{'Zmanim for ' + location.Name}</Text>
-                <Text>{'Sun Rises at ' + sunrise}</Text>
-                <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
-                <View>
-                    {problemText}
-                </View>
-                <Button icon={{ name: 'add' }} title='New Entry' borderRadius={20} onPress={this.newEntry.bind(this)} />
+            <View
+                style={[styles.container, this.props.isToday ? { backgroundColor: '#eef' } : null]}>
+                <TouchableWithoutFeedback onPress={this.showDateDetails.bind(this)}>
+                    <View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
+                            {todayText}
+                            <Text style={styles.dateNumHeb}>{Utils.toJNum(jdate.Day)}</Text>
+                        </View>
+                        <Text style={styles.date}>
+                            <Text style={styles.dateHeb}>
+                                {jdate.toString()}</Text>
+                            <Text>{'\n'}</Text>
+                            <Text style={styles.dateEng}>
+                                {Utils.toStringDate(sdate, true)}</Text>
+                        </Text>
+                        {dailyInfoText}
+                        <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
+                        <Text style={styles.location}>{'Zmanim for ' + location.Name}</Text>
+                        <Text>{'Sun Rises at ' + sunrise}</Text>
+                        <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
+                        <View>
+                            {problemText}
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
+                <Button icon={{ name: 'add' }} style={{width:80}} title='New Entry' borderRadius={20} onPress={this.newEntry.bind(this)} />
             </View>
         );
     }

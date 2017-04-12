@@ -1,7 +1,7 @@
 import Utils from './Utils.js';
 import jDate from './jDate.js';
 
-"use strict";
+'use strict';
 /***********************************************************************************************************
  * Computes the Day Yomi for the given day.
  * Sample of use - to get todays daf:
@@ -93,17 +93,17 @@ Dafyomi.getDaf = function (jd) {
             blatt = (Dafyomi.masechtaList[j].daf + 1) - (total - dno);
             /* fiddle with the weird ones near the end */
             switch (count) {
-                case 36:
-                    blatt = blatt + 21;
-                    break;
-                case 37:
-                    blatt = blatt + 24;
-                    break;
-                case 38:
-                    blatt = blatt + 33;
-                    break;
-                default:
-                    break;
+            case 36:
+                blatt = blatt + 21;
+                break;
+            case 37:
+                blatt = blatt + 24;
+                break;
+            case 38:
+                blatt = blatt + 33;
+                break;
+            default:
+                break;
             }
             /* Bailout */
             j = 1 + dafcnt;
@@ -117,11 +117,11 @@ Dafyomi.getDaf = function (jd) {
 // Returns the name of the Masechta and daf number in English, For example: Sukkah, Daf 3
 Dafyomi.toString = function (jd) {
     var d = Dafyomi.getDaf(jd);
-    return d.masechet.eng + ", Daf " + d.daf.toString();
+    return d.masechet.eng + ', Daf ' + d.daf.toString();
 };
 
 //Returns the name of the Masechta and daf number in Hebrew. For example: 'סוכה דף כ.
 Dafyomi.toStringHeb = function (jd) {
     var d = Dafyomi.getDaf(jd);
-    return d.masechet.heb + " דף " + Utils.toJNum(d.masechet.daf);
-}
+    return d.masechet.heb + ' דף ' + Utils.toJNum(d.masechet.daf);
+};

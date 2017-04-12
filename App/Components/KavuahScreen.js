@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { ScrollView, View, StyleSheet, Text, Picker, Switch } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
+import { List, ListItem, Icon } from 'react-native-elements';
 
 export default class KavuahScreen extends Component {
     static navigationOptions = {
-        title: 'Kavuahs',
+        title: 'List of Kavuahs',
+        right: <Icon name='add-circle' onPress={this.newKavuah} />,
     };
     constructor(props) {
         super(props);
@@ -15,22 +17,28 @@ export default class KavuahScreen extends Component {
         this.state = {
             kavuahList: appData.KavuahList
         };
+
+    }
+    newKavuah() {
+        this.navigate('NewKavuah', {
+            appData: this.appData
+        });
     }
     render() {
         return (
             <ScrollView style={styles.container}>
-                <Text style={styles.header}>Kavuahs</Text>
+                <List>
+                    {this.state.kavuahList.map(kavuah => (
+                        <ListItem
+                            key={kavuah.kavuahId}
+                            title={kavuah.toString()}
+                            leftIcon={{ name: 'device-hub' }} />
+                    ))}
+                </List>
             </ScrollView>);
     }
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#ffffff' },
-    header: {
-        backgroundColor: '#fe9', color: '#977', padding: 5, flex: 1, textAlign: 'center', fontWeight: 'bold', fontSize: 14
-    },
-    formRow: { flex: 1, flexDirection: 'column' },
-    label: { margin: 0, backgroundColor: '#f5f5e8', padding: 10 },
-    picker: { margin: 0 },
-    switch: { margin: 5, alignSelf: 'flex-start' }
+    container: { flex: 1, backgroundColor: '#ffffff' }
 });

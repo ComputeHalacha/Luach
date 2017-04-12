@@ -127,7 +127,7 @@ export default class DataUtils {
         return list;
     }
     static async KavuahToDatabase(kavuah) {
-        if (!kavuah.settingEntry.hasId) {
+        if (!(kavuah.settingEntry && kavuah.settingEntry.hasId)) {
             throw 'A kavuah can not be saved to the database unless it\'s setting entry is already in the database.';
         }
         const params = [

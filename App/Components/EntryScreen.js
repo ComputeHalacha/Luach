@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 import { List, ListItem, Icon } from 'react-native-elements';
 import JDate from '../Code/JCal/jDate';
 
 
 export default class EntryScreen extends Component {
     static navigationOptions = {
-        title: 'Entries',
+        title: 'List of Entries',
         right: <Icon name='add-circle' onPress={this.newEntry} />,
     };
     constructor(props) {
@@ -30,16 +30,24 @@ export default class EntryScreen extends Component {
             appData: this.appData
         });
     }
+    newKavuah(entry)
+    {
+        this.navigate('NewKavuah', {
+            appData: this.appData,
+            settingEntry:entry
+        });
+    }
     render() {
         return (
             <ScrollView style={styles.container}>
-                <Icon name='add-circle' onPress={this.newEntry.bind(this)} />
+                <Text>To add a new Kavuah for any entry, do a long press on the Entry.</Text>
                 <List>
-                    {this.state.entryList.list.map(entry => (
+                    {this.state.entryList.descending.map(entry => (
                         <ListItem
                             key={entry.entryId}
                             title={entry.toString()}
-                            leftIcon={{ name: 'list' }} />
+                            leftIcon={{ name: 'list' }}
+                            onLongPress={() => this.newKavuah.bind(this)(entry)} />
                     ))}
                 </List>
             </ScrollView>);

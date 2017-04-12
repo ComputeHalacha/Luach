@@ -30,9 +30,30 @@ export default class Location {
         this.Longitude = longitude;
         this.UTCOffset = utcOffset || 0;
         this.Elevation = elevation || 0;
-        this.CandleLighting = candleLighting || (this.Israel ? 30 : 18);
+        this.CandleLighting = Location.getCandles(this);
         this.locationId = locationId;
     }
+
+    static getCandles(location) {
+        if (location.candleLighting) {
+            return location.candleLighting;
+        }
+        else if (!location.Israel) {
+            return 18;
+        }
+        else {
+            const special = [{ names: ['jerusalem', 'yerush', 'petach', 'petah', 'petak'], min: 40 },
+            { names: ['haifa', 'chaifa', 'be\'er sheva', 'beersheba'], min: 22 }],
+                loclc = location.Name.toLowerCase(),
+                city = special.find(sp => {
+                    return sp.names.find(spi => {
+                        return loclc.indexOf(spi) > -1;
+                    });
+                });
+            return city ? city.min : 30;
+        }
+    }
+
     /**Gets the Location for Jerusalem.*/
     static getJerusalem() {
         return new Location('Jerusalem', true, 31.78, -35.22, 2, 800, 40, 28);

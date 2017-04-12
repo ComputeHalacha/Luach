@@ -90,8 +90,12 @@ export default class Zmanim {
     }
 
     static getChatzos(date, location) {
-        const sunTimes = Zmanim.getSunTimes(date, location, false),
-            rise = sunTimes.sunrise,
+        return Zmanim.getChatzosFromSuntimes(
+            Zmanim.getSunTimes(date, location, false));
+    }
+
+    static getChatzosFromSuntimes(sunTimes) {
+        const rise = sunTimes.sunrise,
             set = sunTimes.sunset;
 
         if (isNaN(rise.hour) || isNaN(set.hour)) {
@@ -106,8 +110,13 @@ export default class Zmanim {
     }
 
     static getShaaZmanis(date, location, offset) {
-        let sunTimes = Zmanim.getSunTimes(date, location, false),
-            rise = sunTimes.sunrise,
+        return Zmanim.getShaaZmanisFromSunTimes(
+            Zmanim.getSunTimes(date, location, false),
+            offset);
+    }
+
+    static getShaaZmanisFromSunTimes(sunTimes, offset) {
+        let rise = sunTimes.sunrise,
             set = sunTimes.sunset;
 
         if (isNaN(rise.hour) || isNaN(set.hour)) {
@@ -126,26 +135,13 @@ export default class Zmanim {
     }
 
     static getCandleLighting(date, location) {
-        const set = Zmanim.getSunTimes(date, location).sunset;
+        return Zmanim.getCandleLightingFromSunTimes(
+            Zmanim.getSunTimes(date, location),
+            location);
+    }
 
-        if (!location.Israel) {
-            return Utils.addMinutes(set, -18);
-        }
-
-        const special = [{ names: ['jerusalem', 'yerush', 'petach', 'petah', 'petak'], min: 40 },
-        { names: ['haifa', 'chaifa', 'be\'er sheva', 'beersheba'], min: 22 }],
-            loclc = location.Name.toLowerCase(),
-            city = special.find(sp => {
-                return sp.names.find(spi => {
-                    return loclc.indexOf(spi) > -1;
-                });
-            });
-        if (city) {
-            return Utils.addMinutes(set, -city.min);
-        }
-        else {
-            return Utils.addMinutes(set, -30);
-        }
+    static getCandleLightingFromSunTimes(sunTimes, location) {
+        return Utils.addMinutes(sunTimes.sunset, -location.CandleLighting);
     }
 
     static isSecularLeapYear(year) {
