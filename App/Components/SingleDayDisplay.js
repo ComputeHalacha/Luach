@@ -20,6 +20,10 @@ export default class SingleDayDisplay extends Component {
         const { jdate, location, appData, navigate } = this.props;
         navigate('NewEntry', { jdate: jdate, location: location, appData: appData });
     }
+    newOccasion() {
+        const { jdate, appData, navigate } = this.props;
+        navigate('NewOccasion', { jdate: jdate, appData: appData });
+    }
     showDateDetails() {
         const { jdate, location, navigate } = this.props;
         navigate('DateDetails', { jdate: jdate, location: location });
@@ -73,7 +77,10 @@ export default class SingleDayDisplay extends Component {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-                <Button icon={{ name: 'add' }} style={{ width: 80 }} title='New Entry' borderRadius={20} onPress={this.newEntry.bind(this)} />
+                <View style={{ flex: 1, flexDirection: 'row' }}>
+                    <Button icon={{ name: 'add' }} style={{ flex: 2 }} title='New Entry' borderRadius={20} onPress={this.newEntry.bind(this)} />
+                    <Button icon={{ name: 'add' }} style={{ flex: 2 }} title='New Occasion' borderRadius={20} onPress={this.newOccasion.bind(this)} />
+                </View>
             </View>
         );
     }

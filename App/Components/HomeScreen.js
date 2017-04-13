@@ -7,7 +7,7 @@ import jDate from '../Code/JCal/jDate';
 import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
 import ProblemOnahs from '../Code/Chashavshavon/ProblemOnah';
-import { UserOccasionType, UserOccasion } from '../Code/JCal/UserOccasion';
+import { UserOccasion } from '../Code/JCal/UserOccasion';
 
 const { width } = Dimensions.get('window');
 
