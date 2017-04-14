@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Alert } from 'react-native';
 import { List, ListItem, Icon, Button } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 
@@ -37,6 +37,8 @@ export default class KavuahScreen extends Component {
                     appData: appData,
                     kavuahList: appData.KavuahList
                 });
+                Alert.alert('Remove kavuah',
+                            `The kavuah of ${kavuah.toString()} has been successfully removed.`);
             }
         }
         ).catch(error => {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
 import { List, ListItem, Button } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 import JDate from '../Code/JCal/jDate';
@@ -44,6 +44,8 @@ export default class EntryScreen extends Component {
                     appData: appData,
                     entryList: appData.EntryList
                 });
+                Alert.alert('Remove entry',
+                            `The entry for ${entry.toString()} has been successfully removed.`);
             }
         }
         ).catch(error => {

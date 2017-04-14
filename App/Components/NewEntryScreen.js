@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text, Picker } from 'react-native';
+import { ScrollView, View, StyleSheet, Text, Picker, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import Entry from '../Code/Chashavshavon/Entry';
 import NightDay from '../Code/Chashavshavon/NightDay';
@@ -37,6 +37,8 @@ export default class NewEntry extends React.Component {
             entryList.add(entry);
             entryList.calulateHaflagas();
             this.setState({ appData: appData });
+            Alert.alert('Add Entry',
+                        `The entry for ${entry.toString()} has been successfully added.`);
             this.navigate('Entries', { appData: this.state.appData });
         }
         ).catch(error => {

@@ -16,7 +16,7 @@ export default class Entry {
         return this.onah.isSameOnah(entry.onah);
     }
     toString() {
-        let str = `${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'} of ${this.date.toString()}`;
+        let str = `${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'} of ${this.date.toShortString()}`;
         if (this.haflaga) {
             str += ` [Haflaga of ${this.haflaga.toString()}]`;
         }

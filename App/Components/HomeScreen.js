@@ -33,7 +33,8 @@ export default class HomeScreen extends React.Component {
             appData: null,
             currDate: HomeScreen.today,
             currLocation: null,
-            pageNumber: 1
+            pageNumber: 1,
+            onDayChange: this.onDayChanged.bind(this)
         };
         AppData.getAppData().then(ad => {
             const allOccasions = ad.UserOccasions;
@@ -80,15 +81,18 @@ export default class HomeScreen extends React.Component {
             daysList: daysList
         });
     }
-    onDayChanged(i) {
-        if (i === this.state.daysList.length - 1) {
-            this._addDaysToEnd(i);
+    onDayChanged(position, currentElement) {
+        //In case we change the day here, prevent this function from being called recursively in an endless loop
+        this.setState({onDayChange:undefined});
+
+        if (position === this.state.daysList.length - 1) {
+            this._addDaysToEnd(position, currentElement);
         }
-        else if (i === 0) {
-            this._addDaysToBeginning();
+        else if (position === 0) {
+            this._addDaysToBeginning(position, currentElement);
         }
     }
-    _addDaysToEnd(pn) {
+    _addDaysToEnd(position) {
         const daysList = this.state.daysList,
             day = daysList[daysList.length - 1].day.addDays(1);
         daysList.push({
@@ -97,7 +101,8 @@ export default class HomeScreen extends React.Component {
         });
         this.setState({
             daysList: daysList,
-            pageNumber: pn
+            pageNumber: position,
+            onDayChange:this.onDayChanged.bind(this)
         });
     }
     _addDaysToBeginning() {
@@ -109,7 +114,8 @@ export default class HomeScreen extends React.Component {
         });
         this.setState({
             daysList: daysList,
-            pageNumber: 1
+            pageNumber: 1,
+            onDayChange:this.onDayChanged.bind(this)
         });
     }
     renderDay(singleDay) {
@@ -172,7 +178,7 @@ export default class HomeScreen extends React.Component {
                         swipeThreshold={0.2}
                         initialPage={1}
                         currentPage={this.state.pageNumber}
-                        onPageChange={this.onDayChanged.bind(this)}>
+                        onPageChange={this.state.onDayChange.bind(this)}>
                         {this.state.daysList.map(day =>
                             this.renderDay(day)
                         )}

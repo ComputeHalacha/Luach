@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Alert } from 'react-native';
 import { List, ListItem, Button } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 
@@ -33,6 +33,8 @@ export default class OccasionsScreen extends Component {
                     appData: appData,
                     occasionList: appData.UserOccasions
                 });
+                Alert.alert('Remove occasion',
+                            `The ocassion ${occasion.title} has been successfully removed.`);
             }
         }
         ).catch(error => {

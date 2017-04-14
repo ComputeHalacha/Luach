@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text, Picker, TextInput } from 'react-native';
+import { ScrollView, View, StyleSheet, Text, Picker, TextInput, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { UserOccasionType, UserOccasion } from '../Code/JCal/UserOccasion';
 import DataUtils from '../Code/Data/DataUtils';
@@ -36,7 +36,9 @@ export default class NewOccasion extends React.Component {
         if (this.onUpdate) {
             this.onUpdate(occasion);
         }
-        this.navigate('Home', { appData: this.state.appData, jdate: this.state.jdate });
+        Alert.alert('Add occasion',
+                    `The occasion ${occasion.title} has been successfully added.`);
+        this.navigate('Occasions', { appData: this.state.appData });
     }
     render() {
         const jmonthName = Utils.jMonthsEng[this.state.jdate.Month],

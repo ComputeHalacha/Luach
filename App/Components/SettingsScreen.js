@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, View, StyleSheet, Text, Picker, Switch } from 'react-native';
+import { ScrollView, View, StyleSheet, Text, Picker, Switch, Alert } from 'react-native';
 import Location from '../Code/JCal/Location';
 import { setDefault } from '../Code/GeneralUtils';
 

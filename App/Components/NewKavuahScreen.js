@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text, Picker, Switch } from 'react-native';
+import { ScrollView, View, StyleSheet, Text, Picker, Switch, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import {KavuahType, Kavuah} from '../Code/Chashavshavon/Kavuah';
 import DataUtils from '../Code/Data/DataUtils';
@@ -37,6 +37,8 @@ export default class NewKavuah extends React.Component {
         this.setState({ appData: ad });
         DataUtils.KavuahToDatabase(kavuah);
         this.onUpdate();
+        Alert.alert('Add Kavuah',
+                    `The Kavuah for ${kavuah.toString()} has been successfully added.`);
         this.navigate('Kavuahs', { appData: this.state.appData });
     }
     render() {
