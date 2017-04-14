@@ -149,7 +149,7 @@ export default class DataUtils {
                         dateAbs,
                         comments)
                     VALUES (?,?,?,?)`,
-                [params])
+                params)
                 .then(results => occasion.occasionId = results.id)
                 .catch(error => {
                     console.warn('Error trying to insert occasion into the database.');
@@ -220,7 +220,7 @@ export default class DataUtils {
                         active,
                         [ignore])
                     VALUES (?,?,?,?,?,?)`,
-                [params])
+                params)
                 .then(results => kavuah.kavuahId = results.id)
                 .catch(error => {
                     console.warn('Error trying to insert kavuah into the database.');

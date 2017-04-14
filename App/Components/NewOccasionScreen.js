@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text, Picker, Switch, TextInput } from 'react-native';
+import { ScrollView, View, StyleSheet, Text, Picker, TextInput } from 'react-native';
 import { Button } from 'react-native-elements';
 import { UserOccasionType, UserOccasion } from '../Code/JCal/UserOccasion';
 import DataUtils from '../Code/Data/DataUtils';
@@ -33,15 +33,18 @@ export default class NewOccasion extends React.Component {
         ad.UserOccasions.push(occasion);
         this.setState({ appData: ad });
         DataUtils.UserOccasionToDatabase(occasion);
-        this.onUpdate();
-        this.navigate('Home', { appData: this.state.appData });
+        if (this.onUpdate) {
+            this.onUpdate(occasion);
+        }
+        this.navigate('Home', { appData: this.state.appData, jdate: this.state.jdate });
     }
     render() {
         const jmonthName = Utils.jMonthsEng[this.state.jdate.Month],
             jDay = Utils.toSuffixed(this.state.jdate.Day),
             sdate = this.state.jdate.getDate(),
             sMonthName = Utils.sMonthsEng[sdate.getMonth()],
-            sDay = Utils.toSuffixed(sdate.getDate());
+            sDay = Utils.toSuffixed(sdate.getDate()),
+            muxedDate = `${this.state.jdate.toShortString(false)} (${new Intl.DateTimeFormat().format(sdate)})`;
         return <ScrollView style={styles.container}>
             <Text style={styles.header}>New Occasion for {this.state.jdate.toString(false)}</Text>
             <View style={styles.formRow}>
@@ -55,18 +58,18 @@ export default class NewOccasion extends React.Component {
             <View style={styles.formRow}>
                 <Text style={styles.label}>Occasion Type</Text>
                 <Picker style={styles.picker}
-                    selectedValue={this.state.occasionType}
+                    selectedValue={this.state.occasionType || 0}
                     onValueChange={value => this.setState({ occasionType: value })}>
-                    <Picker.Item label='One Time Occasion'
+                    <Picker.Item label={`One Time Occasion on ${muxedDate}`}
                         value={UserOccasionType.OneTime} />
-                    <Picker.Item label={`Each ${jmonthName} ${jDay}`}
+                    <Picker.Item label={`Annual occasion on the ${jDay} day of ${jmonthName}`}
                         value={UserOccasionType.HebrewDateRecurringYearly} />
-                    <Picker.Item label={`On the ${jDay} of each Jewish Month`}
+                    <Picker.Item label={`Monthly occasion On the ${jDay} day of each Jewish Month`}
                         value={UserOccasionType.HebrewDateRecurringMonthly} />
-                    <Picker.Item label={`Each ${sMonthName} ${sDay}`}
+                    <Picker.Item label={`Annual occasion on the the ${sDay} day of ${sMonthName} `}
                         value={UserOccasionType.SecularDateRecurringYearly} />
-                    <Picker.Item label={`On the ${sDay} of each Secular Month`}
-                        value={UserOccasionType.SecularDateRecurringMonthly} />suach} />
+                    <Picker.Item label={`Monthy occasion on the ${sDay} day of each Secular Month`}
+                        value={UserOccasionType.SecularDateRecurringMonthly} />
                 </Picker>
             </View>
             <View style={styles.formRow}>

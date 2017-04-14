@@ -2,11 +2,11 @@ import jDate from './jDate';
 import Utils from './Utils';
 
 class UserOccasionType {
-    static get OneTime() { return 0; }
-    static get HebrewDateRecurringYearly() { return 1; }
-    static get HebrewDateRecurringMonthly() { return 2; }
-    static get SecularDateRecurringYearly() { return 3; }
-    static get SecularDateRecurringMonthly() { return 4; }
+    static get OneTime() { return 1; }
+    static get HebrewDateRecurringYearly() { return 2; }
+    static get HebrewDateRecurringMonthly() { return 4; }
+    static get SecularDateRecurringYearly() { return 8; }
+    static get SecularDateRecurringMonthly() { return 16; }
 }
 
 class UserOccasion {

@@ -8,6 +8,7 @@ import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
 import ProblemOnahs from '../Code/Chashavshavon/ProblemOnah';
 import { UserOccasion } from '../Code/JCal/UserOccasion';
+import Settings from '../Code/Settings';
 
 const { width } = Dimensions.get('window');
 
@@ -51,11 +52,11 @@ export default class HomeScreen extends React.Component {
     * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
     * This should be done after updating settings, occasions, entries or kavuahs.
     */
-    updateAppData(newSettings) {
+    updateAppData(data) {
         const ad = this.state.appData;
 
-        if (newSettings) {
-            ad.Settings = newSettings;
+        if (data && data instanceof Settings) {
+            ad.Settings = data;
         }
 
         //Now that the data has been changed, we need to recalculate the problem onahs.
@@ -75,19 +76,19 @@ export default class HomeScreen extends React.Component {
 
         this.setState({
             appData: ad,
-            currLocation: newSettings.location,
+            currLocation: ad.Settings.location,
             daysList: daysList
         });
     }
     onDayChanged(i) {
         if (i === this.state.daysList.length - 1) {
-            this._addDaysToEnd(i);
+            this._addDaysToEnd();
         }
         else if (i === 0) {
             this._addDaysToBeginning();
         }
     }
-    _addDaysToEnd(pageNum) {
+    _addDaysToEnd() {
         const daysList = this.state.daysList,
             day = daysList[daysList.length - 1].day.addDays(1);
         daysList.push({
@@ -96,7 +97,7 @@ export default class HomeScreen extends React.Component {
         });
         this.setState({
             daysList: daysList,
-            pageNumber: pageNum
+            pageNumber: daysList.length - 1
         });
     }
     _addDaysToBeginning() {
@@ -121,7 +122,8 @@ export default class HomeScreen extends React.Component {
             occasions={occasions}
             isToday={HomeScreen.today.Abs === day.Abs}
             appData={this.state.appData}
-            navigate={this.navigate} />);
+            navigate={this.navigate}
+            onUpdate={this.updateAppData.bind(this)} />);
     }
     render() {
         const menuList = [

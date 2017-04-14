@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
-import { Button, Icon } from 'react-native-elements';
+import { Button, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
+import { Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
 
 const Prob = props =>
@@ -15,14 +15,15 @@ const Prob = props =>
 export default class SingleDayDisplay extends Component {
     constructor(props) {
         super(props);
+
     }
     newEntry() {
         const { jdate, location, appData, navigate } = this.props;
         navigate('NewEntry', { jdate: jdate, location: location, appData: appData });
     }
     newOccasion() {
-        const { jdate, appData, navigate } = this.props;
-        navigate('NewOccasion', { jdate: jdate, appData: appData });
+        const { jdate, onUpdate, appData, navigate } = this.props;
+        navigate('NewOccasion', { jdate, onUpdate, appData });
     }
     showDateDetails() {
         const { jdate, location, navigate } = this.props;
@@ -77,9 +78,19 @@ export default class SingleDayDisplay extends Component {
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
-                <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <Button icon={{ name: 'add' }} style={{ flex: 2 }} title='New Entry' borderRadius={20} onPress={this.newEntry.bind(this)} />
-                    <Button icon={{ name: 'add' }} style={{ flex: 2 }} title='New Occasion' borderRadius={20} onPress={this.newOccasion.bind(this)} />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Button
+                        color='#abf'
+                        style={styles.btn}
+                        accessibilityLabel='Add a new Entry'
+                        title='New Entry'
+                        onPress={this.newEntry.bind(this)} />
+                    <Button
+                        color='#fba'
+                        style={styles.btn}
+                        accessibilityLabel='Add a new Occasion for this date'
+                        title='New Occasion'
+                        onPress={this.newOccasion.bind(this)} />
                 </View>
             </View>
         );
@@ -131,5 +142,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     probView: { flexDirection: 'row', marginBottom: 10 },
-    probList: { color: '#762', fontSize: 14 }
+    probList: { color: '#762', fontSize: 14 },
+    btn: { fontSize: 7, height: 25 }
+
 });

@@ -3,14 +3,14 @@ import NightDay from './NightDay';
 import { setDefault } from '../GeneralUtils';
 
 class KavuahType {
-    static get Haflagah() { return 0; }
-    static get DayOfMonth() { return 1; }
-    static get DayOfWeek() { return 2; }
-    static get Sirug() { return 3; }
-    static get DilugHaflaga() { return 4; }
-    static get DilugDayOfMonth() { return 5; }
-    static get HaflagaMaayanPasuach() { return 6; }
-    static get DayOfMonthMaayanPasuach() { return 7; }
+    static get Haflagah() { return 1; }
+    static get DayOfMonth() { return 2; }
+    static get DayOfWeek() { return 4; }
+    static get Sirug() { return 8; }
+    static get DilugHaflaga() { return 16; }
+    static get DilugDayOfMonth() { return 32; }
+    static get HaflagaMaayanPasuach() { return 64; }
+    static get DayOfMonthMaayanPasuach() { return 128; }
 }
 
 class Kavuah {

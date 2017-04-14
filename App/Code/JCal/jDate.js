@@ -236,6 +236,10 @@ export default class jDate {
             this.Year.toString();
     }
 
+/**
+ * Returns the current Jewish date in the format "Nissan 3, 5778"
+ * @param {bool} showDow - show day of week?
+ */
     toShortString(showDow) {
         return ((showDow ? Utils.dowEng[this.getDayOfWeek()] + ' ' : '') +
             Utils.jMonthsEng[this.Month] + ' ' +
