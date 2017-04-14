@@ -82,13 +82,13 @@ export default class HomeScreen extends React.Component {
     }
     onDayChanged(i) {
         if (i === this.state.daysList.length - 1) {
-            this._addDaysToEnd();
+            this._addDaysToEnd(i);
         }
         else if (i === 0) {
             this._addDaysToBeginning();
         }
     }
-    _addDaysToEnd() {
+    _addDaysToEnd(pn) {
         const daysList = this.state.daysList,
             day = daysList[daysList.length - 1].day.addDays(1);
         daysList.push({
@@ -97,7 +97,7 @@ export default class HomeScreen extends React.Component {
         });
         this.setState({
             daysList: daysList,
-            pageNumber: daysList.length - 1
+            pageNumber: pn
         });
     }
     _addDaysToBeginning() {
