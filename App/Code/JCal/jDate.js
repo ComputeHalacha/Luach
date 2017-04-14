@@ -237,7 +237,7 @@ export default class jDate {
     }
 
 /**
- * Returns the current Jewish date in the format "Nissan 3, 5778"
+ * Returns the current Jewish date in the format "[Tuesday] Nissan 3, 5778"
  * @param {bool} showDow - show day of week?
  */
     toShortString(showDow) {
@@ -552,7 +552,8 @@ export default class jDate {
      * Gets a javascript date from an absolute date
      */
     static sdFromAbs(abs) {
-        const dt = new Date(2000, 0, 1); // 1/1/2000 is absolute date 730120
+        const dt = new Date(2000, 0, 1);
+        // 1/1/2000 is absolute date 730120
         dt.setDate((abs - 730120) + 1);
         return dt;
     }

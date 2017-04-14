@@ -157,6 +157,16 @@ export default class DataUtils {
                 });
         }
     }
+    static async DeleteUserOccasion(occasion) {
+        if (!occasion.hasId) {
+            throw 'Occasions can only be deleted from the database if they have an id';
+        }
+        await DataUtils._executeSql('DELETE from occasions where occasionId=?', [occasion.occasionId])
+            .catch(error => {
+                console.warn(`Error trying to delete occasion id ${occasion.occasionId} from the database`);
+                console.error(error);
+            });
+    }
     /**Gets all Kavuahs from the database.
      *
      * `entries`: An EntryList instance or an Array of entries where the settingEntry can be found.*/
@@ -228,6 +238,16 @@ export default class DataUtils {
                 });
         }
     }
+    static async DeleteKavuah(kavuah) {
+        if (!kavuah.hasId) {
+            throw 'Kavuahs can only be deleted from the database if they have an id';
+        }
+        await DataUtils._executeSql('DELETE from kavuahs where kavuahId=?', [kavuah.kavuahId])
+            .catch(error => {
+                console.warn(`Error trying to delete kavuah id ${kavuah.kavuahId} from the database`);
+                console.error(error);
+            });
+    }
     static async EntryToDatabase(entry) {
         if (entry.hasId) {
             await DataUtils._executeSql('UPDATE entries SET dateAbs=?, day=? WHERE entryId=?',
@@ -249,6 +269,16 @@ export default class DataUtils {
                     console.error(error);
                 });
         }
+    }
+    static async DeleteEntry(entry) {
+        if (!entry.hasId) {
+            throw 'Entries can only be deleted from the database if they have an id';
+        }
+        await DataUtils._executeSql('DELETE from entries where entryId=?', [entry.entryId])
+            .catch(error => {
+                console.warn(`Error trying to delete entry id ${entry.entryId} from the database`);
+                console.error(error);
+            });
     }
     /**
         Queries the locations table of the local sqlite database, and returns a list of Location objects.

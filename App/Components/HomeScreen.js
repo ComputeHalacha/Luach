@@ -137,6 +137,11 @@ export default class HomeScreen extends React.Component {
                     })
             },
             {
+                title: 'Occasions',
+                icon: 'event',
+                onPress: () => this.navigate('Occasions', { appData: this.state.appData })
+            },
+            {
                 title: 'Kavuahs',
                 icon: 'device-hub',
                 onPress: () => this.navigate('Kavuahs', { appData: this.state.appData })

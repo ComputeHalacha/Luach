@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
-import { List, ListItem, Icon } from 'react-native-elements';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { List, ListItem, Button } from 'react-native-elements';
+import DataUtils from '../Code/Data/DataUtils';
 import JDate from '../Code/JCal/jDate';
 
 
@@ -30,11 +31,30 @@ export default class EntryScreen extends Component {
             appData: this.appData
         });
     }
-    newKavuah(entry)
-    {
+    deleteEntry(entry) {
+        DataUtils.DeleteEntry(entry).then(() => {
+            const appData = this.state.appData;
+            let entryList = appData.EntryList,
+                index = entryList.indexOf(entry);
+            if (index > -1) {
+                entryList = entryList.splice(index, 1);
+                entryList.calulateHaflagas();
+                appData.EntryList = entryList;
+                this.setState({
+                    appData: appData,
+                    entryList: appData.EntryList
+                });
+            }
+        }
+        ).catch(error => {
+            console.warn('Error trying to delete an entry from the database.');
+            console.error(error);
+        });
+    }
+    newKavuah(entry) {
         this.navigate('NewKavuah', {
             appData: this.appData,
-            settingEntry:entry
+            settingEntry: entry
         });
     }
     render() {
@@ -47,7 +67,21 @@ export default class EntryScreen extends Component {
                             key={entry.entryId}
                             title={entry.toString()}
                             leftIcon={{ name: 'list' }}
-                            onLongPress={() => this.newKavuah.bind(this)(entry)} />
+                            hideChevron
+                            subtitle={
+                                <View style={styles.buttonList}>
+                                    <Button
+                                        title='Remove'
+                                        icon={{name:'delete-forever'}}
+                                        backgroundColor='#f50'
+                                        onPress={() => this.deleteEntry.bind(this)(entry)} />
+                                    <Button
+                                        title='New Kavuah'
+                                        icon={{name:'device-hub'}}
+                                        backgroundColor='#05f'
+                                        onPress={() => this.newKavuah.bind(this)(entry)} />
+                                </View>}
+                            />
                     ))}
                 </List>
             </ScrollView>);
@@ -55,5 +89,6 @@ export default class EntryScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#ffffff' }
+    container: { flex: 1, backgroundColor: '#ffffff' },
+    buttonList:{flexDiection:'row'}
 });

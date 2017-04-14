@@ -4,6 +4,7 @@ import './App/Code/initAndroid';
 import HomeScreen from './App/Components/HomeScreen';
 import SettingsScreen from './App/Components/SettingsScreen';
 import NewOccasionScreen from './App/Components/NewOccasionScreen';
+import OccasionsScreen from './App/Components/OccasionsScreen';
 import KavuahScreen from './App/Components/KavuahScreen';
 import EntryScreen from './App/Components/EntryScreen';
 import FlaggedDatesScreen from './App/Components/FlaggedDatesScreen';
@@ -17,6 +18,7 @@ AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
     Home: { screen: HomeScreen },
     Settings: { screen: SettingsScreen },
     NewOccasion: {screen: NewOccasionScreen},
+    Occasions :{screen:OccasionsScreen},
     Kavuahs: { screen: KavuahScreen },
     Entries: { screen: EntryScreen },
     NewEntry: { screen: NewEntryScreen },
