@@ -507,19 +507,11 @@ export default class jDate {
 
     /**Gets the absolute date of the given javascript Date object.*/
     static absSd(date) {
-        let year = date.getFullYear(),
-            month = date.getMonth() + 1,
-            numberOfDays = date.getDate(); // days this month
-        // add days in prior months this year
-        for (let i = month - 1; i > 0; i--) {
-            numberOfDays += jDate.daysSMonth(i, year);
-        }
+        const msPerDay = 86400000, //The number of milliseconds per each day
+            numFullDays = Math.floor(date.valueOf() / msPerDay), //The number of full days since 1/1/1970.
+            startAbs = 719163; //The Absolute Date for the zero day of the js Date object - 1/1/1970.,
 
-        return (numberOfDays          // days this year
-            + 365 * (year - 1)     // days in previous years ignoring leap days
-            + parseInt((year - 1) / 4)       // Julian leap days before this year...
-            - parseInt((year - 1) / 100)     // ...minus prior century years...
-            + parseInt((year - 1) / 400));   // ...plus prior years divisible by 400
+        return startAbs + numFullDays;
     }
 
     /**Calculate the absolute date for the given Jewish Date.*/
@@ -552,31 +544,11 @@ export default class jDate {
      * Gets a javascript date from an absolute date
      */
     static sdFromAbs(abs) {
-        const dt = new Date(2000, 0, 1);
-        // 1/1/2000 is absolute date 730120
-        dt.setDate((abs - 730120) + 1);
-        return dt;
-    }
+        const startAbs = 719163, //The Absolute Date for the zero day of the js Date object - 1/1/1970.
+            daysFromStart = abs - startAbs, //The number of days since 1/1/1970
+            msPerDay = 86400000; //The number of milliseconds per day
 
-    /**The number of days in the given Gregorian Month.
-     *
-     * Note: For the month parameter, January should be 1 and December should be 12.
-     * This is unlike Javascripts getMonth() function which returns 0 for January and 11 for December.*/
-    static daysSMonth(month, year) {
-        switch (month) {
-            case 2:
-                if ((((year % 4) === 0) && ((year % 100) != 0))
-                    || ((year % 400) === 0))
-                    return 29;
-                else
-                    return 28;
-
-            case 4:
-            case 6:
-            case 9:
-            case 11: return 30;
-            default: return 31;
-        }
+        return new Date(daysFromStart * msPerDay);
     }
 
     /**Number of days in the given Jewish Month. Nissan is 1 and Adar Sheini is 13.*/
