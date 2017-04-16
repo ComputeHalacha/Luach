@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, View, StyleSheet, Text, Picker, TextInput, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
-import { UserOccasionType, UserOccasion } from '../Code/JCal/UserOccasion';
+import { UserOccasionTypes, UserOccasion } from '../Code/JCal/UserOccasion';
 import DataUtils from '../Code/Data/DataUtils';
 import Utils from '../Code/JCal/Utils';
 
@@ -18,7 +18,7 @@ export default class NewOccasion extends React.Component {
         this.state = {
             appData: appData,
             jdate: jdate,
-            occasionType: UserOccasionType.OneTime,
+            occasionType: UserOccasionTypes.OneTime,
             title: '',
             comment: ''
         };
@@ -63,15 +63,15 @@ export default class NewOccasion extends React.Component {
                     selectedValue={this.state.occasionType || 0}
                     onValueChange={value => this.setState({ occasionType: value })}>
                     <Picker.Item label={`One Time Occasion on ${muxedDate}`}
-                        value={UserOccasionType.OneTime} />
+                        value={UserOccasionTypes.OneTime} />
                     <Picker.Item label={`Annual occasion on the ${jDay} day of ${jmonthName}`}
-                        value={UserOccasionType.HebrewDateRecurringYearly} />
+                        value={UserOccasionTypes.HebrewDateRecurringYearly} />
                     <Picker.Item label={`Monthly occasion On the ${jDay} day of each Jewish Month`}
-                        value={UserOccasionType.HebrewDateRecurringMonthly} />
+                        value={UserOccasionTypes.HebrewDateRecurringMonthly} />
                     <Picker.Item label={`Annual occasion on the the ${sDay} day of ${sMonthName} `}
-                        value={UserOccasionType.SecularDateRecurringYearly} />
+                        value={UserOccasionTypes.SecularDateRecurringYearly} />
                     <Picker.Item label={`Monthy occasion on the ${sDay} day of each Secular Month`}
-                        value={UserOccasionType.SecularDateRecurringMonthly} />
+                        value={UserOccasionTypes.SecularDateRecurringMonthly} />
                 </Picker>
             </View>
             <View style={styles.formRow}>

@@ -2,16 +2,16 @@ import Utils from '../JCal/Utils';
 import NightDay from './NightDay';
 import { setDefault } from '../GeneralUtils';
 
-class KavuahType {
-    static get Haflagah() { return 1; }
-    static get DayOfMonth() { return 2; }
-    static get DayOfWeek() { return 4; }
-    static get Sirug() { return 8; }
-    static get DilugHaflaga() { return 16; }
-    static get DilugDayOfMonth() { return 32; }
-    static get HaflagaMaayanPasuach() { return 64; }
-    static get DayOfMonthMaayanPasuach() { return 128; }
-}
+const KavuahTypes = {
+    Haflagah: 1,
+    DayOfMonth: 2,
+    DayOfWeek: 4,
+    Sirug: 8,
+    DilugHaflaga: 16,
+    DilugDayOfMonth: 32,
+    HaflagaMaayanPasuach: 64,
+    DayOfMonthMaayanPasuach: 128
+};
 
 class Kavuah {
     constructor(kavuaType, settingEntry, specialNumber, cancelsOnahBeinunis, active, ignore, kavuahId) {
@@ -35,30 +35,30 @@ class Kavuah {
     toString() {
         let txt = this.settingEntry.nightDay === NightDay.Night ? 'Nighttime ' : 'Daytime ';
         switch (this.kavuaType) {
-        case KavuahType.Haflagah:
-            txt += `every ${this.settingEntry.haflaga.toString()} days`;
-            break;
-        case KavuahType.DayOfMonth:
-            txt = `the ${Utils.toSuffixed(this.settingEntry.day)} day of the Jewish Month`;
-            break;
-        case KavuahType.DayOfWeek:
-            txt += `${Utils.dowEng[this.settingEntry.date.getDayOfWeek()]} every ${Utils.toSuffixed(this.specialNumber)} week`;
-            break;
-        case KavuahType.Sirug:
-            txt += `the ${Utils.toSuffixed(this.settingEntry.day)} day of every ${Utils.toSuffixed(this.specialNumber)} month`;
-            break;
-        case KavuahType.HaflagaMaayanPasuach:
-            txt += `every ${this.settingEntry.specialNumber.toString()} days (through Ma'ayan Pasuach)`;
-            break;
-        case KavuahType.DayOfMonthMaayanPasuach:
-            txt += `the ${Utils.toSuffixed(this.specialNumber)} day of the Jewish Month (through Ma'ayan Pasuach)`;
-            break;
-        case KavuahType.DilugHaflaga:
-            txt += `following the interval pattern of ${this.specialNumber < 0 ? '-' : '+'} ${Math.Abs(this.specialNumber).toString()} days`;
-            break;
-        case KavuahType.DilugDayOfMonth:
-            txt += `for days of the month following the interval pattern of ${this.specialNumber < 0 ? '-' : '+'} ${Math.Abs(this.specialNumber).toString()} days`;
-            break;
+            case KavuahTypes.Haflagah:
+                txt += `every ${this.settingEntry.haflaga.toString()} days`;
+                break;
+            case KavuahTypes.DayOfMonth:
+                txt = `the ${Utils.toSuffixed(this.settingEntry.day)} day of the Jewish Month`;
+                break;
+            case KavuahTypes.DayOfWeek:
+                txt += `${Utils.dowEng[this.settingEntry.date.getDayOfWeek()]} every ${Utils.toSuffixed(this.specialNumber)} week`;
+                break;
+            case KavuahTypes.Sirug:
+                txt += `the ${Utils.toSuffixed(this.settingEntry.day)} day of every ${Utils.toSuffixed(this.specialNumber)} month`;
+                break;
+            case KavuahTypes.HaflagaMaayanPasuach:
+                txt += `every ${this.settingEntry.specialNumber.toString()} days (through Ma'ayan Pasuach)`;
+                break;
+            case KavuahTypes.DayOfMonthMaayanPasuach:
+                txt += `the ${Utils.toSuffixed(this.specialNumber)} day of the Jewish Month (through Ma'ayan Pasuach)`;
+                break;
+            case KavuahTypes.DilugHaflaga:
+                txt += `following the interval pattern of ${this.specialNumber < 0 ? '-' : '+'} ${Math.Abs(this.specialNumber).toString()} days`;
+                break;
+            case KavuahTypes.DilugDayOfMonth:
+                txt += `for days of the month following the interval pattern of ${this.specialNumber < 0 ? '-' : '+'} ${Math.Abs(this.specialNumber).toString()} days`;
+                break;
         }
         if (!this.active) {
             txt += ' [INACTIVE]';
@@ -73,7 +73,7 @@ class Kavuah {
     get hasId() {
         return !!this.kavuahId;
     }
-   //Works out all possible Kavuahs from the given list of entries
+    //Works out all possible Kavuahs from the given list of entries
     static getKavuahSuggestionList(entryList) {
         let kavuahList = [];
         const queue = [];
@@ -115,7 +115,7 @@ class Kavuah {
             const thirdFind = entryList.find(en =>
                 en.onah.nightDay === entry.onah.nightDay && en.date.Abs === thirdMonth.Abs);
             if (thirdFind) {
-                list.push(new Kavuah(KavuahType.DayOfMonth, thirdFind, thirdMonth.Day, true));
+                list.push(new Kavuah(KavuahTypes.DayOfMonth, thirdFind, thirdMonth.Day, true));
             }
         }
         return list;
@@ -141,7 +141,7 @@ class Kavuah {
                     thirdMonth.Month === en.month &&
                     thirdMonth.Year === en.year);
             if (finalFind) {
-                list.push(new Kavuah(KavuahType.DilugDayOfMonth, finalFind, dilugDays, false));
+                list.push(new Kavuah(KavuahTypes.DilugDayOfMonth, finalFind, dilugDays, false));
             }
         }
         return list;
@@ -168,7 +168,7 @@ class Kavuah {
                     en.nightDay === entry.nightDay &&
                     en.date.Abs === nextDate.Abs);
                 if (secondFind) {
-                    list.push(new Kavuah(KavuahType.DayOfWeek, secondFind, interval, false));
+                    list.push(new Kavuah(KavuahTypes.DayOfWeek, secondFind, interval, false));
                 }
             }
         }
@@ -179,7 +179,7 @@ class Kavuah {
         //We simply compare the intervals between the entries. If they are the same, we have a Kavuah
         if ((threeEntries[0].haflaga === threeEntries[1].haflaga) &&
             (threeEntries[1].haflaga === threeEntries[2].haflaga)) {
-            list.push(new Kavuah(KavuahType.Haflagah, threeEntries[2], threeEntries[2].haflaga, true));
+            list.push(new Kavuah(KavuahTypes.Haflagah, threeEntries[2], threeEntries[2].haflaga, true));
         }
         return list;
     }
@@ -197,7 +197,7 @@ class Kavuah {
             (threeEntries[1].day === threeEntries[2].day) &&
             threeEntries[1].date.diffMonths(threeEntries[2].date) === monthDiff) {
             //Add the kavuah
-            list.push(new Kavuah(KavuahType.Sirug, threeEntries[2], monthDiff, true));
+            list.push(new Kavuah(KavuahTypes.Sirug, threeEntries[2], monthDiff, true));
         }
         return list;
     }
@@ -210,10 +210,10 @@ class Kavuah {
 
         //If the "Dilug" is 0 it will be a regular Kavuah of Haflagah but not a Dilug one
         if (haflagaDiff1 > 0 && haflagaDiff1 === haflagaDiff2) {
-            list.push(new Kavuah(KavuahType.DilugHaflaga, threeEntries[2], haflagaDiff1, false));
+            list.push(new Kavuah(KavuahTypes.DilugHaflaga, threeEntries[2], haflagaDiff1, false));
         }
         return list;
     }
 }
 
-export {KavuahType, Kavuah};
+export { KavuahTypes, Kavuah };

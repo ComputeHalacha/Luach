@@ -236,10 +236,10 @@ export default class jDate {
             this.Year.toString();
     }
 
-/**
- * Returns the current Jewish date in the format "[Tuesday] Nissan 3, 5778"
- * @param {bool} showDow - show day of week?
- */
+    /**
+     * Returns the current Jewish date in the format "[Tuesday] Nissan 3, 5778"
+     * @param {bool} showDow - show day of week?
+     */
     toShortString(showDow) {
         return ((showDow ? Utils.dowEng[this.getDayOfWeek()] + ' ' : '') +
             Utils.jMonthsEng[this.Month] + ' ' +
@@ -897,7 +897,9 @@ export default class jDate {
         if ((jMonth === 1 && jDay > 15) || jMonth === 2 || (jMonth === 3 && jDay < 6)) {
             const dayOfSefirah = jd.getDayOfOmer();
             if (dayOfSefirah > 0) {
-                list.push(!hebrew ? 'Sefiras Ha\'omer - Day ' + dayOfSefirah.toString() : 'ספירת העומר - יום ' + dayOfSefirah.toString());
+                list.push(!hebrew ?
+                    'Sefiras Ha\'omer - Day ' + dayOfSefirah.toString() :
+                    'ספירת העומר - יום ' + dayOfSefirah.toString());
             }
         }
 

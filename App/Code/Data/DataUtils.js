@@ -3,7 +3,7 @@ import { isNumber } from '../GeneralUtils';
 import jDate from '../JCal/jDate';
 import Settings from '../Settings';
 import Location from '../JCal/Location';
-import { UserOccasionType, UserOccasion } from '../JCal/UserOccasion';
+import { UserOccasion } from '../JCal/UserOccasion';
 import Entry from '../Chashavshavon/Entry';
 import EntryList from '../Chashavshavon/EntryList';
 import Onah from '../Chashavshavon/Onah';

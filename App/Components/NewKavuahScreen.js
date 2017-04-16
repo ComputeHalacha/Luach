@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, View, StyleSheet, Text, Picker, Switch, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
-import {KavuahType, Kavuah} from '../Code/Chashavshavon/Kavuah';
+import {KavuahTypes, Kavuah} from '../Code/Chashavshavon/Kavuah';
 import DataUtils from '../Code/Data/DataUtils';
 
 export default class NewKavuah extends React.Component {
@@ -21,7 +21,7 @@ export default class NewKavuah extends React.Component {
         this.state = {
             appData: appData,
             settingEntry: settingEntry,
-            kavuahType: KavuahType.Haflagah,
+            kavuahType: KavuahTypes.Haflagah,
             specialNumber: settingEntry && settingEntry.haflaga,
             cancelsOnahBeinunis: true,
             active: true
@@ -62,14 +62,14 @@ export default class NewKavuah extends React.Component {
                 <Picker style={styles.picker}
                     selectedValue={this.state.kavuahType}
                     onValueChange={value => this.setState({ kavuahType: value })}>
-                    <Picker.Item label='Haflaga' value={KavuahType.Haflagah} />
-                    <Picker.Item label='Day Of Month' value={KavuahType.DayOfMonth} />
-                    <Picker.Item label='Day Of Week' value={KavuahType.DayOfWeek} />
-                    <Picker.Item label='"Dilug" of Haflaga' value={KavuahType.DilugHaflaga} />
-                    <Picker.Item label='"Dilug" of Day Of Month' value={KavuahType.DilugDayOfMonth} />
-                    <Picker.Item label='Sirug' value={KavuahType.Sirug} />
-                    <Picker.Item label={'Haflaga with Ma\'ayan Pasuach'} value={KavuahType.HaflagaMaayanPasuach} />
-                    <Picker.Item label={'Day Of Month with Ma\'ayan Pasuach'} value={KavuahType.DayOfMonthMaayanPasuach} />
+                    <Picker.Item label='Haflaga' value={KavuahTypes.Haflagah} />
+                    <Picker.Item label='Day Of Month' value={KavuahTypes.DayOfMonth} />
+                    <Picker.Item label='Day Of Week' value={KavuahTypes.DayOfWeek} />
+                    <Picker.Item label='"Dilug" of Haflaga' value={KavuahTypes.DilugHaflaga} />
+                    <Picker.Item label='"Dilug" of Day Of Month' value={KavuahTypes.DilugDayOfMonth} />
+                    <Picker.Item label='Sirug' value={KavuahTypes.Sirug} />
+                    <Picker.Item label={'Haflaga with Ma\'ayan Pasuach'} value={KavuahTypes.HaflagaMaayanPasuach} />
+                    <Picker.Item label={'Day Of Month with Ma\'ayan Pasuach'} value={KavuahTypes.DayOfMonthMaayanPasuach} />
                 </Picker>
             </View>
             <View style={styles.formRow}>

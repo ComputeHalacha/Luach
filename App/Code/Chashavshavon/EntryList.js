@@ -4,7 +4,7 @@ import Entry from './Entry';
 import Settings from '../Settings';
 import NightDay from './NightDay';
 import ProblemOnah from './ProblemOnah';
-import {KavuahType, Kavuah} from './Kavuah';
+import {KavuahTypes, Kavuah} from './Kavuah';
 
 const today = new jDate();
 
@@ -220,7 +220,7 @@ export default class EntryList {
 
         //Kavuah Haflagah - with or without Maayan Pasuach
         for (let kavuah of kavuahList.filter(k => k.active &&
-            (k.kavuahType === KavuahType.Haflagah || k.kavuahType === KavuahType.HaflagaMaayanPasuach))) {
+            (k.kavuahType === KavuahTypes.Haflagah || k.kavuahType === KavuahTypes.HaflagaMaayanPasuach))) {
             const kavuahHaflaga = new ProblemOnah(
                 entry.date.addDays(kavuah.settingEntry.haflaga - 1),
                 kavuah.settingEntry.dayNight,
@@ -232,7 +232,7 @@ export default class EntryList {
         if (this.settings.CheshbonKavuahByActualEntry) {
             //Kavvuah Dilug Haflagos - from actual entry not from what was supposed to be. We cheshbon both.
             //The theoretical ones, are worked out in the function "getIndependentKavuahOnahs"
-            for (let kavuah of kavuahList.filter(k => k.kavuahType === KavuahType.DilugHaflaga && k.active)) {
+            for (let kavuah of kavuahList.filter(k => k.kavuahType === KavuahTypes.DilugHaflaga && k.active)) {
                 const kavuahDilugHaflaga = new ProblemOnah(
                     entry.date.addDays(entry.onah.haflaga + kavuah.specialNumber - 1),
                     kavuah.settingEntry.dayNight,
@@ -245,7 +245,7 @@ export default class EntryList {
             //Kavvuah Dilug Yom Hachodesh - even if one was off, only works out from entry not from what was supposed to be.
             //We cheshbon both.
             //The theoretical ones, are worked out in the function "GetIndependentKavuahOnahs"
-            for (let kavuah of kavuahList.filter(k => k.kavuahType === KavuahType.DilugDayOfMonth && k.active)) {
+            for (let kavuah of kavuahList.filter(k => k.kavuahType === KavuahTypes.DilugDayOfMonth && k.active)) {
                 const kavuahDilugDayofMonth = new ProblemOnah(
                     entry.date.addMonths(1).addDays(kavuah.specialNumber),
                     kavuah.settingEntry.nightDay,
@@ -262,20 +262,20 @@ export default class EntryList {
 
         //Kavuahs of Yom Hachodesh and Sirug
         for (let kavuah of kavuahList.filter(k => k.active &&
-            has(k.kavuahType, KavuahType.DayOfMonth, KavuahType.DayOfMonthMaayanPasuach, KavuahType.Sirug))) {
+            has(k.kavuahType, KavuahTypes.DayOfMonth, KavuahTypes.DayOfMonthMaayanPasuach, KavuahTypes.Sirug))) {
             let dt = kavuah.settingEntry.date.addMonths(
-                kavuah.kavuahType === KavuahType.Sirug ? kavuah.specialNumber : 1);
+                kavuah.kavuahType === KavuahTypes.Sirug ? kavuah.specialNumber : 1);
             while (dt.Abs <= this.stopWarningDate.Abs) {
                 const o = new ProblemOnah(dt, kavuah.settingEntry.nightDay,
                     'Kavuah for' + kavuah.toString());
                 onahs.push(o);
                 this.addOhrZarua(o, onahs);
 
-                dt = dt.addMonths(kavuah.kavuahType === KavuahType.Sirug ? kavuah.specialNumber : 1);
+                dt = dt.addMonths(kavuah.kavuahType === KavuahTypes.Sirug ? kavuah.specialNumber : 1);
             }
         }
         //Kavuahs of "Day of week" - cheshboned from the theoretical Entries
-        for (let kavuah of kavuahList.filter(k => k.active && k.kavuahType === KavuahType.DayOfWeek)) {
+        for (let kavuah of kavuahList.filter(k => k.active && k.kavuahType === KavuahTypes.DayOfWeek)) {
             let dt = kavuah.settingEntryonah.jdate.addDays(kavuah.specialNumber);
             while (dt.Abs <= this.stopWarningDate.Abs) {
                 const o = new ProblemOnah(
@@ -290,7 +290,7 @@ export default class EntryList {
         }
         if (this.settings.cheshbonKavuahByCheshbon) {
             //Kavuahs of Yom Hachodesh of Dilug - cheshboned from the theoretical Entries
-            for (let kavuah of kavuahList.filter(k => k.active && k.kavuahType === KavuahType.DilugDayOfMonth)) {
+            for (let kavuah of kavuahList.filter(k => k.active && k.kavuahType === KavuahTypes.DilugDayOfMonth)) {
                 let dt = kavuah.settingEntry.date;
                 for (let i = 0; ; i++) {
                     dt = dt.addMonths(1);
@@ -309,7 +309,7 @@ export default class EntryList {
                 }
             }
             //Kavuahs of Yom Haflaga of Dilug - cheshboned from the theoretical Entries
-            for (let kavuah of kavuahList.filter(k => k.active && k.kavuahType === KavuahType.DilugHaflaga)) {
+            for (let kavuah of kavuahList.filter(k => k.active && k.kavuahType === KavuahTypes.DilugHaflaga)) {
                 let dt = kavuah.settingEntry.date;
                 for (let i = 1; ; i++) {
                     //For negative dilugim, we stop when we get to 0

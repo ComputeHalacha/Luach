@@ -15,8 +15,8 @@ export default class OccasionsScreen extends Component {
 
         const { appData } = this.props.navigation.state.params;
 
-        this.appData = appData;
         this.state = {
+            appData: appData,
             occasionList: appData.UserOccasions
         };
     }
@@ -34,7 +34,7 @@ export default class OccasionsScreen extends Component {
                     occasionList: appData.UserOccasions
                 });
                 Alert.alert('Remove occasion',
-                            `The ocassion ${occasion.title} has been successfully removed.`);
+                    `The ocassion ${occasion.title} has been successfully removed.`);
             }
         }
         ).catch(error => {
@@ -56,11 +56,11 @@ export default class OccasionsScreen extends Component {
                                 <View style={styles.buttonList}>
                                     <Button
                                         title='Remove'
-                                        icon={{name:'delete-forever'}}
+                                        icon={{ name: 'delete-forever' }}
                                         backgroundColor='#f50'
                                         onPress={() => this.deleteOccasion.bind(this)(occasion)} />
                                 </View>}
-                            />
+                        />
                     ))}
                 </List>
             </ScrollView>);
