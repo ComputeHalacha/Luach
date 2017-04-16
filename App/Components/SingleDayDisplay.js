@@ -46,6 +46,9 @@ export default class SingleDayDisplay extends Component {
             occasions = this.props.occasions,
             occasionText = occasions && occasions.length ?
                 occasions.map((o, i) => <Text key={i}>{o.title}</Text>) : null,
+            entries = this.props.entries,
+            entriesText = entries && entries.length ?
+                entries.map((e, i) => (<Text key={i}>{e.toKnownDateString()}</Text>)) : null,
             todayText = isToday ? (<Text style={styles.todayText}>TODAY</Text>) : null;
 
         return (
@@ -73,6 +76,9 @@ export default class SingleDayDisplay extends Component {
                         <View>
                             {occasionText}
                         </View>
+                        <View>
+                            {entriesText}
+                        </View>                        
                         <View>
                             {problemText}
                         </View>

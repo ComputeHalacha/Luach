@@ -22,6 +22,13 @@ export default class Entry {
         }
         return str;
     }
+    toKnownDateString() {
+        let str = `Entry for ${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'}`;
+        if (this.haflaga) {
+            str += ` [Haflaga of ${this.haflaga.toString()}]`;
+        }
+        return str;
+    }
     get nightDay() {
         return this.onah.nightDay;
     }
