@@ -25,21 +25,21 @@ export default class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
         const daysList = [
-            { day: HomeScreen.today.addDays(-1), probs: [], occasions: [] },
-            { day: HomeScreen.today, probs: [], occasions: [] },
-            { day: HomeScreen.today.addDays(1), probs: [], occasions: [] }];
+            { day: HomeScreen.today.addDays(-1), probs: [], occasions: [], entries: [] },
+            { day: HomeScreen.today, probs: [], occasions: [], entries: [] },
+            { day: HomeScreen.today.addDays(1), probs: [], occasions: [], entries: [] }];
         this.state = {
             daysList: daysList,
             appData: null,
             currDate: HomeScreen.today,
             currLocation: null,
-            pageNumber: 1,
-            onDayChange: this.onDayChanged.bind(this)
+            pageNumber: 1
         };
         AppData.getAppData().then(ad => {
             const allOccasions = ad.UserOccasions;
             for (let day of daysList) {
                 day.occasions = UserOccasion.getOccasionsForDate(day.day, allOccasions);
+                day.entries = ad.EntryList.list.filter(e => e.date.Abs === day.day.Abs);
             }
             this.setState({
                 appData: ad,
@@ -73,6 +73,7 @@ export default class HomeScreen extends React.Component {
         for (let day of daysList) {
             day.probs = ProblemOnahs.getProbsForDate(day.day, allProbs);
             day.occasions = UserOccasion.getOccasionsForDate(day.day, allOccasions);
+            day.entries = ad.EntryList.list.filter(e => e.date.Abs === day.day.Abs);
         }
 
         this.setState({
@@ -82,9 +83,6 @@ export default class HomeScreen extends React.Component {
         });
     }
     onDayChanged(position, currentElement) {
-        //In case we change the day here, prevent this function from being called recursively in an endless loop
-        this.setState({onDayChange:undefined});
-
         if (position === this.state.daysList.length - 1) {
             this._addDaysToEnd(position, currentElement);
         }
@@ -101,8 +99,7 @@ export default class HomeScreen extends React.Component {
         });
         this.setState({
             daysList: daysList,
-            pageNumber: position,
-            onDayChange:this.onDayChanged.bind(this)
+            pageNumber: position
         });
     }
     _addDaysToBeginning() {
@@ -114,18 +111,18 @@ export default class HomeScreen extends React.Component {
         });
         this.setState({
             daysList: daysList,
-            pageNumber: 1,
-            onDayChange:this.onDayChanged.bind(this)
+            pageNumber: 1
         });
     }
     renderDay(singleDay) {
-        const { day, probs, occasions } = singleDay;
+        const { day, probs, occasions, entries } = singleDay;
         return (<SingleDayDisplay
             key={day.Abs}
             jdate={day}
             location={this.state.currLocation || Location.getJerusalem()}
             problems={probs}
             occasions={occasions}
+            entries={entries}
             isToday={HomeScreen.today.Abs === day.Abs}
             appData={this.state.appData}
             navigate={this.navigate}
@@ -178,7 +175,7 @@ export default class HomeScreen extends React.Component {
                         swipeThreshold={0.2}
                         initialPage={1}
                         currentPage={this.state.pageNumber}
-                        onPageChange={this.state.onDayChange.bind(this)}>
+                        onPageChange={this.onDayChanged.bind(this)}>
                         {this.state.daysList.map(day =>
                             this.renderDay(day)
                         )}

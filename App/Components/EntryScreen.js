@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
-import { List, ListItem, Button } from 'react-native-elements';
+import { List, ListItem, Button, Icon } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 import JDate from '../Code/JCal/jDate';
 
@@ -92,5 +92,5 @@ export default class EntryScreen extends Component {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#ffffff' },
-    buttonList:{flexDiection:'row'}
+    buttonList:{flexDirection:'row'}
 });
