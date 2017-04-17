@@ -35,35 +35,42 @@ export default class EntryScreen extends Component {
         DataUtils.DeleteEntry(entry).then(() => {
             const appData = this.state.appData;
             let entryList = appData.EntryList,
+                kavuahList = appData.KavuahList,
                 index = entryList.list.indexOf(entry);
             if (index > -1) {
-                const kavuahs = appData.KavuahList.filter(k => k.settingEntry.entryId === entry.entryId),
-                    doDelete = () => {
-                        entryList.list = entryList.list.splice(index, 1);
-                        entryList.calulateHaflagas();
-                        appData.EntryList = entryList;
-                        this.setState({
-                            appData: appData,
-                            entryList: appData.EntryList
-                        });
-                        Alert.alert('Remove entry',
-                            `The entry for ${entry.toString()} has been successfully removed.`);
-                    };
-                if (kavuahs.length) {
-                    Alert.alert(
-                        'Kavuahs Found',
-                        `The following Kavuah/s were set by this Entry:
-                        ${kavuahs.map(k => '\n-' + k.toString())}
-                        Are you sure that you want to delete it?`,
-                        [
-                            { text: 'Cancel', onPress: () => { return; }, style: 'cancel' },
-                            { text: 'OK', onPress: () => doDelete() },
-                        ]
-                    );
-                }
-                else {
-                    doDelete();
-                }
+                const kavuahs = kavuahList.filter(k => k.settingEntry.entryId === entry.entryId);
+                Alert.alert(
+                    'Confirm Entry Removal',
+                    kavuahs.length ?
+                        `The following Kavuah/s were set by this Entry and will need to be removed if you remove this Entry:
+                        ${kavuahs.map(k => '\n\t* ' + k.toString())}
+                        Are you sure that you want to remove this/these Kavuah/s together with the entry?`:
+                        'Are you sure that you want to remove this Entry?',
+                    [
+                        //Button 1
+                        { text: 'Cancel', onPress: () => { return; }, style: 'cancel' },
+                        //Button 2
+                        {
+                            text: 'OK', onPress: () => {
+                                for (let k of kavuahs) {
+                                    let index = kavuahList.indexOf(k);
+                                    DataUtils.DeleteKavuah(k);
+                                    kavuahList = kavuahList.splice(index, 1);
+                                }
+                                entryList.list = entryList.list.splice(index, 1);
+                                entryList.calulateHaflagas();
+                                appData.EntryList = entryList;
+                                appData.KavuahList = kavuahList;
+                                this.setState({
+                                    appData: appData,
+                                    entryList: appData.EntryList
+                                });
+                                Alert.alert('Remove entry',
+                                    `The entry for ${entry.toString()} has been successfully removed.`);
+                            }
+                        },
+                    ]);
+
             }
         }
         ).catch(error => {
