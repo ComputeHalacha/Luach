@@ -35,17 +35,35 @@ export default class EntryScreen extends Component {
         DataUtils.DeleteEntry(entry).then(() => {
             const appData = this.state.appData;
             let entryList = appData.EntryList,
-                index = entryList.indexOf(entry);
+                index = entryList.list.indexOf(entry);
             if (index > -1) {
-                entryList = entryList.splice(index, 1);
-                entryList.calulateHaflagas();
-                appData.EntryList = entryList;
-                this.setState({
-                    appData: appData,
-                    entryList: appData.EntryList
-                });
-                Alert.alert('Remove entry',
+                const kavuahs = appData.KavuahList.filter(k => k.settingEntry.entryId === entry.entryId),
+                    doDelete = () => {
+                        entryList.list = entryList.list.splice(index, 1);
+                        entryList.calulateHaflagas();
+                        appData.EntryList = entryList;
+                        this.setState({
+                            appData: appData,
+                            entryList: appData.EntryList
+                        });
+                        Alert.alert('Remove entry',
                             `The entry for ${entry.toString()} has been successfully removed.`);
+                    };
+                if (kavuahs.length) {
+                    Alert.alert(
+                        'Kavuahs Found',
+                        `The following Kavuah/s were set by this Entry:
+                        ${kavuahs.map(k => '\n-' + k.toString())}
+                        Are you sure that you want to delete it?`,
+                        [
+                            { text: 'Cancel', onPress: () => { return; }, style: 'cancel' },
+                            { text: 'OK', onPress: () => doDelete() },
+                        ]
+                    );
+                }
+                else {
+                    doDelete();
+                }
             }
         }
         ).catch(error => {
@@ -74,16 +92,16 @@ export default class EntryScreen extends Component {
                                 <View style={styles.buttonList}>
                                     <Button
                                         title='Remove'
-                                        icon={{name:'delete-forever'}}
+                                        icon={{ name: 'delete-forever' }}
                                         backgroundColor='#f50'
                                         onPress={() => this.deleteEntry.bind(this)(entry)} />
                                     <Button
                                         title='New Kavuah'
-                                        icon={{name:'device-hub'}}
+                                        icon={{ name: 'device-hub' }}
                                         backgroundColor='#05f'
                                         onPress={() => this.newKavuah.bind(this)(entry)} />
                                 </View>}
-                            />
+                        />
                     ))}
                 </List>
             </ScrollView>);
@@ -92,5 +110,5 @@ export default class EntryScreen extends Component {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#ffffff' },
-    buttonList:{flexDirection:'row'}
+    buttonList: { flexDirection: 'row' }
 });

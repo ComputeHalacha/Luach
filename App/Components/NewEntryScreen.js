@@ -2,10 +2,9 @@ import React from 'react';
 import { ScrollView, View, StyleSheet, Text, Picker, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import Entry from '../Code/Chashavshavon/Entry';
-import NightDay from '../Code/Chashavshavon/NightDay';
 import Utils from '../Code/JCal/Utils';
 import Location from '../Code/JCal/Location';
-import Onah from '../Code/Chashavshavon/Onah';
+import {NightDay, Onah} from '../Code/Chashavshavon/Onah';
 import DataUtils from '../Code/Data/DataUtils';
 
 export default class NewEntry extends React.Component {

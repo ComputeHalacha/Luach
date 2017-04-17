@@ -2,7 +2,7 @@ import { has, isNumber } from '../GeneralUtils';
 import jDate from '../JCal/jDate';
 import Entry from './Entry';
 import Settings from '../Settings';
-import NightDay from './NightDay';
+import {NightDay} from './Onah';
 import ProblemOnah from './ProblemOnah';
 import {KavuahTypes, Kavuah} from './Kavuah';
 

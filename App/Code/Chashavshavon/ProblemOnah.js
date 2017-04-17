@@ -1,5 +1,4 @@
-import Onah from './Onah';
-import NightDay from './NightDay';
+import {NightDay, Onah} from './Onah';
 
 export default class ProblemOnah extends Onah {
     constructor(jdate, nightDay, name) {

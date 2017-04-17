@@ -1,4 +1,4 @@
-import NightDay from './NightDay';
+import {NightDay} from './Onah';
 
 export default class Entry {
     /**

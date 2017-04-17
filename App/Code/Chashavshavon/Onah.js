@@ -1,6 +1,9 @@
-import NightDay from './NightDay';
+class NightDay {
+    static get Night() { return -1; }
+    static get Day() { return 1; }
+}
 
-export default class Onah {
+class Onah {
     constructor(jdate, nightDay) {
         if (!jdate) {
             throw 'jdate must be supplied.';
@@ -29,3 +32,5 @@ export default class Onah {
         }
     }
 }
+
+export { NightDay, Onah };

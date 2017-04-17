@@ -1,5 +1,5 @@
 import Utils from '../JCal/Utils';
-import NightDay from './NightDay';
+import {NightDay} from './Onah';
 import { setDefault } from '../GeneralUtils';
 
 const KavuahTypes = {

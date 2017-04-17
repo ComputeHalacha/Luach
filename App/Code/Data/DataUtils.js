@@ -6,8 +6,7 @@ import Location from '../JCal/Location';
 import { UserOccasion } from '../JCal/UserOccasion';
 import Entry from '../Chashavshavon/Entry';
 import EntryList from '../Chashavshavon/EntryList';
-import Onah from '../Chashavshavon/Onah';
-import NightDay from '../Chashavshavon/NightDay';
+import {NightDay, Onah} from '../Chashavshavon/Onah';
 import Kavuah from '../Chashavshavon/Kavuah';
 
 SQLite.DEBUG(true);
