@@ -6,7 +6,7 @@ import Zmanim from './Zmanim.js';
 import DafYomi from './Dafyomi';
 
 //Keeps a "repository" of years that have had their elapsed days previously calculated. Format: { year:5776, elapsed:2109283 }
-const yearCache = [];
+const _yearCache = [];
 
 /** **************************************************************************************************************************
  *  Represents a single day in the Jewish Calendar.
@@ -516,7 +516,8 @@ export default class jDate {
 
     /**Calculate the absolute date for the given Jewish Date.*/
     static absJd(year, month, day) {
-        let dayInYear = day; // Days so far this month.
+        //The number of total days.
+        let dayInYear = day; // day is the number of days so far this month.
         if (month < 7) { // Before Tishrei, so add days in prior months this year before and after Nissan.
             let m = 7;
             while (m <= (jDate.monthsJYear(year))) {
@@ -553,9 +554,19 @@ export default class jDate {
 
     /**Number of days in the given Jewish Month. Nissan is 1 and Adar Sheini is 13.*/
     static daysJMonth(year, month) {
-        if ((month === 2) || (month === 4) || (month === 6) || ((month === 8) &&
-            (!jDate.isLongCheshvan(year))) || ((month === 9) && jDate.isShortKislev(year)) || (month === 10) || ((month === 12) &&
-                (!jDate.isJdLeapY(year))) || (month === 13)) {
+        //Nissan, Sivan, Av, Tishrei and Shvat always have 30 days/
+        //Note, this first if is technichally unnessesary as the else below also returns 30,
+        //but we do it here to save unnessesary checks of the "else if".
+        if ([1, 3, 5, 7, 11].includes(month)) {
+            return 30;
+        }
+        //Iyyar, Tammuz, Ellul, Teves and Adar Sheini always have 29 days.
+        else if ([2, 4, 6, 10, 13].includes(month) ||
+            //Cheshvan and Kislev are sometimes 29 days and sometimes 30 days.
+            ((month === 8) && (!jDate.isLongCheshvan(year))) ||
+            ((month === 9) && jDate.isShortKislev(year)) ||
+            //Adar has 29 days unless it is Adar Rishon.
+            ((month === 12) && (!jDate.isJdLeapY(year)))) {
             return 29;
         }
         else {
@@ -567,20 +578,21 @@ export default class jDate {
     static tDays(year) {
         /*As this function is called many times, often on the same year for all types of calculations,
         we save a list of years with their elapsed values.*/
-        const cached = yearCache.find(y => y.year === year);
+        const cached = _yearCache.find(y => y.year === year);
         //If this year was already calculated and cached, then we return the cached value.
         if (cached) {
             return cached.elapsed;
         }
 
-        let months = parseInt((235 * parseInt((year - 1) / 19)) + // Leap months this cycle
+        const months = parseInt((235 * parseInt((year - 1) / 19)) + // Leap months this cycle
             (12 * ((year - 1) % 19)) +                        // Regular months in this cycle.
             (7 * ((year - 1) % 19) + 1) / 19),                // Months in complete cycles so far.
             parts = 204 + 793 * (months % 1080),
             hours = 5 + 12 * months + 793 * parseInt(months / 1080) + parseInt(parts / 1080),
             conjDay = parseInt(1 + 29 * months + hours / 24),
-            conjParts = 1080 * (hours % 24) + parts % 1080,
-            altDay;
+            conjParts = 1080 * (hours % 24) + parts % 1080;
+
+        let altDay;
         /* at the end of a leap year -  15 hours, 589 parts or later... -
         ... or is on a Monday at... -  ...of a common year, -
         at 9 hours, 204 parts or later... - ...or is on a Tuesday... -
@@ -601,7 +613,7 @@ export default class jDate {
         }
 
         //Add this year to the cache to save on calculations later on
-        yearCache.push({ year: year, elapsed: altDay });
+        _yearCache.push({ year: year, elapsed: altDay });
 
         return altDay;
     }
@@ -756,7 +768,8 @@ export default class jDate {
                 }
                 else if (jDay === 18 && dayOfWeek === 0) {
                     list.push(!hebrew ? 'Fast - 17th of Tammuz' : 'צום י"ז בתמוז');
-                } break;
+                }
+                break;
             case 5: //Av
                 if (jDay === 9 && dayOfWeek !== 6)
                     list.push(!hebrew ? 'Tisha B\'Av' : 'תשעה באב');

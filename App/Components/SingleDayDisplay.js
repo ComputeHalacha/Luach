@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
+import { NightDay } from '../Code/Chashavshavon/Onah';
 
 const Prob = props =>
     (<View style={styles.probView}>
@@ -43,6 +44,8 @@ export default class SingleDayDisplay extends Component {
             problemText = probs && probs.length ?
                 probs.map((po, i) => <Prob key={i} real={true} text={po.toString()} />) :
                 (<Prob text='There are no Flagged Dates.' />),
+            nightHasProb = probs && probs.length && probs.find(p => p.nightDay === NightDay.Night),
+            dayHasProb = probs && probs.length && probs.find(p => p.nightDay === NightDay.Day),
             occasions = this.props.occasions,
             occasionText = occasions && occasions.length ?
                 occasions.map((o, i) => <Text key={i}>{o.title}</Text>) : null,
@@ -53,50 +56,56 @@ export default class SingleDayDisplay extends Component {
 
         return (
             <View
-                style={[styles.container, this.props.isToday ? { backgroundColor: '#eef' } : null]}>
-                <TouchableWithoutFeedback onPress={this.showDateDetails.bind(this)}>
-                    <View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
-                            {todayText}
-                            <Text style={styles.dateNumHeb}>{Utils.toJNum(jdate.Day)}</Text>
-                        </View>
-                        <Text style={styles.date}>
-                            <Text style={styles.dateHeb}>
-                                {jdate.toString()}</Text>
-                            <Text>{'\n'}</Text>
-                            <Text style={styles.dateEng}>
-                                {Utils.toStringDate(sdate, true)}</Text>
-                        </Text>
-                        {dailyInfoText}
-                        <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
-                        <Text style={styles.location}>{'Zmanim for ' + location.Name}</Text>
-                        <Text>{'Sun Rises at ' + sunrise}</Text>
-                        <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
+                style={styles.container}>
+                <View style={{ position: 'absolute', height: '50%', width: '99%', margin: 1, backgroundColor: nightHasProb ? '#f1e8e8' : (this.props.isToday ? '#e8e8f1' : '#f1f1f1') }}>
+                </View>
+                <View style={{ position: 'absolute', top: '50%', height: '50%', width: '98%', marginLeft: 2, backgroundColor: dayHasProb ? '#fff1f1' : '#ffffff' }}>
+                </View>
+                <View style={{ margin: 15 }}>
+                    <TouchableWithoutFeedback onPress={this.showDateDetails.bind(this)}>
                         <View>
-                            {occasionText}
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
+                                {todayText}
+                                <Text style={styles.dateNumHeb}>{Utils.toJNum(jdate.Day)}</Text>
+                            </View>
+                            <Text style={styles.date}>
+                                <Text style={styles.dateHeb}>
+                                    {jdate.toString()}</Text>
+                                <Text>{'\n'}</Text>
+                                <Text style={styles.dateEng}>
+                                    {Utils.toStringDate(sdate, true)}</Text>
+                            </Text>
+                            {dailyInfoText}
+                            <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
+                            <Text style={styles.location}>{'Zmanim for ' + location.Name}</Text>
+                            <Text>{'Sun Rises at ' + sunrise}</Text>
+                            <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
+                            <View>
+                                {occasionText}
+                            </View>
+                            <View>
+                                {entriesText}
+                            </View>
+                            <View>
+                                {problemText}
+                            </View>
                         </View>
-                        <View>
-                            {entriesText}
-                        </View>                        
-                        <View>
-                            {problemText}
-                        </View>
+                    </TouchableWithoutFeedback>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Button
+                            color='#abf'
+                            style={styles.btn}
+                            accessibilityLabel='Add a new Entry'
+                            title='New Entry'
+                            onPress={this.newEntry.bind(this)} />
+                        <Button
+                            color='#fba'
+                            style={styles.btn}
+                            accessibilityLabel='Add a new Occasion for this date'
+                            title='New Occasion'
+                            onPress={this.newOccasion.bind(this)} />
                     </View>
-                </TouchableWithoutFeedback>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Button
-                        color='#abf'
-                        style={styles.btn}
-                        accessibilityLabel='Add a new Entry'
-                        title='New Entry'
-                        onPress={this.newEntry.bind(this)} />
-                    <Button
-                        color='#fba'
-                        style={styles.btn}
-                        accessibilityLabel='Add a new Occasion for this date'
-                        title='New Occasion'
-                        onPress={this.newOccasion.bind(this)} />
                 </View>
             </View>
         );
@@ -110,7 +119,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#777',
         borderRadius: 6,
-        padding: 20,
+        padding: 0,
         margin: 10,
         backgroundColor: '#fff'
     },
