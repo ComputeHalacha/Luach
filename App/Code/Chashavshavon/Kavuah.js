@@ -1,8 +1,8 @@
 import Utils from '../JCal/Utils';
-import {NightDay} from './Onah';
+import { NightDay } from './Onah';
 import { setDefault } from '../GeneralUtils';
 
-const KavuahTypes = {
+const KavuahTypes = Object.freeze({
     Haflagah: 1,
     DayOfMonth: 2,
     DayOfWeek: 4,
@@ -11,7 +11,7 @@ const KavuahTypes = {
     DilugDayOfMonth: 32,
     HaflagaMaayanPasuach: 64,
     DayOfMonthMaayanPasuach: 128
-};
+});
 
 class Kavuah {
     constructor(kavuaType, settingEntry, specialNumber, cancelsOnahBeinunis, active, ignore, kavuahId) {

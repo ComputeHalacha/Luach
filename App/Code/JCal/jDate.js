@@ -319,9 +319,9 @@ export default class jDate {
         return new Sedra(this, israel);
     }
 
-    /**Get the sedra of the week for the current Jewish date.*/
+    /**Get the prakim of Pirkei Avos for the current Jewish date.*/
     getPirkeiAvos(israel) {
-        return new PirkeiAvos(this, israel);
+        return PirkeiAvos.getPrakim(this, israel);
     }
 
     /**Gets sunrise and sunset time for the current Jewish date at the given Location.
@@ -674,6 +674,14 @@ export default class jDate {
             //All months but Tishrei have Shabbos Mevarchim on the Shabbos before Rosh Chodesh
             if (jMonth != 6 && jDay > 22 && jDay < 30)
                 list.push(!hebrew ? 'Shabbos Mevarchim' : 'מברכים החודש');
+
+            const pa = jd.getPirkeiAvos(israel);
+            if (pa.length) {
+                list.push(!hebrew ? 'Pirkei Avos - ' +
+                    pa.map(s => Utils.toSuffixed(s) + ' Perek').join(' and ') :
+                    'פרקי אבות - ' +
+                    pa.map(s => Utils.toJNum(s) + ' פרק').join('ו'));
+            }
         }
         if (jDay === 30) {
             const monthIndex = (jMonth === 12 && !isLeapYear) || jMonth === 13 ? 1 : jMonth + 1;

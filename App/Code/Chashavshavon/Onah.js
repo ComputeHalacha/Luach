@@ -1,7 +1,7 @@
-class NightDay {
-    static get Night() { return -1; }
-    static get Day() { return 1; }
-}
+const NightDay = Object.freeze({
+    Night: -1,
+    Day: 1
+});
 
 class Onah {
     constructor(jdate, nightDay) {

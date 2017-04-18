@@ -46,7 +46,7 @@ export default class OccasionsScreen extends Component {
         return (
             <ScrollView style={styles.container}>
                 <List>
-                    {this.state.occasionList.descending.map(occasion => (
+                    {this.state.occasionList.map(occasion => (
                         <ListItem
                             key={occasion.occasionId}
                             title={occasion.toString()}

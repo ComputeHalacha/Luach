@@ -1,13 +1,13 @@
 import jDate from './jDate';
 import Utils from './Utils';
 
-const UserOccasionTypes = {
+const UserOccasionTypes = Object.freeze({
     OneTime: 1,
     HebrewDateRecurringYearly: 2,
     HebrewDateRecurringMonthly: 4,
     SecularDateRecurringYearly: 8,
     SecularDateRecurringMonthly: 16
-};
+});
 
 class UserOccasion {
     constructor(title, occasionType, dateAbs, comments, occasionId) {
