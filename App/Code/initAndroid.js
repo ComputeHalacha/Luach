@@ -6,6 +6,7 @@ PermissionsAndroid.check(locationPermission).then(response => {
     console.log('Location permission granted.');
 });
 
+
 async function requestLocationPermission() {
     try {
         const granted = await PermissionsAndroid.request(

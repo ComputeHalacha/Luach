@@ -18,52 +18,60 @@ class UserOccasion {
         this.occasionId = occasionId;
     }
     toString() {
+        let str = this.title + ' - ';
         switch (this.occasionType) {
             case UserOccasionTypes.OneTime:
-                return 'One time event on ' + this.jdate.toString(true) + '  (' +
+                str += 'One time event on ' + this.jdate.toString(true) + '  (' +
                     Utils.toStringDate(this.sdate, true) + ')';
+                break;
             case UserOccasionTypes.HebrewDateRecurringYearly:
-                return 'Yearly event on the ' + Utils.toSuffixed(this.jdate.Day) +
+                str += 'Yearly event on the ' + Utils.toSuffixed(this.jdate.Day) +
                     ' day of ' + Utils.jMonthsEng[this.jdate.Month];
+                break;
             case UserOccasionTypes.HebrewDateRecurringMonthly:
-                return 'Monthly event on the ' + Utils.toSuffixed(this.jdate.Day)
+                str += 'Monthly event on the ' + Utils.toSuffixed(this.jdate.Day)
                     + ' day of each Jewish month';
+                break;
             case UserOccasionTypes.SecularDateRecurringYearly:
-                return 'Yearly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
+                str += 'Yearly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
                     ' day of ' + Utils.sMonthsEng[this.sdate.getMonth()];
+                break;
             case UserOccasionTypes.SecularDateRecurringMonthly:
-                return 'Monthly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
+                str += 'Monthly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
                     ' day of each Secular month';
+                break;
         }
+        return str;
     }
     get jdate() {
-        if (!this.jdate) {
-            this.jdate = new jDate(this.dateAbs);
+        if (!this._jdate) {
+            this._jdate = new jDate(this.dateAbs);
         }
-        return this.jdate;
+        return this._jdate;
     }
     get sdate() {
-        if (!this.sdate) {
-            this.sdate = jDate.sdFromAbs(this.dateAbs);
+        if (!this._sdate) {
+            this._sdate = jDate.sdFromAbs(this.dateAbs);
         }
-        return this.sdate;
+        return this._sdate;
     }
     get hasId() {
         return !!this.occasionId;
     }
     static getOccasionsForDate(jdate, allOccasions) {
         return allOccasions.filter(o => {
+            const ojDate = o.jdate;
             switch (o.occasionType) {
                 case UserOccasionTypes.OneTime:
                     return o.dateAbs === jdate.Abs;
                 case UserOccasionTypes.HebrewDateRecurringYearly:
-                    return o.Month === jDate.Month && o.Day === jdate.Day;
+                    return ojDate.Month === jdate.Month && ojDate.Day === jdate.Day;
                 case UserOccasionTypes.HebrewDateRecurringMonthly:
-                    return o.Day === jdate.Day;
+                    return ojDate.Day === jdate.Day;
                 case UserOccasionTypes.SecularDateRecurringYearly:
                 case UserOccasionTypes.SecularDateRecurringMonthly:
                     const sdate1 = jdate.getDate(),
-                        sdate2 = o.getDate();
+                        sdate2 = ojDate.getDate();
                     if (o.occasionType === UserOccasionTypes.SecularDateRecurringYearly) {
                         return sdate1.getMonth() === sdate2.getMonth() && sdate1.getDate() === sdate2.getDate();
                     }

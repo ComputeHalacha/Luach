@@ -5,6 +5,7 @@ import { UserOccasionTypes, UserOccasion } from '../Code/JCal/UserOccasion';
 import DataUtils from '../Code/Data/DataUtils';
 import Utils from '../Code/JCal/Utils';
 
+
 export default class NewOccasion extends React.Component {
     static navigationOptions = {
         title: 'New Occasion',
@@ -46,7 +47,7 @@ export default class NewOccasion extends React.Component {
             sdate = this.state.jdate.getDate(),
             sMonthName = Utils.sMonthsEng[sdate.getMonth()],
             sDay = Utils.toSuffixed(sdate.getDate()),
-            muxedDate = `${this.state.jdate.toShortString(false)} (${new Intl.DateTimeFormat().format(sdate)})`;
+            muxedDate = `${this.state.jdate.toShortString(false)} (${sdate.toLocaleDateString()})`;
         return <ScrollView style={styles.container}>
             <Text style={styles.header}>New Occasion for {this.state.jdate.toString(false)}</Text>
             <View style={styles.formRow}>

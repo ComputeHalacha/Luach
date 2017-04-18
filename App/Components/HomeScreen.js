@@ -95,7 +95,8 @@ export default class HomeScreen extends React.Component {
             day = daysList[daysList.length - 1].day.addDays(1);
         daysList.push({
             day,
-            probs: ProblemOnahs.getProbsForDate(day, this.state.appData && this.state.appData.ProblemOnahs)
+            probs: ProblemOnahs.getProbsForDate(day, this.state.appData && this.state.appData.ProblemOnahs),
+            occasions: UserOccasion.getOccasionsForDate(day, this.state.appData.UserOccasions)
         });
         this.setState({
             daysList: daysList,
@@ -107,7 +108,8 @@ export default class HomeScreen extends React.Component {
             day = daysList[0].day.addDays(-1);
         daysList.unshift({
             day,
-            probs: ProblemOnahs.getProbsForDate(day, this.state.appData && this.state.appData.ProblemOnahs)
+            probs: ProblemOnahs.getProbsForDate(day, this.state.appData && this.state.appData.ProblemOnahs),
+            occasions: UserOccasion.getOccasionsForDate(day, this.state.appData.UserOccasions)
         });
         this.setState({
             daysList: daysList,
