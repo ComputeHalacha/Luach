@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
+import { ScrollView, Text, View, Alert } from 'react-native';
 import { List, ListItem, Button, Icon } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 import JDate from '../Code/JCal/jDate';
-
+import {GeneralStyles} from './styles';
 
 export default class EntryScreen extends Component {
     static navigationOptions = {
@@ -86,7 +86,7 @@ export default class EntryScreen extends Component {
     }
     render() {
         return (
-            <ScrollView style={styles.container}>
+            <ScrollView style={GeneralStyles.container}>
                 <Text>To add a new Kavuah for any entry, do a long press on the Entry.</Text>
                 <List>
                     {this.state.entryList.descending.map(entry => (
@@ -96,7 +96,7 @@ export default class EntryScreen extends Component {
                             leftIcon={{ name: 'list' }}
                             hideChevron
                             subtitle={
-                                <View style={styles.buttonList}>
+                                <View style={GeneralStyles.buttonList}>
                                     <Button
                                         title='Remove'
                                         icon={{ name: 'delete-forever' }}
@@ -114,8 +114,3 @@ export default class EntryScreen extends Component {
             </ScrollView>);
     }
 }
-
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#ffffff' },
-    buttonList: { flexDirection: 'row' }
-});

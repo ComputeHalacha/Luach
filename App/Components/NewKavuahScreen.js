@@ -1,8 +1,9 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text, Picker, Switch, Alert } from 'react-native';
+import { ScrollView, View, Text, Picker, Switch, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import {KavuahTypes, Kavuah} from '../Code/Chashavshavon/Kavuah';
 import DataUtils from '../Code/Data/DataUtils';
+import {GeneralStyles} from './styles';
 
 export default class NewKavuah extends React.Component {
     static navigationOptions = {
@@ -46,10 +47,10 @@ export default class NewKavuah extends React.Component {
         for (let i = 0; i <= 100; i++) {
             nums.push(i);
         }
-        return <ScrollView style={styles.container}>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Setting Entry</Text>
-                <Picker style={styles.picker}
+        return <ScrollView style={GeneralStyles.container}>
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Setting Entry</Text>
+                <Picker style={GeneralStyles.picker}
                     selectedValue={this.state.settingEntry}
                     onValueChange={value => this.setState({ settingEntry: value })}>
                     {this.entryList.descending.map(entry =>
@@ -57,9 +58,9 @@ export default class NewKavuah extends React.Component {
                     )}
                 </Picker>
             </View>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Kavuah Type</Text>
-                <Picker style={styles.picker}
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Kavuah Type</Text>
+                <Picker style={GeneralStyles.picker}
                     selectedValue={this.state.kavuahType}
                     onValueChange={value => this.setState({ kavuahType: value })}>
                     <Picker.Item label='Haflaga' value={KavuahTypes.Haflagah} />
@@ -72,38 +73,31 @@ export default class NewKavuah extends React.Component {
                     <Picker.Item label={'Day Of Month with Ma\'ayan Pasuach'} value={KavuahTypes.DayOfMonthMaayanPasuach} />
                 </Picker>
             </View>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Kavuah Defining Number</Text>
-                <Picker style={styles.picker}
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Kavuah Defining Number</Text>
+                <Picker style={GeneralStyles.picker}
                     selectedValue={this.state.specialNumber}
                     onValueChange={value => this.setState({ specialNumber: value })}>
                     {nums.map(num =>
                         (<Picker.Item key={num} label={num.toString()} value={num} />))}
                 </Picker>
             </View>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Cancels Onah Beinonis</Text>
-                <Switch style={styles.switch}
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Cancels Onah Beinonis</Text>
+                <Switch style={GeneralStyles.switch}
                     value={this.state.cancelsOnahBeinunis}
                     onValueChange={value => this.setState({ cancelsOnahBeinunis: value })} />
             </View>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Active</Text>
-                <Switch style={styles.switch}
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Active</Text>
+                <Switch style={GeneralStyles.switch}
                     value={this.state.active}
                     onValueChange={value => this.setState({ active: value })} />
             </View>
             <Text>{'\n'}</Text>
-            <View style={styles.formRow}>
+            <View style={GeneralStyles.formRow}>
                 <Button title='Add Kavuah' onPress={this.addKavuah.bind(this)} />
             </View>
         </ScrollView>;
     }
 }
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#ffffff' },
-    formRow: { flex: 1, flexDirection: 'column' },
-    label: { margin: 0, backgroundColor: '#f5f5e8', padding: 10 },
-    picker: { margin: 0 },
-    switch: { margin: 5, alignSelf: 'flex-start' }
-});

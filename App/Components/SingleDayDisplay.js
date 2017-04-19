@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, Modal, TouchableHighlight } from 'react-native';
+import { List, ListItem, Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
 import { NightDay } from '../Code/Chashavshavon/Onah';
-
-const Prob = props =>
-    (<View style={styles.probView}>
-        <Icon name='flag' color={props.real ? '#f00' : '#888'} />
-        <Text style={[styles.probList, { color: props.real ? '#f00' : '#888' }]}>{props.text}</Text>
-    </View>);
 
 /**
  * Display a single jewish date.
@@ -16,7 +10,7 @@ const Prob = props =>
 export default class SingleDayDisplay extends Component {
     constructor(props) {
         super(props);
-
+        this.state = { popupVisible: false };
     }
     newEntry() {
         const { jdate, location, appData, navigate } = this.props;
@@ -30,6 +24,9 @@ export default class SingleDayDisplay extends Component {
         const { jdate, location, navigate } = this.props;
         navigate('DateDetails', { jdate: jdate, location: location });
     }
+    toggleModal() {
+        this.setState({ popupVisible: !this.state.popupVisible });
+    }
     render() {
         const { jdate, location, isToday } = this.props,
             sdate = jdate.getDate(),
@@ -41,11 +38,11 @@ export default class SingleDayDisplay extends Component {
             sunset = suntimes && suntimes.sunset ?
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
             probs = this.props.problems,
-            problemText = probs && probs.length ?
-                probs.map((po, i) => <Prob key={i} real={true} text={po.toString()} />) :
-                (<Prob text='There are no Flagged Dates.' />),
-            nightHasProb = probs && probs.length && probs.find(p => p.nightDay === NightDay.Night),
-            dayHasProb = probs && probs.length && probs.find(p => p.nightDay === NightDay.Day),
+            nightProbs = probs && probs.length && probs.filter(p => p.nightDay === NightDay.Night),
+            dayProbs = probs && probs.length && probs.filter(p => p.nightDay === NightDay.Day),
+            problemText = probs && probs.length ? (<View>
+                <Icon name='flag' color={'#f00'} onPress={this.toggleModal.bind(this)} />
+            </View>) : null,
             occasions = this.props.occasions,
             occasionText = occasions && occasions.length ?
                 occasions.map((o, i) => <Text key={i}>{o.title}</Text>) : null,
@@ -56,11 +53,67 @@ export default class SingleDayDisplay extends Component {
 
         return (
             <View
-                style={styles.container}>
-                <View style={{ position: 'absolute', height: '50%', width: '99%', margin: 1, backgroundColor: nightHasProb ? '#f1e8e8' : (this.props.isToday ? '#e8e8f1' : '#f1f1f1') }}>
-                </View>
-                <View style={{ position: 'absolute', top: '50%', height: '50%', width: '98%', marginLeft: 2, backgroundColor: dayHasProb ? '#fff1f1' : '#ffffff' }}>
-                </View>
+                style={[styles.container, {
+                    backgroundColor:
+                    (entries && entries.length ? '#fee' : (probs && probs.length ? '#fe9' : (isToday ? '#eef' : '#fff')))
+                }]}>
+                <Modal
+                    animationType={'slide'}
+                    transparent={true}
+                    visible={this.state.popupVisible}
+                    onRequestClose={this.toggleModal.bind(this)}>
+                    <View style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        padding: 20,
+                        borderColor: '#444',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }}>
+                        <View style={{
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: '#fff'
+                        }}>
+                            <View style={{
+                                flexDirection: 'row',
+                                justifyContent: 'center'
+                            }}>
+                                <View style={{
+                                    flex: 1,
+                                    backgroundColor: nightProbs && nightProbs.length ? '#f1e8e8' : '#f1f1f1'
+                                }}>
+                                    <Text style={{ textAlign: 'center' }}>Night-Time</Text>
+                                    <List>
+                                        {nightProbs && nightProbs.map((p, i) => (
+                                            <ListItem
+                                                key={i}
+                                                title={p.toString()}
+                                                leftIcon={{ name: 'flag' }}
+                                                hideChevron />
+                                        ))}
+                                    </List>
+                                </View>
+                                <View style={{
+                                    flex: 1,
+                                    backgroundColor: dayProbs && dayProbs.length ? '#fff1f1' : '#ffffff'
+                                }}>
+                                    <Text style={{ textAlign: 'center' }}>Day-Time</Text>
+                                    <List>
+                                        {dayProbs && dayProbs.map((p, i) => (
+                                            <ListItem
+                                                key={i}
+                                                title={p.name}
+                                                leftIcon={{ name: 'flag' }}
+                                                hideChevron />
+                                        ))}
+                                    </List>
+                                </View>
+                            </View>
+                        </View>
+                        <Button onPress={this.toggleModal.bind(this)} title='Close' style={{ flex: 1 }} />
+                    </View>
+                </Modal>
                 <View style={{ margin: 15 }}>
                     <TouchableWithoutFeedback onPress={this.showDateDetails.bind(this)}>
                         <View>
@@ -107,7 +160,7 @@ export default class SingleDayDisplay extends Component {
                             onPress={this.newOccasion.bind(this)} />
                     </View>
                 </View>
-            </View>
+            </View >
         );
     }
 }
@@ -157,7 +210,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     probView: { flexDirection: 'row', marginBottom: 10 },
-    probList: { color: '#762', fontSize: 14 },
     btn: { fontSize: 7, height: 25 }
 
 });

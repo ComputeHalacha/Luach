@@ -1,10 +1,10 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text, Picker, TextInput, Alert } from 'react-native';
+import { ScrollView, View, Text, Picker, TextInput, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { UserOccasionTypes, UserOccasion } from '../Code/JCal/UserOccasion';
 import DataUtils from '../Code/Data/DataUtils';
 import Utils from '../Code/JCal/Utils';
-
+import {GeneralStyles} from './styles';
 
 export default class NewOccasion extends React.Component {
     static navigationOptions = {
@@ -48,19 +48,19 @@ export default class NewOccasion extends React.Component {
             sMonthName = Utils.sMonthsEng[sdate.getMonth()],
             sDay = Utils.toSuffixed(sdate.getDate()),
             muxedDate = `${this.state.jdate.toShortString(false)} (${sdate.toLocaleDateString()})`;
-        return <ScrollView style={styles.container}>
-            <Text style={styles.header}>New Occasion for {this.state.jdate.toString(false)}</Text>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Occasion Title</Text>
+        return <ScrollView style={GeneralStyles.container}>
+            <Text style={GeneralStyles.header}>New Occasion for {this.state.jdate.toString(false)}</Text>
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Occasion Title</Text>
                 <TextInput
                     autoFocus
                     placeholder='Occasion Title'
                     value={this.state.title}
                     onChangeText={(text) => this.setState({ title: text })} />
             </View>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Occasion Type</Text>
-                <Picker style={styles.picker}
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Occasion Type</Text>
+                <Picker style={GeneralStyles.picker}
                     selectedValue={this.state.occasionType || 0}
                     onValueChange={value => this.setState({ occasionType: value })}>
                     <Picker.Item label={`One Time Occasion on ${muxedDate}`}
@@ -75,8 +75,8 @@ export default class NewOccasion extends React.Component {
                         value={UserOccasionTypes.SecularDateRecurringMonthly} />
                 </Picker>
             </View>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Comments</Text>
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Comments</Text>
                 <TextInput
                     multiline
                     placeholder='Comments'
@@ -85,16 +85,9 @@ export default class NewOccasion extends React.Component {
             </View>
 
             <Text>{'\n'}</Text>
-            <View style={styles.formRow}>
+            <View style={GeneralStyles.formRow}>
                 <Button title='Add Occasion' onPress={this.addOccasion.bind(this)} />
             </View>
         </ScrollView>;
     }
 }
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#ffffff' },
-    formRow: { flex: 1, flexDirection: 'column' },
-    label: { margin: 0, backgroundColor: '#f5f5e8', padding: 10 },
-    picker: { margin: 0 },
-    switch: { margin: 5, alignSelf: 'flex-start' }
-});

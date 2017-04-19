@@ -1,11 +1,12 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text, Picker, Alert } from 'react-native';
+import { ScrollView, View, Text, Picker, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import Entry from '../Code/Chashavshavon/Entry';
 import Utils from '../Code/JCal/Utils';
 import Location from '../Code/JCal/Location';
 import {NightDay, Onah} from '../Code/Chashavshavon/Onah';
 import DataUtils from '../Code/Data/DataUtils';
+import {GeneralStyles} from './styles';
 
 export default class NewEntry extends React.Component {
     static navigationOptions = {
@@ -52,11 +53,11 @@ export default class NewEntry extends React.Component {
         for (let i = 1; i < 31; i++) {
             daysOfMonth.push(i);
         }
-        return <ScrollView style={styles.container}>
-            <Text style={styles.header}>New Entry</Text>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Day</Text>
-                <Picker style={styles.picker}
+        return <ScrollView style={GeneralStyles.container}>
+            <Text style={GeneralStyles.header}>New Entry</Text>
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Day</Text>
+                <Picker style={GeneralStyles.picker}
                     selectedValue={this.jdate.Day}
                     onValueChange={value => this.jdate.Day = value}>
                     {daysOfMonth.map(d =>
@@ -64,9 +65,9 @@ export default class NewEntry extends React.Component {
                     )}
                 </Picker>
             </View>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Month</Text>
-                <Picker style={styles.picker}
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Month</Text>
+                <Picker style={GeneralStyles.picker}
                     selectedValue={this.jdate.Month}
                     onValueChange={value => this.jdate.Month = value}>
                     {Utils.jMonthsEng.map((m, i) =>
@@ -74,9 +75,9 @@ export default class NewEntry extends React.Component {
                     )}
                 </Picker>
             </View>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Year</Text>
-                <Picker style={styles.picker}
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Year</Text>
+                <Picker style={GeneralStyles.picker}
                     selectedValue={this.jdate.Year}
                     onValueChange={value => this.jdate.Year = value}>
                     <Picker.Item label={this.jdate.Year.toString()} value={this.jdate.Year} key={this.jdate.Year} />
@@ -84,9 +85,9 @@ export default class NewEntry extends React.Component {
                     <Picker.Item label={twoYearsBack.toString()} value={twoYearsBack} key={twoYearsBack} />
                 </Picker>
             </View>
-            <View style={styles.formRow}>
-                <Text style={styles.label}>Time of Day</Text>
-                <Picker style={styles.picker}
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Time of Day</Text>
+                <Picker style={GeneralStyles.picker}
                     selectedValue={this.nightDay}
                     onValueChange={value => this.nightDay = value}>
                     <Picker.Item label='Night' value={NightDay.Night} key={NightDay.Night} />
@@ -94,18 +95,9 @@ export default class NewEntry extends React.Component {
                 </Picker>
             </View>
             <Text>{'\n'}</Text>
-            <View style={styles.formRow}>
+            <View style={GeneralStyles.formRow}>
                 <Button title='Add Entry' onPress={this.addEntry.bind(this)} />
             </View>
         </ScrollView>;
     }
 }
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#ffffff' },
-    header: {
-        backgroundColor: '#fe9', color: '#977', padding: 5, flex: 1, textAlign: 'center', fontWeight: 'bold', fontSize: 14
-    },
-    formRow: { flex: 1, flexDirection: 'column' },
-    label: { margin: 0, backgroundColor: '#f5f5e8', padding: 10 },
-    picker: { margin: 0 }
-});

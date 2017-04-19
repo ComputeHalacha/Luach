@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, View, Alert } from 'react-native';
+import { ScrollView, View, Alert } from 'react-native';
 import { List, ListItem, Button } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
-
+import {GeneralStyles} from './styles';
 
 export default class OccasionsScreen extends Component {
     static navigationOptions = {
@@ -44,7 +44,7 @@ export default class OccasionsScreen extends Component {
     }
     render() {
         return (
-            <ScrollView style={styles.container}>
+            <ScrollView style={GeneralStyles.container}>
                 <List>
                     {this.state.occasionList.map(occasion => (
                         <ListItem
@@ -53,7 +53,7 @@ export default class OccasionsScreen extends Component {
                             leftIcon={{ name: 'list' }}
                             hideChevron
                             subtitle={
-                                <View style={styles.buttonList}>
+                                <View>
                                     <Button
                                         title='Remove'
                                         icon={{ name: 'delete-forever' }}
@@ -66,7 +66,3 @@ export default class OccasionsScreen extends Component {
             </ScrollView>);
     }
 }
-
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#ffffff' }
-});
