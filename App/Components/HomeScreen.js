@@ -96,7 +96,8 @@ export default class HomeScreen extends React.Component {
         daysList.push({
             day,
             probs: ProblemOnahs.getProbsForDate(day, this.state.appData && this.state.appData.ProblemOnahs),
-            occasions: UserOccasion.getOccasionsForDate(day, this.state.appData.UserOccasions)
+            occasions: UserOccasion.getOccasionsForDate(day, this.state.appData.UserOccasions),
+            entries : this.state.appData.EntryList.list.filter(e => e.date.Abs === day.Abs)
         });
         this.setState({
             daysList: daysList,
@@ -109,7 +110,8 @@ export default class HomeScreen extends React.Component {
         daysList.unshift({
             day,
             probs: ProblemOnahs.getProbsForDate(day, this.state.appData && this.state.appData.ProblemOnahs),
-            occasions: UserOccasion.getOccasionsForDate(day, this.state.appData.UserOccasions)
+            occasions: UserOccasion.getOccasionsForDate(day, this.state.appData.UserOccasions),
+            entries : this.state.appData.EntryList.list.filter(e => e.date.Abs === day.Abs)
         });
         this.setState({
             daysList: daysList,

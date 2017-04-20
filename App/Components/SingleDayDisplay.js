@@ -1,8 +1,68 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, Modal, TouchableHighlight } from 'react-native';
+import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, Modal } from 'react-native';
 import { List, ListItem, Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
 import { NightDay } from '../Code/Chashavshavon/Onah';
+
+const ProbPopup = props => (
+    <Modal
+        animationType={'slide'}
+        transparent={true}
+        visible={props.visible}
+        onRequestClose={props.onRequestClose}>
+        <View style={{
+            flex: 1,
+            justifyContent: 'center',
+            padding: 20,
+            borderColor: '#444',
+            borderWidth: 1,
+            borderRadius: 6
+        }}>
+            <View style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#fff'
+            }}>
+                <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center'
+                }}>
+                    <View style={{
+                        flex: 1,
+                        backgroundColor: props.nightProbs && props.nightProbs.length ? '#f1e8e8' : '#f1f1f1'
+                    }}>
+                        <Text style={{ textAlign: 'center' }}>Night-Time</Text>
+                        <List>
+                            {props.nightProbs && props.nightProbs.map((p, i) => (
+                                <ListItem
+                                    key={i}
+                                    title={p.name}
+                                    leftIcon={{ name: 'flag' }}
+                                    hideChevron />
+                            ))}
+                        </List>
+                    </View>
+                    <View style={{
+                        flex: 1,
+                        backgroundColor: props.dayProbs && props.dayProbs.length ? '#fff1f1' : '#ffffff'
+                    }}>
+                        <Text style={{ textAlign: 'center' }}>Day-Time</Text>
+                        <List>
+                            {props.dayProbs && props.dayProbs.map((p, i) => (
+                                <ListItem
+                                    key={i}
+                                    title={p.name}
+                                    leftIcon={{ name: 'flag' }}
+                                    hideChevron />
+                            ))}
+                        </List>
+                    </View>
+                </View>
+            </View>
+            <Button onPress={props.onRequestClose} title='Close' style={{ flex: 1 }} />
+        </View>
+    </Modal>
+);
 
 /**
  * Display a single jewish date.
@@ -57,63 +117,11 @@ export default class SingleDayDisplay extends Component {
                     backgroundColor:
                     (entries && entries.length ? '#fee' : (probs && probs.length ? '#fe9' : (isToday ? '#eef' : '#fff')))
                 }]}>
-                <Modal
-                    animationType={'slide'}
-                    transparent={true}
+                <ProbPopup
                     visible={this.state.popupVisible}
-                    onRequestClose={this.toggleModal.bind(this)}>
-                    <View style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        padding: 20,
-                        borderColor: '#444',
-                        borderWidth: 1,
-                        borderRadius: 6
-                    }}>
-                        <View style={{
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: '#fff'
-                        }}>
-                            <View style={{
-                                flexDirection: 'row',
-                                justifyContent: 'center'
-                            }}>
-                                <View style={{
-                                    flex: 1,
-                                    backgroundColor: nightProbs && nightProbs.length ? '#f1e8e8' : '#f1f1f1'
-                                }}>
-                                    <Text style={{ textAlign: 'center' }}>Night-Time</Text>
-                                    <List>
-                                        {nightProbs && nightProbs.map((p, i) => (
-                                            <ListItem
-                                                key={i}
-                                                title={p.name}
-                                                leftIcon={{ name: 'flag' }}
-                                                hideChevron />
-                                        ))}
-                                    </List>
-                                </View>
-                                <View style={{
-                                    flex: 1,
-                                    backgroundColor: dayProbs && dayProbs.length ? '#fff1f1' : '#ffffff'
-                                }}>
-                                    <Text style={{ textAlign: 'center' }}>Day-Time</Text>
-                                    <List>
-                                        {dayProbs && dayProbs.map((p, i) => (
-                                            <ListItem
-                                                key={i}
-                                                title={p.name}
-                                                leftIcon={{ name: 'flag' }}
-                                                hideChevron />
-                                        ))}
-                                    </List>
-                                </View>
-                            </View>
-                        </View>
-                        <Button onPress={this.toggleModal.bind(this)} title='Close' style={{ flex: 1 }} />
-                    </View>
-                </Modal>
+                    onRequestClose={this.toggleModal.bind(this)}
+                    nightProbs={nightProbs}
+                    dayProbs={dayProbs} />
                 <View style={{ margin: 15 }}>
                     <TouchableWithoutFeedback onPress={this.showDateDetails.bind(this)}>
                         <View>

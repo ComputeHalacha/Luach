@@ -13,7 +13,7 @@ export default class ProblemOnah extends Onah {
             this.jdate.addDays(-1).getDate() : this.jdate.getDate();
         return `The ${this.nightDay === NightDay.Night ? 'night' : 'day'} of ` +
             this.jdate.toString() +
-            `(${goyDate.toLocaleDateString()}) is the ${this.name}`;
+            ` (${goyDate.toLocaleDateString()}) is the ${this.name}`;
     }
     /**
      * Filter a list of problem onahs for the ones pertaining to the given date.
