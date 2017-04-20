@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { ScrollView, Text } from 'react-native';
+import { List, ListItem, Button, Icon } from 'react-native-elements';
+import JDate from '../Code/JCal/jDate';
 import { GeneralStyles } from './styles';
 
 export default class FlaggedDatesScreen extends Component {
@@ -12,15 +14,26 @@ export default class FlaggedDatesScreen extends Component {
         this.navigate = this.props.navigation.navigate;
 
         const { params } = this.props.navigation.state,
-            appData = params.appData;
+            appData = params.appData,
+            todayAbs = JDate.absSd(new Date());
         this.state = {
-            problemOnahs: appData.ProblemOnahs
+            problemOnahs: appData.ProblemOnahs.filter(o => o.jdate.Abs >= todayAbs)
         };
     }
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
-                <Text style={GeneralStyles.header}>Flagged Dates</Text>
+                <Text style={GeneralStyles.header}>Upcoming Flagged Dates</Text>
+                <List>
+                    {this.state.problemOnahs.map((o, index) => (
+                        <ListItem
+                            key={index}
+                            title={o.toString()}
+                            leftIcon={{ name: 'flag' }}
+                            hideChevron
+                        />
+                    ))}
+                </List>
             </ScrollView>);
     }
 }

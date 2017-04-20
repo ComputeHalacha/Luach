@@ -88,7 +88,7 @@ export default class SingleDayDisplay extends Component {
                                         {nightProbs && nightProbs.map((p, i) => (
                                             <ListItem
                                                 key={i}
-                                                title={p.toString()}
+                                                title={p.name}
                                                 leftIcon={{ name: 'flag' }}
                                                 hideChevron />
                                         ))}

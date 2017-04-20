@@ -87,7 +87,7 @@ export default class EntryScreen extends Component {
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
-                <Text>To add a new Kavuah for any entry, do a long press on the Entry.</Text>
+                 <Text style={GeneralStyles.header}>List of Entries</Text>
                 <List>
                     {this.state.entryList.descending.map(entry => (
                         <ListItem

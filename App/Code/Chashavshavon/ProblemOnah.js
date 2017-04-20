@@ -1,4 +1,4 @@
-import {NightDay, Onah} from './Onah';
+import { NightDay, Onah } from './Onah';
 
 export default class ProblemOnah extends Onah {
     constructor(jdate, nightDay, name) {
@@ -12,8 +12,8 @@ export default class ProblemOnah extends Onah {
         const goyDate = this.nightDay === NightDay.Night ?
             this.jdate.addDays(-1).getDate() : this.jdate.getDate();
         return `The ${this.nightDay === NightDay.Night ? 'night' : 'day'} of ` +
-            goyDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) +
-            ` - ${this.jdate.toString(true, true)} is the ${this.name}`;
+            this.jdate.toString() +
+            `(${goyDate.toLocaleDateString()}) is the ${this.name}`;
     }
     /**
      * Filter a list of problem onahs for the ones pertaining to the given date.
