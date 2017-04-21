@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, View, Alert } from 'react-native';
 import { List, ListItem, Icon, Button } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
-import {GeneralStyles} from './styles';
+import { GeneralStyles } from './styles';
 
 export default class KavuahScreen extends Component {
     static navigationOptions = {
@@ -17,9 +17,15 @@ export default class KavuahScreen extends Component {
         const { params } = this.props.navigation.state,
             appData = params.appData;
         this.state = {
+            appData: appData,
             kavuahList: appData.KavuahList
         };
-
+    }
+    update(appData) {
+        this.setState({
+            appData: appData,
+            kavuahList: appData.KavuahList
+        });
     }
     newKavuah() {
         this.navigate('NewKavuah', {
@@ -34,12 +40,9 @@ export default class KavuahScreen extends Component {
             if (index > -1) {
                 kavuahList = kavuahList.splice(index, 1);
                 appData.KavuahList = kavuahList;
-                this.setState({
-                    appData: appData,
-                    kavuahList: appData.KavuahList
-                });
+                this.update(appData);
                 Alert.alert('Remove kavuah',
-                            `The kavuah of ${kavuah.toString()} has been successfully removed.`);
+                    `The kavuah of ${kavuah.toString()} has been successfully removed.`);
             }
         }
         ).catch(error => {
@@ -47,9 +50,21 @@ export default class KavuahScreen extends Component {
             console.error(error);
         });
     }
+    findKavuahs() {
+        this.navigate('FindKavuahs', {
+            appData: this.state.appData,
+            onUpdate: this.update.bind(this)
+        });
+    }
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
+                <View>
+                    <Button
+                        title="Find Kavuahs"
+                        icon={{ name: 'search' }}
+                        onPress={this.findKavuahs.bind(this)} />
+                </View>
                 <List>
                     {this.state.kavuahList.map(kavuah => (
                         <ListItem
@@ -61,7 +76,7 @@ export default class KavuahScreen extends Component {
                                 <View>
                                     <Button
                                         title='Remove'
-                                        icon={{name:'delete-forever'}}
+                                        icon={{ name: 'delete-forever' }}
                                         backgroundColor='#f50'
                                         onPress={() => this.deleteKavuah.bind(this)(kavuah)} />
                                 </View>} />

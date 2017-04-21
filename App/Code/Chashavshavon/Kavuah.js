@@ -73,7 +73,15 @@ class Kavuah {
     get hasId() {
         return !!this.kavuahId;
     }
-    //Works out all possible Kavuahs from the given list of entries
+    /**
+     * Works out all possible Kavuahs from the given list of entries
+     * Returns an array of objects, each containing:
+     * {
+     *      kavuah: the found Kavuah object
+     *      entries: an array of the 3 or 4 Entry objects that were found to have a possible Kavuah relationship.
+     * }
+     * @param {*} entryList
+     */
     static getKavuahSuggestionList(entryList) {
         let kavuahList = [];
         const queue = [];
@@ -84,22 +92,31 @@ class Kavuah {
                 .concat(Kavuah.getDilugDayOfMonthKavuah(entry, entryList))
                 .concat(Kavuah.getDayOfWeekKavuahs(entry, entryList));
 
-            //For cheshboning out all other Kavuahs, we use 3 entries in a row.
+            //For cheshboning out all other Kavuahs, we use 3 or 4 entries in a row.
             //First, add the current entry of the loop.
             queue.push(entry);
             //if the queue is too "full"
-            if (queue.length > 3) {
-                //pop out the earliest one - leaves us with just this entry and the previous 2.
+            if (queue.length > 4) {
+                //pop out the earliest one - leaves us with just this entry and the previous 3.
                 queue.shift();
             }
-            //We can't start cheshboning until we have 3 entries - all with the same nightDay
-            if (queue.length === 3 &&
+
+            //To cheshbon the sirug kavuah we need 3 entries with the same night/day.
+            if (queue.length >= 3 &&
                 queue[0].nightDay === queue[1].nightDay &&
                 queue[1].nightDay === queue[2].nightDay) {
+                //We only need three entries for a sirug kavuah.
+                //We always send the last 3 entries as the last one is always the newly added one.
+                kavuahList = kavuahList
+                    .concat(Kavuah.getSirugKavuah(queue.slice(-3)));
 
-                kavuahList = kavuahList.concat(Kavuah.getHaflagahKavuah(queue))
-                    .concat(Kavuah.getSirugKavuah(queue))
-                    .concat(Kavuah.getDilugHaflagahKavuah(queue));
+                //We can't start cheshboning haflaga kavuahs until we have 4 entries - all with the same nightDay
+                if (queue.length === 4 &&
+                    queue[2].nightDay === queue[3].nightDay) {
+                    kavuahList = kavuahList
+                        .concat(Kavuah.getHaflagahKavuah(queue))
+                        .concat(Kavuah.getDilugHaflagahKavuah(queue));
+                }
             }
         }
         return kavuahList;
@@ -110,12 +127,17 @@ class Kavuah {
             thirdMonth = nextMonth.addMonths(1);
         //We look for an entry that is exactly one Jewish month later
         //Note, it is irrelevant if there were other entries in the interim
-        if (entryList.some(en => en.onah.nightDay === entry.onah.nightDay && en.date.Abs === nextMonth.Abs)) {
+        const secondFind = entryList.find(en =>
+            en.onah.nightDay === entry.onah.nightDay && en.date.Abs === nextMonth.Abs);
+        if (secondFind) {
             //Now we look for another entry that is exactly two Jewish months later
             const thirdFind = entryList.find(en =>
                 en.onah.nightDay === entry.onah.nightDay && en.date.Abs === thirdMonth.Abs);
             if (thirdFind) {
-                list.push(new Kavuah(KavuahTypes.DayOfMonth, thirdFind, thirdMonth.Day, true));
+                list.push({
+                    kavuah: new Kavuah(KavuahTypes.DayOfMonth, thirdFind, thirdMonth.Day, true),
+                    entries: [entry, secondFind, thirdFind]
+                });
             }
         }
         return list;
@@ -141,7 +163,10 @@ class Kavuah {
                     thirdMonth.Month === en.month &&
                     thirdMonth.Year === en.year);
             if (finalFind) {
-                list.push(new Kavuah(KavuahTypes.DilugDayOfMonth, finalFind, dilugDays, false));
+                list.push({
+                    kavuah: new Kavuah(KavuahTypes.DilugDayOfMonth, finalFind, dilugDays, false),
+                    entries: [entry, secondFind, finalFind]
+                });
             }
         }
         return list;
@@ -168,18 +193,24 @@ class Kavuah {
                     en.nightDay === entry.nightDay &&
                     en.date.Abs === nextDate.Abs);
                 if (secondFind) {
-                    list.push(new Kavuah(KavuahTypes.DayOfWeek, secondFind, interval, false));
+                    list.push({
+                        kavuah: new Kavuah(KavuahTypes.DayOfWeek, secondFind, interval, false),
+                        entries: [entry, firstFind, secondFind]
+                    });
                 }
             }
         }
         return list;
     }
-    static getHaflagahKavuah(threeEntries) {
+    static getHaflagahKavuah(fourEntries) {
         const list = [];
         //We simply compare the intervals between the entries. If they are the same, we have a Kavuah
-        if ((threeEntries[0].haflaga === threeEntries[1].haflaga) &&
-            (threeEntries[1].haflaga === threeEntries[2].haflaga)) {
-            list.push(new Kavuah(KavuahTypes.Haflagah, threeEntries[2], threeEntries[2].haflaga, true));
+        if ((fourEntries[1].haflaga === fourEntries[2].haflaga) &&
+            (fourEntries[2].haflaga === fourEntries[3].haflaga)) {
+            list.push({
+                kavuah: new Kavuah(KavuahTypes.Haflagah, fourEntries[3], fourEntries[3].haflaga, true),
+                entries: fourEntries
+            });
         }
         return list;
     }
@@ -197,20 +228,26 @@ class Kavuah {
             (threeEntries[1].day === threeEntries[2].day) &&
             threeEntries[1].date.diffMonths(threeEntries[2].date) === monthDiff) {
             //Add the kavuah
-            list.push(new Kavuah(KavuahTypes.Sirug, threeEntries[2], monthDiff, true));
+            list.push({
+                kavuah: new Kavuah(KavuahTypes.Sirug, threeEntries[2], monthDiff, true),
+                entries: threeEntries
+            });
         }
         return list;
     }
-    static getDilugHaflagahKavuah(threeEntries) {
+    static getDilugHaflagahKavuah(fourEntries) {
         // Cheshbon out Dilug Haflaga Kavuahs
         const list = [],
             //We check the three entries if their interval "Dilug"s are the same.
-            haflagaDiff1 = threeEntries[2].haflaga - threeEntries[1].haflaga,
-            haflagaDiff2 = threeEntries[1].haflaga - threeEntries[0].haflaga;
+            haflagaDiff1 = fourEntries[3].haflaga - fourEntries[2].haflaga,
+            haflagaDiff2 = fourEntries[2].haflaga - fourEntries[1].haflaga;
 
         //If the "Dilug" is 0 it will be a regular Kavuah of Haflagah but not a Dilug one
         if (haflagaDiff1 > 0 && haflagaDiff1 === haflagaDiff2) {
-            list.push(new Kavuah(KavuahTypes.DilugHaflaga, threeEntries[2], haflagaDiff1, false));
+            list.push({
+                kavuah: new Kavuah(KavuahTypes.DilugHaflaga, fourEntries[3], haflagaDiff1, false),
+                entries: fourEntries
+            });
         }
         return list;
     }

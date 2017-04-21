@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, Modal } from 'react-native';
+import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, Modal, ScrollView } from 'react-native';
 import { List, ListItem, Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
 import { NightDay } from '../Code/Chashavshavon/Onah';
@@ -12,54 +12,57 @@ const ProbPopup = props => (
         onRequestClose={props.onRequestClose}>
         <View style={{
             flex: 1,
-            justifyContent: 'center',
-            padding: 20,
-            borderColor: '#444',
-            borderWidth: 1,
-            borderRadius: 6
+            justifyContent: 'center'
         }}>
             <View style={{
-                alignItems: 'center',
-                justifyContent: 'center',
+                margin: 15,
+                padding: 15,
+                borderColor: '#444',
+                borderWidth: 1,
+                borderRadius: 6,
                 backgroundColor: '#fff'
             }}>
                 <View style={{
-                    flexDirection: 'row',
+                    alignItems: 'center',
                     justifyContent: 'center'
                 }}>
                     <View style={{
-                        flex: 1,
-                        backgroundColor: props.nightProbs && props.nightProbs.length ? '#f1e8e8' : '#f1f1f1'
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        marginBottom: 20
                     }}>
-                        <Text style={{ textAlign: 'center' }}>Night-Time</Text>
-                        <List>
-                            {props.nightProbs && props.nightProbs.map((p, i) => (
-                                <ListItem
-                                    key={i}
-                                    title={p.name}
-                                    leftIcon={{ name: 'flag' }}
-                                    hideChevron />
-                            ))}
-                        </List>
+                        <View style={{ flex: 1, backgroundColor: '#e5e5e5' }}>
+                            <View style={{ backgroundColor: '#666', padding: 10 }}>
+                                <Text style={{ textAlign: 'center', color: '#fff' }}>Night-Time</Text>
+                            </View>
+                            <View style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: '#fff1f1'
+                            }}>
+                                {props.nightProbs && props.nightProbs.map((p, i) => (
+                                    <Text key={i} style={{ padding: 3 }}>{p.name}</Text>
+                                ))}
+                            </View>
+                        </View>
+                        <View style={{ flex: 1, backgroundColor: '#f1f1f1' }}>
+                            <View style={{ backgroundColor: '#999', padding: 10 }}>
+                                <Text style={{ textAlign: 'center', color: '#fff' }}>Day-Time</Text>
+                            </View>
+                            <View style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: '#fff6f6'
+                            }}>
+                                {props.dayProbs && props.dayProbs.map((p, i) => (
+                                    <Text key={i} style={{ padding: 5 }}>{p.name}</Text>
+                                ))}
+                            </View>
+                        </View>
                     </View>
-                    <View style={{
-                        flex: 1,
-                        backgroundColor: props.dayProbs && props.dayProbs.length ? '#fff1f1' : '#ffffff'
-                    }}>
-                        <Text style={{ textAlign: 'center' }}>Day-Time</Text>
-                        <List>
-                            {props.dayProbs && props.dayProbs.map((p, i) => (
-                                <ListItem
-                                    key={i}
-                                    title={p.name}
-                                    leftIcon={{ name: 'flag' }}
-                                    hideChevron />
-                            ))}
-                        </List>
-                    </View>
+                    <Button onPress={props.onRequestClose} title='Close' style={{ flex: 1, padding: 35 }} />
                 </View>
             </View>
-            <Button onPress={props.onRequestClose} title='Close' style={{ flex: 1 }} />
         </View>
     </Modal>
 );
