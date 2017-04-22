@@ -6,7 +6,7 @@ import Location from '../JCal/Location';
 import { UserOccasion } from '../JCal/UserOccasion';
 import Entry from '../Chashavshavon/Entry';
 import EntryList from '../Chashavshavon/EntryList';
-import {NightDay, Onah} from '../Chashavshavon/Onah';
+import { NightDay, Onah } from '../Chashavshavon/Onah';
 import Kavuah from '../Chashavshavon/Kavuah';
 
 SQLite.DEBUG(true);
@@ -22,14 +22,20 @@ export default class DataUtils {
                     location = locations ?
                         locations.find(l => l.locationId === dbSet.locationId) :
                         await DataUtils.LocationFromDatabase(dbSet.locationId);
-                settings = new Settings(
-                    location,
-                    dbSet.showOhrZeruah,
-                    dbSet.onahBeinunis24Hours,
-                    dbSet.numberMonthsAheadToWarn,
-                    dbSet.keepLongerHaflagah,
-                    dbSet.cheshbonKavuahByActualEntry,
-                    dbSet.cheshbonKavuahByCheshbon);
+                settings = new Settings({
+                    location: location,
+                    showOhrZeruah: dbSet.showOhrZeruah,
+                    onahBeinunis24Hours: dbSet.onahBeinunis24Hours,
+                    numberMonthsAheadToWarn: dbSet.numberMonthsAheadToWarn,
+                    keepLongerHaflagah: dbSet.keepLongerHaflagah,
+                    cheshbonKavuahByActualEntry: dbSet.cheshbonKavuahByActualEntry,
+                    cheshbonKavuahByCheshbon: dbSet.cheshbonKavuahByCheshbon,
+                    calcKavuahsOnNewEntry: dbSet.calcKavuahsOnNewEntry,
+                    showProbFlagOnHome: dbSet.showProbFlagOnHome,
+                    showEntryFlagOnHome: dbSet.showEntryFlagOnHome,
+                    requirePIN: dbSet.requirePIN,
+                    PIN: dbSet.PIN
+                });
             })
             .catch(error => {
                 console.warn('Error trying to get settings from the database.');
@@ -45,7 +51,12 @@ export default class DataUtils {
             numberMonthsAheadToWarn=?,
             keepLongerHaflagah=?,
             cheshbonKavuahByActualEntry=?,
-            cheshbonKavuahByCheshbon=?`,
+            cheshbonKavuahByCheshbon=?,
+            calcKavuahsOnNewEntry=?,
+            showProbFlagOnHome=?,
+            showEntryFlagOnHome=?,
+            requirePIN=?,
+            pin=?`,
             [
                 (settings.location && settings.location.locationId) || 28, //Jerusalem is 28
                 settings.showOhrZeruah,
@@ -53,7 +64,12 @@ export default class DataUtils {
                 settings.numberMonthsAheadToWarn,
                 settings.keepLongerHaflagah,
                 settings.cheshbonKavuahByActualEntry,
-                settings.cheshbonKavuahByCheshbon
+                settings.cheshbonKavuahByCheshbon,
+                settings.calcKavuahsOnNewEntry,
+                settings.showProbFlagOnHome,
+                settings.showEntryFlagOnHome,
+                settings.requirePIN,
+                settings.PIN
             ])
             .catch(error => {
                 console.warn('Error trying to enter settings into the database.');

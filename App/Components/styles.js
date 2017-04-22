@@ -13,6 +13,7 @@ const GeneralStyles = StyleSheet.create({
     label: { margin: 0, backgroundColor: '#f5f5e8', padding: 10 },
     picker: { margin: 0 },
     switch: { margin: 5, alignSelf: 'flex-start' },
+    textInput: { margin: 5, alignSelf: 'flex-start' },
     buttonList: { flexDirection: 'row' },
     dateEng: { color: '#080' },
     dateHeb: { color: '#008' },

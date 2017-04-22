@@ -29,7 +29,7 @@ export default class FindKavuahScreen extends Component {
             const plist = Kavuah.getKavuahSuggestionList(appData.EntryList.list);
             this.setState({ possibleKavuahList: plist });
             if (!plist.length) {
-                Alert.alert(`The application could not find any Kavuah combinations.
+                Alert.alert(`The application did not find any Kavuah combinations.
                     Please remember: DO NOT RELY EXCLUSIVELY UPON THIS APPLICATION!`);
                 this.navigate('Kavuahs', { appData: appData });
             }

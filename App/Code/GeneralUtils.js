@@ -25,7 +25,7 @@ function has(o, ...arr) {
     }
 }
 
-/**Returns the default value only if the param value is undefined or null.
+/**Returns the default value only if the param value is undefined, null or NaN.
  *
  * Otherwise, the original param value is returned.
  *
@@ -33,7 +33,7 @@ function has(o, ...arr) {
  * where we want to keep false, "" and 0 if they were supplied.
  */
 function setDefault(paramValue, defValue) {
-    if (typeof paramValue === 'undefined' || paramValue === null) {
+    if (typeof paramValue === 'undefined' || paramValue === null || isNaN(paramValue)) {
         return defValue;
     }
     else {

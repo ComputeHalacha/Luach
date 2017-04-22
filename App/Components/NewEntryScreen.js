@@ -4,9 +4,9 @@ import { Button } from 'react-native-elements';
 import Entry from '../Code/Chashavshavon/Entry';
 import Utils from '../Code/JCal/Utils';
 import Location from '../Code/JCal/Location';
-import {NightDay, Onah} from '../Code/Chashavshavon/Onah';
+import { NightDay, Onah } from '../Code/Chashavshavon/Onah';
 import DataUtils from '../Code/Data/DataUtils';
-import {GeneralStyles} from './styles';
+import { GeneralStyles } from './styles';
 
 export default class NewEntry extends React.Component {
     static navigationOptions = {
@@ -38,8 +38,13 @@ export default class NewEntry extends React.Component {
             entryList.calulateHaflagas();
             this.setState({ appData: appData });
             Alert.alert('Add Entry',
-                        `The entry for ${entry.toString()} has been successfully added.`);
-            this.navigate('Entries', { appData: this.state.appData });
+                `The entry for ${entry.toString()} has been successfully added.`);
+            if (appData.Settings.calcKavuahsOnNewEntry) {
+                this.navigate('FindKavuahs', { appData: appData });
+            }
+            else {
+                this.navigate('Entries', { appData: appData });
+            }
         }
         ).catch(error => {
             console.warn('Error trying to add entry to the database.');

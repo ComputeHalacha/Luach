@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView, View, StyleSheet, Text, Picker, Switch, Alert } from 'react-native';
+import { ScrollView, View, Text, TextInput, Picker, Switch } from 'react-native';
 import Location from '../Code/JCal/Location';
 import { setDefault } from '../Code/GeneralUtils';
-import {GeneralStyles} from './styles';
+import { GeneralStyles } from './styles';
 
 export default class SettingsScreen extends Component {
     static navigationOptions = {
@@ -38,7 +38,12 @@ export default class SettingsScreen extends Component {
             numberMonthsAheadToWarn = (this.state.settings && this.state.settings.numberMonthsAheadToWarn) || 12,
             keepLongerHaflagah = setDefault(this.state.settings && this.state.settings.keepLongerHaflagah, true),
             cheshbonKavuahByActualEntry = setDefault(this.state.settings && this.state.settings.cheshbonKavuahByActualEntry, true),
-            cheshbonKavuahByCheshbon = setDefault(this.state.settings && this.state.settings.cheshbonKavuahByCheshbon, true);
+            cheshbonKavuahByCheshbon = setDefault(this.state.settings && this.state.settings.cheshbonKavuahByCheshbon, true),
+            calcKavuahsOnNewEntry = setDefault(this.state.settings && this.state.settings.calcKavuahsOnNewEntry, true),
+            showProbFlagOnHome = setDefault(this.state.settings && this.state.settings.showProbFlagOnHome, true),
+            showEntryFlagOnHome = setDefault(this.state.settings && this.state.settings.showEntryFlagOnHome, true),
+            requirePIN = setDefault(this.state.settings && this.state.settings.requirePIN, true),
+            PIN = setDefault(this.state.settings && this.state.settings.PIN, '1234');
         me.update.bind(me);
         return (
             <ScrollView style={GeneralStyles.container}>
@@ -92,6 +97,39 @@ export default class SettingsScreen extends Component {
                     <Switch style={GeneralStyles.switch}
                         onValueChange={value => me.update('cheshbonKavuahByCheshbon', value)}
                         value={!!cheshbonKavuahByCheshbon} />
+                </View>
+                <View style={GeneralStyles.formRow}>
+                    <Text style={GeneralStyles.label}>Automatically Calculate Kavuahs upon addition of an Entry?</Text>
+                    <Switch style={GeneralStyles.switch}
+                        onValueChange={value => me.update('calcKavuahsOnNewEntry', value)}
+                        value={!!calcKavuahsOnNewEntry} />
+                </View>
+                <View style={GeneralStyles.formRow}>
+                    <Text style={GeneralStyles.label}>Show flags for problem dates on home page?</Text>
+                    <Switch style={GeneralStyles.switch}
+                        onValueChange={value => me.update('showProbFlagOnHome', value)}
+                        value={!!showProbFlagOnHome} />
+                </View>
+                <View style={GeneralStyles.formRow}>
+                    <Text style={GeneralStyles.label}>Show flags for dates that have an Entry on home page?</Text>
+                    <Switch style={GeneralStyles.switch}
+                        onValueChange={value => me.update('showEntryFlagOnHome', value)}
+                        value={!!showEntryFlagOnHome} />
+                </View>
+                <View style={GeneralStyles.formRow}>
+                    <Text style={GeneralStyles.label}>Require PIN to open application?</Text>
+                    <Switch style={GeneralStyles.switch}
+                        onValueChange={value => me.update('requirePIN', value)}
+                        value={!!requirePIN} />
+                </View>
+                <View style={GeneralStyles.formRow}>
+                    <Text style={GeneralStyles.label}>4 digit PIN Number</Text>
+                    <TextInput style={GeneralStyles.textInput}
+                        keyboardType='numeric'
+                        returnKeyType='next'
+                        maxLength={4}
+                        onValueChange={value => me.update('PIN', value)}
+                        value={PIN} />
                 </View>
             </ScrollView>);
     }
