@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Alert } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import { List, ListItem, Icon, Button } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 import { Kavuah } from '../Code/Chashavshavon/Kavuah';
@@ -7,13 +8,12 @@ import { GeneralStyles } from './styles';
 
 export default class FindKavuahScreen extends Component {
     static navigationOptions = {
-        title: 'Calculate Kavuahs',
-        right: <Icon name='add-circle' onPress={this.newKavuah} />,
+        title: 'Calculate Kavuahs'
     };
     constructor(props) {
         super(props);
 
-        this.navigate = this.props.navigation.navigate;
+        this.dispatch = this.props.navigation.dispatch;
 
         const { params } = this.props.navigation.state,
             appData = params.appData;
@@ -31,14 +31,9 @@ export default class FindKavuahScreen extends Component {
             if (!plist.length) {
                 Alert.alert(`The application did not find any Kavuah combinations.
                     Please remember: DO NOT RELY EXCLUSIVELY UPON THIS APPLICATION!`);
-                this.navigate('Kavuahs', { appData: appData });
+                this.dispatch(NavigationActions.back());
             }
         }
-    }
-    newKavuah() {
-        this.navigate('NewKavuah', {
-            appData: this.appData
-        });
     }
     addKavuah(pk) {
         const appData = this.state.appData,

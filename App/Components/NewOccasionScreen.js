@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, View, Text, Picker, TextInput, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
+import { NavigationActions } from 'react-navigation';
 import { UserOccasionTypes, UserOccasion } from '../Code/JCal/UserOccasion';
 import DataUtils from '../Code/Data/DataUtils';
 import Utils from '../Code/JCal/Utils';
@@ -15,7 +16,7 @@ export default class NewOccasion extends React.Component {
         const navigation = this.props.navigation;
         let { appData, onUpdate, jdate } = navigation.state.params;
         this.onUpdate = onUpdate;
-        this.navigate = navigation.navigate;
+        this.dispatch = navigation.dispatch;
         this.state = {
             appData: appData,
             jdate: jdate,
@@ -39,7 +40,7 @@ export default class NewOccasion extends React.Component {
         }
         Alert.alert('Add occasion',
                     `The occasion ${occasion.title} has been successfully added.`);
-        this.navigate('Occasions', { appData: this.state.appData });
+        this.dispatch(NavigationActions.back());
     }
     render() {
         const jmonthName = Utils.jMonthsEng[this.state.jdate.Month],

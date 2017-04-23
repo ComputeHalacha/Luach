@@ -33,22 +33,39 @@ export default class KavuahScreen extends Component {
         });
     }
     deleteKavuah(kavuah) {
-        DataUtils.DeleteKavuah(kavuah).then(() => {
-            const appData = this.state.appData;
-            let kavuahList = appData.KavuahList,
-                index = kavuahList.indexOf(kavuah);
-            if (index > -1) {
-                kavuahList = kavuahList.splice(index, 1);
-                appData.KavuahList = kavuahList;
-                this.update(appData);
-                Alert.alert('Remove kavuah',
-                    `The kavuah of ${kavuah.toString()} has been successfully removed.`);
-            }
+        const appData = this.state.appData;
+        let kavuahList = appData.KavuahList,
+            index = kavuahList.indexOf(kavuah);
+        if (index > -1 || kavuah.hasId) {
+            Alert.alert(
+                'Confirm Kavuah Removal',
+                'Are you sure that you want to remove this Kavuah?',
+                [   //Button 1
+                    {
+                        text: 'Cancel',
+                        onPress: () => { return; },
+                        style: 'cancel'
+                    },
+                    //Button 2
+                    {
+                        text: 'OK', onPress: () => {
+                            if (kavuah.hasId) {
+                                DataUtils.DeleteKavuah(kavuah).catch(error => {
+                                    console.warn('Error trying to delete a kavuah from the database.');
+                                    console.error(error);
+                                });
+                            }
+                            if (index > -1) {
+                                kavuahList = kavuahList.splice(index, 1);
+                                appData.KavuahList = kavuahList;
+                                this.update(appData);
+                            }
+                            Alert.alert('Remove kavuah',
+                                `The kavuah of ${kavuah.toString()} has been successfully removed.`);
+                        }
+                    }
+                ]);
         }
-        ).catch(error => {
-            console.warn('Error trying to delete a kavuah from the database.');
-            console.error(error);
-        });
     }
     findKavuahs() {
         this.navigate('FindKavuahs', {

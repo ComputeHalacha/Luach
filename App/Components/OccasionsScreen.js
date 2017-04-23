@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Alert } from 'react-native';
+import { ScrollView, Alert } from 'react-native';
 import { List, ListItem, Button } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
-import {GeneralStyles} from './styles';
+import { GeneralStyles } from './styles';
 
 export default class OccasionsScreen extends Component {
     static navigationOptions = {
@@ -27,11 +27,10 @@ export default class OccasionsScreen extends Component {
                 index = occasionList.indexOf(occasion);
             if (index > -1) {
                 occasionList = occasionList.splice(index, 1);
-                occasionList.calulateHaflagas();
                 appData.UserOccasions = occasionList;
                 this.setState({
                     appData: appData,
-                    occasionList: appData.UserOccasions
+                    occasionList: occasionList
                 });
                 Alert.alert('Remove occasion',
                     `The ocassion ${occasion.title} has been successfully removed.`);
@@ -53,13 +52,12 @@ export default class OccasionsScreen extends Component {
                             leftIcon={{ name: 'list' }}
                             hideChevron
                             subtitle={
-                                <View>
-                                    <Button
-                                        title='Remove'
-                                        icon={{ name: 'delete-forever' }}
-                                        backgroundColor='#f50'
-                                        onPress={() => this.deleteOccasion.bind(this)(occasion)} />
-                                </View>}
+                                <Button
+                                    title='Remove'
+                                    icon={{ name: 'delete-forever' }}
+                                    backgroundColor='#fca'
+                                    onPress={() => this.deleteOccasion.bind(this)(occasion)} />
+                            }
                         />
                     ))}
                 </List>

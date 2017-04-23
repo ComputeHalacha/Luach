@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, View, Text, Picker, Switch, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
+import { NavigationActions } from 'react-navigation';
 import {KavuahTypes, Kavuah} from '../Code/Chashavshavon/Kavuah';
 import DataUtils from '../Code/Data/DataUtils';
 import {GeneralStyles} from './styles';
@@ -14,7 +15,7 @@ export default class NewKavuah extends React.Component {
         const navigation = this.props.navigation;
         let { appData, onUpdate, settingEntry } = navigation.state.params;
         this.onUpdate = onUpdate;
-        this.navigate = navigation.navigate;
+        this.dispatch = navigation.dispatch;
         this.entryList = appData.EntryList;
         if (!settingEntry) {
             settingEntry = this.entryList.list[this.entryList.list.length - 1];
@@ -40,7 +41,7 @@ export default class NewKavuah extends React.Component {
         this.onUpdate();
         Alert.alert('Add Kavuah',
                     `The Kavuah for ${kavuah.toString()} has been successfully added.`);
-        this.navigate('Kavuahs', { appData: this.state.appData });
+        this.dispatch(NavigationActions.back());
     }
     render() {
         const nums = [];

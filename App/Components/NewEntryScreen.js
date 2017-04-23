@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, View, Text, Picker, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
+import { NavigationActions } from 'react-navigation';
 import Entry from '../Code/Chashavshavon/Entry';
 import Utils from '../Code/JCal/Utils';
 import Location from '../Code/JCal/Location';
@@ -27,6 +28,7 @@ export default class NewEntry extends React.Component {
             this.location = location;
         this.nightDay = isNight ? NightDay.Night : NightDay.Day;
         this.navigate = navigation.navigate;
+        this.dispatch = navigation.dispatch;
     }
     addEntry() {
         const onah = new Onah(this.jdate, this.nightDay),
@@ -43,7 +45,7 @@ export default class NewEntry extends React.Component {
                 this.navigate('FindKavuahs', { appData: appData });
             }
             else {
-                this.navigate('Entries', { appData: appData });
+                this.dispatch(NavigationActions.back());
             }
         }
         ).catch(error => {

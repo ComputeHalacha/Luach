@@ -11,8 +11,6 @@ export default class FlaggedDatesScreen extends Component {
     constructor(props) {
         super(props);
 
-        this.navigate = this.props.navigation.navigate;
-
         const { params } = this.props.navigation.state,
             appData = params.appData,
             todayAbs = JDate.absSd(new Date());
