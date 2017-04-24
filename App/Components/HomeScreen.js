@@ -24,10 +24,10 @@ export default class HomeScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        const daysList = [
-            { day: HomeScreen.today.addDays(-1), probs: [], occasions: [], entries: [] },
-            { day: HomeScreen.today, probs: [], occasions: [], entries: [] },
-            { day: HomeScreen.today.addDays(1), probs: [], occasions: [], entries: [] }];
+
+        this.setDayInformation.bind(this);
+        this.getDaysList.bind(this);
+        const daysList = this.getDaysList();
         this.state = {
             daysList: daysList,
             appData: null,
@@ -36,12 +36,8 @@ export default class HomeScreen extends React.Component {
             pageNumber: 1
         };
         AppData.getAppData().then(ad => {
-            for (let day of daysList) {
-                day.probs = ad.Settings.showProbFlagOnHome ?
-                    ProblemOnahs.getProbsForDate(day.day, ad.ProblemOnahs) : [];
-                day.occasions = UserOccasion.getOccasionsForDate(day.day, ad.UserOccasions);
-                day.entries = ad.Settings.showEntryFlagOnHome ?
-                    ad.EntryList.list.filter(e => e.date.Abs === day.day.Abs) : [];
+            for (let singleDay of daysList) {
+                this.setDayInformation(singleDay, ad);
             }
             this.setState({
                 appData: ad,
@@ -69,15 +65,9 @@ export default class HomeScreen extends React.Component {
         ad.ProblemOnahs = probs;
 
         //In case the problems or occasions have been changed, we need to update the days list
-        const daysList = this.state.daysList,
-            allProbs = this.state.appData.ProblemOnahs,
-            allOccasions = this.state.appData.UserOccasions;
-        for (let day of daysList) {
-            day.probs = ad.Settings.showProbFlagOnHome ?
-                ProblemOnahs.getProbsForDate(day.day, allProbs) : [];
-            day.occasions = UserOccasion.getOccasionsForDate(day.day, allOccasions);
-            day.entries = ad.Settings.showEntryFlagOnHome ?
-                ad.EntryList.list.filter(e => e.date.Abs === day.day.Abs) : [];
+        const daysList = this.state.daysList;
+        for (let singleDay of daysList) {
+            this.setDayInformation(singleDay, ad);
         }
 
         this.setState({
@@ -97,14 +87,7 @@ export default class HomeScreen extends React.Component {
     _addDaysToEnd(position) {
         const daysList = this.state.daysList,
             day = daysList[daysList.length - 1].day.addDays(1);
-        daysList.push({
-            day,
-            probs: this.state.appData && this.state.appData.Settings.showProbFlagOnHome ?
-                ProblemOnahs.getProbsForDate(day, this.state.appData && this.state.appData.ProblemOnahs) : [],
-            occasions: UserOccasion.getOccasionsForDate(day, this.state.appData.UserOccasions),
-            entries: this.state.appData && this.state.appData.Settings.showEntryFlagOnHome ?
-                this.state.appData.EntryList.list.filter(e => e.date.Abs === day.Abs) : []
-        });
+        daysList.push(this.setDayInformation({ day }));
         this.setState({
             daysList: daysList,
             pageNumber: position
@@ -113,18 +96,31 @@ export default class HomeScreen extends React.Component {
     _addDaysToBeginning() {
         const daysList = this.state.daysList,
             day = daysList[0].day.addDays(-1);
-        daysList.unshift({
-            day,
-            probs: this.state.appData && this.state.appData.Settings.showProbFlagOnHome ?
-                ProblemOnahs.getProbsForDate(day, this.state.appData && this.state.appData.ProblemOnahs) : [],
-            occasions: UserOccasion.getOccasionsForDate(day, this.state.appData.UserOccasions),
-            entries: this.state.appData && this.state.appData.Settings.showEntryFlagOnHome ?
-                this.state.appData.EntryList.list.filter(e => e.date.Abs === day.Abs) : []
-        });
+        daysList.unshift(this.setDayInformation({ day }));
         this.setState({
             daysList: daysList,
             pageNumber: 1
         });
+    }
+    getDaysList(jdate) {
+        jdate = jdate || HomeScreen.today;
+
+        const daysList = [this.setDayInformation({ day: jdate.addDays(-1) })];
+        daysList.push(this.setDayInformation({ day: jdate }));
+        daysList.push(this.setDayInformation({ day: jdate.addDays(1) }));
+
+        return daysList;
+    }
+    setDayInformation(singleDay, appData) {
+        appData = appData || (this.state && this.state.appData);
+
+        singleDay.probs = appData && appData.Settings.showProbFlagOnHome ?
+            ProblemOnahs.getProbsForDate(singleDay.day, appData && appData.ProblemOnahs) : [];
+        singleDay.occasions = appData && appData.UserOccasions ?
+            UserOccasion.getOccasionsForDate(singleDay.day, appData.UserOccasions) : [];
+        singleDay.entries = appData && appData.Settings.showEntryFlagOnHome ?
+            appData.EntryList.list.filter(e => e.date.Abs === singleDay.day.Abs) : [];
+        return singleDay;
     }
     renderDay(singleDay) {
         const { day, probs, occasions, entries } = singleDay;
@@ -179,7 +175,7 @@ export default class HomeScreen extends React.Component {
         ];
         return (
             <ScrollView style={{ flex: 1 }}>
-                <View contentContainerStyle={styles.container}>
+                <View>
                     <Carousel
                         ref={carousel => this._carousel = carousel}
                         pageWidth={width - 40}

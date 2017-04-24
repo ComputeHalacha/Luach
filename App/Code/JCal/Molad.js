@@ -5,11 +5,11 @@ import jDate from './jDate.js';
  * Algorithm was adapted from Hebcal by Danny Sadinoff
  *
  * Example of use:
- * var moladString = Molad.getString(5776, 10);
+ * const moladString = Molad.getString(5776, 10);
  */
 export default class Molad {
     static getMolad(month, year) {
-        var totalMonths, partsElapsed, hoursElapsed, parts, monthAdj = month - 7;
+        let totalMonths, partsElapsed, hoursElapsed, parts, monthAdj = month - 7;
 
         if (monthAdj < 0) {
             monthAdj += jDate.monthsJYear(year);
@@ -32,11 +32,11 @@ export default class Molad {
     // The molad is always in Jerusalem so we use the Jerusalem sunset times
     // to determine whether to display "Night" or "Motzai Shabbos" etc. (check this...)
     static getString(year, month) {
-        var molad = Molad.getMolad(month, year),
+        const molad = Molad.getMolad(month, year),
             nightfall = molad.jDate.getSunriseSunset(Location.getJerusalem()).sunset,
             isNight = Utils.totalMinutes(Utils.timeDiff(molad.time, nightfall)) >= 0,
-            dow = molad.jDate.getDayOfWeek(),
-            str = '';
+            dow = molad.jDate.getDayOfWeek();
+        let str = '';
 
         if (isNaN(nightfall.hour)) {
             str += Utils.dowEng[dow];
@@ -60,11 +60,11 @@ export default class Molad {
     // The molad is always in Jerusalem so we use the Jerusalem sunset times
     // to determine whether to display "ליל/יום" or "מוצאי שב"ק" etc.
     static getStringHeb(year, month) {
-        var molad = Molad.getMolad(month, year),
+        const molad = Molad.getMolad(month, year),
             nightfall = molad.jDate.getSunriseSunset(Location.getJerusalem()).sunset,
             isNight = Utils.totalMinutes(Utils.timeDiff(molad.time, nightfall)) >= 0,
-            dow = molad.jDate.getDayOfWeek(),
-            str = '';
+            dow = molad.jDate.getDayOfWeek();
+        let str = '';
 
         if (dow === 6) {
             str += (isNight ? 'מוצאי שב"ק' : 'יום שב"ק');

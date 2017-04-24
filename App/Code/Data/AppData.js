@@ -10,12 +10,15 @@ export default class AppData {
         this.ProblemOnahs = problemOnahs;
     }
     static async getAppData() {
-        if (!global.AppData) {
+        if (!global.GlobalAppData) {
             await AppData.fromDatabase().then(ad => {
-                global.AppData = ad;
+                global.GlobalAppData = ad;
             });
         }
-        return global.AppData;
+        return global.GlobalAppData;
+    }
+    static setAppData(ad) {
+        global.GlobalAppData = ad;
     }
     static async fromDatabase() {
         let locations, settings, occasions, entryList, kavuahList, problemOnahs;

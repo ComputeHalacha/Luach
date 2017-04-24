@@ -23,7 +23,7 @@ Utils.toJNum = function (number) {
         throw new Error('Max value is 9999');
     }
 
-    var n = number,
+    let n = number,
         retval = '';
 
     if (n >= 1000) {
@@ -75,7 +75,7 @@ Utils.toStringDate = function (date, hideDayOfWeek, dontCapitalize) {
 
 //Add two character suffix to number. e.g. 21st, 102nd, 93rd, 500th
 Utils.toSuffixed = function (num) {
-    var t = num.toString(),
+    const t = num.toString(),
         suffix = 'th';
     if (t.length === 1 || (t[t.length - 2] !== '1')) {
         switch (t[t.length - 1]) {
@@ -105,7 +105,7 @@ Utils.getSdDOW = function (year, month, day) {
 //The argument needs to be an object in the format {hour : 12, minute :42 }
 Utils.fixHourMinute = function (hm) {
     //make a copy - javascript sends object parameters by reference
-    var result = { hour: hm.hour, minute: hm.minute };
+    const result = { hour: hm.hour, minute: hm.minute };
     while (result.minute < 0) {
         result.minute += 60;
         result.hour--;
@@ -164,7 +164,7 @@ Utils.getTimeString = function (hm, army, roundUp) {
 //Gets the UTC offset in whole hours for the users time zone
 //Note: this is not affected by DST - unlike javascripts getTimezoneOffset() function which gives you the current offset.
 Utils.currUtcOffset = function () {
-    var date = new Date(),
+    const date = new Date(),
         jan = new Date(date.getFullYear(), 0, 1),
         jul = new Date(date.getFullYear(), 6, 1);
     return -parseInt(Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset()) / 60);
@@ -182,7 +182,7 @@ Utils.isDST = function () {
 
 //Determines if the given date and time are during DST according to the USA rules
 Utils.isUSA_DST = function (date) {
-    var year = date.getFullYear(),
+    const year = date.getFullYear(),
         month = date.getMonth() + 1,
         day = date.getDate(),
         hour = date.getHours();
@@ -217,7 +217,7 @@ Utils.isUSA_DST = function (date) {
 
 //Determines if the given date and time is during DST according to the current (5776) Israeli rules
 Utils.isIsrael_DST = function (date) {
-    var year = date.getFullYear(),
+    const year = date.getFullYear(),
         month = date.getMonth() + 1,
         day = date.getDate(),
         hour = date.getHours();
@@ -231,21 +231,21 @@ Utils.isIsrael_DST = function (date) {
     //DST starts at 2 AM on the Friday before the last Sunday in March
     else if (month === 3) { //March
         //Gets date of the Friday before the last Sunday
-        var lastFriday = (31 - Utils.getSdDOW(year, 3, 31)) - 2;
+        const lastFriday = (31 - Utils.getSdDOW(year, 3, 31)) - 2;
         return (day > lastFriday || (day === lastFriday && hour >= 2));
     }
     //DST ends at 2 AM on the last Sunday in October
     else //dt.Month === 10 / October
     {
         //Gets date of last Sunday in October
-        var lastSunday = 31 - Utils.getSdDOW(year, 10, 31);
+        const lastSunday = 31 - Utils.getSdDOW(year, 10, 31);
         return (day < lastSunday || (day === lastSunday && hour < 2));
     }
 };
 
 //The current time in Israel - determined by the current users system time and time zone offset
 Utils.getSdNowInIsrael = function () {
-    var now = new Date(),
+    const now = new Date(),
         //first determine the hour differential between this user and Israel time
         israelTimeOffset = 2 + -Utils.currUtcOffset();
     //This will give us the current correct date and time in Israel

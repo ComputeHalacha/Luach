@@ -6,8 +6,8 @@ import jDate from './jDate.js';
  * Computes the Sedra/Sedras of the week for the given day.
  * Returns an array of sedras (either one or two) for the given Jewish Date
  * Sample of use to get todays sedra in Israel:
- *     var sedras = new Sedra(new jDate(new Date(), true));
- *     var str = sedras.map(function (s) { return s.eng; }).join(' - ');
+ *     const sedras = new Sedra(new jDate(new Date(), true));
+ *     const str = sedras.map(function (s) { return s.eng; }).join(' - ');
  * The code was converted to javascript and tweaked by CBS.
  * It is directly based on the C code in Danny Sadinoff's HebCal - Copyright (C) 1994.
  * Portions of that code are Copyright (c) 2002 Michael J. Radwin. All Rights Reserved.
@@ -19,7 +19,7 @@ export default function Sedra(jd, israel) {
         return [Sedra.sedraList[53]];
     }
 
-    var sedraArray = [],
+    let sedraArray = [],
         sedraOrder = Sedra.getSedraOrder(jd.Year, israel),
         absDate = jd.Abs,
         index,
@@ -31,7 +31,7 @@ export default function Sedra(jd, israel) {
     weekNum = (absDate - sedraOrder.firstSatInYear) / 7;
 
     if (weekNum >= sedraOrder.sedraArray.length) {
-        var indexLast = sedraOrder.sedraArray[sedraOrder.sedraArray.length - 1];
+        const indexLast = sedraOrder.sedraArray[sedraOrder.sedraArray.length - 1];
         if (indexLast < 0) {
             /* advance 2 parashiyot ahead after a doubled week */
             index = (-indexLast) + 2;
@@ -48,7 +48,7 @@ export default function Sedra(jd, israel) {
         sedraArray = [Sedra.sedraList[index]];
     }
     else {
-        var i = -index;      /* undouble the sedra */
+        const i = -index;      /* undouble the sedra */
         sedraArray = [Sedra.sedraList[i], Sedra.sedraList[i + 1]];
     }
     return sedraArray;
@@ -84,12 +84,12 @@ Sedra.getSedraOrder = function (year, israel) {
         return Sedra.lastCalculatedYear;
     }
 
-    var longCheshvon = jDate.isLongCheshvan(year),
+    const longCheshvon = jDate.isLongCheshvan(year),
         shortKislev = jDate.isShortKislev(year),
         roshHashana = jDate.absJd(year, 7, 1),
         roshHashanaDOW = Math.abs(roshHashana % 7),
-        firstSatInYear = Sedra.getDayOnOrBefore(6, roshHashana + 6),
-        yearType,
+        firstSatInYear = Sedra.getDayOnOrBefore(6, roshHashana + 6);
+    let yearType,
         sArray;
 
     if (longCheshvon && !shortKislev)
@@ -101,84 +101,84 @@ Sedra.getSedraOrder = function (year, israel) {
 
     if (!jDate.isJdLeapY(year)) {
         switch (roshHashanaDOW) {
-        case 6:
-            if (yearType === 'incomplete') {
-                sArray = Sedra.shabbos_short;
-            }
-            else if (yearType === 'complete') {
-                sArray = Sedra.shabbos_long;
-            }
-            break;
+            case 6:
+                if (yearType === 'incomplete') {
+                    sArray = Sedra.shabbos_short;
+                }
+                else if (yearType === 'complete') {
+                    sArray = Sedra.shabbos_long;
+                }
+                break;
 
-        case 1:
-            if (yearType === 'incomplete') {
-                sArray = Sedra.mon_short;
-            }
-            else if (yearType === 'complete') {
-                sArray = israel ? Sedra.mon_short : Sedra.mon_long;
-            }
-            break;
+            case 1:
+                if (yearType === 'incomplete') {
+                    sArray = Sedra.mon_short;
+                }
+                else if (yearType === 'complete') {
+                    sArray = israel ? Sedra.mon_short : Sedra.mon_long;
+                }
+                break;
 
-        case 2:
-            if (yearType === 'regular') {
-                sArray = israel ? Sedra.mon_short : Sedra.mon_long;
-            }
-            break;
+            case 2:
+                if (yearType === 'regular') {
+                    sArray = israel ? Sedra.mon_short : Sedra.mon_long;
+                }
+                break;
 
-        case 4:
-            if (yearType === 'regular') {
-                sArray = israel ? Sedra.thu_normal_Israel : Sedra.thu_normal;
-            }
-            else if (yearType === 'complete') {
-                sArray = Sedra.thu_long;
-            }
-            break;
+            case 4:
+                if (yearType === 'regular') {
+                    sArray = israel ? Sedra.thu_normal_Israel : Sedra.thu_normal;
+                }
+                else if (yearType === 'complete') {
+                    sArray = Sedra.thu_long;
+                }
+                break;
 
-        default:
-            throw new Error('improper sedra year type calculated.');
+            default:
+                throw new Error('improper sedra year type calculated.');
         }
     }
     else  /* leap year */ {
         switch (roshHashanaDOW) {
-        case 6:
-            if (yearType === 'incomplete') {
-                sArray = Sedra.shabbos_short_leap;
-            }
-            else if (yearType === 'complete') {
-                sArray = israel ? Sedra.shabbos_short_leap : Sedra.shabbos_long_leap;
-            }
-            break;
+            case 6:
+                if (yearType === 'incomplete') {
+                    sArray = Sedra.shabbos_short_leap;
+                }
+                else if (yearType === 'complete') {
+                    sArray = israel ? Sedra.shabbos_short_leap : Sedra.shabbos_long_leap;
+                }
+                break;
 
-        case 1:
-            if (yearType === 'incomplete') {
-                sArray = israel ? Sedra.mon_short_leap_Israel : Sedra.mon_short_leap;
-            }
-            else if (yearType === 'complete') {
-                sArray = israel ? Sedra.mon_long_leap_Israel : Sedra.mon_long_leap;
-            }
-            break;
+            case 1:
+                if (yearType === 'incomplete') {
+                    sArray = israel ? Sedra.mon_short_leap_Israel : Sedra.mon_short_leap;
+                }
+                else if (yearType === 'complete') {
+                    sArray = israel ? Sedra.mon_long_leap_Israel : Sedra.mon_long_leap;
+                }
+                break;
 
-        case 2:
-            if (yearType === 'regular') {
-                sArray = israel ? Sedra.mon_long_leap_Israel : Sedra.mon_long_leap;
-            }
-            break;
+            case 2:
+                if (yearType === 'regular') {
+                    sArray = israel ? Sedra.mon_long_leap_Israel : Sedra.mon_long_leap;
+                }
+                break;
 
-        case 4:
-            if (yearType === 'incomplete') {
-                sArray = Sedra.thu_short_leap;
-            }
-            else if (yearType === 'complete') {
-                sArray = Sedra.thu_long_leap;
-            }
-            break;
+            case 4:
+                if (yearType === 'incomplete') {
+                    sArray = Sedra.thu_short_leap;
+                }
+                else if (yearType === 'complete') {
+                    sArray = Sedra.thu_long_leap;
+                }
+                break;
 
-        default:
-            throw 'improper sedra year type calculated.';
+            default:
+                throw 'improper sedra year type calculated.';
         }
     }
 
-    var retobj = {
+    const retobj = {
         firstSatInYear: firstSatInYear,
         sedraArray: sArray,
         year: year,

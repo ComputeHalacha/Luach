@@ -6,8 +6,8 @@
  * Computes the Perek/Prakim of the week for the given Shabbos.
  * Returns an array of prakim (integers) (either one or two) for the given Jewish Date
  * Sample of use to get todays sedra in Israel:
- *     var prakim = PirkeiAvos.getPrakim(new jd(new Date(), true));
- *     var str = 'Pirkei Avos: ' + prakim.map(function (s) { return Utils.toSuffixed(s) + ' Perek'; }).join(' and ');
+ *     const prakim = PirkeiAvos.getPrakim(new jd(new Date(), true));
+ *     const str = 'Pirkei Avos: ' + prakim.map(function (s) { return Utils.toSuffixed(s) + ' Perek'; }).join(' and ');
  * ***************************************************************************************************************/
 export default class PirkeiAvos {
     static getPrakim(jd, israel) {
@@ -15,7 +15,7 @@ export default class PirkeiAvos {
             return [];
         }
 
-        var jMonth = jd.Month,
+        const jMonth = jd.Month,
             jDay = jd.Day;
 
         //Pirkei Avos is from after Pesach until Rosh Hashana
