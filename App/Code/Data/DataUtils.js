@@ -56,7 +56,7 @@ export default class DataUtils {
             showProbFlagOnHome=?,
             showEntryFlagOnHome=?,
             requirePIN=?,
-            pin=?`,
+            PIN=?`,
             [
                 (settings.location && settings.location.locationId) || 28, //Jerusalem is 28
                 settings.showOhrZeruah,
