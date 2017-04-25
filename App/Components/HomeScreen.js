@@ -52,10 +52,13 @@ export default class HomeScreen extends React.Component {
     * This should be done after updating settings, occasions, entries or kavuahs.
     */
     updateAppData(data) {
-        const ad = this.state.appData;
+        let ad = this.state.appData;
 
         if (data && data instanceof Settings) {
             ad.Settings = data;
+        }
+        else if (data && data instanceof AppData) {
+            ad = data;
         }
 
         //Now that the data has been changed, we need to recalculate the problem onahs.
@@ -137,42 +140,43 @@ export default class HomeScreen extends React.Component {
             onUpdate={this.updateAppData.bind(this)} />);
     }
     render() {
-        const menuList = [
-            {
-                title: 'Settings',
-                icon: 'settings',
-                onPress: () => this.navigate('Settings',
-                    {
-                        appData: this.state.appData,
-                        onUpdate: this.updateAppData.bind(this)
-                    })
-            },
-            {
-                title: 'Occasions',
-                icon: 'event',
-                onPress: () => this.navigate('Occasions', { appData: this.state.appData })
-            },
-            {
-                title: 'Kavuahs',
-                icon: 'device-hub',
-                onPress: () => this.navigate('Kavuahs', { appData: this.state.appData })
-            },
-            {
-                title: 'Entries',
-                icon: 'list',
-                onPress: () => this.navigate('Entries',
-                    {
-                        appData: this.state.appData,
-                        currLocation: this.state.currLocation || Location.getJerusalem()
-                    })
-            },
-            {
-                title: 'Dates',
-                icon: 'flag',
-                onPress: () => this.navigate('FlaggedDates', { appData: this.state.appData })
-            }
+        const params = {
+            appData: this.state.appData,
+            onUpdate: this.updateAppData.bind(this)
+        },
+            menuList = [
+                {
+                    title: 'Settings',
+                    icon: 'settings',
+                    onPress: () => this.navigate('Settings', params)
+                },
+                {
+                    title: 'Occasions',
+                    icon: 'event',
+                    onPress: () => this.navigate('Occasions', params)
+                },
+                {
+                    title: 'Kavuahs',
+                    icon: 'device-hub',
+                    onPress: () => this.navigate('Kavuahs', params)
+                },
+                {
+                    title: 'Entries',
+                    icon: 'list',
+                    onPress: () => this.navigate('Entries',
+                        {
+                            appData: this.state.appData,
+                            currLocation: this.state.currLocation || Location.getJerusalem(),
+                            onUpdate: this.updateAppData.bind(this)
+                        })
+                },
+                {
+                    title: 'Dates',
+                    icon: 'flag',
+                    onPress: () => this.navigate('FlaggedDates', params)
+                }
 
-        ];
+            ];
         return (
             <ScrollView style={{ flex: 1 }}>
                 <View>

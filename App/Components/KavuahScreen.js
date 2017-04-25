@@ -16,6 +16,7 @@ export default class KavuahScreen extends Component {
 
         const { params } = this.props.navigation.state,
             appData = params.appData;
+        this.onUpdate = params.onUpdate;
         this.state = {
             appData: appData,
             kavuahList: appData.KavuahList
@@ -59,6 +60,9 @@ export default class KavuahScreen extends Component {
                                 kavuahList = kavuahList.splice(index, 1);
                                 appData.KavuahList = kavuahList;
                                 this.update(appData);
+                                if (this.onUpdate) {
+                                    this.onUpdate(appData);
+                                }
                             }
                             Alert.alert('Remove kavuah',
                                 `The kavuah of ${kavuah.toString()} has been successfully removed.`);

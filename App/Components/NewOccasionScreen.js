@@ -36,7 +36,7 @@ export default class NewOccasion extends React.Component {
         this.setState({ appData: ad });
         DataUtils.UserOccasionToDatabase(occasion);
         if (this.onUpdate) {
-            this.onUpdate(occasion);
+            this.onUpdate(ad);
         }
         Alert.alert('Add occasion',
                     `The occasion ${occasion.title} has been successfully added.`);

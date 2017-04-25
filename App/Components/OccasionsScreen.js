@@ -13,8 +13,8 @@ export default class OccasionsScreen extends Component {
 
         this.navigate = this.props.navigation.navigate;
 
-        const { appData } = this.props.navigation.state.params;
-
+        const { appData, onUpdate } = this.props.navigation.state.params;
+        this.onUpdate = onUpdate;
         this.state = {
             appData: appData,
             occasionList: appData.UserOccasions
@@ -28,6 +28,9 @@ export default class OccasionsScreen extends Component {
             if (index > -1) {
                 occasionList = occasionList.splice(index, 1);
                 appData.UserOccasions = occasionList;
+                if (this.onUpdate) {
+                    this.onUpdate(appData);
+                }
                 this.setState({
                     appData: appData,
                     occasionList: occasionList

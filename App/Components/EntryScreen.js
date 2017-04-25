@@ -15,10 +15,11 @@ export default class EntryScreen extends Component {
 
         this.navigate = this.props.navigation.navigate;
 
-        const { appData, currLocation } = this.props.navigation.state.params;
+        const { appData, currLocation, onUpdate } = this.props.navigation.state.params;
 
         this.appData = appData;
         this.currLocation = currLocation;
+        this.onUpdate = onUpdate;
         this.state = {
             entryList: appData.EntryList
         };
@@ -74,6 +75,9 @@ export default class EntryScreen extends Component {
                                 appData: appData,
                                 entryList: appData.EntryList
                             });
+                            if (this.onUpdate) {
+                                this.onUpdate(appData);
+                            }
                             Alert.alert('Remove entry',
                                 `The entry for ${entry.toString()} has been successfully removed.`);
                         }

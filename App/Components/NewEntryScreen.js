@@ -18,11 +18,12 @@ export default class NewEntry extends React.Component {
     constructor(props) {
         super(props);
         const navigation = this.props.navigation,
-            { jdate, location, appData } = navigation.state.params,
+            { jdate, location, appData, onUpdate } = navigation.state.params,
             dt = new Date(),
             shkia = jdate.getSunriseSunset(location || Location.getJerusalem()).sunset,
             currTime = { hour: dt.getHours(), minute: dt.getMinutes() },
             isNight = Utils.totalMinutes(Utils.timeDiff(currTime, shkia)) >= 0;
+        this.onUpdate = onUpdate;
 
         this.state = {
             appData: appData,
@@ -42,6 +43,10 @@ export default class NewEntry extends React.Component {
                 entryList = appData.EntryList;
             entryList.add(entry);
             entryList.calulateHaflagas();
+            if (this.onUpdate) {
+                this.onUpdate(appData);
+            }
+
             this.setState({ appData: appData });
             Alert.alert('Add Entry',
                 `The entry for ${entry.toString()} has been successfully added.`);
