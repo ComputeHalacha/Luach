@@ -1,4 +1,5 @@
-import {NightDay} from './Onah';
+import { NightDay } from './Onah';
+import Utils from '../JCal/Utils';
 
 export default class Entry {
     /**
@@ -17,6 +18,14 @@ export default class Entry {
     }
     toString() {
         let str = `${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'} of ${this.date.toShortString()}`;
+        if (this.haflaga) {
+            str += ` [Haflaga of ${this.haflaga.toString()}]`;
+        }
+        return str;
+    }
+    toLongString() {
+        let str = (this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time') +
+            ' of ' + this.date.toString() + ' - ' + Utils.toStringDate(this.date.getDate(), true, true);
         if (this.haflaga) {
             str += ` [Haflaga of ${this.haflaga.toString()}]`;
         }

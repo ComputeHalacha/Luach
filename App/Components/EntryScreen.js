@@ -4,6 +4,7 @@ import { List, ListItem, Button, Icon } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 import JDate from '../Code/JCal/jDate';
 import { GeneralStyles } from './styles';
+import { NightDay } from '../Code/Chashavshavon/Onah';
 
 export default class EntryScreen extends Component {
     static navigationOptions = {
@@ -98,27 +99,35 @@ export default class EntryScreen extends Component {
             <ScrollView style={GeneralStyles.container}>
                 <Text style={GeneralStyles.header}>List of Entries</Text>
                 <List>
-                    {this.state.entryList.descending.map(entry => (
-                        <ListItem
-                            key={entry.entryId}
-                            title={entry.toString()}
-                            leftIcon={{ name: 'list' }}
-                            hideChevron
-                            subtitle={
-                                <View style={GeneralStyles.buttonList}>
-                                    <Button
-                                        title='Remove'
-                                        icon={{ name: 'delete-forever' }}
-                                        backgroundColor='#f50'
-                                        onPress={() => this.deleteEntry.bind(this)(entry)} />
-                                    <Button
-                                        title='New Kavuah'
-                                        icon={{ name: 'device-hub' }}
-                                        backgroundColor='#05f'
-                                        onPress={() => this.newKavuah.bind(this)(entry)} />
-                                </View>}
-                        />
-                    ))}
+                    {this.state.entryList.descending.map(entry => {
+                        const isNight = entry.nightDay === NightDay.Night;
+                        return (
+                            <ListItem
+                                containerStyle={{ backgroundColor: isNight ? '#333' : '#ccc' }}
+                                key={entry.entryId}
+                                title={entry.toLongString()}
+                                titleStyle={{ color: isNight ? '#fff' : '#000' }}
+                                leftIcon={
+                                    isNight ?
+                                        { name: 'ios-moon', color: 'orange', type: 'ionicon' } :
+                                        { name: 'ios-sunny', color: 'yellow', type: 'ionicon' }}
+                                hideChevron
+                                subtitle={
+                                    <View style={GeneralStyles.buttonList}>
+                                        <Button
+                                            title='Remove'
+                                            icon={{ name: 'delete-forever' }}
+                                            backgroundColor='#f50'
+                                            onPress={() => this.deleteEntry.bind(this)(entry)} />
+                                        <Button
+                                            title='New Kavuah'
+                                            icon={{ name: 'device-hub' }}
+                                            backgroundColor='#05f'
+                                            onPress={() => this.newKavuah.bind(this)(entry)} />
+                                    </View>}
+                            />
+                        );
+                    })}
                 </List>
             </ScrollView>);
     }

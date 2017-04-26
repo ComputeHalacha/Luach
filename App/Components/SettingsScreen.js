@@ -13,16 +13,16 @@ export default class SettingsScreen extends Component {
         const { appData, onUpdate } = this.props.navigation.state.params;
         this.onUpdate = onUpdate;
         this.state = {
-            settings: appData.Settings || {},
-            locations: appData.Locations || []
+            appData: appData
         };
     }
     update(name, value) {
-        const sets = this.state.settings;
+        const appData = this.state.appData,
+            sets = appData.Settings;
         sets[name] = value;
         sets.save();
-        this.setState({ settings: sets });
-        this.onUpdate(sets);
+        this.setState({ appData: appData });
+        this.onUpdate(appData);
     }
     render() {
         const nums = [];
@@ -31,19 +31,20 @@ export default class SettingsScreen extends Component {
         }
 
         const me = this,
-            location = this.state.settings.location || Location.getJerusalem(),
-            locations = this.state.locations || [],
-            showOhrZeruah = setDefault(this.state.settings && this.state.settings.showOhrZeruah, true),
-            onahBeinunis24Hours = this.state.settings && this.state.settings.onahBeinunis24Hours,
-            numberMonthsAheadToWarn = (this.state.settings && this.state.settings.numberMonthsAheadToWarn) || 12,
-            keepLongerHaflagah = setDefault(this.state.settings && this.state.settings.keepLongerHaflagah, true),
-            cheshbonKavuahByActualEntry = setDefault(this.state.settings && this.state.settings.cheshbonKavuahByActualEntry, true),
-            cheshbonKavuahByCheshbon = setDefault(this.state.settings && this.state.settings.cheshbonKavuahByCheshbon, true),
-            calcKavuahsOnNewEntry = setDefault(this.state.settings && this.state.settings.calcKavuahsOnNewEntry, true),
-            showProbFlagOnHome = setDefault(this.state.settings && this.state.settings.showProbFlagOnHome, true),
-            showEntryFlagOnHome = setDefault(this.state.settings && this.state.settings.showEntryFlagOnHome, true),
-            requirePIN = setDefault(this.state.settings && this.state.settings.requirePIN, true),
-            PIN = setDefault(this.state.settings && this.state.settings.PIN, '1234');
+            sets = this.state.appData && this.state.appData.Settings,
+            location = sets && sets.location || Location.getJerusalem(),
+            locations = this.state.appData && this.state.appData.Locations || [],
+            showOhrZeruah = setDefault(sets && sets.showOhrZeruah, true),
+            onahBeinunis24Hours = sets && sets.onahBeinunis24Hours,
+            numberMonthsAheadToWarn = (sets && sets.numberMonthsAheadToWarn) || 12,
+            keepLongerHaflagah = setDefault(sets && sets.keepLongerHaflagah, true),
+            cheshbonKavuahByActualEntry = setDefault(sets && sets.cheshbonKavuahByActualEntry, true),
+            cheshbonKavuahByCheshbon = setDefault(sets && sets.cheshbonKavuahByCheshbon, true),
+            calcKavuahsOnNewEntry = setDefault(sets && sets.calcKavuahsOnNewEntry, true),
+            showProbFlagOnHome = setDefault(sets && sets.showProbFlagOnHome, true),
+            showEntryFlagOnHome = setDefault(sets && sets.showEntryFlagOnHome, true),
+            requirePIN = setDefault(sets && sets.requirePIN, true),
+            PIN = setDefault(sets && sets.PIN, '1234');
         me.update.bind(me);
         return (
             <ScrollView style={GeneralStyles.container}>

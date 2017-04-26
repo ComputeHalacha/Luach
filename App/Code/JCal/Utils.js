@@ -75,8 +75,8 @@ Utils.toStringDate = function (date, hideDayOfWeek, dontCapitalize) {
 
 //Add two character suffix to number. e.g. 21st, 102nd, 93rd, 500th
 Utils.toSuffixed = function (num) {
-    const t = num.toString(),
-        suffix = 'th';
+    const t = num.toString();
+    let suffix = 'th';
     if (t.length === 1 || (t[t.length - 2] !== '1')) {
         switch (t[t.length - 1]) {
             case '1':
