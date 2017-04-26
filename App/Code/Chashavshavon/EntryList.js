@@ -38,28 +38,36 @@ export default class EntryList {
     /**
      * Remove the given entry from the list
      * In most cases, calulateHaflagas should be called after changing the list.
-     * @param {*} arg
-     * @param {*} afterwards
+     * @param {*} arg - either the index of the Entry to remove or the actual Entry to remove.
+     * @param {*} afterwards - the callback. Suppies the removed entry as an argument.
      */
     remove(arg, afterwards) {
-        let removed = false;
+        let wasRemoved = false,
+            entry = null;
         if (isNumber(arg) && arg >= 0 && arg < this.list.length) {
-            this.list.splice(arg, 1);
-            removed = true;
+            entry = this.list.splice(arg, 1);
+            wasRemoved = true;
         }
         else if (arg instanceof Entry) {
             const index = this.list.indexOf(arg);
             if (index > -1) {
-                this.list.splice(index, 1);
-                removed = true;
+                entry = this.list.splice(index, 1);
+                wasRemoved = true;
             }
         }
         else {
             throw 'EntryList.remove accepts either an Entry to remove or the index of the Entry to remove';
         }
-        if (removed && afterwards instanceof Function) {
-            afterwards();
+        if (wasRemoved && afterwards instanceof Function) {
+            afterwards(entry);
         }
+    }
+    /**
+     * Returns whether or not the given Entry is in this list.
+     * @param {*} Entry to test
+     */
+    contains(entry) {
+        return !!~this.list.indexOf(entry);
     }
     /**
      * Returns the list of entries sorted chronologically reversed - the most recent first.

@@ -28,27 +28,35 @@ export default class AppData {
                 await DataUtils.SettingsFromDatabase(locations)
                     .then(s => settings = s)
                     .catch(error => {
-                        console.warn(`Error running SettingsFromDatabase.`);
-                        console.error(error);
+                        if(__DEV__) {
+                            console.warn(`Error running SettingsFromDatabase.`);
+                            console.error(error);
+                        }
                     });
             })
             .catch(error => {
-                console.warn(`Error running SettingsFromDatabase.`);
-                console.error(error);
+                if(__DEV__) {
+                    console.warn(`Error running SettingsFromDatabase.`);
+                    console.error(error);
+                }
             });
         await DataUtils.GetAllUserOccasions()
             .then(ol => {
                 occasions = ol;
             })
             .catch(error => {
-                console.warn(`Error running GetAllUserOccasions.`);
-                console.error(error);
+                if(__DEV__) {
+                    console.warn(`Error running GetAllUserOccasions.`);
+                    console.error(error);
+                }
             });
         await DataUtils.EntryListFromDatabase(settings)
             .then(e => entryList = e)
             .catch(error => {
-                console.warn(`Error running EntryListFromDatabase.`);
-                console.error(error);
+                if(__DEV__) {
+                    console.warn(`Error running EntryListFromDatabase.`);
+                    console.error(error);
+                }
             });
         await DataUtils.GetAllKavuahs(entryList)
             .then(k => {
@@ -56,8 +64,10 @@ export default class AppData {
                 problemOnahs = entryList.getProblemOnahs(kavuahList);
             })
             .catch(error => {
-                console.warn(`Error running GetAllKavuahs.`);
-                console.error(error);
+                if(__DEV__) {
+                    console.warn(`Error running GetAllKavuahs.`);
+                    console.error(error);
+                }
             });
 
         return new AppData(locations, settings, occasions, entryList, kavuahList, problemOnahs);

@@ -18,11 +18,10 @@ export default class EntryScreen extends Component {
 
         const { appData, currLocation, onUpdate } = this.props.navigation.state.params;
 
-        this.appData = appData;
         this.currLocation = currLocation;
         this.onUpdate = onUpdate;
         this.state = {
-            entryList: appData.EntryList
+            appData:appData
         };
         this.newEntry.bind(this);
     }
@@ -36,9 +35,8 @@ export default class EntryScreen extends Component {
     deleteEntry(entry) {
         const appData = this.state.appData;
         let entryList = appData.EntryList,
-            kavuahList = appData.KavuahList,
-            index = entryList.list.indexOf(entry);
-        if (index > -1) {
+            kavuahList = appData.KavuahList;            
+        if (entryList.contains(entry)) {
             const kavuahs = kavuahList.filter(k => k.settingEntry.entryId === entry.entryId);
             Alert.alert(
                 'Confirm Entry Removal',
@@ -57,30 +55,34 @@ export default class EntryScreen extends Component {
                     {
                         text: 'OK', onPress: () => {
                             DataUtils.DeleteEntry(entry).catch(error => {
-                                console.warn('Error trying to delete an entry from the database.');
-                                console.error(error);
+                                if(__DEV__) {
+                                    console.warn('Error trying to delete an entry from the database.');
+                                    console.error(error);
+                                }
                             });
                             for (let k of kavuahs) {
                                 let index = kavuahList.indexOf(k);
                                 DataUtils.DeleteKavuah(k).catch(error => {
-                                    console.warn('Error trying to delete a Kavuah from the database.');
-                                    console.error(error);
+                                    if(__DEV__) {
+                                        console.warn('Error trying to delete a Kavuah from the database.');
+                                        console.error(error);
+                                    }
                                 });
-                                kavuahList = kavuahList.splice(index, 1);
+                                kavuahList.splice(index, 1);
                             }
-                            entryList.list = entryList.list.splice(index, 1);
-                            entryList.calulateHaflagas();
-                            appData.EntryList = entryList;
-                            appData.KavuahList = kavuahList;
-                            this.setState({
-                                appData: appData,
-                                entryList: appData.EntryList
+                            entryList.remove(entry, e => {
+                                entryList.calulateHaflagas();
+                                appData.EntryList = entryList;
+                                appData.KavuahList = kavuahList;
+                                this.setState({
+                                    appData: appData
+                                });
+                                if (this.onUpdate) {
+                                    this.onUpdate(appData);
+                                }
+                                Alert.alert('Remove entry',
+                                    `The entry for ${e.toString()} has been successfully removed.`);
                             });
-                            if (this.onUpdate) {
-                                this.onUpdate(appData);
-                            }
-                            Alert.alert('Remove entry',
-                                `The entry for ${entry.toString()} has been successfully removed.`);
                         }
                     },
                 ]);
@@ -99,7 +101,7 @@ export default class EntryScreen extends Component {
             <ScrollView style={GeneralStyles.container}>
                 <Text style={GeneralStyles.header}>List of Entries</Text>
                 <List>
-                    {this.state.entryList.descending.map(entry => {
+                    {this.state.appData.EntryList && this.state.appData.EntryList.descending.map(entry => {
                         const isNight = entry.nightDay === NightDay.Night;
                         return (
                             <ListItem

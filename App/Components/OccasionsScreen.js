@@ -40,8 +40,10 @@ export default class OccasionsScreen extends Component {
             }
         }
         ).catch(error => {
-            console.warn('Error trying to delete an occasion from the database.');
-            console.error(error);
+            if(__DEV__) {
+                console.warn('Error trying to delete an occasion from the database.');
+                console.error(error);
+            }
         });
     }
     render() {

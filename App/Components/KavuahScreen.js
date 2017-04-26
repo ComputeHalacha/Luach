@@ -52,8 +52,10 @@ export default class KavuahScreen extends Component {
                         text: 'OK', onPress: () => {
                             if (kavuah.hasId) {
                                 DataUtils.DeleteKavuah(kavuah).catch(error => {
-                                    console.warn('Error trying to delete a kavuah from the database.');
-                                    console.error(error);
+                                    if(__DEV__) {
+                                        console.warn('Error trying to delete a kavuah from the database.');
+                                        console.error(error);
+                                    }
                                 });
                             }
                             if (index > -1) {

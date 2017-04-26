@@ -58,8 +58,10 @@ export default class NewEntry extends React.Component {
             }
         }
         ).catch(error => {
-            console.warn('Error trying to add entry to the database.');
-            console.error(error);
+            if(__DEV__) {
+                console.warn('Error trying to add entry to the database.');
+                console.error(error);
+            }
         });
     }
     render() {

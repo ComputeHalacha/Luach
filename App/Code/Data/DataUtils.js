@@ -38,8 +38,10 @@ export default class DataUtils {
                 });
             })
             .catch(error => {
-                console.warn('Error trying to get settings from the database.');
-                console.error(error);
+                if(__DEV__) {
+                    console.warn('Error trying to get settings from the database.');
+                    console.error(error);
+                }
             });
         return settings;
     }
@@ -72,8 +74,10 @@ export default class DataUtils {
                 settings.PIN
             ])
             .catch(error => {
-                console.warn('Error trying to enter settings into the database.');
-                console.error(error);
+                if(__DEV__) {
+                    console.warn('Error trying to enter settings into the database.');
+                    console.error(error);
+                }
             });
     }
     static async EntryListFromDatabase(settings) {
@@ -89,8 +93,10 @@ export default class DataUtils {
                 }
             })
             .catch(error => {
-                console.warn('Error trying to get all entries from the database.');
-                console.error(error);
+                if(__DEV__) {
+                    console.warn('Error trying to get all entries from the database.');
+                    console.error(error);
+                }
             });
         return entryList;
     }
@@ -129,8 +135,10 @@ export default class DataUtils {
                     o.occasionId));
             })
             .catch(error => {
-                console.warn('Error trying to get all occasions from the database.');
-                console.error(error);
+                if(__DEV__) {
+                    console.warn('Error trying to get all occasions from the database.');
+                    console.error(error);
+                }
             });
         return list;
     }
@@ -150,11 +158,15 @@ export default class DataUtils {
                 WHERE occasionId=?`,
                 [...params, occasion.occasionId])
                 .then(() => {
-                    console.log(`Updated Occasion Id ${occasion.occasionId.toString()}`);
+                    if(__DEV__) {
+                        console.log(`Updated Occasion Id ${occasion.occasionId.toString()}`);
+                    }
                 })
                 .catch(error => {
-                    console.warn(`Error trying to update Occasion Id ${occasion.occasionId.toString()} to the database.`);
-                    console.error(error);
+                    if(__DEV__) {
+                        console.warn(`Error trying to update Occasion Id ${occasion.occasionId.toString()} to the database.`);
+                        console.error(error);
+                    }
                 });
         }
         else {
@@ -167,8 +179,10 @@ export default class DataUtils {
                 params)
                 .then(results => occasion.occasionId = results.id)
                 .catch(error => {
-                    console.warn('Error trying to insert occasion into the database.');
-                    console.error(error);
+                    if(__DEV__) {
+                        console.warn('Error trying to insert occasion into the database.');
+                        console.error(error);
+                    }
                 });
         }
     }
@@ -178,8 +192,10 @@ export default class DataUtils {
         }
         await DataUtils._executeSql('DELETE from occasions where occasionId=?', [occasion.occasionId])
             .catch(error => {
-                console.warn(`Error trying to delete occasion id ${occasion.occasionId} from the database`);
-                console.error(error);
+                if(__DEV__) {
+                    console.warn(`Error trying to delete occasion id ${occasion.occasionId} from the database`);
+                    console.error(error);
+                }
             });
     }
     /**Gets all Kavuahs from the database.
@@ -201,8 +217,10 @@ export default class DataUtils {
                     k.kavuahId));
             })
             .catch(error => {
-                console.warn('Error trying to get all kavuahs from the database.');
-                console.error(error);
+                if(__DEV__) {
+                    console.warn('Error trying to get all kavuahs from the database.');
+                    console.error(error);
+                }
             });
         return list;
     }
@@ -229,11 +247,15 @@ export default class DataUtils {
                 WHERE kavuahId=?`,
                 [...params, kavuah.kavuahId])
                 .then(() => {
-                    console.log(`Updated Kavuah Id ${kavuah.kavuahId.toString()}`);
+                    if(__DEV__) {
+                        console.log(`Updated Kavuah Id ${kavuah.kavuahId.toString()}`);
+                    }
                 })
                 .catch(error => {
-                    console.warn(`Error trying to update Kavuah Id ${kavuah.kavuahId.toString()} to the database.`);
-                    console.error(error);
+                    if(__DEV__) {
+                        console.warn(`Error trying to update Kavuah Id ${kavuah.kavuahId.toString()} to the database.`);
+                        console.error(error);
+                    }
                 });
         }
         else {
@@ -248,8 +270,10 @@ export default class DataUtils {
                 params)
                 .then(results => kavuah.kavuahId = results.id)
                 .catch(error => {
-                    console.warn('Error trying to insert kavuah into the database.');
-                    console.error(error);
+                    if(__DEV__) {
+                        console.warn('Error trying to insert kavuah into the database.');
+                        console.error(error);
+                    }
                 });
         }
     }
@@ -259,8 +283,10 @@ export default class DataUtils {
         }
         await DataUtils._executeSql('DELETE from kavuahs where kavuahId=?', [kavuah.kavuahId])
             .catch(error => {
-                console.warn(`Error trying to delete kavuah id ${kavuah.kavuahId} from the database`);
-                console.error(error);
+                if(__DEV__) {
+                    console.warn(`Error trying to delete kavuah id ${kavuah.kavuahId} from the database`);
+                    console.error(error);
+                }
             });
     }
     static async EntryToDatabase(entry) {
@@ -268,11 +294,15 @@ export default class DataUtils {
             await DataUtils._executeSql('UPDATE entries SET dateAbs=?, day=? WHERE entryId=?',
                 [entry.date.Abs, entry.nightDay === NightDay.Day, entry.entryId])
                 .then(() => {
-                    console.log(`Updated Entry Id ${entry.entryId.toString()}`);
+                    if(__DEV__) {
+                        console.log(`Updated Entry Id ${entry.entryId.toString()}`);
+                    }
                 })
                 .catch(error => {
-                    console.warn(`Error trying to update entry id ${entry.entryId.toString()} to the database.`);
-                    console.error(error);
+                    if(__DEV__) {
+                        console.warn(`Error trying to update entry id ${entry.entryId.toString()} to the database.`);
+                        console.error(error);
+                    }
                 });
         }
         else {
@@ -280,8 +310,10 @@ export default class DataUtils {
                 [entry.date.Abs, entry.nightDay === NightDay.Day])
                 .then(results => entry.entryId = results.id)
                 .catch(error => {
-                    console.warn('Error trying to insert entry into the database.');
-                    console.error(error);
+                    if(__DEV__) {
+                        console.warn('Error trying to insert entry into the database.');
+                        console.error(error);
+                    }
                 });
         }
     }
@@ -291,8 +323,10 @@ export default class DataUtils {
         }
         await DataUtils._executeSql('DELETE from entries where entryId=?', [entry.entryId])
             .catch(error => {
-                console.warn(`Error trying to delete entry id ${entry.entryId} from the database`);
-                console.error(error);
+                if(__DEV__) {
+                    console.warn(`Error trying to delete entry id ${entry.entryId} from the database`);
+                    console.error(error);
+                }
             });
     }
     /**
@@ -304,7 +338,9 @@ export default class DataUtils {
         const list = [];
         await DataUtils._executeSql(`SELECT * FROM locations ${whereClause ? ' WHERE ' + whereClause : ''} ORDER BY name`, values)
             .then(results => {
-                console.log('442 - Results returned from db  - in _queryLocations');
+                if(__DEV__) {
+                    console.log('442 - Results returned from db  - in _queryLocations');
+                }
                 for (let l of results.list) {
                     list.push(new Location(
                         l.name,
@@ -332,19 +368,27 @@ export default class DataUtils {
         await SQLite.openDatabase({ name: 'luachAndroidDB', createFromLocation: '~data/luachAndroidDB.sqlite' })
             .then(async database => {
                 db = database;
-                console.log('0120 - database is open. Starting transaction...');
+                if(__DEV__) {
+                    console.log('0120 - database is open. Starting transaction...');
+                }
                 await db.executeSql(sql, values).then(results => {
                     if (!!results && results.length && !!results[0].rows && !!results[0].rows.item) {
-                        console.log(`0121 - the sql was executed successfully - ${results[0].rows.length.toString()} rows returned`);
+                        if(__DEV__) {
+                            console.log(`0121 - the sql was executed successfully - ${results[0].rows.length.toString()} rows returned`);
+                        }
                         for (let i = 0; i < results[0].rows.length; i++) {
                             resultsList.push(results[0].rows.item(i));
                         }
                     }
                     else if (!!results && isNumber(results.rowsAffected)) {
-                        console.log(`0122 - sql executed successfully - ${results.rowsAffected.toString()} rows affected`);
+                        if(__DEV__) {
+                            console.log(`0122 - sql executed successfully - ${results.rowsAffected.toString()} rows affected`);
+                        }
                     }
                     else {
-                        console.log('0123 - sql executed successfully - Results information is not available');
+                        if(__DEV__) {
+                            console.log('0123 - sql executed successfully - Results information is not available');
+                        }
                     }
                     if (!!results && results.length) {
                         insertId = results[0].insertId;
@@ -374,8 +418,10 @@ export default class DataUtils {
                     DataUtils._closeDatabase(db);
                 });*/
             }).catch(error => {
-                console.warn('0124 - error opening database');
-                console.error(error);
+                if(__DEV__) {
+                    console.warn('0124 - error opening database');
+                    console.error(error);
+                }
                 DataUtils._closeDatabase(db);
             });
 
@@ -384,13 +430,19 @@ export default class DataUtils {
     static _closeDatabase(db) {
         if (db) {
             db.close().then(status => {
-                console.log('130 -  Database is now CLOSED');
+                if(__DEV__) {
+                    console.log('130 -  Database is now CLOSED');
+                }
             }).catch((error) => {
-                console.warn('131 - error closing database');
+                if(__DEV__) {
+                    console.warn('131 - error closing database');
+                }
             });
         }
         else {
-            console.warn('132 - db variable is not a database object');
+            if(__DEV__) {
+                console.warn('132 - db variable is not a database object');
+            }
         }
     }
 }
