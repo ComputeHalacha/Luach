@@ -51,18 +51,10 @@ export default class HomeScreen extends React.Component {
     * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
     * This should be done after updating settings, occasions, entries or kavuahs.
     */
-    updateAppData(data) {
-        let ad = this.state.appData;
-
-        if (data && data instanceof Settings) {
-            ad.Settings = data;
-        }
-        else if (data && data instanceof AppData) {
-            ad = data;
-        }
-
-        //Now that the data has been changed, we need to recalculate the problem onahs.
-        const elist = ad.EntryList,
+    updateAppData(appData) {
+        const ad = appData && appData instanceof AppData ? appData : this.state.appData,
+            //As the data has been changed, we need to recalculate the problem onahs.
+            elist = ad.EntryList,
             klist = ad.KavuahList,
             probs = elist.getProblemOnahs(klist);
         ad.ProblemOnahs = probs;
