@@ -33,7 +33,7 @@ export default class KavuahScreen extends Component {
     }
     newKavuah() {
         this.navigate('NewKavuah', {
-            appData: this.appData,
+            appData: this.state.appData,
             onUpdate: this.update.bind(this)
         });
     }
@@ -83,25 +83,31 @@ export default class KavuahScreen extends Component {
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
-                <View>
-                    <Button
-                        title="Find Kavuahs"
-                        icon={{ name: 'search' }}
+                <View style={{ flexDirection: 'row' }}>
+                    <Icon
+                        reverse
+                        name='search'
+                        color='#668'
                         onPress={this.findKavuahs.bind(this)} />
+                    <Icon
+                        reverse
+                        name='add'
+                        color='#686'
+                        onPress={this.newKavuah.bind(this)} />
                 </View>
                 <List>
-                    {this.state.kavuahList.map(kavuah => (
+                    {this.state.kavuahList.map((kavuah, index) => (
                         <ListItem
-                            key={kavuah.kavuahId}
-                            title={kavuah.toString()}
+                            key={index}
+                            title={kavuah.toLongString()}
                             leftIcon={{ name: 'device-hub' }}
                             hideChevron
                             subtitle={
                                 <View>
-                                    <Button
-                                        title='Remove'
-                                        icon={{ name: 'delete-forever' }}
-                                        backgroundColor='#f50'
+                                    <Icon
+                                        name='delete-forever'
+                                        color='#f44'
+                                        size={20}
                                         onPress={() => this.deleteKavuah.bind(this)(kavuah)} />
                                 </View>} />
                     ))}

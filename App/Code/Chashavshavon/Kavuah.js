@@ -33,7 +33,11 @@ class Kavuah {
         this.kavuahId = kavuahId;
     }
     toString() {
-        let txt = this.settingEntry.nightDay === NightDay.Night ? 'Nighttime ' : 'Daytime ';
+        let txt = '';
+        if (!this.active) {
+            txt = '[INACTIVE] ';
+        }
+        txt += this.settingEntry.nightDay === NightDay.Night ? 'Night-time ' : 'Day-time ';
         switch (this.kavuahType) {
             case KavuahTypes.Haflagah:
                 txt += `every ${this.settingEntry.haflaga.toString()} days`;
@@ -60,8 +64,13 @@ class Kavuah {
                 txt += `for days of the month following the interval pattern of ${this.specialNumber < 0 ? '-' : '+'} ${Math.Abs(this.specialNumber).toString()} days`;
                 break;
         }
-        if (!this.active) {
-            txt += ' [INACTIVE]';
+        return txt;
+    }
+    toLongString() {
+        let txt = this.toString();
+        txt += '\nSetting Entry: ' + this.settingEntry.toLongString();
+        if (this.cancelsOnahBeinunis) {
+            txt += '\nThis Kavuah cancels the "Onah Beinonis" dates.';
         }
         return txt;
     }
