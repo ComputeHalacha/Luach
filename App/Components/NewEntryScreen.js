@@ -43,22 +43,22 @@ export default class NewEntry extends React.Component {
                 entryList = appData.EntryList;
             entryList.add(entry);
             entryList.calulateHaflagas();
+            appData.EntryList = entryList;
+            this.setState({ appData: appData });
             if (this.onUpdate) {
                 this.onUpdate(appData);
             }
-
-            this.setState({ appData: appData });
             Alert.alert('Add Entry',
                 `The entry for ${entry.toString()} has been successfully added.`);
             if (appData.Settings.calcKavuahsOnNewEntry) {
-                this.navigate('FindKavuahs', { appData: appData });
+                this.navigate('FindKavuahs', { appData: appData, onUpdate: this.onUpdate });
             }
             else {
                 this.dispatch(NavigationActions.back());
             }
         }
         ).catch(error => {
-            if(__DEV__) {
+            if (__DEV__) {
                 console.warn('Error trying to add entry to the database.');
                 console.error(error);
             }

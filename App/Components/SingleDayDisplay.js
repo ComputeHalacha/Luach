@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, Modal, ScrollView } from 'react-native';
-import { List, ListItem, Icon } from 'react-native-elements';
+import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, Modal } from 'react-native';
+import { Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
 import { NightDay } from '../Code/Chashavshavon/Onah';
 
@@ -76,8 +76,8 @@ export default class SingleDayDisplay extends Component {
         this.state = { popupVisible: false };
     }
     newEntry() {
-        const { jdate, location, appData, navigate } = this.props;
-        navigate('NewEntry', { jdate: jdate, location: location, appData: appData });
+        const { jdate, onUpdate, location, appData, navigate } = this.props;
+        navigate('NewEntry', { jdate, location, appData, onUpdate });
     }
     newOccasion() {
         const { jdate, onUpdate, appData, navigate } = this.props;
@@ -85,7 +85,7 @@ export default class SingleDayDisplay extends Component {
     }
     showDateDetails() {
         const { jdate, location, navigate } = this.props;
-        navigate('DateDetails', { jdate: jdate, location: location });
+        navigate('DateDetails', { jdate, location });
     }
     toggleModal() {
         this.setState({ popupVisible: !this.state.popupVisible });

@@ -23,6 +23,9 @@ export default class KavuahScreen extends Component {
         };
     }
     update(appData) {
+        if (this.onUpdate) {
+            this.onUpdate(appData);
+        }
         this.setState({
             appData: appData,
             kavuahList: appData.KavuahList
@@ -30,7 +33,8 @@ export default class KavuahScreen extends Component {
     }
     newKavuah() {
         this.navigate('NewKavuah', {
-            appData: this.appData
+            appData: this.appData,
+            onUpdate: this.update
         });
     }
     deleteKavuah(kavuah) {
@@ -52,19 +56,16 @@ export default class KavuahScreen extends Component {
                         text: 'OK', onPress: () => {
                             if (kavuah.hasId) {
                                 DataUtils.DeleteKavuah(kavuah).catch(error => {
-                                    if(__DEV__) {
+                                    if (__DEV__) {
                                         console.warn('Error trying to delete a kavuah from the database.');
                                         console.error(error);
                                     }
                                 });
                             }
                             if (index > -1) {
-                                kavuahList = kavuahList.splice(index, 1);
+                                kavuahList.splice(index, 1);
                                 appData.KavuahList = kavuahList;
-                                this.update(appData);
-                                if (this.onUpdate) {
-                                    this.onUpdate(appData);
-                                }
+                                this.update.bind(this)(appData);
                             }
                             Alert.alert('Remove kavuah',
                                 `The kavuah of ${kavuah.toString()} has been successfully removed.`);

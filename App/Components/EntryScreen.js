@@ -21,7 +21,7 @@ export default class EntryScreen extends Component {
         this.currLocation = currLocation;
         this.onUpdate = onUpdate;
         this.state = {
-            appData:appData
+            appData: appData
         };
         this.newEntry.bind(this);
     }
@@ -29,13 +29,14 @@ export default class EntryScreen extends Component {
         this.navigate('NewEntry', {
             jdate: new JDate(),
             location: this.currLocation,
-            appData: this.appData
+            appData: this.appData,
+            onUpdate: this.onUpdate
         });
     }
     deleteEntry(entry) {
         const appData = this.state.appData;
         let entryList = appData.EntryList,
-            kavuahList = appData.KavuahList;            
+            kavuahList = appData.KavuahList;
         if (entryList.contains(entry)) {
             const kavuahs = kavuahList.filter(k => k.settingEntry.entryId === entry.entryId);
             Alert.alert(
@@ -55,7 +56,7 @@ export default class EntryScreen extends Component {
                     {
                         text: 'OK', onPress: () => {
                             DataUtils.DeleteEntry(entry).catch(error => {
-                                if(__DEV__) {
+                                if (__DEV__) {
                                     console.warn('Error trying to delete an entry from the database.');
                                     console.error(error);
                                 }
@@ -63,7 +64,7 @@ export default class EntryScreen extends Component {
                             for (let k of kavuahs) {
                                 let index = kavuahList.indexOf(k);
                                 DataUtils.DeleteKavuah(k).catch(error => {
-                                    if(__DEV__) {
+                                    if (__DEV__) {
                                         console.warn('Error trying to delete a Kavuah from the database.');
                                         console.error(error);
                                     }
@@ -93,7 +94,8 @@ export default class EntryScreen extends Component {
     newKavuah(entry) {
         this.navigate('NewKavuah', {
             appData: this.appData,
-            settingEntry: entry
+            settingEntry: entry,
+            onUpdate:this.onUpdate
         });
     }
     render() {

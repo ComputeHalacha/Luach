@@ -8,7 +8,6 @@ import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
 import ProblemOnahs from '../Code/Chashavshavon/ProblemOnah';
 import { UserOccasion } from '../Code/JCal/UserOccasion';
-import Settings from '../Code/Settings';
 
 const { width } = Dimensions.get('window');
 
