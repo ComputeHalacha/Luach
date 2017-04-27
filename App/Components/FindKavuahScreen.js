@@ -53,7 +53,7 @@ export default class FindKavuahScreen extends Component {
         let list = this.state.possibleKavuahList,
             index = list.indexOf(pk.kavuah);
         if (index > -1) {
-            list = list.splice(index, 1);
+            list.splice(index, 1);
             this.setState({
                 possibleKavuahList: list
             });

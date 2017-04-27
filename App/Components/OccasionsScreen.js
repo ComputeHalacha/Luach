@@ -26,7 +26,7 @@ export default class OccasionsScreen extends Component {
             let occasionList = appData.UserOccasions,
                 index = occasionList.indexOf(occasion);
             if (index > -1) {
-                occasionList = occasionList.splice(index, 1);
+                occasionList.splice(index, 1);
                 appData.UserOccasions = occasionList;
                 if (this.onUpdate) {
                     this.onUpdate(appData);

@@ -38,7 +38,7 @@ export default class EntryScreen extends Component {
         let entryList = appData.EntryList,
             kavuahList = appData.KavuahList;
         if (entryList.contains(entry)) {
-            const kavuahs = kavuahList.filter(k => k.settingEntry.entryId === entry.entryId);
+            const kavuahs = kavuahList.filter(k => k.settingEntry.isSameEntry(entry));
             Alert.alert(
                 'Confirm Entry Removal',
                 kavuahs.length ?
@@ -95,7 +95,7 @@ export default class EntryScreen extends Component {
         this.navigate('NewKavuah', {
             appData: this.appData,
             settingEntry: entry,
-            onUpdate:this.onUpdate
+            onUpdate: this.onUpdate
         });
     }
     render() {
@@ -107,14 +107,14 @@ export default class EntryScreen extends Component {
                         const isNight = entry.nightDay === NightDay.Night;
                         return (
                             <ListItem
-                                containerStyle={{ backgroundColor: isNight ? '#333' : '#ccc' }}
+                                containerStyle={{ backgroundColor: isNight ? '#333' : '#ddd' }}
                                 key={entry.entryId}
                                 title={entry.toLongString()}
                                 titleStyle={{ color: isNight ? '#fff' : '#000' }}
                                 leftIcon={
                                     isNight ?
                                         { name: 'ios-moon', color: 'orange', type: 'ionicon' } :
-                                        { name: 'ios-sunny', color: 'yellow', type: 'ionicon' }}
+                                        { name: 'ios-sunny', color: '#fff100', type: 'ionicon', style: { fontSize: 34 } }}
                                 hideChevron
                                 subtitle={
                                     <View style={GeneralStyles.buttonList}>

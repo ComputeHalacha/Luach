@@ -17,7 +17,7 @@ function isValidDate(dt) {
  *
  * This function is awfully similar to Array.includes, but has the added plus of accepting any number or type of arguments.*/
 function has(o, ...arr) {
-    if (arr.length === 1 && (arr[0] instanceof Array || isString(arr[0]))) {
+    if (arr.length === 1 && (Array.isArray(arr[0]) || isString(arr[0]))) {
         return arr[0].includes(o);
     }
     else {

@@ -2,9 +2,9 @@ import { has, isNumber } from '../GeneralUtils';
 import jDate from '../JCal/jDate';
 import Entry from './Entry';
 import Settings from '../Settings';
-import {NightDay} from './Onah';
+import { NightDay } from './Onah';
 import ProblemOnah from './ProblemOnah';
-import {KavuahTypes, Kavuah} from './Kavuah';
+import { KavuahTypes, Kavuah } from './Kavuah';
 
 const today = new jDate();
 
@@ -39,6 +39,8 @@ export default class EntryList {
      * Remove the given entry from the list
      * In most cases, calulateHaflagas should be called after changing the list.
      * @param {*} arg - either the index of the Entry to remove or the actual Entry to remove.
+     * Note: The suppled Entry does not have to refer to the same instance as the Entry in the list,
+     * an entry where Entry.isSameEntry() returns true is removed.
      * @param {*} afterwards - the callback. Suppies the removed entry as an argument.
      */
     remove(arg, afterwards) {
@@ -49,7 +51,7 @@ export default class EntryList {
             wasRemoved = true;
         }
         else if (arg instanceof Entry) {
-            const index = this.list.indexOf(arg);
+            const index = this.list.findIndex(e => e === arg || e.isSameEntry(arg));
             if (index > -1) {
                 entry = this.list.splice(index, 1);
                 wasRemoved = true;
@@ -64,10 +66,12 @@ export default class EntryList {
     }
     /**
      * Returns whether or not the given Entry is in this list.
+     * Note: The suppled Entry does not have to refer to the same actual instance as an Entry in the list;
+     * an entry where isSameEntry returns true is also considered "found".
      * @param {*} Entry to test
      */
     contains(entry) {
-        return !!~this.list.indexOf(entry);
+        return !!~this.list.findIndex(e => e === entry || e.isSameEntry(entry));
     }
     /**
      * Returns the list of entries sorted chronologically reversed - the most recent first.

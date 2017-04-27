@@ -34,7 +34,7 @@ export default class KavuahScreen extends Component {
     newKavuah() {
         this.navigate('NewKavuah', {
             appData: this.appData,
-            onUpdate: this.update
+            onUpdate: this.update.bind(this)
         });
     }
     deleteKavuah(kavuah) {

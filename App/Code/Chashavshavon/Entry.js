@@ -13,6 +13,11 @@ export default class Entry {
         this.entryId = entryId;
         this.haflaga = haflaga;
     }
+    /**
+     * Returns true if the supplied Entry has the same jdate and nightDay as this Entry.
+     * The application assumes that there can not be more than a single Entry per Onah.
+     * @param {Entry} entry
+     */
     isSameEntry(entry) {
         return this.onah.isSameOnah(entry.onah);
     }

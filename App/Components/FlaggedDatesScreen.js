@@ -3,6 +3,7 @@ import { ScrollView, Text } from 'react-native';
 import { List, ListItem } from 'react-native-elements';
 import JDate from '../Code/JCal/jDate';
 import { GeneralStyles } from './styles';
+import { NightDay } from '../Code/Chashavshavon/Onah';
 
 export default class FlaggedDatesScreen extends Component {
     static navigationOptions = {
@@ -23,14 +24,23 @@ export default class FlaggedDatesScreen extends Component {
             <ScrollView style={GeneralStyles.container}>
                 <Text style={GeneralStyles.header}>Upcoming Flagged Dates</Text>
                 <List>
-                    {this.state.problemOnahs.map((o, index) => (
-                        <ListItem
-                            key={index}
-                            title={o.toString()}
-                            leftIcon={{ name: 'flag', color:'red' }}
-                            hideChevron
-                        />
-                    ))}
+                    {this.state.problemOnahs.map((o, index) => {
+                        const isNight = o.nightDay === NightDay.Night;
+                        return (
+                            <ListItem
+                                key={index}
+                                containerStyle={{ backgroundColor: isNight ? '#333' : '#ddd' }}
+                                title={o.toString()}
+                                titleStyle={{ color: isNight ? '#fff' : '#000' }}
+                                leftIcon={
+                                    isNight ?
+                                        { name: 'ios-moon', color: 'orange', type: 'ionicon' } :
+                                        { name: 'ios-sunny', color: '#fff100', type: 'ionicon', style: { fontSize: 34 } }}
+
+                                hideChevron
+                            />
+                        );
+                    })}
                 </List>
             </ScrollView>);
     }
