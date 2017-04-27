@@ -7,7 +7,7 @@ import { UserOccasion } from '../JCal/UserOccasion';
 import Entry from '../Chashavshavon/Entry';
 import EntryList from '../Chashavshavon/EntryList';
 import { NightDay, Onah } from '../Chashavshavon/Onah';
-import Kavuah from '../Chashavshavon/Kavuah';
+import {Kavuah} from '../Chashavshavon/Kavuah';
 
 SQLite.DEBUG(true);
 SQLite.enablePromise(true);
@@ -206,6 +206,7 @@ export default class DataUtils {
             entries = entries.list;
         }
         let list = [];
+        //DataUtils._executeSql('DELETE from kavuahs');
         await DataUtils._executeSql('SELECT * from kavuahs')
             .then(results => {
                 list = results.list.map(k => new Kavuah(k.kavuahType,

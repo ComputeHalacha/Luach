@@ -29,7 +29,7 @@ export default class EntryScreen extends Component {
         this.navigate('NewEntry', {
             jdate: new JDate(),
             location: this.currLocation,
-            appData: this.appData,
+            appData: this.state.appData,
             onUpdate: this.onUpdate
         });
     }
@@ -93,7 +93,7 @@ export default class EntryScreen extends Component {
 
     newKavuah(entry) {
         this.navigate('NewKavuah', {
-            appData: this.appData,
+            appData: this.state.appData,
             settingEntry: entry,
             onUpdate: this.onUpdate
         });

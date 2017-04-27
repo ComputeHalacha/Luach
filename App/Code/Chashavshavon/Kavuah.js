@@ -14,8 +14,8 @@ const KavuahTypes = Object.freeze({
 });
 
 class Kavuah {
-    constructor(kavuaType, settingEntry, specialNumber, cancelsOnahBeinunis, active, ignore, kavuahId) {
-        this.kavuaType = kavuaType;
+    constructor(kavuahType, settingEntry, specialNumber, cancelsOnahBeinunis, active, ignore, kavuahId) {
+        this.kavuahType = kavuahType;
         //The third entry  - the one that created the chazakah.
         this.settingEntry = settingEntry;
         /*Each type of Kavuah uses the specialNumber in its own way:
@@ -34,7 +34,7 @@ class Kavuah {
     }
     toString() {
         let txt = this.settingEntry.nightDay === NightDay.Night ? 'Nighttime ' : 'Daytime ';
-        switch (this.kavuaType) {
+        switch (this.kavuahType) {
             case KavuahTypes.Haflagah:
                 txt += `every ${this.settingEntry.haflaga.toString()} days`;
                 break;
@@ -66,7 +66,7 @@ class Kavuah {
         return txt;
     }
     isMatchingKavuah(kavuah) {
-        return this.kavuaType === kavuah.kavuaType &&
+        return this.kavuahType === kavuah.kavuahType &&
             this.settingEntry.onah.isSameOnah(kavuah.settingEntry.onah) &&
             this.specialNumber === kavuah.specialNumber;
     }

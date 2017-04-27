@@ -235,7 +235,7 @@ export default class EntryList {
             (k.kavuahType === KavuahTypes.Haflagah || k.kavuahType === KavuahTypes.HaflagaMaayanPasuach))) {
             const kavuahHaflaga = new ProblemOnah(
                 entry.date.addDays(kavuah.settingEntry.haflaga - 1),
-                kavuah.settingEntry.dayNight,
+                kavuah.settingEntry.nightDay,
                 'Kavuah of ' + kavuah.toString());
             onahs.push(kavuahHaflaga);
             this.addOhrZarua(kavuahHaflaga, onahs);
@@ -247,7 +247,7 @@ export default class EntryList {
             for (let kavuah of kavuahList.filter(k => k.kavuahType === KavuahTypes.DilugHaflaga && k.active)) {
                 const kavuahDilugHaflaga = new ProblemOnah(
                     entry.date.addDays(entry.onah.haflaga + kavuah.specialNumber - 1),
-                    kavuah.settingEntry.dayNight,
+                    kavuah.settingEntry.nightDay,
                     'Kavuah by sighting for ' + kavuah.toString());
                 onahs.push(kavuahDilugHaflaga);
                 this.addOhrZarua(kavuahDilugHaflaga, onahs);

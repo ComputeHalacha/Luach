@@ -2,9 +2,9 @@ import React from 'react';
 import { ScrollView, View, Text, Picker, Switch, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
-import {KavuahTypes, Kavuah} from '../Code/Chashavshavon/Kavuah';
+import { KavuahTypes, Kavuah } from '../Code/Chashavshavon/Kavuah';
 import DataUtils from '../Code/Data/DataUtils';
-import {GeneralStyles} from './styles';
+import { GeneralStyles } from './styles';
 
 export default class NewKavuah extends React.Component {
     static navigationOptions = {
@@ -38,9 +38,11 @@ export default class NewKavuah extends React.Component {
         ad.KavuahList.push(kavuah);
         this.setState({ appData: ad });
         DataUtils.KavuahToDatabase(kavuah);
-        this.onUpdate();
+        if (this.onUpdate) {
+            this.onUpdate(ad);
+        }
         Alert.alert('Add Kavuah',
-                    `The Kavuah for ${kavuah.toString()} has been successfully added.`);
+            `The Kavuah for ${kavuah.toString()} has been successfully added.`);
         this.dispatch(NavigationActions.back());
     }
     render() {
