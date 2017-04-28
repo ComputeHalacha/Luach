@@ -24,27 +24,18 @@ export default class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
 
-        this.setDayInformation.bind(this);
-        this.getDaysList.bind(this);
-        const daysList = this.getDaysList();
-        this.state = {
-            daysList: daysList,
-            appData: null,
-            currDate: HomeScreen.today,
-            currLocation: null,
-            pageNumber: 1
-        };
-        AppData.getAppData().then(ad => {
-            for (let singleDay of daysList) {
-                this.setDayInformation(singleDay, ad);
-            }
-            this.setState({
-                appData: ad,
-                daysList: daysList,
-                currLocation: ad.Settings.location
-            });
-        });
-        this.navigate = this.props.navigation.navigate;
+        this.navigate = props.navigation.navigate;
+        this.setDayInformation = this.setDayInformation.bind(this);
+        this.getDaysList = this.getDaysList.bind(this);
+
+        //If this screen was navigated to from another screen.
+        if (props.navigation.state && props.navigation.state.params) {
+            this._navigatedShowing.bind(this)(props.navigation.state.params);
+        }
+        //We are on the initial showing of the app. We will load the appData from the database.
+        else {
+            this._initialShowing.bind(this)();
+        }
     }
     /**
     * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
@@ -78,6 +69,45 @@ export default class HomeScreen extends React.Component {
             this._addDaysToBeginning(position, currentElement);
         }
     }
+    _initialShowing() {
+        const currDate = HomeScreen.today,
+            daysList = this.getDaysList(currDate);
+        //As we will be going to the database which takes some time, we set initial values for the state.
+        this.state = {
+            daysList: daysList,
+            appData: null,
+            currDate: currDate,
+            currLocation: null,
+            pageNumber: 1
+        };
+
+        //Get the data from the database
+        AppData.getAppData().then(ad => {
+            //Set each days props - such as entries, occasions and probs.
+            for (let singleDay of daysList) {
+                this.setDayInformation(singleDay, ad);
+            }
+            this.setState({
+                appData: ad,
+                daysList: daysList,
+                currLocation: ad.Settings.location
+            });
+        });
+    }
+    _navigatedShowing(params) {
+        //As this screen was navigated to from another screen, we will use the original appData.
+        //We also allow another screen to naviate to any date by supplying a currDate property in the navigate props.
+        const appData = params.appData,
+            currDate = params.currDate || HomeScreen.today;
+        //We don't need to use setState here as this function is only called from the constructor.
+        this.state = {
+            appData: appData,
+            daysList: this.getDaysList(currDate, appData),
+            currDate: currDate,
+            currLocation: appData.Settings.location,
+            pageNumber: 1
+        };
+    }
     _addDaysToEnd(position) {
         const daysList = this.state.daysList,
             day = daysList[daysList.length - 1].day.addDays(1);
@@ -96,12 +126,11 @@ export default class HomeScreen extends React.Component {
             pageNumber: 1
         });
     }
-    getDaysList(jdate) {
-        jdate = jdate || HomeScreen.today;
-
-        const daysList = [this.setDayInformation({ day: jdate.addDays(-1) })];
-        daysList.push(this.setDayInformation({ day: jdate }));
-        daysList.push(this.setDayInformation({ day: jdate.addDays(1) }));
+    getDaysList(jdate, appData) {
+        appData = appData || (this.state && this.state.appData);
+        const daysList = [this.setDayInformation({ day: jdate.addDays(-1) }, appData)];
+        daysList.push(this.setDayInformation({ day: jdate }, appData));
+        daysList.push(this.setDayInformation({ day: jdate.addDays(1) }, appData));
 
         return daysList;
     }
