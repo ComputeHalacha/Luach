@@ -15,9 +15,9 @@ export default class FindKavuahScreen extends Component {
 
         this.dispatch = this.props.navigation.dispatch;
 
-        const { params } = this.props.navigation.state,
-            appData = params.appData;
-        this.onUpdate = params.onUpdate;
+        const { appData, onUpdate } = this.props.navigation.state.params;
+
+        this.onUpdate = onUpdate;
         this.state = {
             appData: appData,
             possibleKavuahList: []
@@ -26,7 +26,14 @@ export default class FindKavuahScreen extends Component {
     componentWillMount() {
         const appData = this.state.appData;
         if (appData) {
-            const plist = Kavuah.getKavuahSuggestionList(appData.EntryList.list);
+            //Get all Kavuahs in the database that are active and are not ignored.
+            const klist = appData.KavuahList.filter(k => k.active && !k.ignore),
+                //Find all possible Kavuahs.
+                plist = Kavuah.getKavuahSuggestionList(appData.EntryList.list)
+                    //Filter out any Kavuahs that are already in the active list.
+                    .filter(pk =>
+                        !(klist.find(k => k.isMatchingKavuah(pk.kavuah)))
+                    );
             this.setState({ possibleKavuahList: plist });
             if (!plist.length) {
                 Alert.alert(`The application did not find any Kavuah combinations.
@@ -37,21 +44,31 @@ export default class FindKavuahScreen extends Component {
     }
     addKavuah(pk) {
         const appData = this.state.appData,
-            kList = appData.KavuahList;
-        DataUtils.KavuahToDatabase(pk.kavuah).then(() => {
-            kList.push(pk.kavuah);
+            kList = appData.KavuahList,
+            foundInList = kList.find(k => k.isMatchingKavuah(pk.kavuah)),
+            kavuah = foundInList || pk.kavuah;
+
+        //In case it was already in the list, but was inactive or ignored.
+        kavuah.active = true;
+        kavuah.ignore = false;
+
+        DataUtils.KavuahToDatabase(kavuah).then(() => {
+            if (!foundInList) {
+                kList.push(pk.kavuah);
+            }
             appData.KavuahList = kList;
+            //Now that it's been added to the database, it is no longer a "possible"" Kavuah.
+            this.deletePossibleKavuah(pk);
             this.setState({ appData: appData });
             if (this.onUpdate) {
                 this.onUpdate(appData);
             }
             Alert('The kavuah has been added to the list');
-            this.deletePossibleKavuah(pk);
         });
     }
     deletePossibleKavuah(pk) {
         let list = this.state.possibleKavuahList,
-            index = list.indexOf(pk.kavuah);
+            index = list.indexOf(pk);
         if (index > -1) {
             list.splice(index, 1);
             this.setState({

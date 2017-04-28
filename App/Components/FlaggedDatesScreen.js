@@ -29,9 +29,8 @@ export default class FlaggedDatesScreen extends Component {
                         return (
                             <ListItem
                                 key={index}
-                                containerStyle={{ backgroundColor: isNight ? '#333' : '#ddd' }}
+                                containerStyle={{ backgroundColor: isNight ? '#ddd' : '#fff' }}
                                 title={o.toString()}
-                                titleStyle={{ color: isNight ? '#fff' : '#000' }}
                                 leftIcon={
                                     isNight ?
                                         { name: 'ios-moon', color: 'orange', type: 'ionicon' } :

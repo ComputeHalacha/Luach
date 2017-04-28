@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Alert } from 'react-native';
-import { List, ListItem, Icon, Button } from 'react-native-elements';
+import { ScrollView, View, Alert, Switch, Text } from 'react-native';
+import { List, ListItem, Icon } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 import { GeneralStyles } from './styles';
 
@@ -80,6 +80,14 @@ export default class KavuahScreen extends Component {
             onUpdate: this.update.bind(this)
         });
     }
+    save(kavuah, name, value) {
+        const appData = this.state.appData,
+            kav = appData.KavuahList.find(k => k === kavuah);
+        kav[name] = value;
+        DataUtils.KavuahToDatabase(kav).then(() => {
+            this.update(appData);
+        });
+    }
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
@@ -103,11 +111,17 @@ export default class KavuahScreen extends Component {
                             leftIcon={{ name: 'device-hub' }}
                             hideChevron
                             subtitle={
-                                <View>
+                                <View style={[GeneralStyles.buttonList, { marginTop: 15 }]}>
+                                    <Text>Active: </Text>
+                                    <Switch value={kavuah.active}
+                                        onValueChange={value =>
+                                            this.save.bind(this)(kavuah, 'active', value)}
+                                        title='Active' />
+                                    <Text>    Remove: </Text>
                                     <Icon
                                         name='delete-forever'
                                         color='#f44'
-                                        size={20}
+                                        size={25}
                                         onPress={() => this.deleteKavuah.bind(this)(kavuah)} />
                                 </View>} />
                     ))}

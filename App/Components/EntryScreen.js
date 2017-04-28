@@ -107,26 +107,28 @@ export default class EntryScreen extends Component {
                         const isNight = entry.nightDay === NightDay.Night;
                         return (
                             <ListItem
-                                containerStyle={{ backgroundColor: isNight ? '#333' : '#ddd' }}
+                                containerStyle={{ backgroundColor: isNight ? '#ddd' : '#fff' }}
                                 key={entry.entryId}
                                 title={entry.toLongString()}
-                                titleStyle={{ color: isNight ? '#fff' : '#000' }}
                                 leftIcon={
                                     isNight ?
                                         { name: 'ios-moon', color: 'orange', type: 'ionicon' } :
                                         { name: 'ios-sunny', color: '#fff100', type: 'ionicon', style: { fontSize: 34 } }}
                                 hideChevron
                                 subtitle={
-                                    <View style={GeneralStyles.buttonList}>
-                                        <Button
+                                    <View style={[GeneralStyles.buttonList, { marginTop: 15 }]}>
+                                        <Text>Remove: </Text>
+                                        <Icon
                                             title='Remove'
-                                            icon={{ name: 'delete-forever' }}
-                                            backgroundColor='#f50'
+                                            name='delete-forever'
+                                            color='#f44'
+                                            size={25}
                                             onPress={() => this.deleteEntry.bind(this)(entry)} />
-                                        <Button
-                                            title='New Kavuah'
-                                            icon={{ name: 'device-hub' }}
-                                            backgroundColor='#05f'
+                                        <Text>    New Kavuah: </Text>
+                                        <Icon
+                                            name='device-hub'
+                                            color='#05f'
+                                            size={25}
                                             onPress={() => this.newKavuah.bind(this)(entry)} />
                                     </View>}
                             />

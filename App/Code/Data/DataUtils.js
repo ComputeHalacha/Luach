@@ -9,11 +9,10 @@ import EntryList from '../Chashavshavon/EntryList';
 import { NightDay, Onah } from '../Chashavshavon/Onah';
 import {Kavuah} from '../Chashavshavon/Kavuah';
 
-SQLite.DEBUG(true);
+SQLite.DEBUG(!!__DEV__);
 SQLite.enablePromise(true);
 
 export default class DataUtils {
-
     static async SettingsFromDatabase(locations) {
         let settings;
         await DataUtils._executeSql('SELECT * from settings')
@@ -212,9 +211,9 @@ export default class DataUtils {
                 list = results.list.map(k => new Kavuah(k.kavuahType,
                     k.settingEntry = entries.find(e => e.entryId === k.settingEntryId),
                     k.specialNumber,
-                    k.cancelsOnahBeinunis,
-                    k.active,
-                    k.ignore,
+                    !!k.cancelsOnahBeinunis,
+                    !!k.active,
+                    !!k.ignore,
                     k.kavuahId));
             })
             .catch(error => {
@@ -345,7 +344,7 @@ export default class DataUtils {
                 for (let l of results.list) {
                     list.push(new Location(
                         l.name,
-                        l.israel,
+                        !!l.israel,
                         l.latitude,
                         l.longitude,
                         l.utcOffset,
