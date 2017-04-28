@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, View, Alert } from 'react-native';
+import { ScrollView, Text, View, Alert, TouchableHighlight } from 'react-native';
 import { List, ListItem, Button, Icon } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 import JDate from '../Code/JCal/jDate';
@@ -90,7 +90,6 @@ export default class EntryScreen extends Component {
 
         }
     }
-
     newKavuah(entry) {
         this.navigate('NewKavuah', {
             appData: this.state.appData,
@@ -98,10 +97,33 @@ export default class EntryScreen extends Component {
             onUpdate: this.onUpdate
         });
     }
+    findKavuahs() {
+        this.navigate('FindKavuahs', {
+            appData: this.state.appData,
+            onUpdate: this.onUpdate
+        });
+    }
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
-                <Text style={GeneralStyles.header}>List of Entries</Text>
+                <View style={GeneralStyles.buttonList}>
+                    <View style={{ alignItems: 'center' }}>
+                        <Icon
+                            reverse
+                            name='add'
+                            color='#9d9'
+                            onPress={this.newEntry.bind(this)} />
+                        <Text>New Entry</Text>
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                        <Icon
+                            reverse
+                            name='search'
+                            color='#ddf'
+                            onPress={this.findKavuahs.bind(this)} />
+                        <Text>Calculate Possible Kavuahs</Text>
+                    </View>
+                </View>
                 <List>
                     {this.state.appData.EntryList && this.state.appData.EntryList.descending.map(entry => {
                         const isNight = entry.nightDay === NightDay.Night;
@@ -116,20 +138,31 @@ export default class EntryScreen extends Component {
                                         { name: 'ios-sunny', color: '#fff100', type: 'ionicon', style: { fontSize: 34 } }}
                                 hideChevron
                                 subtitle={
-                                    <View style={[GeneralStyles.buttonList, { marginTop: 15 }]}>
-                                        <Text>Remove: </Text>
-                                        <Icon
-                                            title='Remove'
-                                            name='delete-forever'
-                                            color='#f44'
-                                            size={25}
-                                            onPress={() => this.deleteEntry.bind(this)(entry)} />
-                                        <Text>    New Kavuah: </Text>
-                                        <Icon
-                                            name='device-hub'
-                                            color='#05f'
-                                            size={25}
-                                            onPress={() => this.newKavuah.bind(this)(entry)} />
+                                    <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                                        <TouchableHighlight
+                                            underlayColor='#faa'
+                                            style={{ flex: 1 }}
+                                            onPress={() => this.deleteEntry.bind(this)(entry)}>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <Icon
+                                                    name='delete-forever'
+                                                    color='#faa'
+                                                    size={25} />
+                                                <Text> Remove</Text>
+                                            </View>
+                                        </TouchableHighlight>
+                                        <TouchableHighlight
+                                            onPress={() => this.newKavuah.bind(this)(entry)}
+                                            underlayColor='#aaf'
+                                            style={{ flex: 1 }}>
+                                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                                                <Icon
+                                                    name='device-hub'
+                                                    color='#aaf'
+                                                    size={25} />
+                                                <Text> New Kavuah</Text>
+                                            </View>
+                                        </TouchableHighlight>
                                     </View>}
                             />
                         );

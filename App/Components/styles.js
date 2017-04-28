@@ -14,7 +14,7 @@ const GeneralStyles = StyleSheet.create({
     picker: { margin: 0 },
     switch: { margin: 5, alignSelf: 'flex-start' },
     textInput: { margin: 5, alignSelf: 'flex-start' },
-    buttonList: { flexDirection: 'row' },
+    buttonList: { flexDirection: 'row', justifyContent: 'space-around' },
     dateEng: { color: '#080' },
     dateHeb: { color: '#008' },
     btn: { fontSize: 7, height: 25 }
