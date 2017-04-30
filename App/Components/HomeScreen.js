@@ -139,11 +139,11 @@ export default class HomeScreen extends React.Component {
         this._addDaysToBeginning();
     }
     prevMonth() {
-        this._goToDate(this.appData.Settings.navigateBySecularDate ?
+        this._goToDate(this.state.appData.Settings.navigateBySecularDate ?
             this.state.currDate.addSecularMonths(-1) : this.state.currDate.addMonths(-1));
     }
     prevYear() {
-        this._goToDate(this.appData.Settings.navigateBySecularDate ?
+        this._goToDate(this.state.appData.Settings.navigateBySecularDate ?
             this.state.currDate.addSecularYears(-1) : this.state.currDate.addYears(-1));
     }
     goToday() {
@@ -153,11 +153,11 @@ export default class HomeScreen extends React.Component {
         this._addDaysToEnd(this.state.pageNumber + 1);
     }
     nextMonth() {
-        this._goToDate(this.appData.Settings.navigateBySecularDate ?
+        this._goToDate(this.state.appData.Settings.navigateBySecularDate ?
             this.state.currDate.addSecularMonths(1) : this.state.currDate.addMonths(1));
     }
     nextYear() {
-        this._goToDate(this.appData.Settings.navigateBySecularDate ?
+        this._goToDate(this.state.appData.Settings.navigateBySecularDate ?
             this.state.currDate.addSecularYears(1) : this.state.currDate.addYears(1));
     }
     getDaysList(jdate, appData) {
