@@ -14,6 +14,7 @@ export default class Settings {
         this.calcKavuahsOnNewEntry = setDefault(args.calcKavuahsOnNewEntry, true);
         this.showProbFlagOnHome = setDefault(args.showProbFlagOnHome, true);
         this.showEntryFlagOnHome = setDefault(args.showEntryFlagOnHome, true);
+        this.navigateBySecularDate = !!args.navigateBySecularDate;
         this.requirePIN = !!args.requirePIN;
         this.PIN = setDefault(args.PIN, '1234');
     }

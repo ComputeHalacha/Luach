@@ -43,6 +43,7 @@ export default class SettingsScreen extends Component {
             calcKavuahsOnNewEntry = setDefault(sets && sets.calcKavuahsOnNewEntry, true),
             showProbFlagOnHome = setDefault(sets && sets.showProbFlagOnHome, true),
             showEntryFlagOnHome = setDefault(sets && sets.showEntryFlagOnHome, true),
+            navigateBySecularDate = sets && sets.navigateBySecularDate,
             requirePIN = setDefault(sets && sets.requirePIN, true),
             PIN = setDefault(sets && sets.PIN, '1234');
         me.update.bind(me);
@@ -106,16 +107,26 @@ export default class SettingsScreen extends Component {
                         value={!!calcKavuahsOnNewEntry} />
                 </View>
                 <View style={GeneralStyles.formRow}>
-                    <Text style={GeneralStyles.label}>Show flags for problem dates on home page?</Text>
+                    <Text style={GeneralStyles.label}>Show flags for problem dates on Main Screen?</Text>
                     <Switch style={GeneralStyles.switch}
                         onValueChange={value => me.update('showProbFlagOnHome', value)}
                         value={!!showProbFlagOnHome} />
                 </View>
                 <View style={GeneralStyles.formRow}>
-                    <Text style={GeneralStyles.label}>Show flags for dates that have an Entry on home page?</Text>
+                    <Text style={GeneralStyles.label}>Show flags for dates that have an Entry on Main Screen?</Text>
                     <Switch style={GeneralStyles.switch}
                         onValueChange={value => me.update('showEntryFlagOnHome', value)}
                         value={!!showEntryFlagOnHome} />
+                </View>
+                <View style={GeneralStyles.formRow}>
+                    <Text style={GeneralStyles.label}>Main Screen date navigation</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 15 }}>
+                        <Text>By Jewish Date</Text>
+                        <Switch style={GeneralStyles.switch}
+                            onValueChange={value => me.update('navigateBySecularDate', value)}
+                            value={!!navigateBySecularDate} />
+                        <Text>By Secular/Gregorian Date</Text>
+                    </View>
                 </View>
                 <View style={GeneralStyles.formRow}>
                     <Text style={GeneralStyles.label}>Require PIN to open application?</Text>

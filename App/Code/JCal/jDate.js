@@ -170,7 +170,14 @@ export default class jDate {
         }
         return new jDate(year, month, day);
     }
-
+    addSecularMonths(months) {
+        const secDate = this.getDate();
+        return new jDate(secDate.setMonth(secDate.getMonth() + months));
+    }
+    addSecularYears(years) {
+        const secDate = this.getDate();
+        return new jDate(secDate.setFullYear(secDate.getFullYear() + years));
+    }
     /**Gets the number of days separating this Jewish Date and the given one.
      *
      * If the given date is before this one, the number will be negative.*/

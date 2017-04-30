@@ -142,17 +142,26 @@ export default class SingleDayDisplay extends Component {
                             </Text>
                             {dailyInfoText}
                             <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
-                            <Text style={styles.location}>{'Zmanim for ' + location.Name}</Text>
-                            <Text>{'Sun Rises at ' + sunrise}</Text>
-                            <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
-                            <View>
-                                {occasionText}
-                            </View>
-                            <View>
-                                {entriesText}
-                            </View>
-                            <View>
-                                {problemText}
+                            <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
+                                <View style={{ flex: 1, alignItems: 'center' }}>
+                                    <Icon color='#bbc' name='info' />
+                                    <Text style={{ fontSize: 12, color: '#bbc' }}>Full Zmanim</Text>
+                                </View>
+                                <View style={{ flex: 3 }}>
+                                    <Text style={styles.location}>{'Zmanim for ' + location.Name}</Text>
+                                    <Text>{'Sun Rises at ' + sunrise}</Text>
+                                    <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
+                                    <View>
+                                        {occasionText}
+                                    </View>
+                                    <View>
+                                        {entriesText}
+                                    </View>
+                                    <View>
+                                        {problemText}
+                                    </View>
+                                </View>
+
                             </View>
                         </View>
                     </TouchableWithoutFeedback>

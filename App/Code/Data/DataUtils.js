@@ -32,6 +32,7 @@ export default class DataUtils {
                     calcKavuahsOnNewEntry: dbSet.calcKavuahsOnNewEntry,
                     showProbFlagOnHome: dbSet.showProbFlagOnHome,
                     showEntryFlagOnHome: dbSet.showEntryFlagOnHome,
+                    navigateBySecularDate:dbSet.navigateBySecularDate,
                     requirePIN: dbSet.requirePIN,
                     PIN: dbSet.PIN
                 });
@@ -56,6 +57,7 @@ export default class DataUtils {
             calcKavuahsOnNewEntry=?,
             showProbFlagOnHome=?,
             showEntryFlagOnHome=?,
+            navigateBySecularDate=?,
             requirePIN=?,
             PIN=?`,
             [
@@ -69,6 +71,7 @@ export default class DataUtils {
                 settings.calcKavuahsOnNewEntry,
                 settings.showProbFlagOnHome,
                 settings.showEntryFlagOnHome,
+                settings.navigateBySecularDate,
                 settings.requirePIN,
                 settings.PIN
             ])

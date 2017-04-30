@@ -1,6 +1,6 @@
 import React from 'react';
-import { Dimensions, StyleSheet, Text, View, ScrollView } from 'react-native';
-import { List, ListItem } from 'react-native-elements';
+import { Dimensions, StyleSheet, Text, View, ScrollView, TouchableHighlight, Image } from 'react-native';
+import { List, ListItem, Icon } from 'react-native-elements';
 import Carousel from './Carousel/Carousel';
 import SingleDayDisplay from './SingleDayDisplay';
 import jDate from '../Code/JCal/jDate';
@@ -108,13 +108,21 @@ export default class HomeScreen extends React.Component {
             pageNumber: 1
         };
     }
+    _goToDate(jdate) {
+        this.setState({
+            daysList: this.getDaysList(jdate),
+            currDate: jdate,
+            pageNumber: 1
+        });
+    }
     _addDaysToEnd(position) {
         const daysList = this.state.daysList,
             day = daysList[daysList.length - 1].day.addDays(1);
         daysList.push(this.setDayInformation({ day }));
         this.setState({
             daysList: daysList,
-            pageNumber: position
+            pageNumber: position,
+            currDate: daysList[daysList.length - 1].day,
         });
     }
     _addDaysToBeginning() {
@@ -123,8 +131,34 @@ export default class HomeScreen extends React.Component {
         daysList.unshift(this.setDayInformation({ day }));
         this.setState({
             daysList: daysList,
-            pageNumber: 1
+            pageNumber: 1,
+            currDate: daysList[1].day
         });
+    }
+    prevDay() {
+        this._addDaysToBeginning();
+    }
+    prevMonth() {
+        this._goToDate(this.appData.Settings.navigateBySecularDate ?
+            this.state.currDate.addSecularMonths(-1) : this.state.currDate.addMonths(-1));
+    }
+    prevYear() {
+        this._goToDate(this.appData.Settings.navigateBySecularDate ?
+            this.state.currDate.addSecularYears(-1) : this.state.currDate.addYears(-1));
+    }
+    goToday() {
+        this._goToDate(HomeScreen.today);
+    }
+    nextDay() {
+        this._addDaysToEnd(this.state.pageNumber + 1);
+    }
+    nextMonth() {
+        this._goToDate(this.appData.Settings.navigateBySecularDate ?
+            this.state.currDate.addSecularMonths(1) : this.state.currDate.addMonths(1));
+    }
+    nextYear() {
+        this._goToDate(this.appData.Settings.navigateBySecularDate ?
+            this.state.currDate.addSecularYears(1) : this.state.currDate.addYears(1));
     }
     getDaysList(jdate, appData) {
         appData = appData || (this.state && this.state.appData);
@@ -199,6 +233,66 @@ export default class HomeScreen extends React.Component {
             ];
         return (
             <ScrollView style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', backgroundColor: '#fff', top: 0 }}>
+                    <View style={{ flex: 1, alignSelf: 'flex-start', flexDirection: 'row' }}>
+                        <TouchableHighlight underlayColor='#eef' onPress={this.prevYear.bind(this)}>
+                            <View style={styles.navView}>
+                                <Icon iconStyle={styles.navIcon} name='navigate-before' />
+                                <Text style={styles.navText}>Year</Text>
+                            </View>
+                        </TouchableHighlight>
+                        <TouchableHighlight underlayColor='#eef' onPress={this.prevMonth.bind(this)}>
+                            <View style={styles.navView}>
+                                <Icon iconStyle={styles.navIcon} name='navigate-before' />
+                                <Text style={styles.navText}>Month</Text>
+                            </View>
+                        </TouchableHighlight>
+                        <TouchableHighlight underlayColor='#eef' onPress={this.prevDay.bind(this)}>
+                            <View style={styles.navView}>
+                                <Icon iconStyle={styles.navIcon} name='navigate-before' />
+                                <Text style={styles.navText}>Day</Text>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                    <TouchableHighlight underlayColor='#eef' onPress={this.goToday.bind(this)}>
+                        <View style={[styles.navView, { flex: 2 }]}>
+                            {(this.state.currDate !== HomeScreen.today &&
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Icon iconStyle={styles.navIcon} name='navigate-before' />
+                                    <Text style={{ color: '#556', fontSize: 11, fontWeight: 'bold' }}>Go to Today</Text>
+                                    <Icon iconStyle={styles.navIcon} name='navigate-next' />
+                                </View>)
+                                ||
+                                (
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Image style={{ width: 15, height: 15, marginRight: 4 }} resizeMode='stretch' source={require('../Images/logo.png')} />
+                                        <Text style={{ color: '#556', fontSize: 15, fontWeight: 'bold' }}>Luach</Text>
+                                    </View>
+                                )
+                            }
+                        </View>
+                    </TouchableHighlight>
+                    <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
+                        <TouchableHighlight underlayColor='#eef' onPress={this.nextYear.bind(this)}>
+                            <View style={styles.navView}>
+                                <Text style={styles.navText}>Year</Text>
+                                <Icon iconStyle={styles.navIcon} name='navigate-next' />
+                            </View>
+                        </TouchableHighlight>
+                        <TouchableHighlight underlayColor='#eef' onPress={this.nextMonth.bind(this)}>
+                            <View style={styles.navView}>
+                                <Text style={styles.navText}>Month</Text>
+                                <Icon iconStyle={styles.navIcon} name='navigate-next' />
+                            </View>
+                        </TouchableHighlight>
+                        <TouchableHighlight underlayColor='#eef' onPress={this.nextDay.bind(this)}>
+                            <View style={styles.navView}>
+                                <Text style={styles.navText}>Day</Text>
+                                <Icon iconStyle={styles.navIcon} name='navigate-next' />
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                </View>
                 <View>
                     <Carousel
                         ref={carousel => this._carousel = carousel}
@@ -234,12 +328,9 @@ export default class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: 15,
-    },
+    navView: { flex: 0, margin: 4, padding: 3, flexDirection: 'row' },
+    navText: { fontSize: 10, color: '#88c' },
+    navIcon: { fontSize: 11 },
     footer: {
         backgroundColor: '#FE9',
         padding: 5,
