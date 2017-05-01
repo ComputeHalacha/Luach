@@ -262,10 +262,10 @@ export default class HomeScreen extends React.Component {
                     </View>
                     <TouchableHighlight underlayColor='#eef' onPress={this.goToday.bind(this)}>
                         <View style={[styles.navView, { flex: 2 }]}>
-                            {(this.state.currDate !== HomeScreen.today &&
+                            {(this.state.currDate.Abs !== HomeScreen.today.Abs &&
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Icon iconStyle={styles.navIcon} name='navigate-before' />
-                                    <Text style={{ color: '#556', fontSize: 11, fontWeight: 'bold' }}>Go to Today</Text>
+                                    <Text style={{ color: '#556', fontSize: 11, fontWeight: 'bold' }}>TODAY</Text>
                                     <Icon iconStyle={styles.navIcon} name='navigate-next' />
                                 </View>)
                                 ||
@@ -334,14 +334,13 @@ export default class HomeScreen extends React.Component {
                         }}>Luach</Text>
                         <Image source={require('../Images/logo.png')} style={{ width: 95, height: 95, margin: 20 }} resizeMode='contain' />
                         <Text style={{
-                            fontSize: 15,
-                            color: '#c00',
+                            fontSize: 13,
+                            color: '#c99',
                             fontWeight: 'bold'
-                        }}>PLEASE NOTE</Text>
+                        }}>-- PLEASE NOTE --</Text>
                         <Text style={{
-                            fontSize: 15,
-                            color: '#ffefef',
-                            fontWeight: 'bold',
+                            fontSize: 11,
+                            color: '#eef',
                             textAlign:'center'
                         }}>DO NOT rely exclusivley upon this application</Text>
                     </View>
@@ -351,7 +350,7 @@ export default class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    navView: { flex: 0, margin: 4, padding: 3, flexDirection: 'row' },
+    navView: { flex: 0, padding: 3, flexDirection: 'row' },
     navText: { fontSize: 10, color: '#88c' },
     navIcon: { fontSize: 11 },
     footer: {

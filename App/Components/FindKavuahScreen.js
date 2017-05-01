@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Alert } from 'react-native';
+import { ScrollView, View, Alert, TouchableHighlight } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { List, ListItem, Button } from 'react-native-elements';
+import { List, ListItem, Icon } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 import { Kavuah } from '../Code/Chashavshavon/Kavuah';
 import { GeneralStyles } from './styles';
@@ -87,17 +87,31 @@ export default class FindKavuahScreen extends Component {
                             leftIcon={{ name: 'device-hub' }}
                             hideChevron
                             subtitle={
-                                <View>
-                                    <Button
-                                        title='Add'
-                                        icon={{ name: 'add' }}
-                                        backgroundColor='#5f5'
-                                        onPress={() => this.addKavuah.bind(this)(pk)} />
-                                    <Button
-                                        title='Remove'
-                                        icon={{ name: 'delete-forever' }}
-                                        backgroundColor='#f50'
-                                        onPress={() => this.deletePossibleKavuah.bind(this)(pk)} />
+                                <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                                    <TouchableHighlight
+                                        underlayColor='#aaf'
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.addKavuah.bind(this)(pk)}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <Icon
+                                                name='add'
+                                                color='#aaf'
+                                                size={25} />
+                                            <Text> Add</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        underlayColor='#faa'
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.deletePossibleKavuah.bind(this)(pk)}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <Icon
+                                                name='delete-forever'
+                                                color='#faa'
+                                                size={25} />
+                                            <Text> Remove</Text>
+                                        </View>
+                                    </TouchableHighlight>
                                 </View>} />
                     ))}
                 </List>

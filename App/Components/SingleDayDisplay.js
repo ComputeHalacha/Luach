@@ -147,10 +147,10 @@ export default class SingleDayDisplay extends Component {
                             <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
                                 <View style={{ flex: 1, alignItems: 'center' }}>
                                     <Icon color='#bbc' name='info' />
-                                    <Text style={{ fontSize: 12, color: '#bbc' }}>Full Zmanim</Text>
+                                    <Text style={{ fontSize: 12, color: '#bbc' }}>Zmanim</Text>
                                 </View>
                                 <View style={{ flex: 3 }}>
-                                    <Text style={styles.location}>{'Zmanim for ' + location.Name}</Text>
+                                    <Text style={styles.location}>{'In ' + location.Name}</Text>
                                     <Text>{'Sun Rises at ' + sunrise}</Text>
                                     <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
                                     <View>

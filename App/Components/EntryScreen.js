@@ -106,7 +106,7 @@ export default class EntryScreen extends Component {
         return (
             <ScrollView style={GeneralStyles.container}>
                 <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
-                    <TouchableHighlight onPress={this.newEntry.bind(this)} style={{ flex: 1 }}>
+                    <TouchableHighlight onPress={this.newEntry.bind(this)}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon
                                 size={12}
@@ -121,7 +121,7 @@ export default class EntryScreen extends Component {
                             }}>New Entry</Text>
                         </View>
                     </TouchableHighlight>
-                    <TouchableHighlight onPress={this.findKavuahs.bind(this)} style={{ flex: 1 }}>
+                    <TouchableHighlight onPress={this.findKavuahs.bind(this)}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon
                                 size={12}
