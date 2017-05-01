@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { List, ListItem, Icon, Button } from 'react-native-elements';
+import { List, ListItem, Button } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 import { Kavuah } from '../Code/Chashavshavon/Kavuah';
 import { GeneralStyles } from './styles';

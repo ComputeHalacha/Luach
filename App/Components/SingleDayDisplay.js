@@ -73,19 +73,21 @@ const ProbPopup = props => (
 export default class SingleDayDisplay extends Component {
     constructor(props) {
         super(props);
+        this.navigate = props.navigate;
         this.state = { popupVisible: false };
+
     }
     newEntry() {
-        const { jdate, onUpdate, location, appData, navigate } = this.props;
-        navigate('NewEntry', { jdate, location, appData, onUpdate });
+        const { jdate, onUpdate, location, appData } = this.props;
+        this.navigate('NewEntry', { jdate, location, appData, onUpdate });
     }
     newOccasion() {
-        const { jdate, onUpdate, appData, navigate } = this.props;
-        navigate('NewOccasion', { jdate, onUpdate, appData });
+        const { jdate, onUpdate, appData } = this.props;
+        this.navigate('NewOccasion', { jdate, onUpdate, appData });
     }
     showDateDetails() {
-        const { jdate, location, navigate } = this.props;
-        navigate('DateDetails', { jdate, location });
+        const { jdate, location } = this.props;
+        this.navigate('DateDetails', { jdate, location });
     }
     toggleModal() {
         this.setState({ popupVisible: !this.state.popupVisible });

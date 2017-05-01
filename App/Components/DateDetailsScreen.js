@@ -5,7 +5,7 @@ import { GeneralStyles } from './styles';
 
 export default class DateDetailsScreen extends React.Component {
     static navigationOptions = {
-        title: (navigation, childRouter) => {
+        title: navigation => {
             return navigation.state.params.jdate.toShortString(true);
         },
     };

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, View, Alert, TouchableHighlight } from 'react-native';
-import { List, ListItem, Button, Icon } from 'react-native-elements';
+import { ScrollView, Text, View, Alert, TouchableHighlight, Image } from 'react-native';
+import { List, ListItem, Icon } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 import JDate from '../Code/JCal/jDate';
 import { GeneralStyles } from './styles';
@@ -8,8 +8,7 @@ import { NightDay } from '../Code/Chashavshavon/Onah';
 
 export default class EntryScreen extends Component {
     static navigationOptions = {
-        title: 'List of Entries',
-        right: <Icon name='add-circle' onPress={this.newEntry} />,
+        title: 'List of Entries'
     };
     constructor(props) {
         super(props);
@@ -106,68 +105,89 @@ export default class EntryScreen extends Component {
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
-                <View style={GeneralStyles.buttonList}>
-                    <View style={{ alignItems: 'center' }}>
-                        <Icon
-                            reverse
-                            name='add'
-                            color='#9d9'
-                            onPress={this.newEntry.bind(this)} />
-                        <Text>New Entry</Text>
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                        <Icon
-                            reverse
-                            name='search'
-                            color='#ddf'
-                            onPress={this.findKavuahs.bind(this)} />
-                        <Text>Calculate Possible Kavuahs</Text>
-                    </View>
-                </View>
-                <List>
-                    {this.state.appData.EntryList && this.state.appData.EntryList.descending.map(entry => {
-                        const isNight = entry.nightDay === NightDay.Night;
-                        return (
-                            <ListItem
-                                containerStyle={{ backgroundColor: isNight ? '#ddd' : '#fff' }}
-                                key={entry.entryId}
-                                title={entry.toLongString()}
-                                leftIcon={
-                                    isNight ?
-                                        { name: 'ios-moon', color: 'orange', type: 'ionicon' } :
-                                        { name: 'ios-sunny', color: '#fff100', type: 'ionicon', style: { fontSize: 34 } }}
-                                hideChevron
-                                subtitle={
-                                    <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
-                                        <TouchableHighlight
-                                            underlayColor='#faa'
-                                            style={{ flex: 1 }}
-                                            onPress={() => this.deleteEntry.bind(this)(entry)}>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Icon
-                                                    name='delete-forever'
-                                                    color='#faa'
-                                                    size={25} />
-                                                <Text> Remove</Text>
-                                            </View>
-                                        </TouchableHighlight>
-                                        <TouchableHighlight
-                                            onPress={() => this.newKavuah.bind(this)(entry)}
-                                            underlayColor='#aaf'
-                                            style={{ flex: 1 }}>
-                                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                                                <Icon
-                                                    name='device-hub'
-                                                    color='#aaf'
-                                                    size={25} />
-                                                <Text> New Kavuah</Text>
-                                            </View>
-                                        </TouchableHighlight>
-                                    </View>}
+                <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
+                    <TouchableHighlight onPress={this.newEntry.bind(this)} style={{ flex: 1 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon
+                                size={12}
+                                reverse
+                                name='add'
+                                color='#484'
                             />
-                        );
-                    })}
-                </List>
+                            <Text style={{
+                                fontSize: 12,
+                                color: '#262',
+                                fontStyle: 'italic'
+                            }}>New Entry</Text>
+                        </View>
+                    </TouchableHighlight>
+                    <TouchableHighlight onPress={this.findKavuahs.bind(this)} style={{ flex: 1 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon
+                                size={12}
+                                reverse
+                                name='search'
+                                color='#669'
+                            />
+                            <Text style={{
+                                fontSize: 12,
+                                color: '#669',
+                                fontStyle: 'italic'
+                            }}>Calculate Possible Kavuahs</Text>
+                        </View>
+                    </TouchableHighlight>
+                </View>
+                {(this.state.appData.EntryList && this.state.appData.EntryList.list.length &&
+                    <List>
+                        {this.state.appData.EntryList && this.state.appData.EntryList.descending.map(entry => {
+                            const isNight = entry.nightDay === NightDay.Night;
+                            return (
+                                <ListItem
+                                    containerStyle={{ backgroundColor: isNight ? '#d0d0db' : '#fff' }}
+                                    key={entry.entryId}
+                                    title={entry.toLongString()}
+                                    leftIcon={
+                                        isNight ?
+                                            { name: 'ios-moon', color: 'orange', type: 'ionicon' } :
+                                            { name: 'ios-sunny', color: '#fff100', type: 'ionicon', style: { fontSize: 34 } }}
+                                    hideChevron
+                                    subtitle={
+                                        <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                                            <TouchableHighlight
+                                                underlayColor='#faa'
+                                                style={{ flex: 1 }}
+                                                onPress={() => this.deleteEntry.bind(this)(entry)}>
+                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                    <Icon
+                                                        name='delete-forever'
+                                                        color='#faa'
+                                                        size={25} />
+                                                    <Text> Remove</Text>
+                                                </View>
+                                            </TouchableHighlight>
+                                            <TouchableHighlight
+                                                onPress={() => this.newKavuah.bind(this)(entry)}
+                                                underlayColor='#aaf'
+                                                style={{ flex: 1 }}>
+                                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                                                    <Icon
+                                                        name='device-hub'
+                                                        color='#aaf'
+                                                        size={25} />
+                                                    <Text> New Kavuah</Text>
+                                                </View>
+                                            </TouchableHighlight>
+                                        </View>}
+                                />
+                            );
+                        })}
+                    </List>)
+                    ||
+                    <View style={GeneralStyles.emptyListView}>
+                        <Text style={GeneralStyles.emptyListText}>There are no Entries in the list</Text>
+                        <Image source={require('../Images/logo.png')} />
+                    </View>
+                }
             </ScrollView>);
     }
 }
