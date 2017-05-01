@@ -166,6 +166,18 @@ export default class EntryScreen extends Component {
                                                 </View>
                                             </TouchableHighlight>
                                             <TouchableHighlight
+                                                underlayColor='#696'
+                                                style={{ flex: 1 }}
+                                                onPress={() => this.navigate('Home', { currDate: entry.date, appData: this.state.appData })}>
+                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                    <Icon
+                                                        name='event-note'
+                                                        color='#696'
+                                                        size={25} />
+                                                    <Text> Go to Date</Text>
+                                                </View>
+                                            </TouchableHighlight>
+                                            <TouchableHighlight
                                                 onPress={() => this.newKavuah.bind(this)(entry)}
                                                 underlayColor='#aaf'
                                                 style={{ flex: 1 }}>

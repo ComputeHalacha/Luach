@@ -36,6 +36,10 @@ export default class HomeScreen extends React.Component {
         else {
             this._initialShowing.bind(this)();
         }
+
+        setTimeout(() =>
+            this.setState({ showFooter: false })
+            , 3000);
     }
     /**
     * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
@@ -78,7 +82,8 @@ export default class HomeScreen extends React.Component {
             appData: null,
             currDate: currDate,
             currLocation: null,
-            pageNumber: 1
+            pageNumber: 1,
+            showFooter: true
         };
 
         //Get the data from the database
@@ -105,7 +110,8 @@ export default class HomeScreen extends React.Component {
             daysList: this.getDaysList(currDate, appData),
             currDate: currDate,
             currLocation: appData.Settings.location,
-            pageNumber: 1
+            pageNumber: 1,
+            showFooter: false
         };
     }
     _goToDate(jdate) {
@@ -319,10 +325,27 @@ export default class HomeScreen extends React.Component {
                         ))}
                     </List>
                 </ScrollView>
-                <View style={styles.footer}>
-                    <Text style={styles.footerText}>
-                        DO NOT depend halachically upon this application</Text>
-                </View>
+                {this.state.showFooter &&
+                    <View style={styles.footer}>
+                        <Text style={{
+                            fontSize: 25,
+                            color: '#ddf',
+                            fontWeight: 'bold'
+                        }}>Luach</Text>
+                        <Image source={require('../Images/logo.png')} style={{ width: 95, height: 95, margin: 20 }} resizeMode='contain' />
+                        <Text style={{
+                            fontSize: 15,
+                            color: '#c00',
+                            fontWeight: 'bold'
+                        }}>PLEASE NOTE</Text>
+                        <Text style={{
+                            fontSize: 15,
+                            color: '#ffefef',
+                            fontWeight: 'bold'
+                        }}>
+                            DO NOT rely exclusivley upon this application</Text>
+                    </View>
+                }
             </ScrollView>);
     }
 }
@@ -332,14 +355,15 @@ const styles = StyleSheet.create({
     navText: { fontSize: 10, color: '#88c' },
     navIcon: { fontSize: 11 },
     footer: {
-        backgroundColor: '#FE9',
-        padding: 5,
-        flexDirection: 'row'
-    },
-    footerText: {
-        fontSize: 11,
+        position: 'absolute',
+        top: '30%',
+        backgroundColor: '#88a',
+        paddingTop: 25,
+        paddingBottom: 25,
+        alignItems: 'center',
         flex: 1,
-        textAlign: 'center',
-        color: '#666'
+        width: '90%',
+        alignSelf: 'center',
+        borderRadius: 5
     }
 });

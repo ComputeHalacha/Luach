@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { ScrollView, Alert, Text, View, Image } from 'react-native';
-import { List, ListItem, Button } from 'react-native-elements';
+import { ScrollView, Alert, Text, View, Image, TouchableHighlight } from 'react-native';
+import { List, ListItem, Icon } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
 import { GeneralStyles } from './styles';
 
@@ -58,11 +58,32 @@ export default class OccasionsScreen extends Component {
                                 leftIcon={{ name: 'list' }}
                                 hideChevron
                                 subtitle={
-                                    <Button
-                                        title='Remove'
-                                        icon={{ name: 'delete-forever' }}
-                                        backgroundColor='#fca'
-                                        onPress={() => this.deleteOccasion.bind(this)(occasion)} />
+                                    <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                                        <TouchableHighlight
+                                            underlayColor='#faa'
+                                            style={{ flex: 1 }}
+                                            onPress={() => this.deleteOccasion.bind(this)(occasion)}>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <Icon
+                                                    name='delete-forever'
+                                                    color='#faa'
+                                                    size={25} />
+                                                <Text> Remove</Text>
+                                            </View>
+                                        </TouchableHighlight>
+                                        <TouchableHighlight
+                                            underlayColor='#696'
+                                            style={{ flex: 1 }}
+                                            onPress={() => this.navigate('Home', { currDate: occasion.jdate, appData: this.state.appData })}>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <Icon
+                                                    name='event-note'
+                                                    color='#696'
+                                                    size={25} />
+                                                <Text> Go to Date</Text>
+                                            </View>
+                                        </TouchableHighlight>
+                                    </View>
                                 }
                             />
                         ))}
