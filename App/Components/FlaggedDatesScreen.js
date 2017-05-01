@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Text, TouchableHighlight } from 'react-native';
+import { ScrollView, View, Text, TouchableHighlight, Image } from 'react-native';
 import { List, ListItem, Icon } from 'react-native-elements';
 import JDate from '../Code/JCal/jDate';
 import { GeneralStyles } from './styles';
@@ -61,7 +61,7 @@ export default class FlaggedDatesScreen extends Component {
                     ||
                     <View style={GeneralStyles.emptyListView}>
                         <Text style={GeneralStyles.emptyListText}>There are no upcoming flagged dates</Text>
-                        <Image source={require('../Images/logo.png')} />
+                        <Image source={require('../Images/logo.png')} resizeMode='contain' style={GeneralStyles.emptyListImage} />
                     </View>}
             </ScrollView>);
     }

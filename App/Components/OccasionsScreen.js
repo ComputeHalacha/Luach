@@ -91,7 +91,7 @@ export default class OccasionsScreen extends Component {
                     ||
                     <View style={GeneralStyles.emptyListView}>
                         <Text style={GeneralStyles.emptyListText}>There are no Occasions in the list</Text>
-                        <Image source={require('../Images/logo.png')} />
+                        <Image source={require('../Images/logo.png')} resizeMode='contain' style={GeneralStyles.emptyListImage} />
                     </View>
                 }
             </ScrollView>);

@@ -197,7 +197,10 @@ export default class EntryScreen extends Component {
                     ||
                     <View style={GeneralStyles.emptyListView}>
                         <Text style={GeneralStyles.emptyListText}>There are no Entries in the list</Text>
-                        <Image source={require('../Images/logo.png')} />
+                        <Image
+                            source={require('../Images/logo.png')}
+                            resizeMode='contain'
+                            style={GeneralStyles.emptyListImage} />
                     </View>
                 }
             </ScrollView>);

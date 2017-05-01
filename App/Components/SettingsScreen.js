@@ -49,7 +49,6 @@ export default class SettingsScreen extends Component {
         me.update.bind(me);
         return (
             <ScrollView style={GeneralStyles.container}>
-                <Text style={GeneralStyles.header}>Settings</Text>
                 <View style={GeneralStyles.formRow}>
                     <Text style={GeneralStyles.label}>Choose your location</Text>
                     <Picker style={GeneralStyles.picker}

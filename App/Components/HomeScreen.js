@@ -341,9 +341,9 @@ export default class HomeScreen extends React.Component {
                         <Text style={{
                             fontSize: 15,
                             color: '#ffefef',
-                            fontWeight: 'bold'
-                        }}>
-                            DO NOT rely exclusivley upon this application</Text>
+                            fontWeight: 'bold',
+                            textAlign:'center'
+                        }}>DO NOT rely exclusivley upon this application</Text>
                     </View>
                 }
             </ScrollView>);
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     navIcon: { fontSize: 11 },
     footer: {
         position: 'absolute',
-        top: '30%',
+        top: '10%',
         backgroundColor: '#88a',
         paddingTop: 25,
         paddingBottom: 25,

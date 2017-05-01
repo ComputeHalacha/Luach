@@ -73,7 +73,6 @@ export default class NewEntry extends React.Component {
             daysOfMonth.push(i);
         }
         return <ScrollView style={GeneralStyles.container}>
-            <Text style={GeneralStyles.header}>New Entry</Text>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Day</Text>
                 <Picker style={GeneralStyles.picker}

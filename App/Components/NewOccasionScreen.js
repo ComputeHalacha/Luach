@@ -50,7 +50,7 @@ export default class NewOccasion extends React.Component {
             sDay = Utils.toSuffixed(sdate.getDate()),
             muxedDate = `${this.state.jdate.toShortString(false)} (${sdate.toLocaleDateString()})`;
         return <ScrollView style={GeneralStyles.container}>
-            <Text style={GeneralStyles.header}>New Occasion for {this.state.jdate.toString(false)}</Text>
+            <Text style={GeneralStyles.header}>{this.state.jdate.toString(false)}</Text>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Occasion Title</Text>
                 <TextInput

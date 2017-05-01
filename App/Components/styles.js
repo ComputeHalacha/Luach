@@ -41,8 +41,11 @@ const GeneralStyles = StyleSheet.create({
     emptyListText: { fontSize: 20,
         fontWeight: 'bold',
         color: '#a8d',
-        marginBottom: 35 }
-
+        marginBottom: 35,
+        textAlign:'center' },
+    emptyListImage:{
+        width:150,
+        height:150}
 });
 
 export { GeneralStyles };
