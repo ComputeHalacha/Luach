@@ -350,7 +350,7 @@ export default class DataUtils {
                         !!l.israel,
                         l.latitude,
                         l.longitude,
-                        l.utcOffset,
+                        l.utcoffset,
                         l.elevation,
                         l.candles,
                         l.locationId));
