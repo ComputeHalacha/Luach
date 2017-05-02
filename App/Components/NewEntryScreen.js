@@ -3,6 +3,7 @@ import { ScrollView, View, Text, Picker, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Entry from '../Code/Chashavshavon/Entry';
+import {Kavuah} from '../Code/Chashavshavon/Kavuah';
 import Utils from '../Code/JCal/Utils';
 import Location from '../Code/JCal/Location';
 import jDate from '../Code/JCal/jDate';
@@ -51,7 +52,17 @@ export default class NewEntry extends React.Component {
             Alert.alert('Add Entry',
                 `The entry for ${entry.toString()} has been successfully added.`);
             if (appData.Settings.calcKavuahsOnNewEntry) {
-                this.navigate('FindKavuahs', { appData: appData, onUpdate: this.onUpdate });
+                const possList = Kavuah.getPossibleNewKavuahs(appData.EntryList.list, appData.KavuahList);
+                if (possList.length) {
+                    this.navigate('FindKavuahs', {
+                        appData: appData,
+                        onUpdate: this.onUpdate,
+                        possibleKavuahList: possList
+                    });
+                }
+                else {
+                    this.dispatch(NavigationActions.back());
+                }
             }
             else {
                 this.dispatch(NavigationActions.back());

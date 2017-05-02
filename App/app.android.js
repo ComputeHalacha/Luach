@@ -1,6 +1,5 @@
 import { AppRegistry } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import './Code/initAndroid';
 import HomeScreen from './Components/HomeScreen';
 import SettingsScreen from './Components/SettingsScreen';
 import NewOccasionScreen from './Components/NewOccasionScreen';

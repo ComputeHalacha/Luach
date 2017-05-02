@@ -83,6 +83,21 @@ class Kavuah {
         return !!this.kavuahId;
     }
     /**
+     * Get possible new Kavuahs from a list of entries.
+     * @param {*} entryList The list of entries to search
+     * @param {*} kavuahList The list of Kavuahs to used to determine if any found kavuah is a "new" one.
+     */
+    static getPossibleNewKavuahs(entryList, kavuahList) {
+        //Get all Kavuahs in the list that are active and are not ignored.
+        const klist = kavuahList.filter(k => k.active && !k.ignore);
+        //Find all possible Kavuahs.
+        return Kavuah.getKavuahSuggestionList(entryList)
+            //Filter out any Kavuahs that are already in the active list.
+            .filter(pk =>
+                !(klist.find(k => k.isMatchingKavuah(pk.kavuah)))
+            );
+    }
+    /**
      * Works out all possible Kavuahs from the given list of entries
      * Returns an array of objects, each containing:
      * {
