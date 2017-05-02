@@ -279,7 +279,7 @@ export default class EntryList {
                 kavuah.kavuahType === KavuahTypes.Sirug ? kavuah.specialNumber : 1);
             while (dt.Abs <= this.stopWarningDate.Abs) {
                 const o = new ProblemOnah(dt, kavuah.settingEntry.nightDay,
-                    'Kavuah for' + kavuah.toString());
+                    'Kavuah for ' + kavuah.toString());
                 onahs.push(o);
                 this.addOhrZarua(o, onahs);
 
