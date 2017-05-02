@@ -22,14 +22,24 @@ export default class EntryScreen extends Component {
         this.state = {
             appData: appData
         };
-        this.newEntry.bind(this);
+        this.newEntry = this.newEntry.bind(this);
+        this.update = this.update.bind(this);
+        this.findKavuahs = this.findKavuahs.bind(this);
+    }
+    update(appData) {
+        if (appData) {
+            this.setState({ apData: appData });
+        }
+        if (this.onUpdate) {
+            this.onUpdate(appData);
+        }
     }
     newEntry() {
         this.navigate('NewEntry', {
             jdate: new JDate(),
             location: this.currLocation,
             appData: this.state.appData,
-            onUpdate: this.onUpdate
+            onUpdate: this.update
         });
     }
     deleteEntry(entry) {
@@ -74,12 +84,7 @@ export default class EntryScreen extends Component {
                                 entryList.calulateHaflagas();
                                 appData.EntryList = entryList;
                                 appData.KavuahList = kavuahList;
-                                this.setState({
-                                    appData: appData
-                                });
-                                if (this.onUpdate) {
-                                    this.onUpdate(appData);
-                                }
+                                this.update(appData);
                                 Alert.alert('Remove entry',
                                     `The entry for ${e.toString()} has been successfully removed.`);
                             });
@@ -93,20 +98,20 @@ export default class EntryScreen extends Component {
         this.navigate('NewKavuah', {
             appData: this.state.appData,
             settingEntry: entry,
-            onUpdate: this.onUpdate
+            onUpdate: this.update
         });
     }
     findKavuahs() {
         this.navigate('FindKavuahs', {
             appData: this.state.appData,
-            onUpdate: this.onUpdate
+            onUpdate: this.update
         });
     }
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
                 <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
-                    <TouchableHighlight onPress={this.newEntry.bind(this)}>
+                    <TouchableHighlight onPress={this.newEntry}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon
                                 size={12}
@@ -121,7 +126,7 @@ export default class EntryScreen extends Component {
                             }}>New Entry</Text>
                         </View>
                     </TouchableHighlight>
-                    <TouchableHighlight onPress={this.findKavuahs.bind(this)}>
+                    <TouchableHighlight onPress={this.findKavuahs}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon
                                 size={12}
