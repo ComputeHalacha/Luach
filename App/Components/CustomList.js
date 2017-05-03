@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ListView, StyleSheet, Text, View } from 'react-native';
+import { ListView, StyleSheet, Text, View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NightDay } from '../Code/Chashavshavon/Onah';
 
@@ -27,72 +27,73 @@ export default class CustomList extends Component {
     constructor(props) {
         super(props);
         const ds = new ListView.DataSource({
-            rowHasChanged: props.rowHasChanged ?
-                props.rowHasChanged : (r1, r2) => r1.toString() !== r2.toString()
+            rowHasChanged: props.rowHasChanged || ((r1, r2) => r1 !== r2)
         });
-        this.dataSource = ds.cloneWithRows(props.dataSource);
+        this.state = { dataSource: ds.cloneWithRows(props.dataSource) };
     }
     render() {
-        return <View style={[styles.outerStyle, this.props.style]}>
-            {(this.dataSource && this.dataSource.length &&
-                <ListView
-                    dataSource={this.dataSource}
-                    renderRow={rowData => {
-                        const mainViewStyle = typeof this.props.mainViewStyle === 'function' ?
-                            this.props.mainViewStyle(rowData) : this.props.mainViewStyle,
-                            title = typeof this.props.title === 'function' ?
-                                this.props.title(rowData) : rowData.toString(),
-                            titleStyle = typeof this.props.titleStyle === 'function' ?
-                                this.props.titleStyle(rowData) : this.props.titleStyle,
-                            nightDay = typeof this.props.nightDay === 'function' ?
-                                this.props.nightDay(rowData) : this.props.nightDay,
-                            iconStyle = typeof this.props.iconStyle === 'function' ?
-                                this.props.iconStyle(rowData) : this.props.iconStyle,
-                            iconName = typeof this.props.iconName === 'function' ?
-                                this.props.iconName(rowData) : this.props.iconName,
-                            iconType = typeof this.props.iconType === 'function' ?
-                                this.props.iconType(rowData) : this.props.iconType,
-                            iconColor = typeof this.props.iconColor === 'function' ?
-                                this.props.iconColor(rowData) : this.props.iconColor,
-                            iconSize = typeof this.props.iconSize === 'function' ?
-                                this.props.iconSize(rowData) : this.props.iconSize,
-                            textSectionViewStyle = typeof this.props.textSectionViewStyle === 'function' ?
-                                this.props.textSectionViewStyle(rowData) : this.props.textSectionViewStyle,
-                            buttonSection = typeof this.props.buttonSection === 'function' ?
-                                this.props.buttonSection(rowData) : this.props.buttonSection;
-                        return <View style={[
-                            styles.mainViewStyle,
-                            (nightDay && ({ backgroundColor: nightDay === NightDay.Night ? '#d0d0db' : 'fff' })),
-                            mainViewStyle]}>
-                            {(nightDay && (nightDay === NightDay.Night ?
-                                <Icon
-                                    name='ios-moon'
-                                    color='orange'
-                                    type='ionicon'
-                                    style={[styles.iconStyle, iconStyle]} />
-                                :
-                                <Icon
-                                    name='ios-sunny'
-                                    color='#fff100'
-                                    type='ionicon'
-                                    style={[styles.iconStyle, iconStyle]} />))
-                                ||
-                                (iconName &&
+        return <View>
+            {(this.state.dataSource.getRowCount() > 0 &&
+                <View style={[styles.outerStyle, this.props.style]}>
+                    <ListView
+                        dataSource={this.state.dataSource}
+                        renderRow={rowData => {
+                            const mainViewStyle = typeof this.props.mainViewStyle === 'function' ?
+                                this.props.mainViewStyle(rowData) : this.props.mainViewStyle,
+                                title = typeof this.props.title === 'function' ?
+                                    this.props.title(rowData) : rowData.toString(),
+                                titleStyle = typeof this.props.titleStyle === 'function' ?
+                                    this.props.titleStyle(rowData) : this.props.titleStyle,
+                                nightDay = typeof this.props.nightDay === 'function' ?
+                                    this.props.nightDay(rowData) : this.props.nightDay,
+                                iconStyle = typeof this.props.iconStyle === 'function' ?
+                                    this.props.iconStyle(rowData) : this.props.iconStyle,
+                                iconName = typeof this.props.iconName === 'function' ?
+                                    this.props.iconName(rowData) : this.props.iconName,
+                                iconType = typeof this.props.iconType === 'function' ?
+                                    this.props.iconType(rowData) : this.props.iconType,
+                                iconColor = typeof this.props.iconColor === 'function' ?
+                                    this.props.iconColor(rowData) : this.props.iconColor,
+                                iconSize = typeof this.props.iconSize === 'function' ?
+                                    this.props.iconSize(rowData) : this.props.iconSize,
+                                textSectionViewStyle = typeof this.props.textSectionViewStyle === 'function' ?
+                                    this.props.textSectionViewStyle(rowData) : this.props.textSectionViewStyle,
+                                buttonSection = typeof this.props.buttonSection === 'function' ?
+                                    this.props.buttonSection(rowData) : this.props.buttonSection;
+                            return <View style={[
+                                styles.mainViewStyle,
+                                (nightDay && ({ backgroundColor: nightDay === NightDay.Night ? '#d0d0db' : '#fff' })),
+                                mainViewStyle]}>
+                                {(nightDay && (nightDay === NightDay.Night ?
                                     <Icon
-                                        name={iconName}
-                                        style={[styles.iconStyle, iconStyle]}
-                                        type={iconType}
-                                        size={iconSize}
-                                        color={iconColor} />)
-                            }
-                            <View style={[styles.textSectionViewStyle, textSectionViewStyle]}>
-                                <Text style={[styles.titleStyle, titleStyle]}>
-                                    {title}
-                                </Text>
-                                {buttonSection}
-                            </View>
-                        </View>;
-                    }} />)
+                                        name='ios-moon'
+                                        color='orange'
+                                        type='ionicon'
+                                        style={[styles.iconStyle, iconStyle]} />
+                                    :
+                                    <Icon
+                                        name='ios-sunny'
+                                        color='#fff100'
+                                        type='ionicon'
+                                        style={[styles.iconStyle, iconStyle]} />))
+                                    ||
+                                    (iconName &&
+                                        <Icon
+                                            name={iconName}
+                                            style={[styles.iconStyle, iconStyle]}
+                                            type={iconType}
+                                            size={iconSize}
+                                            color={iconColor} />)
+                                }
+                                <View style={[styles.textSectionViewStyle, textSectionViewStyle]}>
+                                    <Text style={[styles.titleStyle, titleStyle]}>
+                                        {title}
+                                    </Text>
+                                    {buttonSection}
+                                </View>
+                            </View>;
+                        }} />
+                </View>)
                 ||
                 <View style={styles.emptyListView}>
                     <Text style={styles.emptyListText}>{this.props.emptyListText}</Text>
@@ -108,8 +109,8 @@ export default class CustomList extends Component {
 const styles = StyleSheet.create({
     outerStyle: {
         borderTopWidth: 2,
-        borderBottomWidth: 2,
-        borderColor: '#aab'
+        borderBottomWidth: 1,
+        borderColor: '#cce'
 
     },
     mainViewStyle: {

@@ -148,7 +148,7 @@ export default class EntryScreen extends Component {
                     dataSource={this.state.appData.EntryList && this.state.appData.EntryList.list}
                     nightDay={entry => entry.nightDay}
                     title={entry => entry.toLongString()}
-                    emptyListText='11-==223 There are no Entries in the list'
+                    emptyListText='There are no Entries in the list'
                     buttonSection={entry =>
                         <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
                             <TouchableHighlight

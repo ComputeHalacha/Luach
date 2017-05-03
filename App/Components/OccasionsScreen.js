@@ -52,10 +52,10 @@ export default class OccasionsScreen extends Component {
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
-                {(this.state.occasionList && this.state.occasionList.length &&
                     <CustomList
                         dataSource={this.state.occasionList}
                         iconName='list'
+                        emptyListText='There are no Occasions in the list'
                         buttonSection={occasion => <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
                             <TouchableHighlight
                                 underlayColor='#faa'
@@ -81,13 +81,7 @@ export default class OccasionsScreen extends Component {
                                     <Text> Go to Date</Text>
                                 </View>
                             </TouchableHighlight>
-                        </View>} />)
-                    ||
-                    <View style={GeneralStyles.emptyListView}>
-                        <Text style={GeneralStyles.emptyListText}>There are no Occasions in the list</Text>
-                        <Image source={require('../Images/logo.png')} resizeMode='contain' style={GeneralStyles.emptyListImage} />
-                    </View>
-                }
+                        </View>} />
             </ScrollView>);
     }
 }
