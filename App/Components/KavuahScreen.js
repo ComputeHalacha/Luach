@@ -129,7 +129,7 @@ export default class KavuahScreen extends Component {
                     </TouchableHighlight>
                 </View>
                 <CustomList
-                    dataSource={this.state.kavuahList}
+                    data={this.state.kavuahList}
                     title={kavuah => kavuah.toLongString()}
                     iconName='device-hub'
                     emptyListText='There are no Kavuahs in the list'

@@ -20,7 +20,7 @@ export default class DateDetailsScreen extends React.Component {
         return <ScrollView style={GeneralStyles.container}>
             <Text style={GeneralStyles.header}>{'Zmanim for ' + this.state.location.Name}</Text>
             <CustomList
-                dataSource={list}
+                data={list}
                 textSectionViewStyle={{ flexDirection: 'row' }}
                 title={i => i.title + (i.value ? ':' : '')}
                 titleStyle={i => ({

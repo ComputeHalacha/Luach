@@ -91,7 +91,7 @@ export default class FindKavuahScreen extends Component {
         return (
             <ScrollView style={GeneralStyles.container}>
                 <CustomList
-                    dataSource={this.state.possibleKavuahList}
+                    data={this.state.possibleKavuahList}
                     title={(pk, index) => `Possible Kavuah #${(index + 1).toString()}: ${pk.kavuah.toString()}`}
                     emptyListText='The application did not find any Kavuah combinations'
                     titleStyle={{ fontWeight: 'bold', color: '#55b' }}

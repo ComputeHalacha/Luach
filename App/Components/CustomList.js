@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { ListView, StyleSheet, Text, View, Image } from 'react-native';
+import { FlatList, StyleSheet, Text, View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NightDay } from '../Code/Chashavshavon/Onah';
 
 /*
 PROPS ------------------------------------------
     style = style of outer container
-    dataSource = Array of data items
+    data= = Array of data items
     rowHasChanged = function(row1, row2) to test if the row needs to be re-rendered. The default is row1===row2.
     emptyListText=The text to display if list is empty.
 
@@ -30,72 +30,85 @@ All the following props accept either a flat value or (dataItem, index) => prop 
 export default class CustomList extends Component {
     constructor(props) {
         super(props);
-        this.listViewDataSource = new ListView.DataSource({
-            rowHasChanged: props.rowHasChanged || ((r1, r2) => r1 !== r2)
-        });
+        this.renderItem = this.renderItem.bind(this);
+
+        this.state = {
+            data: (this.props.data && this.props.data.slice().map((o, i) => {
+                if (!o.__index) {
+                    o.__index = i;
+                }
+                return o;
+            })) || []
+        };
+    }
+    renderItem({ item }) {
+        const index = item.__index,
+            mainViewStyle = typeof this.props.mainViewStyle === 'function' ?
+                this.props.mainViewStyle(item, index) : this.props.mainViewStyle,
+            title = typeof this.props.title === 'function' ?
+                this.props.title(item, index) : item.toString(),
+            titleStyle = typeof this.props.titleStyle === 'function' ?
+                this.props.titleStyle(item, index) : this.props.titleStyle,
+            nightDay = typeof this.props.nightDay === 'function' ?
+                this.props.nightDay(item, index) : this.props.nightDay,
+            iconStyle = typeof this.props.iconStyle === 'function' ?
+                this.props.iconStyle(item, index) : this.props.iconStyle,
+            iconName = typeof this.props.iconName === 'function' ?
+                this.props.iconName(item, index) : this.props.iconName,
+            iconType = typeof this.props.iconType === 'function' ?
+                this.props.iconType(item, index) : this.props.iconType,
+            iconColor = typeof this.props.iconColor === 'function' ?
+                this.props.iconColor(item, index) : this.props.iconColor,
+            iconSize = typeof this.props.iconSize === 'function' ?
+                this.props.iconSize(item, index) : this.props.iconSize,
+            textSectionViewStyle = typeof this.props.textSectionViewStyle === 'function' ?
+                this.props.textSectionViewStyle(item, index) : this.props.textSectionViewStyle,
+            secondSection = typeof this.props.secondSection === 'function' ?
+                this.props.secondSection(item, index) : this.props.secondSection;
+        return (<View style={[
+            styles.mainViewStyle,
+            (nightDay && ({ backgroundColor: nightDay === NightDay.Night ? '#d0d0db' : '#fff' })),
+            mainViewStyle]}>
+            {(nightDay && (nightDay === NightDay.Night ?
+                <Icon
+                    name='ios-moon'
+                    color='orange'
+                    type='ionicon'
+                    style={iconStyle}
+                    containerStyle={styles.iconContainerStyle} />
+                :
+                <Icon
+                    name='ios-sunny'
+                    color='#fff100'
+                    type='ionicon'
+                    style={iconStyle}
+                    containerStyle={styles.iconContainerStyle} />))
+                ||
+                (iconName &&
+                    <Icon
+                        name={iconName}
+                        type={iconType}
+                        size={iconSize}
+                        color={iconColor}
+                        style={iconStyle}
+                        containerStyle={styles.iconContainerStyle} />)
+            }
+            <View style={[styles.textSectionViewStyle, textSectionViewStyle]}>
+                <Text style={[styles.titleStyle, titleStyle]}>
+                    {title}
+                </Text>
+                {secondSection}
+            </View>
+        </View>);
     }
     render() {
         return <View>
-            {(this.props.dataSource && this.props.dataSource.length &&
+            {(this.state.data && this.state.data.length &&
                 <View style={[styles.outerStyle, this.props.style]}>
-                    <ListView
-                        dataSource={this.listViewDataSource.cloneWithRows(this.props.dataSource)}
-                        renderRow={(rowData, sectionID, rowID) => {
-                            const mainViewStyle = typeof this.props.mainViewStyle === 'function' ?
-                                this.props.mainViewStyle(rowData, rowID) : this.props.mainViewStyle,
-                                title = typeof this.props.title === 'function' ?
-                                    this.props.title(rowData, rowID) : rowData.toString(),
-                                titleStyle = typeof this.props.titleStyle === 'function' ?
-                                    this.props.titleStyle(rowData, rowID) : this.props.titleStyle,
-                                nightDay = typeof this.props.nightDay === 'function' ?
-                                    this.props.nightDay(rowData, rowID) : this.props.nightDay,
-                                iconStyle = typeof this.props.iconStyle === 'function' ?
-                                    this.props.iconStyle(rowData, rowID) : this.props.iconStyle,
-                                iconName = typeof this.props.iconName === 'function' ?
-                                    this.props.iconName(rowData, rowID) : this.props.iconName,
-                                iconType = typeof this.props.iconType === 'function' ?
-                                    this.props.iconType(rowData, rowID) : this.props.iconType,
-                                iconColor = typeof this.props.iconColor === 'function' ?
-                                    this.props.iconColor(rowData, rowID) : this.props.iconColor,
-                                iconSize = typeof this.props.iconSize === 'function' ?
-                                    this.props.iconSize(rowData, rowID) : this.props.iconSize,
-                                textSectionViewStyle = typeof this.props.textSectionViewStyle === 'function' ?
-                                    this.props.textSectionViewStyle(rowData, rowID) : this.props.textSectionViewStyle,
-                                secondSection = typeof this.props.secondSection === 'function' ?
-                                    this.props.secondSection(rowData, rowID) : this.props.secondSection;
-                            return <View style={[
-                                styles.mainViewStyle,
-                                (nightDay && ({ backgroundColor: nightDay === NightDay.Night ? '#d0d0db' : '#fff' })),
-                                mainViewStyle]}>
-                                {(nightDay && (nightDay === NightDay.Night ?
-                                    <Icon
-                                        name='ios-moon'
-                                        color='orange'
-                                        type='ionicon'
-                                        style={[styles.iconStyle, iconStyle]} />
-                                    :
-                                    <Icon
-                                        name='ios-sunny'
-                                        color='#fff100'
-                                        type='ionicon'
-                                        style={[styles.iconStyle, iconStyle]} />))
-                                    ||
-                                    (iconName &&
-                                        <Icon
-                                            name={iconName}
-                                            style={[styles.iconStyle, iconStyle]}
-                                            type={iconType}
-                                            size={iconSize}
-                                            color={iconColor} />)
-                                }
-                                <View style={[styles.textSectionViewStyle, textSectionViewStyle]}>
-                                    <Text style={[styles.titleStyle, titleStyle]}>
-                                        {title}
-                                    </Text>
-                                    {secondSection}
-                                </View>
-                            </View>;
-                        }} />
+                    <FlatList
+                        data={this.state.data}
+                        renderItem={this.renderItem}
+                        keyExtractor={item => item.__index} />
                 </View>)
                 ||
                 <View style={styles.emptyListView}>
@@ -114,7 +127,6 @@ const styles = StyleSheet.create({
         borderTopWidth: 2,
         borderBottomWidth: 1,
         borderColor: '#cce'
-
     },
     mainViewStyle: {
         borderBottomWidth: 1,
@@ -122,16 +134,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingLeft: 15
     },
-    iconStyle: {
-
+    iconContainerStyle: {
+        paddingRight: 10
     },
     titleStyle: {
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        paddingRight: 20
     },
     textSectionViewStyle: {
         flexWrap: 'wrap',
-        paddingLeft: 20,
-        paddingRight: 20,
+        paddingLeft: 0,
+        paddingRight: 10,
         paddingTop: 10,
         paddingBottom: 5
     },

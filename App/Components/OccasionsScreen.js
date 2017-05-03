@@ -53,7 +53,7 @@ export default class OccasionsScreen extends Component {
         return (
             <ScrollView style={GeneralStyles.container}>
                     <CustomList
-                        dataSource={this.state.occasionList}
+                        data={this.state.occasionList}
                         iconName='list'
                         emptyListText='There are no Occasions in the list'
                         secondSection={occasion => <View style={[GeneralStyles.buttonList, { margin: 15 }]}>

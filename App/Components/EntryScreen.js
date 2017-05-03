@@ -145,7 +145,7 @@ export default class EntryScreen extends Component {
                     </TouchableHighlight>
                 </View>
                 <CustomList
-                    dataSource={this.state.appData.EntryList && this.state.appData.EntryList.list}
+                    data={this.state.appData.EntryList && this.state.appData.EntryList.list}
                     nightDay={entry => entry.nightDay}
                     title={entry => entry.toLongString()}
                     emptyListText='There are no Entries in the list'
