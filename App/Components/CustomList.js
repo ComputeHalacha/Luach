@@ -26,17 +26,16 @@ emptyListText=The text to display if list is empty.
 export default class CustomList extends Component {
     constructor(props) {
         super(props);
-        const ds = new ListView.DataSource({
+        this.listViewDataSource = new ListView.DataSource({
             rowHasChanged: props.rowHasChanged || ((r1, r2) => r1 !== r2)
         });
-        this.state = { dataSource: ds.cloneWithRows(props.dataSource) };
     }
     render() {
         return <View>
-            {(this.state.dataSource.getRowCount() > 0 &&
+            {(this.props.dataSource && this.props.dataSource.length  &&
                 <View style={[styles.outerStyle, this.props.style]}>
                     <ListView
-                        dataSource={this.state.dataSource}
+                        dataSource={this.listViewDataSource.cloneWithRows(this.props.dataSource)}
                         renderRow={rowData => {
                             const mainViewStyle = typeof this.props.mainViewStyle === 'function' ?
                                 this.props.mainViewStyle(rowData) : this.props.mainViewStyle,

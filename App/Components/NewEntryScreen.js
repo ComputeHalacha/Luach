@@ -3,7 +3,7 @@ import { ScrollView, View, Text, Picker, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Entry from '../Code/Chashavshavon/Entry';
-import {Kavuah} from '../Code/Chashavshavon/Kavuah';
+import { Kavuah } from '../Code/Chashavshavon/Kavuah';
 import Utils from '../Code/JCal/Utils';
 import Location from '../Code/JCal/Location';
 import jDate from '../Code/JCal/jDate';
@@ -37,11 +37,16 @@ export default class NewEntry extends React.Component {
         this.dispatch = navigation.dispatch;
     }
     addEntry() {
-        const onah = new Onah(this.state.jdate, this.state.nightDay),
+        const appData = this.state.appData,
+            entryList = appData.EntryList,
+            onah = new Onah(this.state.jdate, this.state.nightDay),
             entry = new Entry(onah);
+        if (entryList.list.find(e => e.isSameEntry(entry))) {
+            Alert.alert('Entry already exists',
+                `The entry for ${entry.toString()} is already in the list.`);
+            return;
+        }
         DataUtils.EntryToDatabase(entry).then(() => {
-            const appData = this.state.appData,
-                entryList = appData.EntryList;
             entryList.add(entry);
             entryList.calulateHaflagas();
             appData.EntryList = entryList;
