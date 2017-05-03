@@ -49,22 +49,6 @@ const GeneralStyles = StyleSheet.create({
         fontSize: 7,
         height: 25
     },
-    emptyListView: {
-        alignItems: 'center',
-        flex: 1,
-        marginTop: 50
-    },
-    emptyListText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#99b',
-        marginBottom: 35,
-        textAlign: 'center'
-    },
-    emptyListImage: {
-        width: 150,
-        height: 150
-    }
 });
 
 export { GeneralStyles };
