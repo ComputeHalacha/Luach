@@ -1,14 +1,13 @@
 import React from 'react';
-import { View, ScrollView, Text } from 'react-native';
-import { List, ListItem } from 'react-native-elements';
+import { ScrollView, Text } from 'react-native';
+import CustomList from './CustomList';
 import { GeneralStyles } from './styles';
 
 export default class DateDetailsScreen extends React.Component {
-    static navigationOptions = {
-        title: navigation => {
-            return navigation.state.params.jdate.toShortString(true);
-        },
-    };
+    static navigationOptions = ({ navigation }) => ({
+        title: navigation.state.params.jdate.toShortString(true)
+    });
+
     constructor(props) {
         super(props);
         const navigation = this.props.navigation,
@@ -20,17 +19,16 @@ export default class DateDetailsScreen extends React.Component {
         const list = this.state.jdate.getAllDetails(this.state.location);
         return <ScrollView style={GeneralStyles.container}>
             <Text style={GeneralStyles.header}>{'Zmanim for ' + this.state.location.Name}</Text>
-            <View>
-                <List>
-                    {list.map((item, index) => (
-                        <ListItem key={index}
-                            title={item.title}
-                            titleStyle={item.important ? { fontWeight: 'bold', color: '#008' } : null}
-                            hideChevron
-                            label={<Text>{item.value}</Text>} />
-                    ))}
-                </List>
-            </View>
+            <CustomList
+                dataSource={list}
+                textSectionViewStyle={{ flexDirection: 'row' }}
+                title={i => i.title + (i.value ? ':' : '')}
+                titleStyle={i => ({
+                    fontWeight: 'bold',
+                    color: i.important ? '#008' : null,
+                    paddingRight: 10
+                })}
+                secondSection={i => <Text>{i.value}</Text>} />
         </ScrollView>;
     }
 }

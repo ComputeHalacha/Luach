@@ -92,13 +92,13 @@ export default class FindKavuahScreen extends Component {
             <ScrollView style={GeneralStyles.container}>
                 <CustomList
                     dataSource={this.state.possibleKavuahList}
-                    title={pk => `Possible Kavuah: ${pk.kavuah.toString()}`}
+                    title={(pk, index) => `Possible Kavuah #${(index + 1).toString()}: ${pk.kavuah.toString()}`}
                     emptyListText='The application did not find any Kavuah combinations'
                     titleStyle={{ fontWeight: 'bold', color: '#55b' }}
                     iconName='device-hub'
                     iconSize={25}
                     iconColor='#f00'
-                    buttonSection={pk => <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                    secondSection={pk => <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
                         <TouchableHighlight
                             underlayColor='#aaf'
                             style={{ flex: 1 }}

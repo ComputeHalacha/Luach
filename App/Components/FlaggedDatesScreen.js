@@ -27,22 +27,21 @@ export default class FlaggedDatesScreen extends Component {
                 <CustomList
                     dataSource={this.state.problemOnahs}
                     nightDay={po => po.nightDay}
-                    emptyText='There are no upcoming flagged dates'
-                    buttonSection={po =>
-                        <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
-                            <TouchableHighlight
-                                underlayColor='#faa'
-                                style={{ flex: 1 }}
-                                onPress={() => this.navigate('Home', { currDate: po.jdate, appData: this.state.appData })}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Icon
-                                        name='event-note'
-                                        color='#393'
-                                        size={25} />
-                                    <Text> Go to Date</Text>
-                                </View>
-                            </TouchableHighlight>
-                        </View>} />
+                    emptyListText='There are no upcoming flagged dates'
+                    secondSection={<View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                        <TouchableHighlight
+                            underlayColor='#faa'
+                            style={{ flex: 1 }}
+                            onPress={() => this.navigate('Home', { currDate: o.jdate, appData: this.state.appData })}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Icon
+                                    name='event-note'
+                                    color='#393'
+                                    size={25} />
+                                <Text> Go to Date</Text>
+                            </View>
+                        </TouchableHighlight>
+                    </View>} />
             </ScrollView>);
     }
 }

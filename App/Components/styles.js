@@ -3,7 +3,6 @@ import { StyleSheet } from 'react-native';
 const GeneralStyles = StyleSheet.create({
     container: {
         flex: 1,
-        flexWrap: 'wrap',
         backgroundColor: '#fff'
     },
     header: {

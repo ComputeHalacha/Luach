@@ -133,7 +133,7 @@ export default class KavuahScreen extends Component {
                     title={kavuah => kavuah.toLongString()}
                     iconName='device-hub'
                     emptyListText='There are no Kavuahs in the list'
-                    buttonSection={kavuah => <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                    secondSection={kavuah => <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                             <Text>Active </Text>
                             <Switch value={kavuah.active}

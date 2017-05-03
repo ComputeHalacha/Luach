@@ -8,7 +8,7 @@ const ProbPopup = props => (
     <Modal
         animationType={'slide'}
         transparent={true}
-        visible={props.visible}
+        visible={!!props.visible}
         onRequestClose={props.onRequestClose}>
         <View style={{
             flex: 1,
@@ -123,7 +123,7 @@ export default class SingleDayDisplay extends Component {
                     (entries && entries.length ? '#fee' : (probs && probs.length ? '#fe9' : (isToday ? '#eef' : '#fff')))
                 }]}>
                 <ProbPopup
-                    visible={this.state.popupVisible}
+                    visible={!!this.state.popupVisible}
                     onRequestClose={this.toggleModal.bind(this)}
                     nightProbs={nightProbs}
                     dayProbs={dayProbs} />

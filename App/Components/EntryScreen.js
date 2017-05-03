@@ -149,7 +149,7 @@ export default class EntryScreen extends Component {
                     nightDay={entry => entry.nightDay}
                     title={entry => entry.toLongString()}
                     emptyListText='There are no Entries in the list'
-                    buttonSection={entry =>
+                    secondSection={entry =>
                         <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
                             <TouchableHighlight
                                 underlayColor='#faa'
