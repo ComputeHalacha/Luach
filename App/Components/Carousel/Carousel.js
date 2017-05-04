@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import {
     Dimensions,
     StyleSheet,
@@ -15,20 +15,6 @@ const { width } = Dimensions.get('window');
 export default class Carousel extends Component {
 
     displayName = 'Carousel';
-
-    static propTypes = {
-        pageStyle: PropTypes.object,
-        pageWidth: PropTypes.number,
-        children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
-        initialPage: PropTypes.number,
-        containerStyle: PropTypes.object,
-        noItemsText: PropTypes.string,
-        onPageChange: PropTypes.func,
-        sneak: PropTypes.number,
-        transitionDelay: PropTypes.number,
-        currentPage: PropTypes.number,
-        swipeThreshold: PropTypes.number
-    };
 
     static defaultProps = {
         initialPage: 0,

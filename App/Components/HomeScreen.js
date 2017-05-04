@@ -12,13 +12,11 @@ import { UserOccasion } from '../Code/JCal/UserOccasion';
 const { width } = Dimensions.get('window');
 
 export default class HomeScreen extends React.Component {
-    static navigationOptions = {
+    static navigationOptions = ({ navigation, screenProps }) => ({
         title: 'Luach',
         permalink: '',
-        header: {
-            visible: false,
-        }
-    };
+        header: null
+    });
     static today = new jDate();
 
     constructor(props) {
@@ -341,7 +339,7 @@ export default class HomeScreen extends React.Component {
                         <Text style={{
                             fontSize: 11,
                             color: '#eef',
-                            textAlign:'center'
+                            textAlign: 'center'
                         }}>DO NOT rely exclusivley upon this application</Text>
                     </View>
                 }

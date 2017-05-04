@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Text, TouchableHighlight, Image } from 'react-native';
-import { List, ListItem, Icon } from 'react-native-elements';
+import { ScrollView, View, Text, TouchableHighlight } from 'react-native';
+import { Icon } from 'react-native-elements';
+import CustomList from './CustomList';
 import JDate from '../Code/JCal/jDate';
 import { GeneralStyles } from './styles';
-import { NightDay } from '../Code/Chashavshavon/Onah';
 
 export default class FlaggedDatesScreen extends Component {
     static navigationOptions = {
@@ -24,45 +24,24 @@ export default class FlaggedDatesScreen extends Component {
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
-                {(this.state.problemOnahs && this.state.problemOnahs.length &&
-                    <List>
-                        {this.state.problemOnahs.map((o, index) => {
-                            const isNight = o.nightDay === NightDay.Night;
-                            return (
-                                <ListItem
-                                    key={index}
-                                    containerStyle={{ backgroundColor: isNight ? '#ddd' : '#fff' }}
-                                    title={o.toString()}
-                                    leftIcon={
-                                        isNight ?
-                                            { name: 'ios-moon', color: 'orange', type: 'ionicon' } :
-                                            { name: 'ios-sunny', color: '#fff100', type: 'ionicon', style: { fontSize: 34 } }}
-
-                                    hideChevron
-                                    subtitle={
-                                        <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
-                                            <TouchableHighlight
-                                                underlayColor='#faa'
-                                                style={{ flex: 1 }}
-                                                onPress={() => this.navigate('Home', { currDate: o.jdate, appData: this.state.appData })}>
-                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                    <Icon
-                                                        name='event-note'
-                                                        color='#393'
-                                                        size={25} />
-                                                    <Text> Go to Date</Text>
-                                                </View>
-                                            </TouchableHighlight>
-                                        </View>}
-                                />
-                            );
-                        })}
-                    </List>)
-                    ||
-                    <View style={GeneralStyles.emptyListView}>
-                        <Text style={GeneralStyles.emptyListText}>There are no upcoming flagged dates</Text>
-                        <Image source={require('../Images/logo.png')} resizeMode='contain' style={GeneralStyles.emptyListImage} />
-                    </View>}
+                <CustomList
+                    data={this.state.problemOnahs}
+                    nightDay={po => po.nightDay}
+                    emptyListText='There are no upcoming flagged dates'
+                    secondSection={po => <View style={GeneralStyles.inItemButtonList}>
+                        <TouchableHighlight
+                            underlayColor='#faa'
+                            style={{ flex: 1 }}
+                            onPress={() => this.navigate('Home', { currDate: po.jdate, appData: this.state.appData })}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Icon
+                                    name='event-note'
+                                    color='#393'
+                                    size={25} />
+                                <Text> Go to Date</Text>
+                            </View>
+                        </TouchableHighlight>
+                    </View>} />
             </ScrollView>);
     }
 }

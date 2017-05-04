@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Alert, Text, TouchableHighlight } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { List, ListItem, Icon } from 'react-native-elements';
+import { Icon } from 'react-native-elements';
+import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';
 import { Kavuah } from '../Code/Chashavshavon/Kavuah';
 import { GeneralStyles } from './styles';
@@ -89,45 +90,42 @@ export default class FindKavuahScreen extends Component {
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
-                <List>
-                    {this.state.possibleKavuahList.map((pk, index) => (
-                        <ListItem
-                            key={index}
-                            title={`Possible Kavuah #${(index + 1).toString()}: ${pk.kavuah.toString()}`}
-                            titleStyle={{ fontWeight: 'bold', color: '#55b' }}
-                            leftIcon={{ name: 'device-hub', color: '#f00', size: 25 }}
-                            hideChevron
-                            subtitle={
-                                <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
-                                    <TouchableHighlight
-                                        underlayColor='#aaf'
-                                        style={{ flex: 1 }}
-                                        onPress={() => this.addKavuah(pk)}>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <Icon
-                                                reverse
-                                                name='add'
-                                                color='#696'
-                                                size={25} />
-                                            <Text style={{ color: '#080' }}> Add this Kavuah</Text>
-                                        </View>
-                                    </TouchableHighlight>
-                                    <TouchableHighlight
-                                        underlayColor='#faa'
-                                        style={{ flex: 1 }}
-                                        onPress={() => this.deletePossibleKavuah(pk)}>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <Icon
-                                                reverse
-                                                name='delete-forever'
-                                                color='#faa'
-                                                size={25} />
-                                            <Text style={{ color: '#faa' }}> Don't add this Kavuah</Text>
-                                        </View>
-                                    </TouchableHighlight>
-                                </View>} />
-                    ))}
-                </List>
+                <CustomList
+                    data={this.state.possibleKavuahList}
+                    title={(pk, index) => `Possible Kavuah #${(index + 1).toString()}: ${pk.kavuah.toString()}`}
+                    emptyListText='The application did not find any Kavuah combinations'
+                    titleStyle={{ fontWeight: 'bold', color: '#55b' }}
+                    iconName='device-hub'
+                    iconSize={25}
+                    iconColor='#f00'
+                    secondSection={pk => <View style={GeneralStyles.inItemButtonList}>
+                        <TouchableHighlight
+                            underlayColor='#aaf'
+                            style={{ flex: 1 }}
+                            onPress={() => this.addKavuah(pk)}>
+                            <View style={{ alignItems: 'center' }}>
+                                <Icon
+                                    reverse
+                                    name='add'
+                                    color='#696'
+                                    size={25} />
+                                <Text style={{ color: '#080' }}> Add this Kavuah</Text>
+                            </View>
+                        </TouchableHighlight>
+                        <TouchableHighlight
+                            underlayColor='#faa'
+                            style={{ flex: 1 }}
+                            onPress={() => this.deletePossibleKavuah(pk)}>
+                            <View style={{ alignItems: 'center' }}>
+                                <Icon
+                                    reverse
+                                    name='delete-forever'
+                                    color='#faa'
+                                    size={25} />
+                                <Text style={{ color: '#faa' }}> Don't add this Kavuah</Text>
+                            </View>
+                        </TouchableHighlight>
+                    </View>} />
             </ScrollView>);
     }
 }

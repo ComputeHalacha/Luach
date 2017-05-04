@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, View, Alert, TouchableHighlight, Image } from 'react-native';
-import { List, ListItem, Icon } from 'react-native-elements';
+import { ScrollView, Text, View, Alert, TouchableHighlight } from 'react-native';
+import { Icon } from 'react-native-elements';
+import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';
 import JDate from '../Code/JCal/jDate';
 import { GeneralStyles } from './styles';
-import { NightDay } from '../Code/Chashavshavon/Onah';
 
 export default class EntryScreen extends Component {
     static navigationOptions = {
@@ -25,6 +25,8 @@ export default class EntryScreen extends Component {
         this.newEntry = this.newEntry.bind(this);
         this.update = this.update.bind(this);
         this.findKavuahs = this.findKavuahs.bind(this);
+        this.deleteEntry = this.deleteEntry.bind(this);
+        this.newKavuah = this.newKavuah.bind(this);
     }
     update(appData) {
         if (appData) {
@@ -142,72 +144,51 @@ export default class EntryScreen extends Component {
                         </View>
                     </TouchableHighlight>
                 </View>
-                {(this.state.appData.EntryList && this.state.appData.EntryList.list.length &&
-                    <List>
-                        {this.state.appData.EntryList && this.state.appData.EntryList.descending.map(entry => {
-                            const isNight = entry.nightDay === NightDay.Night;
-                            return (
-                                <ListItem
-                                    containerStyle={{ backgroundColor: isNight ? '#d0d0db' : '#fff' }}
-                                    key={entry.entryId}
-                                    title={entry.toLongString()}
-                                    leftIcon={
-                                        isNight ?
-                                            { name: 'ios-moon', color: 'orange', type: 'ionicon' } :
-                                            { name: 'ios-sunny', color: '#fff100', type: 'ionicon', style: { fontSize: 34 } }}
-                                    hideChevron
-                                    subtitle={
-                                        <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
-                                            <TouchableHighlight
-                                                underlayColor='#faa'
-                                                style={{ flex: 1 }}
-                                                onPress={() => this.deleteEntry.bind(this)(entry)}>
-                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                    <Icon
-                                                        name='delete-forever'
-                                                        color='#faa'
-                                                        size={25} />
-                                                    <Text> Remove</Text>
-                                                </View>
-                                            </TouchableHighlight>
-                                            <TouchableHighlight
-                                                underlayColor='#696'
-                                                style={{ flex: 1 }}
-                                                onPress={() => this.navigate('Home', { currDate: entry.date, appData: this.state.appData })}>
-                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                    <Icon
-                                                        name='event-note'
-                                                        color='#696'
-                                                        size={25} />
-                                                    <Text> Go to Date</Text>
-                                                </View>
-                                            </TouchableHighlight>
-                                            <TouchableHighlight
-                                                onPress={() => this.newKavuah.bind(this)(entry)}
-                                                underlayColor='#aaf'
-                                                style={{ flex: 1 }}>
-                                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                                                    <Icon
-                                                        name='device-hub'
-                                                        color='#aaf'
-                                                        size={25} />
-                                                    <Text> New Kavuah</Text>
-                                                </View>
-                                            </TouchableHighlight>
-                                        </View>}
-                                />
-                            );
-                        })}
-                    </List>)
-                    ||
-                    <View style={GeneralStyles.emptyListView}>
-                        <Text style={GeneralStyles.emptyListText}>There are no Entries in the list</Text>
-                        <Image
-                            source={require('../Images/logo.png')}
-                            resizeMode='contain'
-                            style={GeneralStyles.emptyListImage} />
-                    </View>
-                }
+                <CustomList
+                    data={this.state.appData.EntryList && this.state.appData.EntryList.list}
+                    nightDay={entry => entry.nightDay}
+                    title={entry => entry.toLongString()}
+                    emptyListText='There are no Entries in the list'
+                    secondSection={entry =>
+                        <View style={GeneralStyles.inItemButtonList}>
+                            <TouchableHighlight
+                                onPress={() => this.newKavuah(entry)}
+                                underlayColor='#aaf'
+                                style={{ flex: 1 }}>
+                                <View style={{ alignItems: 'center' }}>
+                                    <Icon
+                                        name='device-hub'
+                                        color='#aaf'
+                                        size={20} />
+                                    <Text style={GeneralStyles.inItemLinkText}>New Kavuah</Text>
+                                </View>
+                            </TouchableHighlight>
+                            <TouchableHighlight
+                                underlayColor='#696'
+                                style={{ flex: 1 }}
+                                onPress={() => this.navigate('Home', { currDate: entry.date, appData: this.state.appData })}>
+                                <View style={{ alignItems: 'center' }}>
+                                    <Icon
+                                        name='event-note'
+                                        color='#696'
+                                        size={20} />
+                                    <Text style={GeneralStyles.inItemLinkText}>Go to Date</Text>
+                                </View>
+                            </TouchableHighlight>
+                            <TouchableHighlight
+                                underlayColor='#faa'
+                                style={{ flex: 1 }}
+                                onPress={() => this.deleteEntry(entry)}>
+                                <View style={{ alignItems: 'center' }}>
+                                    <Icon
+                                        name='delete-forever'
+                                        color='#faa'
+                                        size={20} />
+                                    <Text style={GeneralStyles.inItemLinkText}>Remove</Text>
+                                </View>
+                            </TouchableHighlight>
+                        </View>}
+                />
             </ScrollView>);
     }
 }
