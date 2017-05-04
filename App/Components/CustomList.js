@@ -3,43 +3,40 @@ import { FlatList, StyleSheet, Text, View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NightDay } from '../Code/Chashavshavon/Onah';
 
-/*
-PROPS ------------------------------------------
-    style = style of outer container
-    data= = Array of data items
-    rowHasChanged = function(row1, row2) to test if the row needs to be re-rendered. The default is row1===row2.
-    emptyListText=The text to display if list is empty.
-
-All the following props accept either a flat value or (dataItem, index) => prop value.
---------------------------------------------------------------------------------------------------
-    mainViewStyle = style of main containing view
-    titleStyle = style of main text
-    title= function to extract main text from each item in the list
-    nightDay = if set, will display an icon and backgroud color for the correct value. Function needs to return a NightDay value.
-    iconName = Name for left-side icon
-    iconStyle = style of main icon
-    iconType = type of main icon
-    iconColor = color of main icon
-    iconSize = size of main icon
-    textSectionViewStyle = the style for the section that contains the title and buttons
-    secondSection=buttons
-
-------------------------------------------------
-*/
+/*******************************************************************************************************************
+ * PROPS ------------------------------------------
+ *    style = style of outer container
+ *    data= = Array of data items
+ *    rowHasChanged = function(row1, row2) to test if the row needs to be re-rendered. The default is row1===row2.
+ *    emptyListText = The text to display if list is empty.
+ *
+ * All the following props accept either a flat value or (dataItem, index) => prop value.
+ *    mainViewStyle = style of main containing view
+ *    titleStyle = style of main text
+ *    title= function to extract main text from each item in the list
+ *    nightDay = if set, will display an icon and backgroud color for the correct value. Function needs to return a NightDay value.
+ *    iconName = Name for left-side icon. If is not supplied, no Icon will be shown.
+ *    iconStyle = style of main icon
+ *    iconType = type of main icon
+ *    iconColor = color of main icon
+ *    iconSize = size of main icon
+ *    textSectionViewStyle = the style for the section that contains the title and buttons
+ *    secondSection = secondary section. Usually used for buttons.
+ **********************************************************************************************************************/
 
 export default class CustomList extends Component {
     constructor(props) {
         super(props);
+        this.getDataWithIndex = this.getDataWithIndex.bind(this);
         this.renderItem = this.renderItem.bind(this);
-
-        this.state = {
-            data: (this.props.data && this.props.data.slice().map((o, i) => {
-                if (!o.__index) {
-                    o.__index = i;
-                }
-                return o;
-            })) || []
-        };
+    }
+    getDataWithIndex() {
+        return this.props.data.map((o, i) => {
+            if (!o.__index) {
+                o.__index = i;
+            }
+            return o;
+        });
     }
     renderItem({ item }) {
         const index = item.__index,
@@ -103,10 +100,10 @@ export default class CustomList extends Component {
     }
     render() {
         return <View>
-            {(this.state.data && this.state.data.length &&
+            {(this.props.data && this.props.data.length &&
                 <View style={[styles.outerStyle, this.props.style]}>
                     <FlatList
-                        data={this.state.data}
+                        data={this.getDataWithIndex()}
                         renderItem={this.renderItem}
                         keyExtractor={item => item.__index} />
                 </View>)
