@@ -37,6 +37,16 @@ const GeneralStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center'
     },
+    inItemButtonList: {
+        flex:1,
+        flexDirection: 'row',
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    inItemLinkText: {
+        fontSize: 10,
+        fontStyle: 'italic'
+    },
     headerButtons: {
         backgroundColor: '#eef',
         borderBottomWidth: 1,

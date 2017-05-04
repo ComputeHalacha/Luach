@@ -28,7 +28,7 @@ export default class FlaggedDatesScreen extends Component {
                     data={this.state.problemOnahs}
                     nightDay={po => po.nightDay}
                     emptyListText='There are no upcoming flagged dates'
-                    secondSection={po => <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                    secondSection={po => <View style={GeneralStyles.inItemButtonList}>
                         <TouchableHighlight
                             underlayColor='#faa'
                             style={{ flex: 1 }}

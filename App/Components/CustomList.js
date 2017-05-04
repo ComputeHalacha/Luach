@@ -123,7 +123,8 @@ const styles = StyleSheet.create({
     outerStyle: {
         borderTopWidth: 2,
         borderBottomWidth: 1,
-        borderColor: '#cce'
+        borderColor: '#cce',
+        flex: 1
     },
     mainViewStyle: {
         borderBottomWidth: 1,
@@ -143,7 +144,8 @@ const styles = StyleSheet.create({
         paddingLeft: 0,
         paddingRight: 10,
         paddingTop: 10,
-        paddingBottom: 5
+        paddingBottom: 5,
+        flex: 1
     },
     emptyListView: {
         alignItems: 'center',

@@ -37,34 +37,34 @@ class Kavuah {
         if (!this.active) {
             txt = '[INACTIVE] ';
         }
-        txt += this.settingEntry.nightDay === NightDay.Night ? 'Night-time ' : 'Day-time ';
+        txt += (this.settingEntry.nightDay === NightDay.Night ? 'Night-time ' : 'Day-time ');
         switch (this.kavuahType) {
             case KavuahTypes.Haflagah:
                 txt += `every ${this.settingEntry.haflaga.toString()} days`;
                 break;
             case KavuahTypes.DayOfMonth:
-                txt = `the ${Utils.toSuffixed(this.settingEntry.day)} day of the Jewish Month`;
+                txt += `on every ${Utils.toSuffixed(this.settingEntry.day)} day of the Jewish Month`;
                 break;
             case KavuahTypes.DayOfWeek:
-                txt += `${Utils.dowEng[this.settingEntry.date.getDayOfWeek()]} every ${Utils.toSuffixed(this.specialNumber)} week`;
+                txt += `on the ${Utils.dowEng[this.settingEntry.date.getDayOfWeek()]} of every ${Utils.toSuffixed(this.specialNumber)} week`;
                 break;
             case KavuahTypes.Sirug:
-                txt += `the ${Utils.toSuffixed(this.settingEntry.day)} day of every ${Utils.toSuffixed(this.specialNumber)} month`;
+                txt += `on the ${Utils.toSuffixed(this.settingEntry.day)} day of every ${Utils.toSuffixed(this.specialNumber)} month`;
                 break;
             case KavuahTypes.HaflagaMaayanPasuach:
-                txt += `every ${this.settingEntry.specialNumber.toString()} days (through Ma'ayan Pasuach)`;
+                txt += `on every ${this.settingEntry.specialNumber.toString()} days (through Ma'ayan Pasuach)`;
                 break;
             case KavuahTypes.DayOfMonthMaayanPasuach:
-                txt += `the ${Utils.toSuffixed(this.specialNumber)} day of the Jewish Month (through Ma'ayan Pasuach)`;
+                txt += `on the ${Utils.toSuffixed(this.specialNumber)} day of the Jewish Month (through Ma'ayan Pasuach)`;
                 break;
             case KavuahTypes.DilugHaflaga:
-                txt += `following the interval pattern of ${this.specialNumber < 0 ? '-' : '+'} ${Math.Abs(this.specialNumber).toString()} days`;
+                txt += `of each day in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.Abs(this.specialNumber).toString()} days"`;
                 break;
             case KavuahTypes.DilugDayOfMonth:
-                txt += `for days of the month following the interval pattern of ${this.specialNumber < 0 ? '-' : '+'} ${Math.Abs(this.specialNumber).toString()} days`;
+                txt += `for days of the month in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.Abs(this.specialNumber).toString()} days"`;
                 break;
         }
-        return txt;
+        return txt + '.';
     }
     toLongString() {
         let txt = this.toString();

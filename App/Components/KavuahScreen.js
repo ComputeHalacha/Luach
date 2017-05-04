@@ -133,7 +133,7 @@ export default class KavuahScreen extends Component {
                     title={kavuah => kavuah.toLongString()}
                     iconName='device-hub'
                     emptyListText='There are no Kavuahs in the list'
-                    secondSection={kavuah => <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                    secondSection={kavuah => <View style={GeneralStyles.inItemButtonList}>
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                             <Text>Active </Text>
                             <Switch value={kavuah.active}
@@ -145,12 +145,12 @@ export default class KavuahScreen extends Component {
                             underlayColor='#faa'
                             style={{ flex: 1 }}
                             onPress={() => this.deleteKavuah(kavuah)}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ alignItems: 'center' }}>
                                 <Icon
                                     name='delete-forever'
                                     color='#faa'
-                                    size={25} />
-                                <Text> Remove</Text>
+                                    size={20} />
+                                <Text style={GeneralStyles.inItemLinkText}>Remove</Text>
                             </View>
                         </TouchableHighlight>
                     </View>}

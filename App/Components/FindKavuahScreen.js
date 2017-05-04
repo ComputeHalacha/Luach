@@ -98,7 +98,7 @@ export default class FindKavuahScreen extends Component {
                     iconName='device-hub'
                     iconSize={25}
                     iconColor='#f00'
-                    secondSection={pk => <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                    secondSection={pk => <View style={GeneralStyles.inItemButtonList}>
                         <TouchableHighlight
                             underlayColor='#aaf'
                             style={{ flex: 1 }}

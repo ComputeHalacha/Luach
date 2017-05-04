@@ -150,41 +150,41 @@ export default class EntryScreen extends Component {
                     title={entry => entry.toLongString()}
                     emptyListText='There are no Entries in the list'
                     secondSection={entry =>
-                        <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                        <View style={GeneralStyles.inItemButtonList}>
                             <TouchableHighlight
-                                underlayColor='#faa'
-                                style={{ flex: 1 }}
-                                onPress={() => this.deleteEntry(entry)}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                onPress={() => this.newKavuah(entry)}
+                                underlayColor='#aaf'
+                                style={{ flex: 1 }}>
+                                <View style={{ alignItems: 'center' }}>
                                     <Icon
-                                        name='delete-forever'
-                                        color='#faa'
-                                        size={25} />
-                                    <Text> Remove</Text>
+                                        name='device-hub'
+                                        color='#aaf'
+                                        size={20} />
+                                    <Text style={GeneralStyles.inItemLinkText}>New Kavuah</Text>
                                 </View>
                             </TouchableHighlight>
                             <TouchableHighlight
                                 underlayColor='#696'
                                 style={{ flex: 1 }}
                                 onPress={() => this.navigate('Home', { currDate: entry.date, appData: this.state.appData })}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ alignItems: 'center' }}>
                                     <Icon
                                         name='event-note'
                                         color='#696'
-                                        size={25} />
-                                    <Text> Go to Date</Text>
+                                        size={20} />
+                                    <Text style={GeneralStyles.inItemLinkText}>Go to Date</Text>
                                 </View>
                             </TouchableHighlight>
                             <TouchableHighlight
-                                onPress={() => this.newKavuah(entry)}
-                                underlayColor='#aaf'
-                                style={{ flex: 1 }}>
-                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                                underlayColor='#faa'
+                                style={{ flex: 1 }}
+                                onPress={() => this.deleteEntry(entry)}>
+                                <View style={{ alignItems: 'center' }}>
                                     <Icon
-                                        name='device-hub'
-                                        color='#aaf'
-                                        size={25} />
-                                    <Text> New Kavuah</Text>
+                                        name='delete-forever'
+                                        color='#faa'
+                                        size={20} />
+                                    <Text style={GeneralStyles.inItemLinkText}>Remove</Text>
                                 </View>
                             </TouchableHighlight>
                         </View>}

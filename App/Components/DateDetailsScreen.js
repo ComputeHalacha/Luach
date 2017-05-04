@@ -21,14 +21,17 @@ export default class DateDetailsScreen extends React.Component {
             <Text style={GeneralStyles.header}>{'Zmanim for ' + this.state.location.Name}</Text>
             <CustomList
                 data={list}
-                textSectionViewStyle={{ flexDirection: 'row' }}
+                textSectionViewStyle={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between'
+                }}
                 title={i => i.title + (i.value ? ':' : '')}
                 titleStyle={i => ({
                     fontWeight: 'bold',
                     color: i.important ? '#008' : null,
                     paddingRight: 10
                 })}
-                secondSection={i => <Text>{i.value}</Text>} />
+                secondSection={i => <Text style={{ textAlign: 'right', flex: 1 }}>{i.value}</Text>} />
         </ScrollView>;
     }
 }

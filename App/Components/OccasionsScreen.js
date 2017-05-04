@@ -56,7 +56,7 @@ export default class OccasionsScreen extends Component {
                         data={this.state.occasionList}
                         iconName='list'
                         emptyListText='There are no Occasions in the list'
-                        secondSection={occasion => <View style={[GeneralStyles.buttonList, { margin: 15 }]}>
+                        secondSection={occasion => <View style={GeneralStyles.inItemButtonList}>
                             <TouchableHighlight
                                 underlayColor='#faa'
                                 style={{ flex: 1 }}
