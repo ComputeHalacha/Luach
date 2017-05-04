@@ -28,13 +28,29 @@ export default class NewKavuah extends React.Component {
             cancelsOnahBeinunis: true,
             active: true
         };
+        this.getSpecialNumber = this.getSpecialNumber.bind(this);
+        this.getSpecialNumberFromEntry = this.getSpecialNumberFromEntry.bind(this);
+        this.getSpecialNumberFromKavuahType = this.getSpecialNumberFromKavuahType.bind(this);
     }
     addKavuah() {
+        if (!this.state.specialNumber) {
+            Alert.alert('Incorrect information',
+                'The "Kavuah Defining Number" was not set.\n' +
+                'If you do not understand how to fill this information, please contact your Rabbi for assistance.');
+            return;
+        }
         const ad = this.state.appData,
             kavuah = new Kavuah(this.state.kavuahType,
                 this.state.settingEntry,
                 this.state.specialNumber,
                 this.state.cancelsOnahBeinunis, this.state.active);
+        if (!kavuah.specialNumberMatchesEntry) {
+            Alert.alert('Incorrect information',
+                'The "Kavuah Defining Number" does not match the Setting Entry information for the selected Kavuah Type.\n' +
+                'Please check that the chosen information is correct and try again.\n' +
+                'If you do not understand how to fill this information, please contact your Rabbi for assistance.');
+            return;
+        }
         ad.KavuahList.push(kavuah);
         this.setState({ appData: ad });
         DataUtils.KavuahToDatabase(kavuah);
@@ -45,6 +61,23 @@ export default class NewKavuah extends React.Component {
             `The Kavuah for ${kavuah.toString()} has been successfully added.`);
         this.dispatch(NavigationActions.back());
     }
+    getSpecialNumberFromEntry(entry) {
+        return this.getSpecialNumber(entry, this.state.kavuahType);
+    }
+    getSpecialNumberFromKavuahType(kavuahType) {
+        return this.getSpecialNumber(this.state.settingEntry, kavuahType);
+    }
+    getSpecialNumber(settingEntry, kavuahType) {
+        if (settingEntry.haflaga &&
+            [KavuahTypes.Haflagah, KavuahTypes.HaflagaMaayanPasuach].includes(kavuahType)) {
+            return settingEntry.haflaga;
+        }
+        else if ([KavuahTypes.DayOfMonth, KavuahTypes.DayOfMonthMaayanPasuach].includes(kavuahType)) {
+            return settingEntry.day;
+        }
+
+        return this.state.specialNumber;
+    }
     render() {
         const nums = [];
         for (let i = 0; i <= 100; i++) {
@@ -52,20 +85,13 @@ export default class NewKavuah extends React.Component {
         }
         return <ScrollView style={GeneralStyles.container}>
             <View style={GeneralStyles.formRow}>
-                <Text style={GeneralStyles.label}>Setting Entry</Text>
-                <Picker style={GeneralStyles.picker}
-                    selectedValue={this.state.settingEntry}
-                    onValueChange={value => this.setState({ settingEntry: value })}>
-                    {this.entryList.descending.map(entry =>
-                        <Picker.Item label={entry.toString()} value={entry} key={entry.entryId} />
-                    )}
-                </Picker>
-            </View>
-            <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Kavuah Type</Text>
                 <Picker style={GeneralStyles.picker}
                     selectedValue={this.state.kavuahType}
-                    onValueChange={value => this.setState({ kavuahType: value })}>
+                    onValueChange={value => this.setState({
+                        kavuahType: value,
+                        specialNumber: this.getSpecialNumberFromKavuahType(value)
+                    })}>
                     <Picker.Item label='Haflaga' value={KavuahTypes.Haflagah} />
                     <Picker.Item label='Day Of Month' value={KavuahTypes.DayOfMonth} />
                     <Picker.Item label='Day Of Week' value={KavuahTypes.DayOfWeek} />
@@ -74,6 +100,19 @@ export default class NewKavuah extends React.Component {
                     <Picker.Item label='Sirug' value={KavuahTypes.Sirug} />
                     <Picker.Item label={'Haflaga with Ma\'ayan Pasuach'} value={KavuahTypes.HaflagaMaayanPasuach} />
                     <Picker.Item label={'Day Of Month with Ma\'ayan Pasuach'} value={KavuahTypes.DayOfMonthMaayanPasuach} />
+                </Picker>
+            </View>
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Setting Entry</Text>
+                <Picker style={GeneralStyles.picker}
+                    selectedValue={this.state.settingEntry}
+                    onValueChange={value => this.setState({
+                        settingEntry: value,
+                        specialNumber: this.getSpecialNumberFromEntry(value)
+                    })}>
+                    {this.entryList.descending.map(entry =>
+                        <Picker.Item label={entry.toString()} value={entry} key={entry.entryId} />
+                    )}
                 </Picker>
             </View>
             <View style={GeneralStyles.formRow}>
@@ -101,6 +140,6 @@ export default class NewKavuah extends React.Component {
             <View style={GeneralStyles.formRow}>
                 <Button title='Add Kavuah' onPress={this.addKavuah.bind(this)} />
             </View>
-        </ScrollView>;
+        </ScrollView >;
     }
 }

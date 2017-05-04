@@ -19,9 +19,10 @@ class Kavuah {
         //The third entry  - the one that created the chazakah.
         this.settingEntry = settingEntry;
         /*Each type of Kavuah uses the specialNumber in its own way:
-            Haflagah and DayOfMonth don't need to use it as the settingEntry has the values.
+            Haflagah  - the number of days
+            DayOfMonth - the day of the month
             DayOfWeek - the number of days beteween onahs
-            Sirug -the number of months beteween onahs
+            Sirug - the number of months beteween onahs
             DilugHaflaga - number of days to increment (can be negative) number
             DilugDayOfMonth - number of days to increment (can be negative) number
             HaflagaMaayanPasuach and DayOfMonthMaayanPasuach the same as their regular couterparts. */
@@ -40,10 +41,10 @@ class Kavuah {
         txt += (this.settingEntry.nightDay === NightDay.Night ? 'Night-time ' : 'Day-time ');
         switch (this.kavuahType) {
             case KavuahTypes.Haflagah:
-                txt += `every ${this.settingEntry.haflaga.toString()} days`;
+                txt += `every ${this.specialNumber.toString()} days`;
                 break;
             case KavuahTypes.DayOfMonth:
-                txt += `on every ${Utils.toSuffixed(this.settingEntry.day)} day of the Jewish Month`;
+                txt += `on every ${Utils.toSuffixed(this.specialNumber)} day of the Jewish Month`;
                 break;
             case KavuahTypes.DayOfWeek:
                 txt += `on the ${Utils.dowEng[this.settingEntry.date.getDayOfWeek()]} of every ${Utils.toSuffixed(this.specialNumber)} week`;
@@ -81,6 +82,27 @@ class Kavuah {
     }
     get hasId() {
         return !!this.kavuahId;
+    }
+    /**
+     * Tries to determine if the specialNumber correctly matches the information in the settingEntry
+     */
+    get specialNumberMatchesEntry() {
+        if (!this.specialNumber) {
+            return false;
+        }
+        switch (this.kavuahType) {
+            case KavuahTypes.Haflagah:
+            case KavuahTypes.HaflagaMaayanPasuach:
+                return this.specialNumber > 0 &&
+                    ((this.specialNumber === this.settingEntry.haflaga) || !this.settingEntry.haflaga);
+            case KavuahTypes.DayOfMonth:
+            case KavuahTypes.DayOfMonthMaayanPasuach:
+                return this.specialNumber > 0 &&
+                    this.specialNumber <= 30 &&
+                    this.specialNumber === this.settingEntry.day;
+            default:
+                return true;
+        }
     }
     /**
      * Get possible new Kavuahs from a list of entries.
