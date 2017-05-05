@@ -52,7 +52,7 @@ export default class EntryScreen extends Component {
             const kavuahs = kavuahList.filter(k => k.settingEntry.isSameEntry(entry));
             Alert.alert(
                 'Confirm Entry Removal',
-                kavuahs.length ?
+                kavuahs.length > 0 ?
                     `The following Kavuah/s were set by this Entry and will need to be removed if you remove this Entry:
                         ${kavuahs.map(k => '\n\t* ' + k.toString())}
                         Are you sure that you want to remove this/these Kavuah/s together with the entry?`:

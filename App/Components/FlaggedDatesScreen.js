@@ -13,17 +13,28 @@ export default class FlaggedDatesScreen extends Component {
         super(props);
 
         const { params } = this.props.navigation.state,
-            appData = params.appData,
-            todayAbs = JDate.absSd(new Date());
+            appData = params.appData;
+
+        this.jdate = params.jdate || JDate.absSd(new Date());
+        this.isToday = (!params.jdate);
         this.navigate = this.props.navigation.navigate;
         this.state = {
             appData: appData,
-            problemOnahs: appData.ProblemOnahs.filter(o => o.jdate.Abs >= todayAbs)
+            problemOnahs: appData.ProblemOnahs.filter(o => {
+                if (this.isToday) {
+                    return o.jdate.Abs >= this.jdate;
+                }
+                else {
+                    return o.jdate.Abs === this.jdate.Abs;
+                }
+            })
         };
     }
     render() {
         return (
             <ScrollView style={GeneralStyles.container}>
+                {(!this.isToday) &&
+                    <Text style={GeneralStyles.header}>{this.jdate.toString()}</Text>}
                 <CustomList
                     data={this.state.problemOnahs}
                     nightDay={po => po.nightDay}

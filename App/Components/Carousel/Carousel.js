@@ -25,7 +25,7 @@ export default class Carousel extends Component {
         noItemsText: 'Sorry, there are currently \n no items available',
         transitionDelay: 0,
         currentPage: 0,
-        swipeThreshold: 0.5
+        swipeThreshold: 0.2
     };
 
     constructor(props) {

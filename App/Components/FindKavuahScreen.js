@@ -36,7 +36,7 @@ export default class FindKavuahScreen extends Component {
             this.setState({
                 possibleKavuahList: possList
             });
-            if (!possList.length) {
+            if (possList.length === 0) {
                 Alert.alert(`The application did not find any Kavuah combinations.
                     Please remember: DO NOT RELY EXCLUSIVELY UPON THIS APPLICATION!`);
                 this.dispatch(NavigationActions.back());
