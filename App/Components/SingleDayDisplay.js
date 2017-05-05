@@ -78,8 +78,8 @@ export default class SingleDayDisplay extends Component {
 
     }
     newEntry() {
-        const { jdate, onUpdate, location, appData } = this.props;
-        this.navigate('NewEntry', { jdate, location, appData, onUpdate });
+        const { jdate, onUpdate, location, appData, isToday } = this.props;
+        this.navigate('NewEntry', { jdate, location, isToday, appData, onUpdate });
     }
     newOccasion() {
         const { jdate, onUpdate, appData } = this.props;

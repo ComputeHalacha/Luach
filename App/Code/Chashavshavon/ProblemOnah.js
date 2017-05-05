@@ -17,8 +17,8 @@ export default class ProblemOnah extends Onah {
     }
     /**
      * Filter a list of problem onahs for the ones pertaining to the given date.
-     * @param {*} JDate
-     * @param {*} [ProblemOnah]
+     * @param {JDate} jdate
+     * @param {[ProblemOnah]} probOnahList
      */
     static getProbsForDate(jdate, probOnahList) {
         return probOnahList && probOnahList.length && probOnahList.filter(po =>

@@ -5,7 +5,6 @@ import { NavigationActions } from 'react-navigation';
 import Entry from '../Code/Chashavshavon/Entry';
 import { Kavuah } from '../Code/Chashavshavon/Kavuah';
 import Utils from '../Code/JCal/Utils';
-import Location from '../Code/JCal/Location';
 import jDate from '../Code/JCal/jDate';
 import { NightDay, Onah } from '../Code/Chashavshavon/Onah';
 import DataUtils from '../Code/Data/DataUtils';
@@ -19,11 +18,13 @@ export default class NewEntry extends React.Component {
     constructor(props) {
         super(props);
         const navigation = this.props.navigation,
-            { jdate, location, appData, onUpdate } = navigation.state.params,
-            dt = new Date(),
-            shkia = jdate.getSunriseSunset(location || Location.getJerusalem()).sunset,
-            currTime = { hour: dt.getHours(), minute: dt.getMinutes() },
-            isNight = Utils.totalMinutes(Utils.timeDiff(currTime, shkia)) >= 0;
+            { jdate, location, isToday, appData, onUpdate } = navigation.state.params,
+            sunset = jdate.getSunriseSunset(location).sunset,
+            sunsetMs = Utils.totalMinutes(sunset) * 60000,
+            isNight = (sunsetMs <= new Date().getTime());
+        if (isToday && isNight) {
+            this.showWarning = true;
+        }
         this.onUpdate = onUpdate;
 
         this.state = {
@@ -89,6 +90,14 @@ export default class NewEntry extends React.Component {
             daysOfMonth.push(i);
         }
         return <ScrollView style={GeneralStyles.container}>
+            {this.showWarning &&
+                <View style={{ flex: 1, backgroundColor: '#ff9' }}>
+                    <Text style={{ color: '#f00', fontWeight: 'bold' }}>
+                        {'PLEASE BE AWARE: as it is now after sunset,\n' +
+                            'the jewish date is currently ' +
+                            this.state.jdate.addDays(1).toString()}</Text>
+                </View>
+            }
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Day</Text>
                 <Picker style={GeneralStyles.picker}
