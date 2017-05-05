@@ -237,7 +237,7 @@ export default class HomeScreen extends React.Component {
             ];
         return (
             <ScrollView style={{ flex: 1 }}>
-                <View style={{ flexDirection: 'row', backgroundColor: '#fff', top: 0 }}>
+                <View style={{ flexDirection: 'row', backgroundColor: '#eef', top: 0, height: '6%' }}>
                     <View style={{ flex: 1, alignSelf: 'flex-start', flexDirection: 'row' }}>
                         <TouchableHighlight underlayColor='#eef' onPress={this.prevYear.bind(this)}>
                             <View style={styles.navView}>
@@ -259,11 +259,11 @@ export default class HomeScreen extends React.Component {
                         </TouchableHighlight>
                     </View>
                     <TouchableHighlight underlayColor='#eef' onPress={this.goToday.bind(this)}>
-                        <View style={[styles.navView, { flex: 2 }]}>
+                        <View style={styles.navCenterView}>
                             {(this.state.currDate.Abs !== HomeScreen.today.Abs &&
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Icon iconStyle={styles.navIcon} name='navigate-before' />
-                                    <Text style={{ color: '#556', fontSize: 11, fontWeight: 'bold' }}>TODAY</Text>
+                                    <Text style={{ color: '#565', fontSize: 13, fontWeight: 'bold' }}>TODAY</Text>
                                     <Icon iconStyle={styles.navIcon} name='navigate-next' />
                                 </View>)
                                 ||
@@ -348,9 +348,25 @@ export default class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    navView: { flex: 0, padding: 3, flexDirection: 'row' },
-    navText: { fontSize: 10, color: '#88c' },
-    navIcon: { fontSize: 11 },
+    navView: {
+        flex: 0,
+        padding: 3,
+        margin: 2,
+        borderRadius: 3,
+        flexDirection: 'row',
+        backgroundColor: '#f6f6ff'
+    },
+    navCenterView: {
+        flex: 2,
+        flexDirection: 'row'
+    },
+    navText: {
+        fontSize: 14,
+        color: '#88c'
+    },
+    navIcon: {
+        fontSize: 11
+    },
     footer: {
         position: 'absolute',
         top: '10%',
