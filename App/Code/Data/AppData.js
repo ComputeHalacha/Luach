@@ -29,14 +29,14 @@ export default class AppData {
                     .then(s => settings = s)
                     .catch(error => {
                         if(__DEV__) {
-                            console.warn(`Error running SettingsFromDatabase.`);
+                            console.warn('Error running SettingsFromDatabase.');
                             console.error(error);
                         }
                     });
             })
             .catch(error => {
                 if(__DEV__) {
-                    console.warn(`Error running SettingsFromDatabase.`);
+                    console.warn('Error running SettingsFromDatabase.');
                     console.error(error);
                 }
             });
@@ -46,7 +46,7 @@ export default class AppData {
             })
             .catch(error => {
                 if(__DEV__) {
-                    console.warn(`Error running GetAllUserOccasions.`);
+                    console.warn('Error running GetAllUserOccasions.');
                     console.error(error);
                 }
             });
@@ -54,7 +54,7 @@ export default class AppData {
             .then(e => entryList = e)
             .catch(error => {
                 if(__DEV__) {
-                    console.warn(`Error running EntryListFromDatabase.`);
+                    console.warn('Error running EntryListFromDatabase.');
                     console.error(error);
                 }
             });
@@ -65,7 +65,7 @@ export default class AppData {
             })
             .catch(error => {
                 if(__DEV__) {
-                    console.warn(`Error running GetAllKavuahs.`);
+                    console.warn('Error running GetAllKavuahs.');
                     console.error(error);
                 }
             });

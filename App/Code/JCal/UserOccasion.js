@@ -70,13 +70,19 @@ class UserOccasion {
                     return ojDate.Day === jdate.Day;
                 case UserOccasionTypes.SecularDateRecurringYearly:
                 case UserOccasionTypes.SecularDateRecurringMonthly:
-                    const sdate1 = jdate.getDate(),
-                        sdate2 = ojDate.getDate();
-                    if (o.occasionType === UserOccasionTypes.SecularDateRecurringYearly) {
-                        return sdate1.getMonth() === sdate2.getMonth() && sdate1.getDate() === sdate2.getDate();
-                    }
-                    else {
-                        return sdate1.getDate() === sdate2.getDate();
+                    {
+                        const sdate1 = jdate.getDate(),
+                            sdate2 = ojDate.getDate();
+                        //For both secualr occasion types, the day of the month must match
+                        if (sdate1.getDate() !== sdate2.getDate()) {
+                            return false;
+                        }
+                        else {
+                            //Now that the day matches, for a mothly occasion, the match is confirmed.
+                            return o.occasionType === UserOccasionTypes.SecularDateRecurringMonthly ||
+                                //For a  yearly occasion, the month must also match
+                                sdate1.getMonth() === sdate2.getMonth();
+                        }
                     }
             }
         });

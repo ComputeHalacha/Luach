@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, Alert, Text, View, Image, TouchableHighlight } from 'react-native';
+import { ScrollView, Alert, Text, View, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
 import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';

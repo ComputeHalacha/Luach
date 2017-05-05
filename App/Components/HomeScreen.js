@@ -12,7 +12,7 @@ import { UserOccasion } from '../Code/JCal/UserOccasion';
 const { width } = Dimensions.get('window');
 
 export default class HomeScreen extends React.Component {
-    static navigationOptions = ({ navigation, screenProps }) => ({
+    static navigationOptions = () => ({
         title: 'Luach',
         permalink: '',
         header: null

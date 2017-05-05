@@ -231,7 +231,5 @@ const styles = StyleSheet.create({
         color: '#800',
         fontWeight: 'bold'
     },
-    probView: { flexDirection: 'row', marginBottom: 10 },
     btn: { fontSize: 7, height: 25 }
-
 });
