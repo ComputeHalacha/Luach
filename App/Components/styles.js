@@ -20,7 +20,7 @@ const GeneralStyles = StyleSheet.create({
     },
     label: {
         margin: 0,
-        backgroundColor: '#e8e8f5',
+        backgroundColor: '#d5d5e6',
         padding: 10
     },
     picker: { margin: 0 },

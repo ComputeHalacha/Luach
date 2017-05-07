@@ -1,11 +1,11 @@
 import React from 'react';
-import { ScrollView, View, Text, Picker, TextInput, Alert } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, Picker, TextInput, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import { UserOccasionTypes, UserOccasion } from '../Code/JCal/UserOccasion';
 import DataUtils from '../Code/Data/DataUtils';
 import Utils from '../Code/JCal/Utils';
-import {GeneralStyles} from './styles';
+import { GeneralStyles } from './styles';
 
 export default class NewOccasion extends React.Component {
     static navigationOptions = {
@@ -39,7 +39,7 @@ export default class NewOccasion extends React.Component {
             this.onUpdate(ad);
         }
         Alert.alert('Add occasion',
-                    `The occasion ${occasion.title} has been successfully added.`);
+            `The occasion ${occasion.title} has been successfully added.`);
         this.dispatch(NavigationActions.back());
     }
     render() {
@@ -50,7 +50,7 @@ export default class NewOccasion extends React.Component {
             sDay = Utils.toSuffixed(sdate.getDate()),
             muxedDate = `${this.state.jdate.toShortString(false)} (${sdate.toLocaleDateString()})`;
         return <ScrollView style={GeneralStyles.container}>
-            <Text style={GeneralStyles.header}>{this.state.jdate.toString(false)}</Text>
+            <Text style={styles.header}>{muxedDate}</Text>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Occasion Title</Text>
                 <TextInput
@@ -92,3 +92,14 @@ export default class NewOccasion extends React.Component {
         </ScrollView>;
     }
 }
+const styles = StyleSheet.create({
+    header: {
+        backgroundColor: '#fba',
+        color: '#fff',
+        padding: 5,
+        flex: 1,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: 16
+    }
+});

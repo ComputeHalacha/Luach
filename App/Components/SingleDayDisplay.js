@@ -42,7 +42,6 @@ export default class SingleDayDisplay extends Component {
                 Utils.getTimeString(suntimes.sunrise) : 'Sun does not rise',
             sunset = suntimes && suntimes.sunset ?
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
-            probs = this.props.problems,
             occasions = this.props.occasions,
             occasionText = occasions && occasions.length > 0 ?
                 occasions.map((o, i) => <Text key={i}>{o.title}</Text>) : null,
@@ -56,7 +55,7 @@ export default class SingleDayDisplay extends Component {
                 style={[styles.container, {
                     backgroundColor:
                     (entries && entries.length > 0 ? '#fee' :
-                        (probs && probs.length > 0 ? '#fe9' : (isToday ? '#eef' : '#fff')))
+                        (this.props.flag ? '#fe9' : (isToday ? '#eef' : '#fff')))
                 }]}>
                 <View style={{ margin: 15 }}>
                     <TouchableWithoutFeedback onPress={this.showDateDetails}>
@@ -91,7 +90,7 @@ export default class SingleDayDisplay extends Component {
                                         {entriesText}
                                     </View>
 
-                                    {probs && probs.length > 0 &&
+                                    {this.props.flag &&
                                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                             <Icon name='flag' color={'#f00'} onPress={this.showProblems} />
                                         </View>}

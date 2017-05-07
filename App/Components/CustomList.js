@@ -64,7 +64,7 @@ export default class CustomList extends Component {
                 this.props.secondSection(item, index) : this.props.secondSection;
         return (<View style={[
             styles.mainViewStyle,
-            (nightDay && ({ backgroundColor: nightDay === NightDay.Night ? '#d0d0db' : '#fff' })),
+            (nightDay && ({ backgroundColor: nightDay === NightDay.Night ? '#d5d5e6' : '#fff' })),
             mainViewStyle]}>
             {(nightDay && (nightDay === NightDay.Night ?
                 <Icon

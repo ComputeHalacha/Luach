@@ -6,10 +6,7 @@ import SingleDayDisplay from './SingleDayDisplay';
 import jDate from '../Code/JCal/jDate';
 import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
-import ProblemOnahs from '../Code/Chashavshavon/ProblemOnah';
 import { UserOccasion } from '../Code/JCal/UserOccasion';
-
-const { width } = Dimensions.get('window');
 
 export default class HomeScreen extends React.Component {
     static navigationOptions = () => ({
@@ -17,6 +14,7 @@ export default class HomeScreen extends React.Component {
         permalink: '',
         header: null
     });
+    static screenWidth = Dimensions.get('window').width;
     static today = new jDate();
 
     constructor(props) {
@@ -24,6 +22,9 @@ export default class HomeScreen extends React.Component {
 
         this.navigate = props.navigation.navigate;
 
+        this.renderItem = this.renderItem.bind(this);
+        this._addDaysToEnd = this._addDaysToEnd.bind(this);
+        this._addDaysToBeginning = this._addDaysToBeginning.bind(this);
         this.setDayInformation = this.setDayInformation.bind(this);
         this.getDaysList = this.getDaysList.bind(this);
         this.onDayChanged = this.onDayChanged.bind(this);
@@ -32,7 +33,7 @@ export default class HomeScreen extends React.Component {
         this.prevDay = this.prevDay.bind(this);
         this.prevMonth = this.prevMonth.bind(this);
         this.prevYear = this.prevYear.bind(this);
-        this.goToday= this.goToday.bind(this);
+        this.goToday = this.goToday.bind(this);
         this.nextDay = this.nextDay.bind(this);
         this.nextMonth = this.nextMonth.bind(this);
         this.nextYear = this.nextYear.bind(this);
@@ -47,8 +48,8 @@ export default class HomeScreen extends React.Component {
         }
 
         setTimeout(() =>
-            this.setState({ showFooter: false })
-            , 3000);
+            this.setState({ showFlash: false })
+            , 5000);
     }
     /**
     * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
@@ -92,7 +93,7 @@ export default class HomeScreen extends React.Component {
             currDate: currDate,
             currLocation: null,
             pageNumber: 1,
-            showFooter: true
+            showFlash: true
         };
 
         //Get the data from the database
@@ -120,7 +121,7 @@ export default class HomeScreen extends React.Component {
             currDate: currDate,
             currLocation: appData.Settings.location,
             pageNumber: 1,
-            showFooter: false
+            showFlash: false
         };
     }
     _goToDate(jdate) {
@@ -186,21 +187,21 @@ export default class HomeScreen extends React.Component {
     setDayInformation(singleDay, appData) {
         appData = appData || (this.state && this.state.appData);
 
-        singleDay.probs = appData && appData.Settings.showProbFlagOnHome ?
-            ProblemOnahs.getProbsForDate(singleDay.day, appData && appData.ProblemOnahs) : [];
+        singleDay.hasProbs = appData && appData.ProblemOnahs && appData.Settings.showProbFlagOnHome &&
+            !!appData.ProblemOnahs.find(po => po.jdate.Abs === singleDay.day.Abs);
         singleDay.occasions = appData && appData.UserOccasions ?
             UserOccasion.getOccasionsForDate(singleDay.day, appData.UserOccasions) : [];
         singleDay.entries = appData && appData.Settings.showEntryFlagOnHome ?
             appData.EntryList.list.filter(e => e.date.Abs === singleDay.day.Abs) : [];
         return singleDay;
     }
-    renderDay(singleDay) {
-        const { day, probs, occasions, entries } = singleDay;
+    renderItem(singleDay) {
+        const { day, hasProbs, occasions, entries } = singleDay;
         return (<SingleDayDisplay
             key={day.Abs}
             jdate={day}
             location={this.state.currLocation || Location.getJerusalem()}
-            problems={probs}
+            flag={hasProbs}
             occasions={occasions}
             entries={entries}
             isToday={HomeScreen.today.Abs === day.Abs}
@@ -248,17 +249,45 @@ export default class HomeScreen extends React.Component {
             ];
         return (
             <ScrollView style={{ flex: 1 }}>
+                {this.state.showFlash &&
+                    <View>
+                        <View style={{
+                            backgroundColor: '#d5d5e6',
+                            padding: 10,
+                            flex: 1
+                        }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={{
+                                    fontSize: 35,
+                                    color: '#909ACF',
+                                    fontWeight: 'bold'
+                                }}>Luach</Text>
+                                <Image
+                                    style={{ width: 30, height: 30, marginLeft: 5 }}
+                                    resizeMode='stretch'
+                                    source={require('../Images/logo.png')} />
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{
+                                    fontSize: 13,
+                                    color: '#a66',
+                                    fontWeight: 'bold'
+                                }}>PLEASE NOTE:<Text
+                                    style={{ fontWeight: 'normal' }}> DO NOT rely exclusivley upon this application</Text></Text>
+                            </View>
+                        </View>
+                    </View>
+                }
                 <View>
                     <Carousel
-                        ref={carousel => this._carousel = carousel}
-                        pageWidth={width - 40}
+                        pageWidth={HomeScreen.screenWidth - 40}
                         sneak={20}
-                        swipeThreshold={0.4}
+                        swipeThreshold={0.2}
                         initialPage={1}
                         currentPage={this.state.pageNumber}
                         onPageChange={this.onDayChanged}>
                         {this.state.daysList.map(day =>
-                            this.renderDay(day)
+                            this.renderItem(day)
                         )}
                     </Carousel>
                 </View>
@@ -334,26 +363,6 @@ export default class HomeScreen extends React.Component {
                         ))}
                     </List>
                 </ScrollView>
-                {this.state.showFooter &&
-                    <View style={styles.footer}>
-                        <Text style={{
-                            fontSize: 25,
-                            color: '#ddf',
-                            fontWeight: 'bold'
-                        }}>Luach</Text>
-                        <Image source={require('../Images/logo.png')} style={{ width: 95, height: 95, margin: 20 }} resizeMode='contain' />
-                        <Text style={{
-                            fontSize: 13,
-                            color: '#c99',
-                            fontWeight: 'bold'
-                        }}>-- PLEASE NOTE --</Text>
-                        <Text style={{
-                            fontSize: 11,
-                            color: '#eef',
-                            textAlign: 'center'
-                        }}>DO NOT rely exclusivley upon this application</Text>
-                    </View>
-                }
             </ScrollView>);
     }
 }
@@ -380,17 +389,5 @@ const styles = StyleSheet.create({
     },
     navIcon: {
         fontSize: 11
-    },
-    footer: {
-        position: 'absolute',
-        top: '10%',
-        backgroundColor: '#88a',
-        paddingTop: 25,
-        paddingBottom: 25,
-        alignItems: 'center',
-        flex: 1,
-        width: '90%',
-        alignSelf: 'center',
-        borderRadius: 5
     }
 });
