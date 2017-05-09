@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, StyleSheet, Text, View, ScrollView, TouchableHighlight, Image } from 'react-native';
+import { PixelRatio, Dimensions, StyleSheet, Text, View, ScrollView, TouchableHighlight, Image } from 'react-native';
 import { List, ListItem, Icon } from 'react-native-elements';
 import Carousel from './Carousel/Carousel';
 import SingleDayDisplay from './SingleDayDisplay';
@@ -15,6 +15,7 @@ export default class HomeScreen extends React.Component {
         header: null
     });
     static screenWidth = Dimensions.get('window').width;
+    static screenWidthPixels = HomeScreen.screenWidth * PixelRatio.get();
     static today = new jDate();
 
     constructor(props) {
@@ -220,17 +221,17 @@ export default class HomeScreen extends React.Component {
                 {
                     title: 'Settings',
                     icon: 'settings',
-                    onPress: () => { if (this.state.loadingDone) this.navigate('Settings', params) }
+                    onPress: () => { if (this.state.loadingDone) this.navigate('Settings', params); }
                 },
                 {
                     title: 'Occasions',
                     icon: 'event',
-                    onPress: () => { if (this.state.loadingDone) this.navigate('Occasions', params) }
+                    onPress: () => { if (this.state.loadingDone) this.navigate('Occasions', params); }
                 },
                 {
                     title: 'Kavuahs',
                     icon: 'device-hub',
-                    onPress: () => { if (this.state.loadingDone) this.navigate('Kavuahs', params) }
+                    onPress: () => { if (this.state.loadingDone) this.navigate('Kavuahs', params); }
                 },
                 {
                     title: 'Entries',
@@ -241,16 +242,23 @@ export default class HomeScreen extends React.Component {
                                 appData: this.state.appData,
                                 currLocation: this.state.currLocation || Location.getJerusalem(),
                                 onUpdate: this.updateAppData
-                            })
+                            });
                     }
                 },
                 {
                     title: 'Dates',
                     icon: 'flag',
-                    onPress: () => { if (this.state.loadingDone) this.navigate('FlaggedDates', params) }
+                    onPress: () => { if (this.state.loadingDone) this.navigate('FlaggedDates', params); }
                 }
 
             ];
+        if (HomeScreen.screenWidthPixels < 500) {
+            menuList.unshift({
+                title: 'Go To Today',
+                icon: 'view-carousel',
+                onPress: () => this.goToday()
+            });
+        }
         return (
             <ScrollView style={{ flex: 1 }}>
                 {this.state.showFlash &&
@@ -316,24 +324,26 @@ export default class HomeScreen extends React.Component {
                             </View>
                         </TouchableHighlight>
                     </View>
-                    <TouchableHighlight underlayColor='#eef' onPress={this.goToday}>
-                        <View style={styles.navCenterView}>
-                            {(this.state.currDate.Abs !== HomeScreen.today.Abs &&
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Icon iconStyle={styles.navIcon} name='navigate-before' />
-                                    <Text style={{ color: '#565', fontSize: 13, fontWeight: 'bold' }}>TODAY</Text>
-                                    <Icon iconStyle={styles.navIcon} name='navigate-next' />
-                                </View>)
-                                ||
-                                (
+                    {HomeScreen.screenWidthPixels >= 500 &&
+                        <TouchableHighlight underlayColor='#eef' onPress={this.goToday}>
+                            <View style={styles.navCenterView}>
+                                {(this.state.currDate.Abs !== HomeScreen.today.Abs &&
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Image style={{ width: 15, height: 15, marginRight: 4 }} resizeMode='stretch' source={require('../Images/logo.png')} />
-                                        <Text style={{ color: '#556', fontSize: 15, fontWeight: 'bold' }}>Luach</Text>
-                                    </View>
-                                )
-                            }
-                        </View>
-                    </TouchableHighlight>
+                                        <Icon iconStyle={styles.navIcon} name='navigate-before' />
+                                        <Text style={{ color: '#565', fontSize: 13, fontWeight: 'bold' }}>TODAY</Text>
+                                        <Icon iconStyle={styles.navIcon} name='navigate-next' />
+                                    </View>)
+                                    ||
+                                    (
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <Image style={{ width: 15, height: 15, marginRight: 4 }} resizeMode='stretch' source={require('../Images/logo.png')} />
+                                            <Text style={{ color: '#556', fontSize: 15, fontWeight: 'bold' }}>Luach</Text>
+                                        </View>
+                                    )
+                                }
+                            </View>
+                        </TouchableHighlight>
+                    }
                     <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
                         <TouchableHighlight underlayColor='#eef' onPress={this.nextYear}>
                             <View style={styles.navView}>
