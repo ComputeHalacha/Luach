@@ -11,6 +11,7 @@ import NewEntryScreen from './Components/NewEntryScreen';
 import NewKavuahScreen from './Components/NewKavuahScreen';
 import DateDetailsScreen from './Components/DateDetailsScreen';
 import FindKavuahScreen from './Components/FindKavuahScreen';
+import FindLocationScreen from './Components/FindLocationScreen';
 
 AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
     Home: { screen: HomeScreen },
@@ -23,5 +24,6 @@ AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
     NewKavuah: { screen: NewKavuahScreen },
     FlaggedDates: { screen: FlaggedDatesScreen },
     DateDetails: { screen: DateDetailsScreen },
-    FindKavuahs: { screen: FindKavuahScreen }
+    FindKavuahs: { screen: FindKavuahScreen },
+    FindLocation: { screen: FindLocationScreen }
 }));

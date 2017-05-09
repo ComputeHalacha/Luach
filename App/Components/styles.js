@@ -30,7 +30,8 @@ const GeneralStyles = StyleSheet.create({
     },
     textInput: {
         margin: 5,
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-start',
+        width: '95%'
     },
     buttonList: {
         flex: 1,
@@ -38,10 +39,10 @@ const GeneralStyles = StyleSheet.create({
         alignItems: 'center'
     },
     inItemButtonList: {
-        flex:1,
+        flex: 1,
         flexDirection: 'row',
-        justifyContent:'center',
-        alignItems:'center'
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     inItemLinkText: {
         fontSize: 10,
@@ -57,6 +58,22 @@ const GeneralStyles = StyleSheet.create({
     btn: {
         fontSize: 7,
         height: 25
+    },
+    emptyListView: {
+        alignItems: 'center',
+        flex: 1,
+        marginTop: 50
+    },
+    emptyListText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#99b',
+        marginBottom: 35,
+        textAlign: 'center'
+    },
+    emptyListImage: {
+        width: 150,
+        height: 150
     },
 });
 

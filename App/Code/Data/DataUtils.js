@@ -13,14 +13,12 @@ SQLite.DEBUG(!!__DEV__);
 SQLite.enablePromise(true);
 
 export default class DataUtils {
-    static async SettingsFromDatabase(locations) {
+    static async SettingsFromDatabase() {
         let settings;
         await DataUtils._executeSql('SELECT * from settings')
             .then(async results => {
                 const dbSet = results.list[0],
-                    location = locations ?
-                        locations.find(l => l.locationId === dbSet.locationId) :
-                        await DataUtils.LocationFromDatabase(dbSet.locationId);
+                    location = await DataUtils.LocationFromDatabase(dbSet.locationId);
                 settings = new Settings({
                     location: location,
                     showOhrZeruah: dbSet.showOhrZeruah,
@@ -114,8 +112,8 @@ export default class DataUtils {
         });
         return location;
     }
-    /**Returns a list of Location objects with all the locations in the database.*/
-    static async GetAllLocations() {
+    /**Returns a list of Location objects that match the search querywith all the locations in the database.*/
+    static async GetAllLocations(query) {
         return await DataUtils._queryLocations();
     }
     /**Returns a list of the Location objects in the database that their name or heb values contain the search term.

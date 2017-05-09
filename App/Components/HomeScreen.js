@@ -105,7 +105,8 @@ export default class HomeScreen extends React.Component {
             this.setState({
                 appData: ad,
                 daysList: daysList,
-                currLocation: ad.Settings.location
+                currLocation: ad.Settings.location,
+                loadingDone: true
             });
         });
     }
@@ -121,7 +122,8 @@ export default class HomeScreen extends React.Component {
             currDate: currDate,
             currLocation: appData.Settings.location,
             pageNumber: 1,
-            showFlash: false
+            showFlash: false,
+            loadingDone: true
         };
     }
     _goToDate(jdate) {
@@ -218,32 +220,34 @@ export default class HomeScreen extends React.Component {
                 {
                     title: 'Settings',
                     icon: 'settings',
-                    onPress: () => this.navigate('Settings', params)
+                    onPress: () => { if (this.state.loadingDone) this.navigate('Settings', params) }
                 },
                 {
                     title: 'Occasions',
                     icon: 'event',
-                    onPress: () => this.navigate('Occasions', params)
+                    onPress: () => { if (this.state.loadingDone) this.navigate('Occasions', params) }
                 },
                 {
                     title: 'Kavuahs',
                     icon: 'device-hub',
-                    onPress: () => this.navigate('Kavuahs', params)
+                    onPress: () => { if (this.state.loadingDone) this.navigate('Kavuahs', params) }
                 },
                 {
                     title: 'Entries',
                     icon: 'list',
-                    onPress: () => this.navigate('Entries',
-                        {
-                            appData: this.state.appData,
-                            currLocation: this.state.currLocation || Location.getJerusalem(),
-                            onUpdate: this.updateAppData
-                        })
+                    onPress: () => {
+                        if (this.state.loadingDone) this.navigate('Entries',
+                            {
+                                appData: this.state.appData,
+                                currLocation: this.state.currLocation || Location.getJerusalem(),
+                                onUpdate: this.updateAppData
+                            })
+                    }
                 },
                 {
                     title: 'Dates',
                     icon: 'flag',
-                    onPress: () => this.navigate('FlaggedDates', params)
+                    onPress: () => { if (this.state.loadingDone) this.navigate('FlaggedDates', params) }
                 }
 
             ];

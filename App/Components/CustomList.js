@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { FlatList, StyleSheet, Text, View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NightDay } from '../Code/Chashavshavon/Onah';
+import { GeneralStyles } from './styles';
 
 /*******************************************************************************************************************
  * PROPS ------------------------------------------
@@ -108,12 +109,12 @@ export default class CustomList extends Component {
                         keyExtractor={item => item.__index} />
                 </View>)
                 ||
-                <View style={styles.emptyListView}>
-                    <Text style={styles.emptyListText}>{this.props.emptyListText}</Text>
+                <View style={GeneralStyles.emptyListView}>
+                    <Text style={GeneralStyles.emptyListText}>{this.props.emptyListText}</Text>
                     <Image
                         source={require('../Images/logo.png')}
                         resizeMode='contain'
-                        style={styles.emptyListImage} />
+                        style={GeneralStyles.emptyListImage} />
                 </View>}
         </View>;
     }
@@ -147,20 +148,4 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
         flex: 1
     },
-    emptyListView: {
-        alignItems: 'center',
-        flex: 1,
-        marginTop: 50
-    },
-    emptyListText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#99b',
-        marginBottom: 35,
-        textAlign: 'center'
-    },
-    emptyListImage: {
-        width: 150,
-        height: 150
-    }
 });

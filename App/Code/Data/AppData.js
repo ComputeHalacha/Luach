@@ -1,8 +1,7 @@
 import DataUtils from './DataUtils';
 
 export default class AppData {
-    constructor(locations, settings, occasions, entryList, kavuahList, problemOnahs) {
-        this.Locations = locations;
+    constructor(settings, occasions, entryList, kavuahList, problemOnahs) {
         this.Settings = settings;
         this.UserOccasions = occasions;
         this.EntryList = entryList;
@@ -21,21 +20,11 @@ export default class AppData {
         global.GlobalAppData = ad;
     }
     static async fromDatabase() {
-        let locations, settings, occasions, entryList, kavuahList, problemOnahs;
-        await DataUtils.GetAllLocations()
-            .then(async l => {
-                locations = l;
-                await DataUtils.SettingsFromDatabase(locations)
-                    .then(s => settings = s)
-                    .catch(error => {
-                        if(__DEV__) {
-                            console.warn('Error running SettingsFromDatabase.');
-                            console.error(error);
-                        }
-                    });
-            })
+        let settings, occasions, entryList, kavuahList, problemOnahs;
+        await DataUtils.SettingsFromDatabase()
+            .then(s => settings = s)
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn('Error running SettingsFromDatabase.');
                     console.error(error);
                 }
@@ -45,7 +34,7 @@ export default class AppData {
                 occasions = ol;
             })
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn('Error running GetAllUserOccasions.');
                     console.error(error);
                 }
@@ -53,7 +42,7 @@ export default class AppData {
         await DataUtils.EntryListFromDatabase(settings)
             .then(e => entryList = e)
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn('Error running EntryListFromDatabase.');
                     console.error(error);
                 }
@@ -64,12 +53,12 @@ export default class AppData {
                 problemOnahs = entryList.getProblemOnahs(kavuahList);
             })
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn('Error running GetAllKavuahs.');
                     console.error(error);
                 }
             });
 
-        return new AppData(locations, settings, occasions, entryList, kavuahList, problemOnahs);
+        return new AppData(settings, occasions, entryList, kavuahList, problemOnahs);
     }
 }

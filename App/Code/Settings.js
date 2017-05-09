@@ -21,4 +21,22 @@ export default class Settings {
     save() {
         DataUtils.SettingsToDatabase(this);
     }
+    isSameSettings(other) {
+        if (!!this != !!other) {
+            return false;
+        }
+        return (!this && !other) || (this.location === other.location &&
+            this.showOhrZeruah === other.showOhrZeruah &&
+            this.onahBeinunis24Hours === other.onahBeinunis24Hours &&
+            this.numberMonthsAheadToWarn === other.numberMonthsAheadToWarn &&
+            this.keepLongerHaflagah === other.keepLongerHaflagah &&
+            this.cheshbonKavuahByActualEntry === other.cheshbonKavuahByActualEntry &&
+            this.cheshbonKavuahByCheshbon === other.cheshbonKavuahByCheshbon &&
+            this.calcKavuahsOnNewEntry === other.calcKavuahsOnNewEntry &&
+            this.showProbFlagOnHome === other.showProbFlagOnHome &&
+            this.showEntryFlagOnHome === other.showEntryFlagOnHome &&
+            this.navigateBySecularDate === other.navigateBySecularDate &&
+            this.requirePIN === other.requirePIN &&
+            this.PIN === other.PIN);
+    }
 }
