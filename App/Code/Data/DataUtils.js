@@ -373,7 +373,7 @@ export default class DataUtils {
                     console.log('0120 - database is open. Starting transaction...');
                 }
                 await db.executeSql(sql, values).then(results => {
-                    if (!!results && results.length && !!results[0].rows && !!results[0].rows.item) {
+                    if (!!results && results.length > 0 && !!results[0].rows && !!results[0].rows.item) {
                         if(__DEV__) {
                             console.log(`0121 - the sql was executed successfully - ${results[0].rows.length.toString()} rows returned`);
                         }

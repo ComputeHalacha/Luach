@@ -28,19 +28,10 @@ import { GeneralStyles } from './styles';
 export default class CustomList extends Component {
     constructor(props) {
         super(props);
-        this.getDataWithIndex = this.getDataWithIndex.bind(this);
         this.renderItem = this.renderItem.bind(this);
     }
-    getDataWithIndex() {
-        return this.props.data.map((o, i) => {
-            if (!o.__index) {
-                o.__index = i;
-            }
-            return o;
-        });
-    }
-    renderItem({ item }) {
-        const index = item.__index,
+    renderItem({ item, index }) {
+        const
             mainViewStyle = typeof this.props.mainViewStyle === 'function' ?
                 this.props.mainViewStyle(item, index) : this.props.mainViewStyle,
             title = typeof this.props.title === 'function' ?
@@ -101,12 +92,12 @@ export default class CustomList extends Component {
     }
     render() {
         return <View>
-            {(this.props.data && this.props.data.length &&
+            {(this.props.data && this.props.data.length > 0 &&
                 <View style={[styles.outerStyle, this.props.style]}>
                     <FlatList
-                        data={this.getDataWithIndex()}
+                        data={this.props.data}
                         renderItem={this.renderItem}
-                        keyExtractor={item => item.__index} />
+                        keyExtractor={item => this.props.data.indexOf(item)} />
                 </View>)
                 ||
                 <View style={GeneralStyles.emptyListView}>

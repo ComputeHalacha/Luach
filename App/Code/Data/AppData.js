@@ -1,12 +1,21 @@
 import DataUtils from './DataUtils';
+import Settings from '../Settings';
+import EntryList from '../Chashavshavon/EntryList';
 
 export default class AppData {
+    /**
+     * @param {Settings} settings
+     * @param {[UserOccasion]} occasions
+     * @param {EntryList} entryList
+     * @param {[Kavuah]} kavuahList
+     * @param {[ProblemOnah]} problemOnahs
+     */
     constructor(settings, occasions, entryList, kavuahList, problemOnahs) {
-        this.Settings = settings;
-        this.UserOccasions = occasions;
-        this.EntryList = entryList;
-        this.KavuahList = kavuahList;
-        this.ProblemOnahs = problemOnahs;
+        this.Settings = settings || new Settings({});
+        this.UserOccasions = occasions || [];
+        this.EntryList = entryList || new EntryList(this.Settings);
+        this.KavuahList = kavuahList || [];
+        this.ProblemOnahs = problemOnahs || [];
     }
     static async getAppData() {
         if (!global.GlobalAppData) {

@@ -85,14 +85,15 @@ export default class HomeScreen extends React.Component {
         }
     }
     _initialShowing() {
-        const currDate = HomeScreen.today,
-            daysList = this.getDaysList(currDate);
+        const appData = new AppData(),
+            daysList = this.getDaysList(HomeScreen.today, appData);
+
         //As we will be going to the database which takes some time, we set initial values for the state.
         this.state = {
             daysList: daysList,
-            appData: null,
-            currDate: currDate,
-            currLocation: null,
+            appData: appData,
+            currDate: HomeScreen.today,
+            currLocation: Location.getJerusalem(),
             pageNumber: 1,
             showFlash: true
         };
@@ -180,7 +181,7 @@ export default class HomeScreen extends React.Component {
             this.state.currDate.addSecularYears(1) : this.state.currDate.addYears(1));
     }
     getDaysList(jdate, appData) {
-        appData = appData || (this.state && this.state.appData);
+        appData = appData || this.state.appData;
         const daysList = [this.setDayInformation({ day: jdate.addDays(-1) }, appData)];
         daysList.push(this.setDayInformation({ day: jdate }, appData));
         daysList.push(this.setDayInformation({ day: jdate.addDays(1) }, appData));
