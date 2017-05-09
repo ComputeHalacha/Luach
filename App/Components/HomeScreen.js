@@ -15,7 +15,7 @@ export default class HomeScreen extends React.Component {
         header: null
     });
     static screenWidth = Dimensions.get('window').width;
-    static screenWidthPixels = HomeScreen.screenWidth * PixelRatio.get();
+    static isSmallScreen = (HomeScreen.screenWidth * PixelRatio.get()) < 650;
     static today = new jDate();
 
     constructor(props) {
@@ -252,7 +252,7 @@ export default class HomeScreen extends React.Component {
                 }
 
             ];
-        if (HomeScreen.screenWidthPixels < 500) {
+        if (HomeScreen.isSmallScreen) {
             menuList.unshift({
                 title: 'Go To Today',
                 icon: 'view-carousel',
@@ -324,7 +324,7 @@ export default class HomeScreen extends React.Component {
                             </View>
                         </TouchableHighlight>
                     </View>
-                    {HomeScreen.screenWidthPixels >= 500 &&
+                    {(!HomeScreen.isSmallScreen) &&
                         <TouchableHighlight underlayColor='#eef' onPress={this.goToday}>
                             <View style={styles.navCenterView}>
                                 {(this.state.currDate.Abs !== HomeScreen.today.Abs &&
