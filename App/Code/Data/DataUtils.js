@@ -7,7 +7,7 @@ import { UserOccasion } from '../JCal/UserOccasion';
 import Entry from '../Chashavshavon/Entry';
 import EntryList from '../Chashavshavon/EntryList';
 import { NightDay, Onah } from '../Chashavshavon/Onah';
-import {Kavuah} from '../Chashavshavon/Kavuah';
+import { Kavuah } from '../Chashavshavon/Kavuah';
 
 SQLite.DEBUG(!!__DEV__);
 SQLite.enablePromise(true);
@@ -22,6 +22,7 @@ export default class DataUtils {
                 settings = new Settings({
                     location: location,
                     showOhrZeruah: dbSet.showOhrZeruah,
+                    keepThirtyOne: dbSet.keepThirtyOne,
                     onahBeinunis24Hours: dbSet.onahBeinunis24Hours,
                     numberMonthsAheadToWarn: dbSet.numberMonthsAheadToWarn,
                     keepLongerHaflagah: dbSet.keepLongerHaflagah,
@@ -30,13 +31,13 @@ export default class DataUtils {
                     calcKavuahsOnNewEntry: dbSet.calcKavuahsOnNewEntry,
                     showProbFlagOnHome: dbSet.showProbFlagOnHome,
                     showEntryFlagOnHome: dbSet.showEntryFlagOnHome,
-                    navigateBySecularDate:dbSet.navigateBySecularDate,
+                    navigateBySecularDate: dbSet.navigateBySecularDate,
                     requirePIN: dbSet.requirePIN,
                     PIN: dbSet.PIN
                 });
             })
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn('Error trying to get settings from the database.');
                     console.error(error);
                 }
@@ -47,6 +48,7 @@ export default class DataUtils {
         await DataUtils._executeSql(`UPDATE settings SET
             locationId=?,
             showOhrZeruah=?,
+            keepThirtyOne=?,
             onahBeinunis24Hours=?,
             numberMonthsAheadToWarn=?,
             keepLongerHaflagah=?,
@@ -61,6 +63,7 @@ export default class DataUtils {
             [
                 (settings.location && settings.location.locationId) || 28, //Jerusalem is 28
                 settings.showOhrZeruah,
+                settings.keepThirtyOne,
                 settings.onahBeinunis24Hours,
                 settings.numberMonthsAheadToWarn,
                 settings.keepLongerHaflagah,
@@ -74,7 +77,7 @@ export default class DataUtils {
                 settings.PIN
             ])
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn('Error trying to enter settings into the database.');
                     console.error(error);
                 }
@@ -93,7 +96,7 @@ export default class DataUtils {
                 }
             })
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn('Error trying to get all entries from the database.');
                     console.error(error);
                 }
@@ -135,7 +138,7 @@ export default class DataUtils {
                     o.occasionId));
             })
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn('Error trying to get all occasions from the database.');
                     console.error(error);
                 }
@@ -158,12 +161,12 @@ export default class DataUtils {
                 WHERE occasionId=?`,
                 [...params, occasion.occasionId])
                 .then(() => {
-                    if(__DEV__) {
+                    if (__DEV__) {
                         console.log(`Updated Occasion Id ${occasion.occasionId.toString()}`);
                     }
                 })
                 .catch(error => {
-                    if(__DEV__) {
+                    if (__DEV__) {
                         console.warn(`Error trying to update Occasion Id ${occasion.occasionId.toString()} to the database.`);
                         console.error(error);
                     }
@@ -179,7 +182,7 @@ export default class DataUtils {
                 params)
                 .then(results => occasion.occasionId = results.id)
                 .catch(error => {
-                    if(__DEV__) {
+                    if (__DEV__) {
                         console.warn('Error trying to insert occasion into the database.');
                         console.error(error);
                     }
@@ -192,7 +195,7 @@ export default class DataUtils {
         }
         await DataUtils._executeSql('DELETE from occasions where occasionId=?', [occasion.occasionId])
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn(`Error trying to delete occasion id ${occasion.occasionId} from the database`);
                     console.error(error);
                 }
@@ -218,7 +221,7 @@ export default class DataUtils {
                     k.kavuahId));
             })
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn('Error trying to get all kavuahs from the database.');
                     console.error(error);
                 }
@@ -248,12 +251,12 @@ export default class DataUtils {
                 WHERE kavuahId=?`,
                 [...params, kavuah.kavuahId])
                 .then(() => {
-                    if(__DEV__) {
+                    if (__DEV__) {
                         console.log(`Updated Kavuah Id ${kavuah.kavuahId.toString()}`);
                     }
                 })
                 .catch(error => {
-                    if(__DEV__) {
+                    if (__DEV__) {
                         console.warn(`Error trying to update Kavuah Id ${kavuah.kavuahId.toString()} to the database.`);
                         console.error(error);
                     }
@@ -271,7 +274,7 @@ export default class DataUtils {
                 params)
                 .then(results => kavuah.kavuahId = results.id)
                 .catch(error => {
-                    if(__DEV__) {
+                    if (__DEV__) {
                         console.warn('Error trying to insert kavuah into the database.');
                         console.error(error);
                     }
@@ -284,7 +287,7 @@ export default class DataUtils {
         }
         await DataUtils._executeSql('DELETE from kavuahs where kavuahId=?', [kavuah.kavuahId])
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn(`Error trying to delete kavuah id ${kavuah.kavuahId} from the database`);
                     console.error(error);
                 }
@@ -295,12 +298,12 @@ export default class DataUtils {
             await DataUtils._executeSql('UPDATE entries SET dateAbs=?, day=? WHERE entryId=?',
                 [entry.date.Abs, entry.nightDay === NightDay.Day, entry.entryId])
                 .then(() => {
-                    if(__DEV__) {
+                    if (__DEV__) {
                         console.log(`Updated Entry Id ${entry.entryId.toString()}`);
                     }
                 })
                 .catch(error => {
-                    if(__DEV__) {
+                    if (__DEV__) {
                         console.warn(`Error trying to update entry id ${entry.entryId.toString()} to the database.`);
                         console.error(error);
                     }
@@ -311,7 +314,7 @@ export default class DataUtils {
                 [entry.date.Abs, entry.nightDay === NightDay.Day])
                 .then(results => entry.entryId = results.id)
                 .catch(error => {
-                    if(__DEV__) {
+                    if (__DEV__) {
                         console.warn('Error trying to insert entry into the database.');
                         console.error(error);
                     }
@@ -324,8 +327,37 @@ export default class DataUtils {
         }
         await DataUtils._executeSql('DELETE from entries where entryId=?', [entry.entryId])
             .catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn(`Error trying to delete entry id ${entry.entryId} from the database`);
+                    console.error(error);
+                }
+            });
+    }
+    static async GetTableFields(tableName) {
+        let list = [];
+        await DataUtils._executeSql(`PRAGMA table_info(${tableName})`)
+            .then(results => { list = results.list })
+            .catch(error => {
+                if (__DEV__) {
+                    console.warn(`Error trying to get fields of ${tableName} table from the database`);
+                    console.error(error);
+                }
+            });
+        return list;
+    }
+    /**
+     * Add a new setting field to the settings table
+     * @param {{name:String, type:String, allowNull:Boolean, defaultValue:String}} settingField
+     */
+    static async AddSettingsField(settingField) {
+        await DataUtils._executeSql(`ALTER TABLE settings
+            ADD COLUMN ${settingField.name}
+                ${settingField.type}
+                ${settingField.allowNull ? '' : 'NOT '} NULL
+                ${settingField.defaultValue ? 'DEFAULT ' + settingField.defaultValue : ''}`)
+            .catch(error => {
+                if (__DEV__) {
+                    console.warn(`Error trying to add the field "${settingField.name}" to the settings table`);
                     console.error(error);
                 }
             });
@@ -339,7 +371,7 @@ export default class DataUtils {
         const list = [];
         await DataUtils._executeSql(`SELECT * FROM locations ${whereClause ? ' WHERE ' + whereClause : ''} ORDER BY name`, values)
             .then(results => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.log('442 - Results returned from db  - in _queryLocations');
                 }
                 for (let l of results.list) {
@@ -369,12 +401,12 @@ export default class DataUtils {
         await SQLite.openDatabase({ name: 'luachAndroidDB', createFromLocation: '~data/luachAndroidDB.sqlite' })
             .then(async database => {
                 db = database;
-                if(__DEV__) {
+                if (__DEV__) {
                     console.log('0120 - database is open. Starting transaction...');
                 }
                 await db.executeSql(sql, values).then(results => {
                     if (!!results && results.length > 0 && !!results[0].rows && !!results[0].rows.item) {
-                        if(__DEV__) {
+                        if (__DEV__) {
                             console.log(`0121 - the sql was executed successfully - ${results[0].rows.length.toString()} rows returned`);
                         }
                         for (let i = 0; i < results[0].rows.length; i++) {
@@ -382,12 +414,12 @@ export default class DataUtils {
                         }
                     }
                     else if (!!results && isNumber(results.rowsAffected)) {
-                        if(__DEV__) {
+                        if (__DEV__) {
                             console.log(`0122 - sql executed successfully - ${results.rowsAffected.toString()} rows affected`);
                         }
                     }
                     else {
-                        if(__DEV__) {
+                        if (__DEV__) {
                             console.log('0123 - sql executed successfully - Results information is not available');
                         }
                     }
@@ -419,7 +451,7 @@ export default class DataUtils {
                     DataUtils._closeDatabase(db);
                 });*/
             }).catch(error => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn('0124 - error opening database');
                     console.error(error);
                 }
@@ -431,17 +463,17 @@ export default class DataUtils {
     static _closeDatabase(db) {
         if (db) {
             db.close().then(status => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.log('130 -  Database is now CLOSED');
                 }
             }).catch((error) => {
-                if(__DEV__) {
+                if (__DEV__) {
                     console.warn('131 - error closing database');
                 }
             });
         }
         else {
-            if(__DEV__) {
+            if (__DEV__) {
                 console.warn('132 - db variable is not a database object');
             }
         }

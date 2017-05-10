@@ -42,6 +42,7 @@ export default class SettingsScreen extends Component {
         const sets = this.state.appData && this.state.appData.Settings,
             location = sets && sets.location || Location.getJerusalem(),
             showOhrZeruah = setDefault(sets && sets.showOhrZeruah, true),
+            keepThirtyOne = setDefault(sets && sets.keepThirtyOne, true),
             onahBeinunis24Hours = sets && sets.onahBeinunis24Hours,
             numberMonthsAheadToWarn = (sets && sets.numberMonthsAheadToWarn) || 12,
             keepLongerHaflagah = setDefault(sets && sets.keepLongerHaflagah, true),
@@ -88,10 +89,16 @@ export default class SettingsScreen extends Component {
                         value={!!showOhrZeruah} />
                 </View>
                 <View style={GeneralStyles.formRow}>
-                    <Text style={GeneralStyles.label}>Flag Onah Beinunis (30 & 31) for a full 24 Hours?</Text>
+                    <Text style={GeneralStyles.label}>Flag Onah Beinunis (30 and 31) for a full 24 Hours?</Text>
                     <Switch style={GeneralStyles.switch}
                         onValueChange={value => this.update('onahBeinunis24Hours', value)}
                         value={!!onahBeinunis24Hours} />
+                </View>
+                <View style={GeneralStyles.formRow}>
+                    <Text style={GeneralStyles.label}>Keep day Thirty One for Onah Beinunis?</Text>
+                    <Switch style={GeneralStyles.switch}
+                        onValueChange={value => this.update('keepThirtyOne', value)}
+                        value={!!keepThirtyOne} />
                 </View>
                 <View style={GeneralStyles.formRow}>
                     <Text style={GeneralStyles.label}>Haflaga is only cancelled by a longer one</Text>

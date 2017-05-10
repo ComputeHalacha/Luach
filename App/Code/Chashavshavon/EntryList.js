@@ -152,22 +152,32 @@ export default class EntryList {
         const onahs = [];
 
         //Day Thirty ***************************************************************
-        const thirty = new ProblemOnah(
-            entry.date.addDays(29),
-            entry.nightDay,
-            'Thirtieth Day');
+        const dayThirty = entry.date.addDays(29),
+            thirty = new ProblemOnah(
+                dayThirty,
+                entry.nightDay,
+                'Thirtieth Day' +
+                (dayThirty.Day === entry.day ? ' and Yom HaChodesh' : ''));
         onahs.push(thirty);
         this.add24HourOnah(thirty, onahs);
         this.addOhrZarua(thirty, onahs);
 
         //Day Thirty One ***************************************************************
-        const thirtyOne = new ProblemOnah(
-            entry.date.addDays(30),
-            entry.nightDay,
-            'Thirty First Day');
-        onahs.push(thirtyOne);
-        this.add24HourOnah(thirtyOne, onahs);
-        this.addOhrZarua(thirtyOne, onahs);
+        const dayThirtyOne = dayThirty.addDays(1);
+        //Even if Settings.keepThirtyOne is false, the 31st day may be the Yom HaChodesh.
+        if (dayThirtyOne.Day === entry.day || this.settings.keepThirtyOne) {
+            let text = dayThirtyOne.Day === entry.day ? 'Yom HaChodesh' : '';
+            if (!!this.settings.keepThirtyOne) {
+                text += (text ? ' and ' : '') + 'Thirty First Day';
+            }
+            const thirtyOne = new ProblemOnah(
+                dayThirtyOne,
+                entry.nightDay,
+                text);
+            onahs.push(thirtyOne);
+            this.add24HourOnah(thirtyOne, onahs);
+            this.addOhrZarua(thirtyOne, onahs);
+        }
 
         //Haflagah **********************************************************************
         if (entry.haflaga > 0) {

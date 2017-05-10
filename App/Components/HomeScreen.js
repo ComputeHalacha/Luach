@@ -128,6 +128,8 @@ export class HomeScreen extends React.Component {
         }
     }
     _initialShowing() {
+        AppData.upgradeDatabase();
+
         const appData = new AppData(),
             daysList = this.getDaysList(Today, appData);
 
