@@ -1,22 +1,37 @@
+import { PixelRatio, Dimensions } from 'react-native';
+import jDate from './JCal/jDate';
+
+export const Today = new jDate();
+
+/**Gets the current screen width in points */
+export function getScreenWidth() {
+    return Dimensions.get('window').width;
+}
+
+/**Gets the current screen width in pixels */
+export function isSmallScreen() {
+    return (getScreenWidth() * PixelRatio.get()) < 650;
+}
+
 /**Returns true if thing is an instance of either a string primitive or String object.*/
-function isString(thing) {
+export function isString(thing) {
     return (typeof thing === 'string' || thing instanceof String);
 }
 
 /**Returns true if thing is an instance of either a number primitive or Number object.*/
-function isNumber(thing) {
+export function isNumber(thing) {
     return (typeof thing === 'number' || thing instanceof Number);
 }
 
 /**Checks a Date object if it represents a valid date or not.*/
-function isValidDate(dt) {
+export function isValidDate(dt) {
     return (!isNaN(dt.valueOf()));
 }
 
 /**Returns whether or not the given, array, string, or argument list contains the given item or substring.
  *
  * This function is awfully similar to Array.includes, but has the added plus of accepting any number or type of arguments.*/
-function has(o, ...arr) {
+export function has(o, ...arr) {
     if (arr.length === 1 && (Array.isArray(arr[0]) || isString(arr[0]))) {
         return arr[0].includes(o);
     }
@@ -32,7 +47,7 @@ function has(o, ...arr) {
  * This is very useful for boolean, string and integer parameters
  * where we want to keep false, "" and 0 if they were supplied.
  */
-function setDefault(paramValue, defValue) {
+export function setDefault(paramValue, defValue) {
     if (typeof paramValue === 'undefined' || paramValue === null || isNaN(paramValue)) {
         return defValue;
     }
@@ -40,5 +55,3 @@ function setDefault(paramValue, defValue) {
         return paramValue;
     }
 }
-
-export { isString, isNumber, has, isValidDate, setDefault };
