@@ -2,6 +2,15 @@ import DataUtils from './DataUtils';
 import Settings from '../Settings';
 import EntryList from '../Chashavshavon/EntryList';
 
+/**
+ * List of setting fields that have been added after the initial app launch.
+ * Any that do not yet exist, will be added to the db schema during initial loading.
+ */
+const addedSettingsFields = [
+    //Added 5/10/17
+    { name: 'keepThirtyOne', type: 'BOOLEAN', allowNull: false, defaultValue: '1' },
+];
+
 export default class AppData {
     /**
      * @param {Settings} settings
@@ -27,6 +36,17 @@ export default class AppData {
     }
     static setAppData(ad) {
         global.GlobalAppData = ad;
+    }
+    static upgradeDatabase() {
+        //Add any new settings that were added after the last update.
+        DataUtils.GetTableFields('settings')
+            .then(fields => {
+                for (let asf of addedSettingsFields) {
+                    if (!fields.some(f => f.name === asf.name)) {
+                        DataUtils.AddSettingsField(asf);
+                    }
+                }
+            });
     }
     static async fromDatabase() {
         let settings, occasions, entryList, kavuahList, problemOnahs;
