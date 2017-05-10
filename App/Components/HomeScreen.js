@@ -215,7 +215,7 @@ export class HomeScreen extends React.Component {
         });
     }
     prevDay() {
-        this._addDaysToBeginning();
+        this._goToDate(this.state.currDate.addDays(-1));
     }
     prevMonth() {
         this._goToDate(this.state.appData.Settings.navigateBySecularDate ?
@@ -229,7 +229,7 @@ export class HomeScreen extends React.Component {
         this._goToDate(Today);
     }
     nextDay() {
-        this._addDaysToEnd(this.state.pageNumber + 1);
+        this._goToDate(this.state.currDate.addDays(1));
     }
     nextMonth() {
         this._goToDate(this.state.appData.Settings.navigateBySecularDate ?
