@@ -1,16 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableHighlight, Image, Modal, TextInput } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableHighlight, Image, Modal, TextInput, BackHandler } from 'react-native';
 import { List, ListItem, Icon } from 'react-native-elements';
-import {Today, getScreenWidth, isSmallScreen} from '../Code/GeneralUtils';
+import { Today, getScreenWidth, isSmallScreen } from '../Code/GeneralUtils';
 import Carousel from './Carousel/Carousel';
 import SingleDayDisplay from './SingleDayDisplay';
-import jDate from '../Code/JCal/jDate';
 import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
 import { UserOccasion } from '../Code/JCal/UserOccasion';
 
 const Login = props =>
-    <Modal>
+    <Modal onRequestClose={() => BackHandler.exitApp()}>
         <View style={{ flex: 1, backgroundColor: '#444', alignItems: 'center' }}>
             <View style={{ backgroundColor: '#eef', flex: 0, width: '75%', borderWidth: 1, borderRadius: 6, padding: 15, alignItems: 'center', marginTop: '10%' }}>
                 <Image style={{ width: 50, height: 50 }} resizeMode='stretch' source={require('../Images/logo.png')} />
@@ -29,7 +28,7 @@ const Login = props =>
             </View>
         </View>
     </Modal>,
-    Flash = props =>
+    Flash = () =>
         <View style={{
             backgroundColor: '#d5d5e6',
             padding: 10,
