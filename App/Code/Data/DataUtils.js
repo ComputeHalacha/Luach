@@ -357,7 +357,7 @@ export default class DataUtils {
                 ${settingField.defaultValue ? 'DEFAULT ' + settingField.defaultValue : ''}`)
             .catch(error => {
                 if (__DEV__) {
-                    console.warn(`Error trying to get add ${settingField.name} field to the settings table`);
+                    console.warn(`Error trying to add the field "${settingField.name}" to the settings table`);
                     console.error(error);
                 }
             });
