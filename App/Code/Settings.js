@@ -6,6 +6,7 @@ export default class Settings {
     constructor(args) {
         this.location = args.location || Location.getJerusalem();
         this.showOhrZeruah = setDefault(args.showOhrZeruah, true);
+        this.keepThirtyOne = setDefault(args.keepThirtyOne, true);
         this.onahBeinunis24Hours = !!args.onahBeinunis24Hours;
         this.numberMonthsAheadToWarn = setDefault(args.numberMonthsAheadToWarn, 12);
         this.keepLongerHaflagah = !!args.keepLongerHaflagah;
@@ -27,6 +28,7 @@ export default class Settings {
         }
         return (!this && !other) || (this.location === other.location &&
             this.showOhrZeruah === other.showOhrZeruah &&
+            this.keepThirtyOne === other.keepThirtyOne &&
             this.onahBeinunis24Hours === other.onahBeinunis24Hours &&
             this.numberMonthsAheadToWarn === other.numberMonthsAheadToWarn &&
             this.keepLongerHaflagah === other.keepLongerHaflagah &&
