@@ -1,12 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, Modal, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Icon, Grid, Row, Col } from 'react-native-elements';
-import { getScreenWidth, isSmallScreen } from '../Code/GeneralUtils';
+import { getScreenWidth } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 import Utils from '../Code/JCal/Utils';
-import Location from '../Code/JCal/Location';
-import AppData from '../Code/Data/AppData';
-import { UserOccasion } from '../Code/JCal/UserOccasion';
 import { GeneralStyles } from './styles';
 
 const Today = new jDate();
@@ -146,12 +143,12 @@ export default class MonthViewScreen extends React.Component {
         const weeks = this.state.month.getAllDays(),
             colWidth = parseInt(getScreenWidth() / 7);
         return <View style={GeneralStyles.container}>
-            <View style={GeneralStyles.headerView}>
+            <View style={styles.headerView}>
                 <Text style={GeneralStyles.headerText}>{this.state.month.toString()}</Text>
             </View>
             <View style={{ flex: 1 }}>
                 <Grid>
-                    <Row>
+                    <Row containerStyle={{ height: 50 }}>
                         <Col style={styles.dayHeadView}>
                             <Text style={styles.dayHead}>Sun</Text></Col>
                         <Col style={styles.dayHeadView}>
@@ -177,12 +174,21 @@ export default class MonthViewScreen extends React.Component {
                                             onPress={() =>
                                                 this.navigate('Home', { currDate: d.jdate, appData: this.appData })}>
                                             <View style={[styles.singleDayView, { backgroundColor: d.color }]}>
-                                                <Text>{d && Utils.toJNum(d.jdate.Day)}</Text>
-                                                <Text>{d && d.sdate.getDate().toString()}</Text>
+                                                <View style={styles.singleDayNumbersView}>
+                                                    <Text>{d && Utils.toJNum(d.jdate.Day)}</Text>
+                                                    <Text>{d && d.sdate.getDate().toString()}</Text>
+                                                </View>
+                                                {d.jdate.DayOfWeek === 6 &&
+                                                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                                        <Text style={{ fontSize: 9, textAlign: 'center' }}>{d.jdate.getSedra(this.appData.Settings.location.Israel).map((s) =>
+                                                            s.eng).join('\n')}</Text>
+                                                    </View>
+                                                }
+
                                             </View>
                                         </TouchableOpacity>)
                                         ||
-                                        <View style={[styles.singleDay, { backgroundColor: '#99e' }]}></View>
+                                        <View style={styles.singleDayBlank}></View>
                                     }
                                 </Col>
                             )}
@@ -190,7 +196,7 @@ export default class MonthViewScreen extends React.Component {
                     )}
                 </Grid>
             </View>
-            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#999' }}>
+            <View style={styles.footerBar}>
                 <TouchableOpacity onPress={this.goPrev}>
                     <View>
                         <Icon name='arrow-back' />
@@ -215,13 +221,20 @@ export default class MonthViewScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    headerView: {
+        backgroundColor: '#99e',
+        flex: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 5
+    },
     dayHeadView: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#99e',
+        backgroundColor: '#999',
         borderWidth: 1,
-        borderColor: '#99e'
+        borderColor: '#aaa'
     },
     dayHead: {
         textAlign: 'center',
@@ -230,12 +243,27 @@ const styles = StyleSheet.create({
     singleDay: {
         flex: 1
     },
+    singleDayBlank: {
+        flex: 1,
+        backgroundColor: '#eee',
+        borderWidth: 1,
+        borderColor: '#ddd'
+    },
     singleDayView: {
         flex: 1,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        padding: 5
+    },
+    singleDayNumbersView: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        borderWidth: 1,
-        borderColor: '#99e',
-        padding: 5
+    },
+    footerBar: {
+        flex: 0,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#999'
     }
 });

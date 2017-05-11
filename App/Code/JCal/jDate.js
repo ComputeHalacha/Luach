@@ -392,7 +392,7 @@ export default class jDate {
             addItem(h, null, true);
         }
         addItem('Parsha of the week',
-            this.getSedra(true).map((s) => s.eng).join(' - '));
+            this.getSedra(location.Israel).map((s) => s.eng).join(' - '));
         addItem('Daf Yomi', this.getDafYomi());
         addItem('Alos Hashachar - 90',
             Utils.getTimeString(mishorNeg90, false, true));
