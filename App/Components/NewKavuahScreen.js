@@ -79,10 +79,8 @@ export default class NewKavuah extends React.Component {
         return this.state.specialNumber;
     }
     render() {
-        const nums = [];
-        for (let i = 0; i <= 100; i++) {
-            nums.push(i);
-        }
+        const nums = Array.from({ length: 100 }, (v, i) => i + 1);
+
         return <ScrollView style={GeneralStyles.container}>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Kavuah Type</Text>

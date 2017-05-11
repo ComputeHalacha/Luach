@@ -18,7 +18,9 @@ export default class DateDetailsScreen extends React.Component {
     render() {
         const list = this.state.jdate.getAllDetails(this.state.location);
         return <ScrollView style={GeneralStyles.container}>
-            <Text style={GeneralStyles.header}>{'Zmanim for ' + this.state.location.Name}</Text>
+            <View style={GeneralStyles.headerView}>
+                <Text style={GeneralStyles.headerText}>{'Zmanim for ' + this.state.location.Name}</Text>
+            </View>
             <CustomList
                 data={list}
                 textSectionViewStyle={{

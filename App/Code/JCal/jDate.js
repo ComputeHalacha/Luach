@@ -5,19 +5,19 @@ import PirkeiAvos from './PirkeiAvos.js';
 import Zmanim from './Zmanim.js';
 import DafYomi from './Dafyomi';
 
-//Keeps a "repository" of years that have had their elapsed days previously calculated. Format: { year:5776, elapsed:2109283 }
+/** Keeps a "repository" of years that have had their elapsed days previously calculated. Format: { year:5776, elapsed:2109283 } */
 const _yearCache = [];
 
-/** **************************************************************************************************************************
- *  Represents a single day in the Jewish Calendar.
- *
- *  Many of the date conversion algorithms are based on the C code which was translated from Lisp
- *  in "Calendrical Calculations" by Nachum Dershowitz and Edward M. Reingold
- *  in Software---Practice & Experience, vol. 20, no. 9 (September, 1990), pp. 899--928.
- *****************************************************************************************************************************/
+/* ****************************************************************************************************************
+ * Many of the date conversion algorithmsin the jDate class are based on the C code which was translated from Lisp
+ * in "Calendrical Calculations" by Nachum Dershowitz and Edward M. Reingold
+ * in Software---Practice & Experience, vol. 20, no. 9 (September, 1990), pp. 899--928.
+ * ****************************************************************************************************************/
+
+/** Represents a single day in the Jewish Calendar. */
 export default class jDate {
     /**
-    * Create a new Jdate.
+    *  Create a new Jdate.
     *  new jDate() - Sets the Jewish Date for the current system date
     *  new jDate(javascriptDateObject) - Sets to the Jewish date on the given Gregorian date
     *  new jDate("January 1 2045") - Accepts any valid javascript Date string (uses javascripts new Date(String))
@@ -29,10 +29,10 @@ export default class jDate {
     *  new jDate(absoluteDate) - The number of days elapsed since the theoretical date Sunday, December 31, 0001 BCE
     *  new jDate(jewishYear, jewishMonth, jewishDay, absoluteDate) - Most efficient constructor. Needs no calculations at all.
     *  new jDate( { year: 5776, month: 4, day: 5, abs: 122548708 } ) - same as new jDate(jewishYear, jewishMonth, jewishDay, absoluteDate)
-    * @param {*} arg
-    * @param {number} month
-    * @param {number} day
-    * @param {number} abs
+    * @param {Number | Date |String | {year:Number,month:Number,day:Number} | [Number, Number, Number, Number]} arg The full Jewish year number OR Javascript Date object or string OR object or array of year, month, day
+    * @param {Number} [month] The month of the Jewish date. Nissan is 1.
+    * @param {Number} [day] The day of the month
+    * @param {Number} [abs] The number of days that have passed since 12/31/0001
     */
     constructor(arg, month, day, abs) {
         //The day of the Jewish Month

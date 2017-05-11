@@ -11,7 +11,7 @@
     "react-native": "0.44.0",
     "react-native-elements": "^0.10.3",
     "react-native-sqlite-storage": "^3.2.2",
-    "react-native-vector-icons": "^4.0.0",
+    "react-native-vector-icons": "^4.1.0",
     "react-navigation": "^1.0.0-beta.9"
   },
   "devDependencies": {
@@ -19,6 +19,7 @@
     "babel-preset-react-native": "1.9.1",
     "eslint": "^3.18.0",
     "eslint-plugin-react": "^6.10.3",
-    "eslint-plugin-react-native": "^2.3.1"
+    "eslint-plugin-react-native": "^2.3.1",
+    "eslint-plugin-react-perf":"^2.0.5"
   }
 }

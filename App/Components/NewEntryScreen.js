@@ -85,10 +85,7 @@ export default class NewEntry extends React.Component {
         const jdate = this.state.jdate,
             lastYear = jdate.Year - 1,
             twoYearsBack = lastYear - 1,
-            daysOfMonth = [];
-        for (let i = 1; i < 31; i++) {
-            daysOfMonth.push(i);
-        }
+            daysOfMonth = Array.from({length: 30}, (v, i) => i + 1);
         return <ScrollView style={GeneralStyles.container}>
             {this.showWarning &&
                 <View style={{ flex: 1, backgroundColor: '#ff9' }}>

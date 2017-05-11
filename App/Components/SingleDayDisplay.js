@@ -15,6 +15,7 @@ export default class SingleDayDisplay extends Component {
         this.newOccasion = this.newOccasion.bind(this);
         this.showDateDetails = this.showDateDetails.bind(this);
         this.showProblems = this.showProblems.bind(this);
+        this.monthView = this.monthView.bind(this);
     }
     newEntry() {
         const { jdate, onUpdate, location, appData, isToday } = this.props;
@@ -23,6 +24,10 @@ export default class SingleDayDisplay extends Component {
     newOccasion() {
         const { jdate, onUpdate, appData } = this.props;
         this.navigate('NewOccasion', { jdate, onUpdate, appData });
+    }
+    monthView() {
+        const { jdate, onUpdate, appData } = this.props;
+        this.navigate('MonthView', { jdate, onUpdate, appData });
     }
     showDateDetails() {
         const { jdate, location } = this.props;
@@ -135,6 +140,12 @@ export default class SingleDayDisplay extends Component {
                             accessibilityLabel='Add a new Occasion for this date'
                             title='New Occasion'
                             onPress={this.newOccasion} />
+                        <Button
+                            color='#afb'
+                            style={styles.btn}
+                            accessibilityLabel='View Month'
+                            title='Month View'
+                            onPress={this.monthView} />
                     </View>
                 </View>
             </View >

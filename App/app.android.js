@@ -1,6 +1,6 @@
 import { AppRegistry } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import {HomeScreen} from './Components/HomeScreen';
+import { HomeScreen } from './Components/HomeScreen';
 import SettingsScreen from './Components/SettingsScreen';
 import NewOccasionScreen from './Components/NewOccasionScreen';
 import OccasionsScreen from './Components/OccasionsScreen';
@@ -12,6 +12,7 @@ import NewKavuahScreen from './Components/NewKavuahScreen';
 import DateDetailsScreen from './Components/DateDetailsScreen';
 import FindKavuahScreen from './Components/FindKavuahScreen';
 import FindLocationScreen from './Components/FindLocationScreen';
+import MontheViewScreen from './Components/MonthViewScreen';
 
 AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
     Home: { screen: HomeScreen },
@@ -25,5 +26,6 @@ AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
     FlaggedDates: { screen: FlaggedDatesScreen },
     DateDetails: { screen: DateDetailsScreen },
     FindKavuahs: { screen: FindKavuahScreen },
-    FindLocation: { screen: FindLocationScreen }
+    FindLocation: { screen: FindLocationScreen },
+    MonthView: { screen: MontheViewScreen }
 }));

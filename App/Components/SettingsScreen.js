@@ -34,12 +34,8 @@ export default class SettingsScreen extends Component {
         this.saveAndUpdate(appData);
     }
     render() {
-        const nums = [];
-        for (let i = 1; i < 24; i++) {
-            nums.push(i);
-        }
-
-        const sets = this.state.appData && this.state.appData.Settings,
+        const nums = Array.from({ length: 24 }, (v, i) => i + 1),
+            sets = this.state.appData && this.state.appData.Settings,
             location = sets && sets.location || Location.getJerusalem(),
             showOhrZeruah = setDefault(sets && sets.showOhrZeruah, true),
             keepThirtyOne = setDefault(sets && sets.keepThirtyOne, true),
@@ -64,12 +60,12 @@ export default class SettingsScreen extends Component {
                             onUpdate: this.saveAndUpdate,
                             appData: this.state.appData
                         })}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Icon name='edit-location' color='#484' size={35} />
-                        <Text style={GeneralStyles.textInput}>
-                            {location.Name}
-                        </Text>
-                    </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Icon name='edit-location' color='#484' size={35} />
+                            <Text style={GeneralStyles.textInput}>
+                                {location.Name}
+                            </Text>
+                        </View>
                     </TouchableHighlight>
                 </View>
                 <View style={GeneralStyles.formRow}>

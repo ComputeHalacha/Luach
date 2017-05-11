@@ -5,11 +5,16 @@ const GeneralStyles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff'
     },
-    header: {
+    headerView: {
         backgroundColor: '#99e',
-        color: '#eef',
         padding: 5,
         flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    headerText: {
+        color: '#eef',
         textAlign: 'center',
         fontWeight: 'bold',
         fontSize: 14

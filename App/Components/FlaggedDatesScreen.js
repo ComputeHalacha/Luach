@@ -34,7 +34,11 @@ export default class FlaggedDatesScreen extends Component {
         return (
             <ScrollView style={GeneralStyles.container}>
                 {(!this.isToday) &&
-                    <Text style={GeneralStyles.header}>{this.jdate.toString()}</Text>}
+                    <View style={GeneralStyles.headerView}>
+                        <Text style={GeneralStyles.headerText}>
+                            {this.jdate.toString()}</Text>
+                    </View>
+                }
                 <CustomList
                     data={this.state.problemOnahs}
                     nightDay={po => po.nightDay}

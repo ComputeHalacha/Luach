@@ -3,10 +3,8 @@ import { ScrollView, View, Text, Image, TextInput, TouchableHighlight } from 're
 import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Location from '../Code/JCal/Location';
-import { setDefault } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 import DataUtils from '../Code/Data/DataUtils';
-import CustomList from './CustomList';
 
 export default class FindLocation extends Component {
     static navigationOptions = {
@@ -51,7 +49,9 @@ export default class FindLocation extends Component {
             </View>
             {this.state.list.length > 0 &&
                 (<View>
-                    <Text style={GeneralStyles.header}>Select a location...</Text>
+                    <View style={GeneralStyles.headerView}>
+                        <Text style={GeneralStyles.headerText}>Select a location...</Text>
+                    </View>
                     {this.state.list.map(i => <View style={GeneralStyles.inItemButtonList}>
                         <TouchableHighlight
                             underlayColor='#afa'
@@ -78,6 +78,6 @@ export default class FindLocation extends Component {
                         style={GeneralStyles.emptyListImage} />
                 </View>)
             }
-        </ScrollView>
+        </ScrollView>;
     }
 }

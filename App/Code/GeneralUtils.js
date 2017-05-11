@@ -1,7 +1,4 @@
 import { PixelRatio, Dimensions } from 'react-native';
-import jDate from './JCal/jDate';
-
-export const Today = new jDate();
 
 /**Gets the current screen width in points */
 export function getScreenWidth() {

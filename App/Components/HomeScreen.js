@@ -1,9 +1,10 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableHighlight, Image, Modal, TextInput, BackHandler } from 'react-native';
 import { List, ListItem, Icon } from 'react-native-elements';
-import { Today, getScreenWidth, isSmallScreen } from '../Code/GeneralUtils';
+import { getScreenWidth, isSmallScreen } from '../Code/GeneralUtils';
 import Carousel from './Carousel/Carousel';
 import SingleDayDisplay from './SingleDayDisplay';
+import jDate from '../Code/JCal/jDate';
 import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
 import { UserOccasion } from '../Code/JCal/UserOccasion';
@@ -24,7 +25,6 @@ const Login = props =>
                     autoFocus={true}
                     secureTextEntry={true}
                     iosclearTextOnFocus={true} />
-
             </View>
         </View>
     </Modal>,
@@ -93,6 +93,13 @@ export class HomeScreen extends React.Component {
         else {
             this._initialShowing();
         }
+        //In case the day changed while the app was open
+        setInterval(() => {
+            const today = new jDate();
+            if (this.state.today.Abs !== today.Abs) {
+                this._goToDate(today, true);
+            }
+        }, 30000);
     }
     /**
     * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
@@ -127,16 +134,18 @@ export class HomeScreen extends React.Component {
         }
     }
     _initialShowing() {
+        const today = new jDate();
         AppData.upgradeDatabase();
 
         const appData = new AppData(),
-            daysList = this.getDaysList(Today, appData);
+            daysList = this.getDaysList(today, appData);
 
         //As we will be going to the database which takes some time, we set initial values for the state.
         this.state = {
             daysList: daysList,
             appData: appData,
-            currDate: Today,
+            today: today,
+            currDate: today,
             currLocation: Location.getJerusalem(),
             pageNumber: 1,
             showFlash: true
@@ -164,13 +173,15 @@ export class HomeScreen extends React.Component {
     _navigatedShowing(params) {
         //As this screen was navigated to from another screen, we will use the original appData.
         //We also allow another screen to naviate to any date by supplying a currDate property in the navigate props.
-        const appData = params.appData,
-            currDate = params.currDate || Today;
+        const today = new jDate(),
+            appData = params.appData,
+            currDate = params.currDate || today;
         //We don't need to use setState here as this function is only called from the constructor.
         this.state = {
             appData: appData,
             daysList: this.getDaysList(currDate, appData),
             currDate: currDate,
+            today: today,
             currLocation: appData.Settings.location,
             pageNumber: 1,
             showFlash: false,
@@ -188,10 +199,12 @@ export class HomeScreen extends React.Component {
             this.setFlash();
         }
     }
-    _goToDate(jdate) {
+    _goToDate(jdate, isToday) {
+        const today = isToday ? jdate : this.state.today;
         this.setState({
             daysList: this.getDaysList(jdate),
             currDate: jdate,
+            today: today,
             pageNumber: 1
         });
     }
@@ -227,7 +240,7 @@ export class HomeScreen extends React.Component {
             this.state.currDate.addSecularYears(-1) : this.state.currDate.addYears(-1));
     }
     goToday() {
-        this._goToDate(Today);
+        this._goToDate(this.state.today, true);
     }
     nextDay() {
         this._goToDate(this.state.currDate.addDays(1));
@@ -316,7 +329,7 @@ export class HomeScreen extends React.Component {
             flag={hasProbs}
             occasions={occasions}
             entries={entries}
-            isToday={Today.Abs === day.Abs}
+            isToday={this.state.today.Abs === day.Abs}
             appData={this.state.appData}
             navigate={this.navigate}
             onUpdate={this.updateAppData} />);
@@ -369,7 +382,7 @@ export class HomeScreen extends React.Component {
                             {(!isSmallScreen()) &&
                                 <TouchableHighlight underlayColor='#eef' onPress={this.goToday}>
                                     <View style={styles.navCenterView}>
-                                        {(this.state.currDate.Abs !== Today.Abs &&
+                                        {(this.state.currDate.Abs !== this.state.today.Abs &&
                                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                                 <Icon iconStyle={styles.navIcon} name='navigate-before' />
                                                 <Text style={{ color: '#565', fontSize: 13, fontWeight: 'bold' }}>TODAY</Text>
