@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import CustomList from './CustomList';
 import { GeneralStyles } from './styles';
 

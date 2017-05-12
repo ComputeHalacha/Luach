@@ -5,7 +5,7 @@ export function getScreenWidth() {
     return Dimensions.get('window').width;
 }
 
-/**Gets the current screen width in pixels */
+/**Is the current screen width less than 650 pixels? */
 export function isSmallScreen() {
     return (getScreenWidth() * PixelRatio.get()) < 650;
 }

@@ -11,6 +11,7 @@ const Today = new jDate();
 class Month {
     /**
      * @param {jDate | Date} date
+     * @param {AppData} appData
      */
     constructor(date, appData) {
         this.isJdate = date instanceof jDate;
@@ -139,12 +140,41 @@ export default class MonthViewScreen extends React.Component {
     goToday() {
         this.setState({ month: new Month(Today, this.appData) });
     }
+    getDayColumn(singleDay, index) {
+        const colWidth = parseInt(getScreenWidth() / 7),
+            jdate = singleDay && singleDay.jdate,
+            shabbos = jdate && jdate.DayOfWeek === 6 &&
+                jdate.getSedra(this.appData.Settings.location.Israel).map((s) =>
+                    s.eng).join('\n'),
+            holiday = jdate && jdate.getMajorHoliday();
+        return (<Col size={colWidth} key={index}>
+            {(jdate &&
+                <TouchableOpacity
+                    style={styles.singleDay}
+                    onPress={() =>
+                        this.navigate('Home', { currDate: jdate, appData: this.appData })}>
+                    <View style={[styles.singleDayView, { backgroundColor: singleDay.color || ((holiday || shabbos) ? '#eef' : null) }]}>
+                        <View style={styles.singleDayNumbersView}>
+                            <Text>{singleDay && Utils.toJNum(jdate.Day)}</Text>
+                            <Text>{singleDay && singleDay.sdate.getDate().toString()}</Text>
+                        </View>
+                        {(shabbos || holiday) &&
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                <Text style={{ fontSize: 9, textAlign: 'center' }}>
+                                    {holiday ? holiday : shabbos}</Text>
+                            </View>}
+                    </View>
+                </TouchableOpacity>)
+                ||
+                <View style={styles.singleDayBlank}></View>
+            }
+        </Col>);
+    }
     render() {
-        const weeks = this.state.month.getAllDays(),
-            colWidth = parseInt(getScreenWidth() / 7);
+        const weeks = this.state.month.getAllDays();
         return <View style={GeneralStyles.container}>
             <View style={styles.headerView}>
-                <Text style={GeneralStyles.headerText}>{this.state.month.toString()}</Text>
+                <Text style={styles.headerText}>{this.state.month.toString()}</Text>
             </View>
             <View style={{ flex: 1 }}>
                 <Grid>
@@ -166,32 +196,7 @@ export default class MonthViewScreen extends React.Component {
                     </Row>
                     {weeks.map((w, i) =>
                         <Row key={i}>
-                            {w.map((d, di) =>
-                                <Col size={colWidth} key={di}>
-                                    {(d &&
-                                        <TouchableOpacity
-                                            style={styles.singleDay}
-                                            onPress={() =>
-                                                this.navigate('Home', { currDate: d.jdate, appData: this.appData })}>
-                                            <View style={[styles.singleDayView, { backgroundColor: d.color }]}>
-                                                <View style={styles.singleDayNumbersView}>
-                                                    <Text>{d && Utils.toJNum(d.jdate.Day)}</Text>
-                                                    <Text>{d && d.sdate.getDate().toString()}</Text>
-                                                </View>
-                                                {d.jdate.DayOfWeek === 6 &&
-                                                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                                        <Text style={{ fontSize: 9, textAlign: 'center' }}>{d.jdate.getSedra(this.appData.Settings.location.Israel).map((s) =>
-                                                            s.eng).join('\n')}</Text>
-                                                    </View>
-                                                }
-
-                                            </View>
-                                        </TouchableOpacity>)
-                                        ||
-                                        <View style={styles.singleDayBlank}></View>
-                                    }
-                                </Col>
-                            )}
+                            {w.map((d, di) => this.getDayColumn(d, di))}
                         </Row>
                     )}
                 </Grid>
@@ -216,7 +221,7 @@ export default class MonthViewScreen extends React.Component {
                     </View>
                 </TouchableOpacity>
             </View>
-        </View >;
+        </View>;
     }
 }
 
@@ -226,7 +231,14 @@ const styles = StyleSheet.create({
         flex: 0,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 5
+        paddingTop: 5,
+        paddingBottom: 10
+    },
+    headerText: {
+        color: '#eef',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: 18
     },
     dayHeadView: {
         flex: 1,

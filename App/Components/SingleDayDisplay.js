@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Button, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
-
 /**
  * Display a home screen box for a single jewish date.
  */
@@ -77,24 +76,31 @@ export default class SingleDayDisplay extends Component {
                     {dailyInfoText}
                     <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start' }}>
-                        <View style={{ width: '75%', height: 75, flex: 0 }}>
+                        <View style={{ width: '55%', height: 75, flex: 0 }}>
                             <Text style={styles.location}>{'In ' + location.Name}</Text>
                             <Text>{'Sun Rises at ' + sunrise}</Text>
                             <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
                         </View>
-                        <TouchableWithoutFeedback
-                            onPress={this.showDateDetails}
-                            style={{
-                                flex: 0,
-                                height: 75,
-                                width: '25%',
-                                alignSelf: 'center'
-                            }}>
-                            <View style={{ alignItems: 'center' }}>
-                                <Icon color='#bbc' name='info' />
-                                <Text style={{ fontSize: 12, color: '#bbc' }}>Zmanim</Text>
-                            </View>
-                        </TouchableWithoutFeedback>
+                        <View style={{
+                            flex: 0,
+                            width: '45%',
+                            alignSelf: 'center',
+                            flexDirection: 'row',
+                            justifyContent: 'space-around'
+                        }}>
+                            <TouchableWithoutFeedback onPress={this.showDateDetails}>
+                                <View style={{ alignItems: 'center' }}>
+                                    <Icon color='#bbc' name='info' />
+                                    <Text style={{ fontSize: 12, color: '#bbc' }}>Zmanim</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={this.monthView}>
+                                <View style={{ alignItems: 'center'}}>
+                                    <Icon color='#bbc' name='calendar' type='octicon' />
+                                    <Text style={{ fontSize: 12, color: '#bbc', textAlign: 'center' }}>{'Month View'}</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
                     </View>
                     {entries && entries.length > 0 &&
                         <View style={styles.additionsViews}>
@@ -125,7 +131,7 @@ export default class SingleDayDisplay extends Component {
                     }
                     <View style={{
                         flexDirection: 'row',
-                        justifyContent: 'space-between',
+                        justifyContent: 'space-around',
                         marginTop: 10
                     }}>
                         <Button
@@ -140,12 +146,6 @@ export default class SingleDayDisplay extends Component {
                             accessibilityLabel='Add a new Occasion for this date'
                             title='New Occasion'
                             onPress={this.newOccasion} />
-                        <Button
-                            color='#afb'
-                            style={styles.btn}
-                            accessibilityLabel='View Month'
-                            title='Month View'
-                            onPress={this.monthView} />
                     </View>
                 </View>
             </View >

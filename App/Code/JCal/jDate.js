@@ -172,7 +172,7 @@ export default class jDate {
     }
     addSecularMonths(months) {
         const secDate = this.getDate();
-        return new jDate (new Date(secDate.setMonth(secDate.getMonth() + months)));
+        return new jDate(new Date(secDate.setMonth(secDate.getMonth() + months)));
     }
     addSecularYears(years) {
         const secDate = this.getDate();
@@ -274,7 +274,13 @@ export default class jDate {
 
     /**Gets an array[string] of holidays, fasts and any other special specifications for the current Jewish date.*/
     getHolidays(israel, hebrew) {
-        return jDate.getHoldidays(this, israel, hebrew);
+        return jDate.getHolidays(this, israel, hebrew);
+    }
+    /**
+     * Gets a string with the name of a major holidays or fast
+     */
+    getMajorHoliday(israel, hebrew) {
+        return jDate.getMajorHoliday(this, israel, hebrew);
     }
 
     /**Is the current Jewish Date the day before a yomtov that contains a Friday?*/
@@ -650,8 +656,10 @@ export default class jDate {
         return jDate.isJdLeapY(year) ? 13 : 12;
     }
 
-    /**Gets an Array[String] of holidays, fasts and any other special specifications for the given Jewish date.*/
-    static getHoldidays(jd, israel, hebrew) {
+    /**
+     * Gets an Array[String] of holidays, fasts and any other special specifications for the given Jewish date.
+     */
+    static getHolidays(jd, israel, hebrew) {
         const list = [],
             jYear = jd.Year,
             jMonth = jd.Month,
@@ -904,5 +912,79 @@ export default class jDate {
         }
 
         return list;
+    }
+    /**
+     * Gets a String with the name of a major holidays or fast
+     */
+    static getMajorHoliday(jd, israel, hebrew) {
+        const jYear = jd.Year,
+            jMonth = jd.Month,
+            jDay = jd.Day,
+            dayOfWeek = jd.getDayOfWeek(),
+            isLeapYear = jDate.isJdLeapY(jYear);
+
+        switch (jMonth) {
+            case 1: //Nissan
+                if (jDay >= 15 && jDay <= (israel ? 21 : 22))
+                    return (!hebrew ? 'Pesach' : 'פסח');
+                break;
+            case 2: //Iyar
+                if (jDay === 18)
+                    return (!hebrew ? 'Lag BaOmer' : 'ל"ג בעומר');
+                break;
+            case 3: //Sivan
+                if (jDay === 6 || (!israel && jDay === 7))
+                    return (!hebrew ? 'Shavuos' : 'שבועות');
+                break;
+            case 4: //Tamuz
+                if ((jDay === 17 && dayOfWeek !== 6) || (jDay === 18 && dayOfWeek === 0)) {
+                    return (!hebrew ? '17 Tammuz' : 'י"ז בתמוז');
+                }
+                break;
+            case 5: //Av
+                if ((jDay === 9 && dayOfWeek !== 6) || (jDay === 10 && dayOfWeek === 0))
+                    return (!hebrew ? 'Tisha B\'Av' : 'תשעה באב');
+                break;
+            case 7: //Tishrei
+                if (jDay === 1 || jDay === 2)
+                    return (!hebrew ? 'Rosh Hashana' : 'ראש השנה');
+                else if ((jDay === 3 && dayOfWeek !== 6) || (jDay === 4 && dayOfWeek === 0))
+                    return (!hebrew ? 'Tzom Gedalya' : 'צום גדליה');
+                else if (jDay === 10)
+                    return (!hebrew ? 'Yom Kippur' : 'יום כיפור');
+                else if (jDay >= 15 && jDay <= 21)
+                    return (!hebrew ? 'Sukkos' : 'סוכות');
+                else if (jDay === 22) {
+                    if (israel) {
+                        return (!hebrew ? 'Simchas Torah' : 'שמחת תורה');
+                    }
+                    else {
+                        return (!hebrew ? 'Shmini Atzeres' : 'שמיני עצרת');
+                    }
+                }
+                else if (jDay === 23 && !israel)
+                    return (!hebrew ? 'Simchas Torah' : 'שמחת תורה');
+                break;
+            case 9: //Kislev
+                if (jDay >= 25)
+                    return (!hebrew ? 'Chanuka' : 'חנוכה');
+                break;
+            case 10: //Teves
+                if (jDay <= jDate.isShortKislev(jYear) ? 3 : 2)
+                    return (!hebrew ? 'Chanuka' : 'חנוכה');
+                else if (jDay === 10)
+                    return (!hebrew ? 'Asara B\'Teves' : 'י\' בטבת');
+                break;
+            case 12: //Both Adars
+            case 13:
+                //The "real" Adar: the only one in a non-leap-year or Adar Sheini
+                if (jMonth === 13 || !isLeapYear) {
+                    if ((jDay === 11 && dayOfWeek === 4) || (jDay === 13 && dayOfWeek !== 6))
+                        return (!hebrew ? 'Taanis Esther' : 'תענית אסתר');
+                    else if (jDay === 14 || jDay === 15)
+                        return (!hebrew ? 'Purim' : 'פורים');
+                }
+                break;
+        }
     }
 }
