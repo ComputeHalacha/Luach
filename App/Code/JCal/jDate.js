@@ -970,7 +970,7 @@ export default class jDate {
                     return (!hebrew ? 'Chanuka' : 'חנוכה');
                 break;
             case 10: //Teves
-                if (jDay <= jDate.isShortKislev(jYear) ? 3 : 2)
+                if (jDay <= 2 || (jDay === 3 && jDate.isShortKislev(jYear)))
                     return (!hebrew ? 'Chanuka' : 'חנוכה');
                 else if (jDay === 10)
                     return (!hebrew ? 'Asara B\'Teves' : 'י\' בטבת');

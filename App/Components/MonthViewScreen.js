@@ -4,6 +4,7 @@ import { Icon, Grid, Row, Col } from 'react-native-elements';
 import { getScreenWidth } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 import Utils from '../Code/JCal/Utils';
+import { NightDay } from '../Code/Chashavshavon/Onah';
 import { GeneralStyles } from './styles';
 
 const Today = new jDate();
@@ -16,6 +17,7 @@ class Month {
     constructor(date, appData) {
         this.isJdate = date instanceof jDate;
         this.appData = appData;
+
         //Set the date to the first of the month.
         if (this.isJdate) {
             this.date = new jDate(date.Year, date.Month, 1);
@@ -25,39 +27,84 @@ class Month {
         }
         this.getSingleDay = this.getSingleDay.bind(this);
     }
-    toString() {
-        if (this.isJdate) {
-            return Utils.jMonthsEng[this.date.Month] + ' ' +
-                this.date.Year.toString();
+    static toString(weeks, isJdate) {
+        let txt = '',
+            firstWeek = weeks[0],
+            firstDay = firstWeek[firstWeek.findIndex(d => d)],
+            firstDayJdate = firstDay.jdate,
+            firstDaySdate = firstDay.sdate,
+            lastWeek = weeks[weeks.length - 1],
+            lastDay = lastWeek[6] || lastWeek[lastWeek.findIndex(d => !d) - 1],
+            lastDayJdate = lastDay.jdate,
+            lastDaySdate = lastDay.sdate;
+        if (isJdate) {
+            txt = Utils.jMonthsEng[firstDayJdate.Month] + ' ' +
+                firstDayJdate.Year.toString() + ' / ' +
+                Utils.sMonthsEng[firstDaySdate.getMonth()] +
+                (firstDaySdate.getMonth() !== lastDaySdate.getMonth() ?
+                    ' - ' + Utils.sMonthsEng[lastDaySdate.getMonth()] : '') +
+                ' ' + lastDaySdate.getFullYear().toString();
         }
         else {
-            return Utils.sMonthsEng[this.date.getMonth()] + ' ' +
-                this.date.getFullYear().toString();
+            txt = Utils.sMonthsEng[firstDaySdate.getMonth()] + ' ' +
+                lastDaySdate.getFullYear().toString() +
+                Utils.jMonthsEng[firstDayJdate.Month] + ' ' +
+                (firstDayJdate.Month !== lastDayJdate.Month ?
+                    ' - ' + Utils.jMonthsEng[lastDayJdate.Month] : '') +
+                ' ' + lastDayJdate.Year.toString();
         }
+        return txt;
     }
     /**
      * Gets a 2 dimentional array for all the days in the month grouped by week.
      * Format is [weeks][days] where days are each an object {jdate, sdate, color, isToday}.
      */
     getAllDays() {
-        return this.isJdate ?
+        const weeks = this.isJdate ?
             this.getAllDaysJdate() : this.getAllDaysSdate();
+
+        if (weeks[0].findIndex(d => d) === -1) {
+            weeks.shift();
+        }
+        if (weeks[weeks.length - 1].findIndex(d => d) === -1) {
+            weeks.pop();
+        }
+        return weeks;
     }
     getSingleDay(date) {
         const jdate = (date instanceof jDate && date) || new jDate(date),
-            sdate = (date instanceof Date && date) || date.getDate();
+            sdate = (date instanceof Date && date) || date.getDate(),
+            entryColor = '#fdd',
+            probColor = '#ffa';
 
-        let color = null;
-        if (this.appData.EntryList.list.some(e => e.date.Abs === jdate.Abs)) {
-            color = '#fee';
+        let colorNight, colorDay, hasProb, hasEntry;
+        if (this.appData.EntryList.list.some(e =>
+            e.date.Abs === jdate.Abs && e.nightDay === NightDay.Night)) {
+            colorNight = entryColor;
+            hasEntry = true;
         }
-        else if (this.appData.ProblemOnahs.some(po => po.jdate.Abs === jdate.Abs)) {
-            color = '#fe9';
+        else if (this.appData.ProblemOnahs.some(po =>
+            po.jdate.Abs === jdate.Abs && po.nightDay === NightDay.Night)) {
+            colorNight = probColor;
+            hasProb = true;
+        }
+        if (this.appData.EntryList.list.some(e =>
+            e.date.Abs === jdate.Abs && e.nightDay === NightDay.Day)) {
+            colorDay = entryColor;
+            hasEntry = true;
+        }
+        else if (this.appData.ProblemOnahs.some(po =>
+            po.jdate.Abs === jdate.Abs && po.nightDay === NightDay.Day)) {
+            colorDay = probColor;
+            hasProb = true;
         }
         return {
-            jdate: jdate,
-            sdate: sdate,
-            color: color,
+            jdate,
+            sdate,
+            colorNight,
+            colorDay,
+            hasEntry,
+            hasProb,
             istoday: jdate.Abs === Today.Abs
         };
     }
@@ -140,6 +187,19 @@ export default class MonthViewScreen extends React.Component {
     goToday() {
         this.setState({ month: new Month(Today, this.appData) });
     }
+    get flag() {
+        return <View style={{
+            backgroundColor: '#ff000055',
+            alignItems: 'center',
+            borderRadius: 40,
+            padding: 3
+        }}>
+            <Icon
+                size={11}
+                name='flag'
+                color={'#ffffff88'} />
+        </View>;
+    }
     getDayColumn(singleDay, index) {
         const colWidth = parseInt(getScreenWidth() / 7),
             jdate = singleDay && singleDay.jdate,
@@ -151,18 +211,51 @@ export default class MonthViewScreen extends React.Component {
             {(jdate &&
                 <TouchableOpacity
                     style={styles.singleDay}
-                    onPress={() =>
-                        this.navigate('Home', { currDate: jdate, appData: this.appData })}>
-                    <View style={[styles.singleDayView, { backgroundColor: singleDay.color || ((holiday || shabbos) ? '#eef' : null) }]}>
-                        <View style={styles.singleDayNumbersView}>
-                            <Text>{singleDay && Utils.toJNum(jdate.Day)}</Text>
-                            <Text>{singleDay && singleDay.sdate.getDate().toString()}</Text>
+                    onPress={() => {
+                        if (singleDay.hasProb) {
+                            this.navigate('FlaggedDates', { jdate, appData: this.appData });
+                        }
+                        else {
+                            this.navigate('Home', { currDate: jdate, appData: this.appData });
+                        }
+                    }}>
+                    <View style={[styles.singleDayView, { backgroundColor: ((holiday || shabbos) ? '#eef' : '#fff') }]}>
+                        {singleDay.colorNight &&
+                            <View style={{
+                                position: 'absolute',
+                                height: '100%',
+                                width: '50%',
+                                backgroundColor: singleDay.colorNight,
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                {singleDay.hasProb && this.flag}
+                            </View>
+                        }
+                        {singleDay.colorDay &&
+                            <View style={{
+                                position: 'absolute',
+                                height: '100%',
+                                width: '50%',
+                                left: '50%',
+                                backgroundColor: singleDay.colorDay,
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                {singleDay.hasProb && this.flag}
+                            </View>
+                        }
+                        <View style={styles.singleDayTextContent}>
+                            <View style={styles.singleDayNumbersView}>
+                                <Text>{singleDay && Utils.toJNum(jdate.Day)}</Text>
+                                <Text>{singleDay && singleDay.sdate.getDate().toString()}</Text>
+                            </View>
+                            {(shabbos || holiday) &&
+                                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text style={{ fontSize: 9, textAlign: 'center' }}>
+                                        {holiday ? holiday : shabbos}</Text>
+                                </View>}
                         </View>
-                        {(shabbos || holiday) &&
-                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ fontSize: 9, textAlign: 'center' }}>
-                                    {holiday ? holiday : shabbos}</Text>
-                            </View>}
                     </View>
                 </TouchableOpacity>)
                 ||
@@ -174,7 +267,7 @@ export default class MonthViewScreen extends React.Component {
         const weeks = this.state.month.getAllDays();
         return <View style={GeneralStyles.container}>
             <View style={styles.headerView}>
-                <Text style={styles.headerText}>{this.state.month.toString()}</Text>
+                <Text style={styles.headerText}>{Month.toString(weeks, this.state.month.isJdate)}</Text>
             </View>
             <View style={{ flex: 1 }}>
                 <Grid>
@@ -204,20 +297,20 @@ export default class MonthViewScreen extends React.Component {
             <View style={styles.footerBar}>
                 <TouchableOpacity onPress={this.goPrev}>
                     <View>
-                        <Icon name='arrow-back' />
-                        <Text>Previous</Text>
+                        <Icon name='arrow-back' color='#aaa' size={15} />
+                        <Text style={styles.footerBarText}>Previous Month</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.goToday}>
                     <View>
-                        <Icon name='view-carousel' />
-                        <Text>Today</Text>
+                        <Icon color='#a77' name='view-carousel' />
+                        <Text style={styles.footerBarText} >Today</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.goNext}>
                     <View>
-                        <Icon name='arrow-forward' />
-                        <Text>Next</Text>
+                        <Icon color='#aaa' name='arrow-forward' size={15} />
+                        <Text style={styles.footerBarText} >Next Month</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -261,11 +354,19 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ddd'
     },
+    singleDayTextContent: {
+        position: 'absolute',
+        padding: 6,
+        backgroundColor: 'rgba(0,0,0,0)',
+        width: '100%',
+        height: '100%',
+    },
     singleDayView: {
         flex: 1,
         borderWidth: 1,
         borderColor: '#ddd',
-        padding: 5
+        width: '100%',
+        height: '100%',
     },
     singleDayNumbersView: {
         flexDirection: 'row',
@@ -276,6 +377,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#999'
-    }
+        backgroundColor: '#dde',
+        padding: 8
+    },
+    footerBarText: { color: '#999', fontSize: 12 }
 });
