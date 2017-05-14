@@ -12,7 +12,7 @@ const Today = new jDate();
 
 export default class MonthViewScreen extends React.Component {
     static navigationOptions = () => ({
-        title: 'View Full Month'
+        title: 'Full Month View'
     });
     constructor(props) {
         super(props);
@@ -27,6 +27,7 @@ export default class MonthViewScreen extends React.Component {
         this.goPrev = this.goPrev.bind(this);
         this.goNext = this.goNext.bind(this);
         this.goToday = this.goToday.bind(this);
+        this.toggleMonthType = this.toggleMonthType.bind(this);
     }
     goPrev() {
         const currMonth = this.state.month;
@@ -49,6 +50,14 @@ export default class MonthViewScreen extends React.Component {
                 type='ionicon'
                 color={nightDay === NightDay.Night ? '#ffb' : '#ff000030'} />
         </View>;
+    }
+    toggleMonthType() {
+        if (this.state.month.isJdate) {
+            this.setState({ month: new Month(this.state.month.date.getDate(), this.appData) });
+        }
+        else {
+            this.setState({ month: new Month(new jDate(this.state.month.date), this.appData) });
+        }
     }
     getDayColumn(singleDay, index) {
         const colWidth = parseInt(getScreenWidth() / 7),
@@ -128,6 +137,9 @@ export default class MonthViewScreen extends React.Component {
         return <View style={GeneralStyles.container}>
             <View style={styles.headerView}>
                 <Text style={styles.headerText}>{Month.toString(weeks, this.state.month.isJdate)}</Text>
+                <TouchableOpacity onPress={this.toggleMonthType}>
+                    <Text style={styles.monthToggle}>{(this.state.month.isJdate ? 'Secular ' : 'Jewish ')}</Text>
+                </TouchableOpacity>
             </View>
             <View style={{ flex: 1, backgroundColor: '#ddd' }}>
                 <Grid>
@@ -157,20 +169,20 @@ export default class MonthViewScreen extends React.Component {
             <View style={styles.footerBar}>
                 <TouchableOpacity onPress={this.goPrev}>
                     <View>
-                        <Icon name='arrow-back' color='#aaa' size={15} />
-                        <Text style={styles.footerBarText}>Previous Month</Text>
+                        <Icon name='arrow-back' color='#888' size={15} />
+                        <Text style={styles.footerBarText}>Previous</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.goToday}>
                     <View>
-                        <Icon color='#a77' name='view-carousel' />
+                        <Icon color='#779' name='view-carousel' />
                         <Text style={styles.footerBarText} >Today</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.goNext}>
                     <View>
-                        <Icon color='#aaa' name='arrow-forward' size={15} />
-                        <Text style={styles.footerBarText} >Next Month</Text>
+                        <Icon color='#888' name='arrow-forward' size={15} />
+                        <Text style={styles.footerBarText} >  Next  </Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -183,15 +195,25 @@ const styles = StyleSheet.create({
         backgroundColor: '#99e',
         flex: 0,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         paddingTop: 5,
-        paddingBottom: 10
+        paddingBottom: 10,
+        flexDirection: 'row'
     },
     headerText: {
         color: '#eef',
         textAlign: 'center',
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 18,
+        paddingLeft: 10
+    },
+    monthToggle: {
+        fontSize: 11,
+        padding: 5,
+        marginRight: 10,
+        backgroundColor: '#aaf',
+        color: '#00f',
+        borderRadius: 6
     },
     dayHeadView: {
         flex: 1,
@@ -237,7 +259,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '#dde',
-        padding: 8
+        paddingLeft: 8,
+        paddingRight: 8,
+        borderTopWidth: 1,
+        borderColor: '#aaa'
     },
-    footerBarText: { color: '#999', fontSize: 12 }
+    footerBarText: { color: '#777', fontSize: 12 }
 });

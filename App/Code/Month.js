@@ -20,7 +20,12 @@ export default class Month {
             this.date = new jDate(date.Year, date.Month, 1);
         }
         else {
-            this.date = date.setDate(1);
+            if (date.getDate() === 1) {
+                this.date = date;
+            }
+            else {
+                this.date = new Date(date.getFullYear(), date.getMonth(), 1);
+            }
         }
         this.getSingleDay = this.getSingleDay.bind(this);
     }
@@ -44,7 +49,7 @@ export default class Month {
         }
         else {
             txt = Utils.sMonthsEng[firstSdate.getMonth()] + ' ' +
-                lastSdate.getFullYear().toString() +
+                lastSdate.getFullYear().toString() + ' / ' +
                 Utils.jMonthsEng[firstJdate.Month] + ' ' +
                 (firstJdate.Month !== lastJdate.Month ?
                     ' - ' + Utils.jMonthsEng[lastJdate.Month] : '') +
@@ -61,9 +66,9 @@ export default class Month {
         return this.isJdate ?
             this.getAllDaysJdate() : this.getAllDaysSdate();
     }
-    getSingleDay(date) {
-        const jdate = (date instanceof jDate && date) || new jDate(date),
-            sdate = (date instanceof Date && date) || date.getDate(),
+    getSingleDay(ambiDate) {
+        const jdate = (ambiDate instanceof jDate && ambiDate) || new jDate(ambiDate),
+            sdate = (ambiDate instanceof Date && ambiDate) || ambiDate.getDate(),
             hasEntryNight = this.appData.EntryList.list.some(e =>
                 e.date.Abs === jdate.Abs && e.nightDay === NightDay.Night),
             hasProbNight = this.appData.ProblemOnahs.some(po =>
@@ -83,30 +88,32 @@ export default class Month {
     }
     getAllDaysJdate() {
         const daysInMonth = jDate.daysJMonth(this.date.Year, this.date.Month),
-            weeks = [Array(7)];
+            weeks = [new Array(7).fill(null)];
         for (let day = 1; day <= daysInMonth; day++) {
             const jdate = new jDate(this.date.Year, this.date.Month, day),
                 dow = jdate.DayOfWeek;
             weeks[weeks.length - 1][dow] = this.getSingleDay(jdate);
             if (dow === 6 && day < daysInMonth) {
                 //We will need a new week for the following day.
-                weeks.push(Array(7));
+                weeks.push(Array(7).fill(null));
             }
         }
         return weeks;
     }
     getAllDaysSdate() {
-        const weeks = [Array(7)],
+        const weeks = [Array(7).fill(null)],
             month = this.date.getMonth();
-        for (let currDay = this.date;
-            currDay.getMonth() === month;
-            currDay = new Date(currDay.setDate(currDay.getDate() + 1))) {
-            const dow = currDay.getDay();
-            weeks[weeks.length - 1][dow] = this.getSingleDay(currDay);
+        for (let sdate = new Date(this.date); sdate.getMonth() === month; sdate.setDate(sdate.getDate() + 1)) {
+            const dow = sdate.getDay();
+            weeks[weeks.length - 1][dow] = this.getSingleDay(new Date(sdate));
             if (dow === 6) {
                 //We will need a new week for the following day.
-                weeks.push(Array(7));
+                weeks.push(Array(7).fill(null));
             }
+        }
+        //If the month ended with a shabbos, the last added week may be empty.
+        if (!weeks[weeks.length - 1].some(day => day)) {
+            weeks.pop();
         }
         return weeks;
     }
@@ -115,7 +122,10 @@ export default class Month {
             return new Month(this.date.addMonths(-1), this.appData);
         }
         else {
-            return new Month(this.date.setMonth(-1), this.appData);
+            return new Month(new Date(
+                this.date.getFullYear(),
+                this.date.getMonth() - 1, 1),
+                this.appData);
         }
     }
     get next() {
@@ -123,7 +133,10 @@ export default class Month {
             return new Month(this.date.addMonths(1), this.appData);
         }
         else {
-            return new Month(this.date.setMonth(1), this.appData);
+            return new Month(new Date(
+                this.date.getFullYear(),
+                this.date.getMonth() + 1, 1),
+                this.appData);
         }
     }
 }
