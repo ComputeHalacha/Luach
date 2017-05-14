@@ -4,143 +4,11 @@ import { Icon, Grid, Row, Col } from 'react-native-elements';
 import { getScreenWidth } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 import Utils from '../Code/JCal/Utils';
+import Month from '../Code/Month';
 import { NightDay } from '../Code/Chashavshavon/Onah';
 import { GeneralStyles } from './styles';
 
 const Today = new jDate();
-
-class Month {
-    /**
-     * @param {jDate | Date} date
-     * @param {AppData} appData
-     */
-    constructor(date, appData) {
-        this.isJdate = date instanceof jDate;
-        this.appData = appData;
-
-        //Set the date to the first of the month.
-        if (this.isJdate) {
-            this.date = new jDate(date.Year, date.Month, 1);
-        }
-        else {
-            this.date = date.setDate(1);
-        }
-        this.getSingleDay = this.getSingleDay.bind(this);
-    }
-    static toString(weeks, isJdate) {
-        let txt = '',
-            firstWeek = weeks[0],
-            firstDay = firstWeek[firstWeek.findIndex(d => d)],
-            firstDayJdate = firstDay.jdate,
-            firstDaySdate = firstDay.sdate,
-            lastWeek = weeks[weeks.length - 1],
-            lastDay = lastWeek[6] || lastWeek[lastWeek.findIndex(d => !d) - 1],
-            lastDayJdate = lastDay.jdate,
-            lastDaySdate = lastDay.sdate;
-        if (isJdate) {
-            txt = Utils.jMonthsEng[firstDayJdate.Month] + ' ' +
-                firstDayJdate.Year.toString() + ' / ' +
-                Utils.sMonthsEng[firstDaySdate.getMonth()] +
-                (firstDaySdate.getMonth() !== lastDaySdate.getMonth() ?
-                    ' - ' + Utils.sMonthsEng[lastDaySdate.getMonth()] : '') +
-                ' ' + lastDaySdate.getFullYear().toString();
-        }
-        else {
-            txt = Utils.sMonthsEng[firstDaySdate.getMonth()] + ' ' +
-                lastDaySdate.getFullYear().toString() +
-                Utils.jMonthsEng[firstDayJdate.Month] + ' ' +
-                (firstDayJdate.Month !== lastDayJdate.Month ?
-                    ' - ' + Utils.jMonthsEng[lastDayJdate.Month] : '') +
-                ' ' + lastDayJdate.Year.toString();
-        }
-        return txt;
-    }
-    /**
-     * Gets a 2 dimentional array for all the days in the month grouped by week.
-     * Format is [weeks][days] where days are each an object {jdate, sdate, color, isToday}.
-     */
-    getAllDays() {
-        const weeks = this.isJdate ?
-            this.getAllDaysJdate() : this.getAllDaysSdate();
-
-        if (weeks[0].findIndex(d => d) === -1) {
-            weeks.shift();
-        }
-        if (weeks[weeks.length - 1].findIndex(d => d) === -1) {
-            weeks.pop();
-        }
-        return weeks;
-    }
-    getSingleDay(date) {
-        const jdate = (date instanceof jDate && date) || new jDate(date),
-            sdate = (date instanceof Date && date) || date.getDate(),
-            hasEntryNight = this.appData.EntryList.list.some(e =>
-                e.date.Abs === jdate.Abs && e.nightDay === NightDay.Night),
-            hasProbNight = this.appData.ProblemOnahs.some(po =>
-                po.jdate.Abs === jdate.Abs && po.nightDay === NightDay.Night),
-            hasEntryDay = this.appData.EntryList.list.some(e =>
-                e.date.Abs === jdate.Abs && e.nightDay === NightDay.Day),
-            hasProbDay = this.appData.ProblemOnahs.some(po =>
-                po.jdate.Abs === jdate.Abs && po.nightDay === NightDay.Day);
-        return {
-            jdate,
-            sdate,
-            hasEntryNight,
-            hasEntryDay,
-            hasProbNight,
-            hasProbDay,
-            istoday: jdate.Abs === Today.Abs
-        };
-    }
-    getAllDaysJdate() {
-        const daysInMonth = jDate.daysJMonth(this.date.Year, this.date.Month),
-            numberOfWeeks = this.date.DayOfWeek >= 5 && daysInMonth > 29 ? 6 : 5,
-            weeks = Array.from({ length: numberOfWeeks }, () => new Array(7).fill(null));
-
-        for (let day = 1, week = 0; day <= daysInMonth; day++) {
-            const jdate = new jDate(this.date.Year, this.date.Month, day);
-            weeks[week][jdate.DayOfWeek] = this.getSingleDay(jdate);
-            if (jdate.DayOfWeek === 6) {
-                week++;
-            }
-        }
-        return weeks;
-    }
-    getAllDaysSdate() {
-        const weeks = [Array(7)];
-        let month = this.date.getMonth(),
-            currWeek = 0;
-        for (let currDay = this.date;
-            currDay.getMonth() === month;
-            currDay = new Date(currDay.setDate(currDay.getDate() + 1))) {
-
-            const dow = currDay.getDay();
-            weeks[currWeek][dow] = this.getSingleDay(currDay);
-            if (dow === 6) {
-                //We will need a new week for the following day.
-                weeks.push(Array(7));
-                currWeek++;
-            }
-        }
-        return weeks;
-    }
-    get prev() {
-        if (this.isJdate) {
-            return new Month(this.date.addMonths(-1), this.appData);
-        }
-        else {
-            return new Month(this.date.setMonth(-1), this.appData);
-        }
-    }
-    get next() {
-        if (this.isJdate) {
-            return new Month(this.date.addMonths(1), this.appData);
-        }
-        else {
-            return new Month(this.date.setMonth(1), this.appData);
-        }
-    }
-}
 
 export default class MonthViewScreen extends React.Component {
     static navigationOptions = () => ({
@@ -185,6 +53,7 @@ export default class MonthViewScreen extends React.Component {
     getDayColumn(singleDay, index) {
         const colWidth = parseInt(getScreenWidth() / 7),
             jdate = singleDay && singleDay.jdate,
+            isToday = jdate && jdate.Abs === Today.Abs,
             shabbos = jdate && jdate.DayOfWeek === 6 &&
                 jdate.getSedra(this.israel).map((s) =>
                     s.eng).join('\n'),
@@ -207,8 +76,8 @@ export default class MonthViewScreen extends React.Component {
                     }}>
                     <View style={[styles.singleDayView, {
                         backgroundColor: ((holiday || shabbos) ? '#eef' : '#fff'),
-                        borderColor: singleDay.istoday ? '#55f' : '#ddd',
-                        borderWidth: singleDay.istoday ? 2 : 1,
+                        borderColor: isToday ? '#55f' : '#ddd',
+                        borderWidth: isToday ? 2 : 1,
                         borderRadius: 5
                     }]}>
                         {specialColorNight &&
