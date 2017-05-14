@@ -521,7 +521,8 @@ export default class jDate {
     /**Gets the absolute date of the given javascript Date object.*/
     static absSd(date) {
         const msPerDay = 86400000, //The number of milliseconds per each day
-            numFullDays = Math.floor(date.valueOf() / msPerDay), //The number of full days since 1/1/1970.
+            dateMs = date.valueOf() - (date.getTimezoneOffset() * 60000), //The number of ms since 1/1/1970.
+            numFullDays = Math.floor(dateMs / msPerDay), //The number of full days since 1/1/1970.
             startAbs = 719163; //The Absolute Date for the zero day of the js Date object - 1/1/1970.,
 
         return startAbs + numFullDays;
@@ -933,7 +934,7 @@ export default class jDate {
                     return (!hebrew ? 'Lag BaOmer' : 'ל"ג בעומר');
                 break;
             case 3: //Sivan
-                if (jDay === 6 || (!israel && jDay === 7))
+                if (jDay === 6 || ((!israel) && jDay === 7))
                     return (!hebrew ? 'Shavuos' : 'שבועות');
                 break;
             case 4: //Tamuz

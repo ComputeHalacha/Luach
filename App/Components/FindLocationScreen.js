@@ -52,20 +52,21 @@ export default class FindLocation extends Component {
                     <View style={GeneralStyles.headerView}>
                         <Text style={GeneralStyles.headerText}>Select a location...</Text>
                     </View>
-                    {this.state.list.map(i => <View style={GeneralStyles.inItemButtonList}>
-                        <TouchableHighlight
-                            underlayColor='#afa'
-                            style={{ flex: 1 }}
-                            onPress={() => this.update(i)}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Icon
-                                    name='forward'
-                                    color='#393'
-                                    size={25} />
-                                <Text> {i.Name}</Text>
-                            </View>
-                        </TouchableHighlight>
-                    </View>)
+                    {this.state.list.map((location, index) =>
+                        <View key={index} style={GeneralStyles.inItemButtonList}>
+                            <TouchableHighlight
+                                underlayColor='#afa'
+                                style={{ flex: 1 }}
+                                onPress={() => this.update(location)}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Icon
+                                        name='forward'
+                                        color='#393'
+                                        size={25} />
+                                    <Text> {location.Name}</Text>
+                                </View>
+                            </TouchableHighlight>
+                        </View>)
                     }
                 </View>)
                 ||

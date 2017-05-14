@@ -74,37 +74,21 @@ class Month {
     getSingleDay(date) {
         const jdate = (date instanceof jDate && date) || new jDate(date),
             sdate = (date instanceof Date && date) || date.getDate(),
-            entryColor = '#fdd',
-            probColor = '#ffa';
-
-        let colorNight, colorDay, hasProb, hasEntry;
-        if (this.appData.EntryList.list.some(e =>
-            e.date.Abs === jdate.Abs && e.nightDay === NightDay.Night)) {
-            colorNight = entryColor;
-            hasEntry = true;
-        }
-        else if (this.appData.ProblemOnahs.some(po =>
-            po.jdate.Abs === jdate.Abs && po.nightDay === NightDay.Night)) {
-            colorNight = probColor;
-            hasProb = true;
-        }
-        if (this.appData.EntryList.list.some(e =>
-            e.date.Abs === jdate.Abs && e.nightDay === NightDay.Day)) {
-            colorDay = entryColor;
-            hasEntry = true;
-        }
-        else if (this.appData.ProblemOnahs.some(po =>
-            po.jdate.Abs === jdate.Abs && po.nightDay === NightDay.Day)) {
-            colorDay = probColor;
-            hasProb = true;
-        }
+            hasEntryNight = this.appData.EntryList.list.some(e =>
+                e.date.Abs === jdate.Abs && e.nightDay === NightDay.Night),
+            hasProbNight = this.appData.ProblemOnahs.some(po =>
+                po.jdate.Abs === jdate.Abs && po.nightDay === NightDay.Night),
+            hasEntryDay = this.appData.EntryList.list.some(e =>
+                e.date.Abs === jdate.Abs && e.nightDay === NightDay.Day),
+            hasProbDay = this.appData.ProblemOnahs.some(po =>
+                po.jdate.Abs === jdate.Abs && po.nightDay === NightDay.Day);
         return {
             jdate,
             sdate,
-            colorNight,
-            colorDay,
-            hasEntry,
-            hasProb,
+            hasEntryNight,
+            hasEntryDay,
+            hasProbNight,
+            hasProbDay,
             istoday: jdate.Abs === Today.Abs
         };
     }
@@ -169,7 +153,7 @@ export default class MonthViewScreen extends React.Component {
         const { jdate, appData } = props.navigation.state.params,
             date = appData.Settings.navigateBySecularDate ? jdate.getDate() : jdate;
         this.appData = appData;
-
+        this.israel = this.appData.Settings.location.Israel;
         this.state = { month: new Month(date, this.appData) };
 
         this.goPrev = this.goPrev.bind(this);
@@ -187,62 +171,69 @@ export default class MonthViewScreen extends React.Component {
     goToday() {
         this.setState({ month: new Month(Today, this.appData) });
     }
-    get flag() {
+    getFlag(nightDay) {
         return <View style={{
-            backgroundColor: '#ff000055',
-            alignItems: 'center',
-            borderRadius: 40,
-            padding: 3
+            alignItems: 'center'
         }}>
             <Icon
-                size={11}
-                name='flag'
-                color={'#ffffff88'} />
+                size={nightDay === NightDay.Night ? 18 : 22}
+                name={nightDay === NightDay.Night ? 'ios-moon' : 'ios-sunny'}
+                type='ionicon'
+                color={nightDay === NightDay.Night ? '#ffb' : '#ff000030'} />
         </View>;
     }
     getDayColumn(singleDay, index) {
         const colWidth = parseInt(getScreenWidth() / 7),
             jdate = singleDay && singleDay.jdate,
             shabbos = jdate && jdate.DayOfWeek === 6 &&
-                jdate.getSedra(this.appData.Settings.location.Israel).map((s) =>
+                jdate.getSedra(this.israel).map((s) =>
                     s.eng).join('\n'),
-            holiday = jdate && jdate.getMajorHoliday();
+            holiday = jdate && jdate.getMajorHoliday(this.israel),
+            specialColorDay = singleDay && ((singleDay.hasEntryDay && '#fdd') ||
+                (singleDay.hasProbDay && '#ffa')),
+            specialColorNight = singleDay && ((singleDay.hasEntryNight && '#fcc') ||
+                (singleDay.hasProbNight && '#eea'));
         return (<Col size={colWidth} key={index}>
             {(jdate &&
                 <TouchableOpacity
                     style={styles.singleDay}
                     onPress={() => {
-                        if (singleDay.hasProb) {
+                        if (singleDay.hasProbNight || singleDay.hasProbDay) {
                             this.navigate('FlaggedDates', { jdate, appData: this.appData });
                         }
                         else {
                             this.navigate('Home', { currDate: jdate, appData: this.appData });
                         }
                     }}>
-                    <View style={[styles.singleDayView, { backgroundColor: ((holiday || shabbos) ? '#eef' : '#fff') }]}>
-                        {singleDay.colorNight &&
+                    <View style={[styles.singleDayView, {
+                        backgroundColor: ((holiday || shabbos) ? '#eef' : '#fff'),
+                        borderColor: singleDay.istoday ? '#55f' : '#ddd',
+                        borderWidth: singleDay.istoday ? 2 : 1,
+                        borderRadius: 5
+                    }]}>
+                        {specialColorNight &&
                             <View style={{
                                 position: 'absolute',
                                 height: '100%',
                                 width: '50%',
-                                backgroundColor: singleDay.colorNight,
+                                backgroundColor: specialColorNight,
                                 alignItems: 'center',
                                 justifyContent: 'center'
                             }}>
-                                {singleDay.hasProb && this.flag}
+                                {this.getFlag(NightDay.Night)}
                             </View>
                         }
-                        {singleDay.colorDay &&
+                        {specialColorDay &&
                             <View style={{
                                 position: 'absolute',
                                 height: '100%',
                                 width: '50%',
                                 left: '50%',
-                                backgroundColor: singleDay.colorDay,
+                                backgroundColor: specialColorDay,
                                 alignItems: 'center',
                                 justifyContent: 'center'
                             }}>
-                                {singleDay.hasProb && this.flag}
+                                {this.getFlag(NightDay.Day)}
                             </View>
                         }
                         <View style={styles.singleDayTextContent}>
@@ -269,7 +260,7 @@ export default class MonthViewScreen extends React.Component {
             <View style={styles.headerView}>
                 <Text style={styles.headerText}>{Month.toString(weeks, this.state.month.isJdate)}</Text>
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, backgroundColor: '#ddd' }}>
                 <Grid>
                     <Row containerStyle={{ height: 50 }}>
                         <Col style={styles.dayHeadView}>
@@ -364,7 +355,6 @@ const styles = StyleSheet.create({
     singleDayView: {
         flex: 1,
         borderWidth: 1,
-        borderColor: '#ddd',
         width: '100%',
         height: '100%',
     },
