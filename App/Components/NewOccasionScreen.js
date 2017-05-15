@@ -5,6 +5,7 @@ import { NavigationActions } from 'react-navigation';
 import { UserOccasionTypes, UserOccasion } from '../Code/JCal/UserOccasion';
 import DataUtils from '../Code/Data/DataUtils';
 import Utils from '../Code/JCal/Utils';
+import { popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class NewOccasion extends React.Component {
@@ -38,8 +39,8 @@ export default class NewOccasion extends React.Component {
         if (this.onUpdate) {
             this.onUpdate(ad);
         }
-        Alert.alert('Add occasion',
-            `The occasion ${occasion.title} has been successfully added.`);
+        popUpMessage(`The occasion ${occasion.title} has been successfully added.`,
+            'Add occasion');
         this.dispatch(NavigationActions.back());
     }
     render() {

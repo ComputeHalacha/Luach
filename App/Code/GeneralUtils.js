@@ -1,4 +1,4 @@
-import { PixelRatio, Dimensions } from 'react-native';
+import { PixelRatio, Dimensions, Platform, ToastAndroid, Alert } from 'react-native';
 
 /**Gets the current screen width in points */
 export function getScreenWidth() {
@@ -50,5 +50,14 @@ export function setDefault(paramValue, defValue) {
     }
     else {
         return paramValue;
+    }
+}
+
+export function popUpMessage(message, optionalTitle) {
+    if (Platform.OS === 'android') {
+        ToastAndroid.show(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
+    }
+    else {
+        Alert.alert(optionalTitle, message);
     }
 }

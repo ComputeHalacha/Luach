@@ -4,6 +4,7 @@ import { Button } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import { KavuahTypes, Kavuah } from '../Code/Chashavshavon/Kavuah';
 import DataUtils from '../Code/Data/DataUtils';
+import { popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class NewKavuah extends React.Component {
@@ -57,8 +58,8 @@ export default class NewKavuah extends React.Component {
         if (this.onUpdate) {
             this.onUpdate(ad);
         }
-        Alert.alert('Add Kavuah',
-            `The Kavuah for ${kavuah.toString()} has been successfully added.`);
+        popUpMessage(`The Kavuah for ${kavuah.toString()} has been successfully added.`,
+            'Add Kavuah');
         this.dispatch(NavigationActions.back());
     }
     getSpecialNumberFromEntry(entry) {

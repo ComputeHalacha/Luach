@@ -4,6 +4,7 @@ import { Icon } from 'react-native-elements';
 import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';
 import JDate from '../Code/JCal/jDate';
+import { popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class EntryScreen extends Component {
@@ -87,8 +88,8 @@ export default class EntryScreen extends Component {
                                 appData.EntryList = entryList;
                                 appData.KavuahList = kavuahList;
                                 this.update(appData);
-                                Alert.alert('Remove entry',
-                                    `The entry for ${e.toString()} has been successfully removed.`);
+                                popUpMessage(`The entry for ${e.toString()} has been successfully removed.`,
+                                    'Remove entry');
                             });
                         }
                     },

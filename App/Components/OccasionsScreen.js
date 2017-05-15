@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { ScrollView, Alert, Text, View, TouchableHighlight } from 'react-native';
+import { ScrollView, Text, View, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
 import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';
+import { popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class OccasionsScreen extends Component {
@@ -38,8 +39,8 @@ export default class OccasionsScreen extends Component {
                     appData: appData,
                     occasionList: occasionList
                 });
-                Alert.alert('Remove occasion',
-                    `The ocassion ${occasion.title} has been successfully removed.`);
+                popUpMessage(`The ocassion ${occasion.title} has been successfully removed.`,
+                    'Remove occasion');
             }
         }
         ).catch(error => {

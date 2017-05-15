@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableHighlight, Image, Modal, TextInput, BackHandler } from 'react-native';
+import { AppState, StyleSheet, Text, View, ScrollView, TouchableHighlight, Image, Modal, TextInput, BackHandler } from 'react-native';
 import { List, ListItem, Icon } from 'react-native-elements';
 import { getScreenWidth, isSmallScreen } from '../Code/GeneralUtils';
 import Carousel from './Carousel/Carousel';
@@ -100,6 +100,18 @@ export class HomeScreen extends React.Component {
                 this._goToDate(today, true);
             }
         }, 30000);
+    }
+    componentDidMount() {
+        AppState.addEventListener('change', this._handleAppStateChange);
+    }
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this._handleAppStateChange);
+    }
+    _handleAppStateChange = (nextAppState) => {
+        const appData = this.state.appData;
+        if (appData && appData.Settings.requirePIN && nextAppState === 'active') {
+            this.setState({ showLogin: true });
+        }
     }
     /**
     * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
@@ -312,12 +324,14 @@ export class HomeScreen extends React.Component {
     setDayInformation(singleDay, appData) {
         appData = appData || (this.state && this.state.appData);
 
-        singleDay.hasProbs = appData && appData.ProblemOnahs && appData.Settings.showProbFlagOnHome &&
-            !!appData.ProblemOnahs.find(po => po.jdate.Abs === singleDay.day.Abs);
-        singleDay.occasions = appData && appData.UserOccasions ?
-            UserOccasion.getOccasionsForDate(singleDay.day, appData.UserOccasions) : [];
-        singleDay.entries = appData && appData.Settings.showEntryFlagOnHome ?
-            appData.EntryList.list.filter(e => e.date.Abs === singleDay.day.Abs) : [];
+        if (appData) {
+            singleDay.hasProbs = appData.Settings.showProbFlagOnHome &&
+                appData.ProblemOnahs.some(po => po.jdate.Abs === singleDay.day.Abs);
+            singleDay.occasions = appData.UserOccasions.length > 0 ?
+                UserOccasion.getOccasionsForDate(singleDay.day, appData.UserOccasions) : [];
+            singleDay.entries = appData.Settings.showEntryFlagOnHome ?
+                appData.EntryList.list.filter(e => e.date.Abs === singleDay.day.Abs) : [];
+        }
         return singleDay;
     }
     renderItem(singleDay) {
@@ -391,7 +405,10 @@ export class HomeScreen extends React.Component {
                                             ||
                                             (
                                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                    <Image style={{ width: 15, height: 15, marginRight: 4 }} resizeMode='stretch' source={require('../Images/logo.png')} />
+                                                    <Image
+                                                        style={{ width: 15, height: 15, marginRight: 4 }}
+                                                        resizeMode='stretch'
+                                                        source={require('../Images/logo.png')} />
                                                     <Text style={{ color: '#556', fontSize: 15, fontWeight: 'bold' }}>Luach</Text>
                                                 </View>
                                             )

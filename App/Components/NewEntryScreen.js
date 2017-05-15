@@ -8,6 +8,7 @@ import Utils from '../Code/JCal/Utils';
 import jDate from '../Code/JCal/jDate';
 import { NightDay, Onah } from '../Code/Chashavshavon/Onah';
 import DataUtils from '../Code/Data/DataUtils';
+import { popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class NewEntry extends React.Component {
@@ -55,8 +56,8 @@ export default class NewEntry extends React.Component {
             if (this.onUpdate) {
                 this.onUpdate(appData);
             }
-            Alert.alert('Add Entry',
-                `The entry for ${entry.toString()} has been successfully added.`);
+            popUpMessage(`The entry for ${entry.toString()} has been successfully added.`,
+                'Add Entry');
             if (appData.Settings.calcKavuahsOnNewEntry) {
                 const possList = Kavuah.getPossibleNewKavuahs(appData.EntryList.list, appData.KavuahList);
                 if (possList.length) {

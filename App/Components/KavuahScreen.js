@@ -3,6 +3,7 @@ import { ScrollView, View, Alert, Switch, Text, TouchableHighlight } from 'react
 import CustomList from './CustomList';
 import { Icon } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
+import { popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class KavuahScreen extends Component {
@@ -74,8 +75,8 @@ export default class KavuahScreen extends Component {
                                 appData.KavuahList = kavuahList;
                                 this.update(appData);
                             }
-                            Alert.alert('Remove kavuah',
-                                `The kavuah of ${kavuah.toString()} has been successfully removed.`);
+                            popUpMessage(`The kavuah of ${kavuah.toString()} has been successfully removed.`,
+                                'Remove kavuah');
                         }
                     }
                 ]);
