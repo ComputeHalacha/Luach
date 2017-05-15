@@ -75,7 +75,7 @@ export default class SingleDayDisplay extends Component {
                     </Text>
                     {dailyInfoText}
                     <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start' }}>
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems:'center' }}>
                         <View style={{ width: '55%', height: 75, flex: 0 }}>
                             <Text style={styles.location}>{'In ' + location.Name}</Text>
                             <Text>{'Sun Rises at ' + sunrise}</Text>
@@ -84,18 +84,17 @@ export default class SingleDayDisplay extends Component {
                         <View style={{
                             flex: 0,
                             width: '45%',
-                            alignSelf: 'center',
-                            flexDirection: 'row',
-                            justifyContent: 'space-around'
+                            justifyContent: 'center',
+                            alignItems: 'flex-end'
                         }}>
                             <TouchableWithoutFeedback onPress={this.showDateDetails}>
-                                <View style={{ alignItems: 'center' }}>
+                                <View style={{ alignItems: 'center', marginBottom:10 }}>
                                     <Icon color='#bbc' name='info' />
-                                    <Text style={{ fontSize: 12, color: '#bbc' }}>Zmanim</Text>
+                                    <Text style={{ fontSize: 12, color: '#bbc' }}>   Zmanim   </Text>
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback onPress={this.monthView}>
-                                <View style={{ alignItems: 'center'}}>
+                                <View style={{ alignItems: 'center' }}>
                                     <Icon color='#bbc' name='calendar' type='octicon' />
                                     <Text style={{ fontSize: 12, color: '#bbc', textAlign: 'center' }}>{'Month View'}</Text>
                                 </View>
@@ -143,8 +142,8 @@ export default class SingleDayDisplay extends Component {
                         <Button
                             color='#fba'
                             style={styles.btn}
-                            accessibilityLabel='Add a new Occasion for this date'
-                            title='New Occasion'
+                            accessibilityLabel='Add a new Event for this date'
+                            title='New Event'
                             onPress={this.newOccasion} />
                     </View>
                 </View>

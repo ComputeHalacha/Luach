@@ -8,7 +8,7 @@ import { GeneralStyles } from './styles';
 
 export default class OccasionsScreen extends Component {
     static navigationOptions = {
-        title: 'List of Occasions',
+        title: 'Events / Occasions',
     };
     constructor(props) {
         super(props);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Icon, Grid, Row, Col } from 'react-native-elements';
+import GestureRecognizer from 'react-native-swipe-gestures';
 import { getScreenWidth } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 import Utils from '../Code/JCal/Utils';
@@ -141,7 +142,12 @@ export default class MonthViewScreen extends React.Component {
                     <Text style={styles.monthToggle}>{(this.state.month.isJdate ? 'Secular ' : 'Jewish ')}</Text>
                 </TouchableOpacity>
             </View>
-            <View style={{ flex: 1, backgroundColor: '#ddd' }}>
+            <GestureRecognizer
+                style={{ flex: 1, backgroundColor: '#ddd' }}
+                onSwipeUp={this.goNext}
+                onSwipeDown={this.goPrev}
+                onSwipeLeft={this.goNext}
+                onSwipeRight={this.goPrev}>
                 <Grid>
                     <Row containerStyle={{ height: 50 }}>
                         <Col style={styles.dayHeadView}>
@@ -165,7 +171,7 @@ export default class MonthViewScreen extends React.Component {
                         </Row>
                     )}
                 </Grid>
-            </View>
+            </GestureRecognizer>
             <View style={styles.footerBar}>
                 <TouchableOpacity onPress={this.goPrev}>
                     <View>
