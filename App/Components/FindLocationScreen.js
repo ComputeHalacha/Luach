@@ -45,6 +45,8 @@ export default class FindLocation extends Component {
                 <Text style={GeneralStyles.label}>Search Location List</Text>
                 <TextInput style={GeneralStyles.textInput}
                     defaultValue={this.locName}
+                    autoFocus={true}
+                    placeholder='Search for a location'
                     onChangeText={value => this.findLocation(value)} />
             </View>
             {this.state.list.length > 0 &&

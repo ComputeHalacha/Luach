@@ -75,20 +75,20 @@ export default class SingleDayDisplay extends Component {
                     </Text>
                     {dailyInfoText}
                     <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
-                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems:'center' }}>
-                        <View style={{ width: '55%', height: 75, flex: 0 }}>
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <View style={{ width: '65%', height: 75, flex: 0 }}>
                             <Text style={styles.location}>{'In ' + location.Name}</Text>
                             <Text>{'Sun Rises at ' + sunrise}</Text>
                             <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
                         </View>
                         <View style={{
                             flex: 0,
-                            width: '45%',
+                            width: '35%',
                             justifyContent: 'center',
                             alignItems: 'flex-end'
                         }}>
                             <TouchableWithoutFeedback onPress={this.showDateDetails}>
-                                <View style={{ alignItems: 'center', marginBottom:10 }}>
+                                <View style={{ alignItems: 'center', marginBottom: 10 }}>
                                     <Icon color='#bbc' name='info' />
                                     <Text style={{ fontSize: 12, color: '#bbc' }}>   Zmanim   </Text>
                                 </View>
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     todayText: {
         color: '#800',
         textAlign: 'center',
-        fontSize: 23,
+        fontSize: 20,
         fontWeight: 'bold',
         flex: 1
     },
@@ -201,6 +201,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
+        marginTop: 5,
+        marginBottom: 5
     },
     entriesText: {
         color: '#e55',

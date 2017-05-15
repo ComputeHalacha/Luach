@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppState, StyleSheet, Animated, FlatList, Text, View, TouchableHighlight, Image, Modal, TextInput, BackHandler } from 'react-native';
+import { AppState, StyleSheet, FlatList, Text, View, TouchableHighlight, Image, Modal, TextInput, BackHandler } from 'react-native';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { Icon } from 'react-native-elements';
 import { isSmallScreen } from '../Code/GeneralUtils';
@@ -72,14 +72,12 @@ export class HomeScreen extends React.Component {
         this.loginAttempt = this.loginAttempt.bind(this);
         this.renderItem = this.renderItem.bind(this);
         this._addDaysToEnd = this._addDaysToEnd.bind(this);
-        this._addDaysToBeginning = this._addDaysToBeginning.bind(this);
         this.setDayInformation = this.setDayInformation.bind(this);
         this.getDaysList = this.getDaysList.bind(this);
         this.updateAppData = this.updateAppData.bind(this);
         this._navigatedShowing = this._navigatedShowing.bind(this);
         this.prevDay = this.prevDay.bind(this);
         this.goToday = this.goToday.bind(this);
-        this.onScrollEnd = this.onScrollEnd.bind(this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
 
@@ -193,9 +191,11 @@ export class HomeScreen extends React.Component {
         };
     }
     setFlash() {
-        setTimeout(() =>
-            this.setState({ showFlash: false })
-            , 2500);
+        if (this.state.showFlash) {
+            setTimeout(() =>
+                this.setState({ showFlash: false })
+                , 2500);
+        }
     }
     loginAttempt(pin) {
         if (pin === this.state.appData.Settings.PIN) {
@@ -204,10 +204,7 @@ export class HomeScreen extends React.Component {
         }
     }
     _goToDate(jdate, isToday) {
-        if (jdate === this.state.currDate && this.flatList) {
-            this.flatList.scrollToOffset({ x: 0, y: 0, animated: true });
-        }
-        else {
+        if (jdate !== this.state.currDate) {
             const today = isToday ? jdate : this.state.today;
             this.setState({
                 daysList: this.getDaysList(jdate),
@@ -216,19 +213,12 @@ export class HomeScreen extends React.Component {
                 pageNumber: 1
             });
         }
+        this.flatList.scrollToOffset({ x: 0, y: 0, animated: true });
     }
     _addDaysToEnd() {
         const daysList = this.state.daysList,
             day = daysList[daysList.length - 1].day.addDays(1);
         daysList.push(this.setDayInformation({ day }));
-        this.setState({
-            daysList: daysList
-        });
-    }
-    _addDaysToBeginning() {
-        const daysList = this.state.daysList,
-            day = daysList[0].day.addDays(-1);
-        daysList.unshift(this.setDayInformation({ day }));
         this.setState({
             daysList: daysList
         });
@@ -259,11 +249,6 @@ export class HomeScreen extends React.Component {
                 appData.EntryList.list.filter(e => e.date.Abs === singleDay.day.Abs) : [];
         }
         return singleDay;
-    }
-    onScrollEnd(e) {
-        if (e.nativeEvent.contentOffset.y <= 100) {
-            this._addDaysToBeginning();
-        }
     }
     hideMenu() {
         this.setState({ menuWidth: 0 });

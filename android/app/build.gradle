@@ -90,8 +90,8 @@ android {
         applicationId "com.luachandroid"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 8
-        versionName "1.7"
+        versionCode 9
+        versionName "1.8"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -117,8 +117,8 @@ android {
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"      
-            signingConfig signingConfigs.release 
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
