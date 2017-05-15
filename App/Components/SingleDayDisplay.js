@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     additionsViews: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
         marginTop: 5,
         marginBottom: 5
     },
