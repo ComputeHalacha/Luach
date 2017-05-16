@@ -17,24 +17,19 @@ export default class SingleDayDisplay extends Component {
         this.monthView = this.monthView.bind(this);
     }
     newEntry() {
-        const { jdate, onUpdate, location, appData, isToday } = this.props;
-        this.navigate('NewEntry', { jdate, location, isToday, appData, onUpdate });
+        this.navigate('NewEntry', this.props);
     }
     newOccasion() {
-        const { jdate, onUpdate, appData } = this.props;
-        this.navigate('NewOccasion', { jdate, onUpdate, appData });
+        this.navigate('NewOccasion', this.props);
     }
     monthView() {
-        const { jdate, onUpdate, appData } = this.props;
-        this.navigate('MonthView', { jdate, onUpdate, appData });
+        this.navigate('MonthView', this.props);
     }
     showDateDetails() {
-        const { jdate, location } = this.props;
-        this.navigate('DateDetails', { jdate, location });
+        this.navigate('DateDetails', this.props);
     }
     showProblems() {
-        const { jdate, onUpdate, appData } = this.props;
-        this.navigate('FlaggedDates', { jdate, onUpdate, appData });
+        this.navigate('FlaggedDates', this.props);
     }
     render() {
         const { jdate, location, isToday } = this.props,

@@ -115,12 +115,16 @@ export default class DataUtils {
         });
         return location;
     }
-    /**Returns a list of Location objects that match the search querywith all the locations in the database.*/
-    static async GetAllLocations(query) {
+    /** Returns a list of Location objects that match the search query with all the locations in the database.*/
+    static async GetAllLocations() {
         return await DataUtils._queryLocations();
     }
-    /**Returns a list of the Location objects in the database that their name or heb values contain the search term.
-    The search is not case sensitive.*/
+    /**
+     * Returns a list of the Location objects in the database that their name or heb values contain the search term.
+     * The search is not case sensitive.
+     * @param {String} search
+     * @returns {<[Location]>}
+     */
     static async SearchLocations(search) {
         if (!search) {
             throw 'Search parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
@@ -333,10 +337,15 @@ export default class DataUtils {
                 }
             });
     }
+    /**
+     * Retrieve the table schema. Each of the returned rows represents a single column of the table.
+     * The fields returned by sqlite for this query are: cid, name, type, notnull, dflt_value, pk.
+     * @param {String} tableName
+     */
     static async GetTableFields(tableName) {
         let list = [];
         await DataUtils._executeSql(`PRAGMA table_info(${tableName})`)
-            .then(results => { list = results.list })
+            .then(results => list = results.list)
             .catch(error => {
                 if (__DEV__) {
                     console.warn(`Error trying to get fields of ${tableName} table from the database`);
@@ -363,10 +372,10 @@ export default class DataUtils {
             });
     }
     /**
-        Queries the locations table of the local sqlite database, and returns a list of Location objects.
-        Optional whereClause should be a valid SQLite statement - such as "name = 'New York'" or "name = ?".
-        If the whereClause contains any parameters (? characters), the values argument should be provided with an array of values.
-        For example, if the whereClause is "name=? and israel=?", then values should be: ['Natanya', true].*/
+     * Queries the locations table of the local sqlite database, and returns a list of Location objects.
+     * @param {String} [whereClause] Optional whereClause should be a valid SQLite statement - such as "name = 'New York'" or "name = ?".
+     * @param {[any]} [values] Array of values to be used for the whereClause if it contains any sqlite parameters - such as 'id=?'. For example, if the whereClause is "name=? and israel=?", then values should be: ['Natanya', true].
+     */
     static async _queryLocations(whereClause, values) {
         const list = [];
         await DataUtils._executeSql(`SELECT * FROM locations ${whereClause ? ' WHERE ' + whereClause : ''} ORDER BY name`, values)
@@ -390,8 +399,8 @@ export default class DataUtils {
     }
     /**
      * Executes sql on the database. promise resolves with an object { list: ResultsArray, id: LastInsertedRowId }
-     * @param {*} sql
-     * @param {*} values
+     * @param {String} sql The sql to execute. Can contain parameters - in the form of ? characters.
+     * @param {[any]} values Array of the values to be used for any sqlite parameters in the sql
      */
     static async _executeSql(sql, values) {
         const resultsList = [];
@@ -427,29 +436,6 @@ export default class DataUtils {
                         insertId = results[0].insertId;
                     }
                 });
-                /*await db.transaction(async tx => {
-                    console.log(`121 - Transaction is running. Starting to execute "${sql}"`);
-                    await tx.executeSql(sql, values).then(([tx, results]) => {
-                        if (!!results && !!results.rows && results.rows.length > 0) {
-                            console.log(`122 - the sql was executed successfully - ${results.rows.length.toString()} rows returned`);
-                            for (let i = 0; i < results.rows.length; i++) {
-                                resultsList.push(results.rows.item(i));
-                            }
-                        }
-                        else if (!!results && isNumber(results.rowsAffected)) {
-                            console.log(`122a - sql executed successfully - ${results.rowsAffected.toString()} rows affected`);
-                        }
-                        else {
-                            console.log(`122b - sql executed successfully - Results information is not available`);
-                        }
-                    }).catch(error => {
-                        console.warn('123 - error executing ' + sql);
-                        console.error(error);
-                    });
-                }).then(() => {
-                    console.log(`124 - Transaction commited successfully.`);
-                    DataUtils._closeDatabase(db);
-                });*/
             }).catch(error => {
                 if (__DEV__) {
                     console.warn('0124 - error opening database');
@@ -466,9 +452,10 @@ export default class DataUtils {
                 if (__DEV__) {
                     console.log('130 -  Database is now CLOSED');
                 }
-            }).catch((error) => {
+            }).catch(error => {
                 if (__DEV__) {
                     console.warn('131 - error closing database');
+                    console.error(error);
                 }
             });
         }

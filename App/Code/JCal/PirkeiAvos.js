@@ -1,4 +1,5 @@
 ﻿import jDate from './jDate.js';
+import Utils from './Utils';
 
 'use strict';
 
@@ -6,8 +7,8 @@
  * Computes the Perek/Prakim of the week for the given Shabbos.
  * Returns an array of prakim (integers) (either one or two) for the given Jewish Date
  * Sample of use to get todays sedra in Israel:
- *     const prakim = PirkeiAvos.getPrakim(new jd(new Date(), true));
- *     const str = 'Pirkei Avos: ' + prakim.map(function (s) { return Utils.toSuffixed(s) + ' Perek'; }).join(' and ');
+ *     const prakim = PirkeiAvos.getPrakim(new jDate(), true);
+ *     const str = 'Pirkei Avos: ' + prakim.map(s => `${Utils.toSuffixed(s)} Perek`).join(' and ');
  * ***************************************************************************************************************/
 export default class PirkeiAvos {
     static getPrakim(jd, israel) {
@@ -44,7 +45,7 @@ export default class PirkeiAvos {
             shb1 = (israel ? 7 : 8) + (6 - pes1.getDayOfWeek()),
             //What number shabbos after pesach is the current date
             cShb = ((jMonth === 1 && jDay === (shb1 + 15)) ? 1 :
-                parseInt((jd.Abs - (pes1.Abs + shb1)) / 7) + 1);
+                Utils.toInt((jd.Abs - (pes1.Abs + shb1)) / 7) + 1);
         let prk = cShb % 6;
         if (prk === 0) prk = 6;
         //If the second day of Shavuos was on Shabbos, we missed a week.
@@ -66,13 +67,13 @@ export default class PirkeiAvos {
         const jYear = jd.Year,
             jDay = jd.Day,
             //The fist day of Ellul.
-            //The year/month/day/absoluteDay constructor for JewishDateMicro is used for efficiency.
+            //The year/month/day/absoluteDay constructor for JDate is used for efficiency.
             day1 = new jDate(jYear, 6, 1, jd.Abs - jd.Day + 1),
             day1DOW = day1.getDayOfWeek(),
             shabbos1Day = day1DOW === 6 ? 1 : ((6 - (day1DOW + 6) % 6) + 1),
             shabbos1Date = new jDate(jYear, 6, shabbos1Day, day1.Abs + shabbos1Day - 1),
             //Which shabbos in Ellul are we working out now?
-            cShb = jDay === shabbos1Day ? 1 : parseInt((jDay - shabbos1Day) / 7) + 1;
+            cShb = jDay === shabbos1Day ? 1 : Utils.toInt((jDay - shabbos1Day) / 7) + 1;
 
         switch (PirkeiAvos._get1stPerek(shabbos1Date, israel)) {
             case 1:

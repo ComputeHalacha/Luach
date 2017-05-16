@@ -1,9 +1,9 @@
 import React from 'react';
-import { AppState, StyleSheet, FlatList, Text, View, TouchableHighlight, Image, Modal, TextInput, BackHandler } from 'react-native';
+import { AppState, FlatList, Text, View, Image, Modal, TextInput, BackHandler } from 'react-native';
 import GestureRecognizer from 'react-native-swipe-gestures';
-import { Icon } from 'react-native-elements';
 import { isSmallScreen } from '../Code/GeneralUtils';
 import SingleDayDisplay from './SingleDayDisplay';
+import SideMenu from './SideMenu';
 import jDate from '../Code/JCal/jDate';
 import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
@@ -78,6 +78,7 @@ export class HomeScreen extends React.Component {
         this._navigatedShowing = this._navigatedShowing.bind(this);
         this.prevDay = this.prevDay.bind(this);
         this.goToday = this.goToday.bind(this);
+        this.scrollToTop = this.scrollToTop.bind(this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
 
@@ -92,8 +93,8 @@ export class HomeScreen extends React.Component {
         //In case the day changed while the app was open
         setInterval(() => {
             const today = new jDate();
-            if (this.state.today.Abs !== today.Abs) {
-                this._goToDate(today, true);
+            if ((!this.state.today) || this.state.today.Abs !== today.Abs) {
+                this.setState({ today: today });
             }
         }, 30000);
     }
@@ -126,7 +127,6 @@ export class HomeScreen extends React.Component {
         for (let singleDay of daysList) {
             this.setDayInformation(singleDay, ad);
         }
-
         this.setState({
             appData: ad,
             currLocation: ad.Settings.location,
@@ -147,7 +147,6 @@ export class HomeScreen extends React.Component {
             today: today,
             currDate: today,
             currLocation: Location.getJerusalem(),
-            pageNumber: 1,
             showFlash: true,
             menuWidth: 50
         };
@@ -184,7 +183,6 @@ export class HomeScreen extends React.Component {
             currDate: currDate,
             today: today,
             currLocation: appData.Settings.location,
-            pageNumber: 1,
             showFlash: false,
             loadingDone: true,
             menuWidth: 50
@@ -203,17 +201,20 @@ export class HomeScreen extends React.Component {
             this.setFlash();
         }
     }
-    _goToDate(jdate, isToday) {
-        if (jdate !== this.state.currDate) {
-            const today = isToday ? jdate : this.state.today;
+    scrollToTop() {
+        //scrollToOffset may not scroll all the way to the top without the setImmediate.
+        setImmediate(() => this.flatList.scrollToOffset({ x: 0, y: 0, animated: true }));
+    }
+    _goToDate(jdate) {
+        if (jdate.Abs !== this.state.currDate.Abs) {
             this.setState({
                 daysList: this.getDaysList(jdate),
-                currDate: jdate,
-                today: today,
-                pageNumber: 1
-            });
+                currDate: jdate
+            }, this.scrollToTop);
         }
-        this.flatList.scrollToOffset({ x: 0, y: 0, animated: true });
+        else {
+            this.scrollToTop();
+        }
     }
     _addDaysToEnd() {
         const daysList = this.state.daysList,
@@ -227,7 +228,7 @@ export class HomeScreen extends React.Component {
         this._goToDate(this.state.currDate.addDays(-1));
     }
     goToday() {
-        this._goToDate(this.state.today, true);
+        this._goToDate(this.state.today);
     }
     getDaysList(jdate, appData) {
         appData = appData || this.state.appData;
@@ -238,7 +239,7 @@ export class HomeScreen extends React.Component {
         return daysList;
     }
     setDayInformation(singleDay, appData) {
-        appData = appData || (this.state && this.state.appData);
+        appData = appData || this.state.appData;
 
         if (appData) {
             singleDay.hasProbs = appData.Settings.showProbFlagOnHome &&
@@ -258,7 +259,7 @@ export class HomeScreen extends React.Component {
     }
     renderItem({ item }) {
         const { day, hasProbs, occasions, entries } = item;
-        return (<SingleDayDisplay
+        return <SingleDayDisplay
             key={day.Abs}
             jdate={day}
             location={this.state.currLocation || Location.getJerusalem()}
@@ -268,13 +269,9 @@ export class HomeScreen extends React.Component {
             isToday={this.state.today.Abs === day.Abs}
             appData={this.state.appData}
             navigate={this.navigate}
-            onUpdate={this.updateAppData} />);
+            onUpdate={this.updateAppData} />;
     }
     render() {
-        const params = {
-            appData: this.state.appData,
-            onUpdate: this.updateAppData
-        };
         return (
             <View style={{ flex: 1 }}>
                 {(this.state.showLogin &&
@@ -284,62 +281,15 @@ export class HomeScreen extends React.Component {
                         <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
                             onSwipeLeft={this.hideMenu}
                             onSwipeRight={this.showMenu}>
-                            <View style={{ width: this.state.menuWidth, height: '100%', flex: 0, borderRightWidth: 1, borderColor: '#777', padding: 0, margin: 0 }}>
-                                <TouchableHighlight underlayColor='#eef' onPress={() => this.navigate('MonthView',
-                                    { ...params, jdate: this.state.currDate })} style={styles.sideButton}>
-                                    <View style={styles.menuView}>
-                                        <Icon iconStyle={styles.menuIcon} name='calendar' type='octicon' />
-                                        <Text style={styles.menuText}>Month</Text>
-                                    </View>
-                                </TouchableHighlight>
-                                <TouchableHighlight style={styles.sideButton} underlayColor='#eef' onPress={this.prevDay}>
-                                    <View style={styles.menuView}>
-                                        <Text style={styles.menuText}>Previous Day</Text>
-                                    </View>
-                                </TouchableHighlight>
-                                <TouchableHighlight underlayColor='#eef' onPress={this.goToday} style={styles.sideButton}>
-                                    <View style={styles.menuView}>
-                                        <Text style={styles.menuText}>Today</Text>
-                                    </View>
-                                </TouchableHighlight>
-                                <TouchableHighlight style={styles.sideButton} underlayColor='#eef' onPress={() => { if (this.state.loadingDone) this.navigate('FlaggedDates', params); }}>
-                                    <View style={styles.menuView}>
-                                        <Icon iconStyle={styles.menuIcon} name='flag' />
-                                        <Text style={styles.menuText}>Dates</Text>
-                                    </View>
-                                </TouchableHighlight>
-                                <TouchableHighlight style={styles.sideButton} underlayColor='#eef' onPress={() => {
-                                    if (this.state.loadingDone) this.navigate('Entries',
-                                        {
-                                            appData: this.state.appData,
-                                            currLocation: this.state.currLocation || Location.getJerusalem(),
-                                            onUpdate: this.updateAppData
-                                        });
-                                }}>
-                                    <View style={styles.menuView}>
-                                        <Icon iconStyle={styles.menuIcon} name='list' />
-                                        <Text style={styles.menuText}>Entries</Text>
-                                    </View>
-                                </TouchableHighlight>
-                                <TouchableHighlight style={styles.sideButton} underlayColor='#eef' onPress={() => { if (this.state.loadingDone) this.navigate('Kavuahs', params); }}>
-                                    <View style={styles.menuView}>
-                                        <Icon iconStyle={styles.menuIcon} name='device-hub' />
-                                        <Text style={styles.menuText}>Kavuahs</Text>
-                                    </View>
-                                </TouchableHighlight>
-                                <TouchableHighlight style={styles.sideButton} underlayColor='#eef' onPress={() => { if (this.state.loadingDone) this.navigate('Occasions', params); }}>
-                                    <View style={styles.menuView}>
-                                        <Icon iconStyle={styles.menuIcon} name='event' />
-                                        <Text style={styles.menuText}>Events</Text>
-                                    </View>
-                                </TouchableHighlight>
-                                <TouchableHighlight style={styles.sideButton} underlayColor='#eef' onPress={() => { if (this.state.loadingDone) this.navigate('Settings', params); }}>
-                                    <View style={styles.menuView}>
-                                        <Icon iconStyle={styles.menuIcon} name='settings' />
-                                        <Text style={styles.menuText}>Settings</Text>
-                                    </View>
-                                </TouchableHighlight>
-                            </View>
+                            <SideMenu
+                                width={this.state.menuWidth}
+                                onUpdate={this.updateAppData}
+                                appData={this.state.appData}
+                                navigate={this.navigate}
+                                currDate={this.state.currDate}
+                                isDataLoading={!this.state.loadingDone}
+                                onGoToday={this.goToday}
+                                onGoPrevious={this.prevDay} />
                             <FlatList
                                 ref={flatList => this.flatList = flatList}
                                 style={{ flex: 1 }}
@@ -356,30 +306,3 @@ export class HomeScreen extends React.Component {
             </View>);
     }
 }
-
-const styles = StyleSheet.create({
-    sideButton: {
-        flex: 1
-    },
-    menuView: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderBottomWidth: 1,
-        borderColor: '#888',
-        backgroundColor: '#666',
-        paddingTop: 5,
-        paddingBottom: 5,
-        width: '100%'
-    },
-    menuText: {
-        fontSize: 10,
-        color: '#eee',
-        textAlign: 'center',
-        flexWrap: 'wrap'
-    },
-    menuIcon: {
-        fontSize: 20,
-        color: '#eee'
-    }
-});

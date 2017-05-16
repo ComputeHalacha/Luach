@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, ScrollView, View, Text, Picker, TextInput, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
+import GestureRecognizer from 'react-native-swipe-gestures';
+import SideMenu from './SideMenu';
 import { UserOccasionTypes, UserOccasion } from '../Code/JCal/UserOccasion';
 import DataUtils from '../Code/Data/DataUtils';
 import Utils from '../Code/JCal/Utils';
@@ -10,7 +12,7 @@ import { GeneralStyles } from './styles';
 
 export default class NewOccasion extends React.Component {
     static navigationOptions = {
-        title: 'New Occasion',
+        title: 'New Event / Occasion',
     };
     constructor(props) {
         super(props);
@@ -18,13 +20,24 @@ export default class NewOccasion extends React.Component {
         let { appData, onUpdate, jdate } = navigation.state.params;
         this.onUpdate = onUpdate;
         this.dispatch = navigation.dispatch;
+        this.navigate = navigation.navigate;
         this.state = {
             appData: appData,
             jdate: jdate,
             occasionType: UserOccasionTypes.OneTime,
             title: '',
-            comment: ''
+            comment: '',
+            menuWidth: 50
         };
+        this.addOccasion = this.addOccasion.bind(this);
+        this.showMenu = this.showMenu.bind(this);
+        this.hideMenu = this.hideMenu.bind(this);
+    }
+    hideMenu() {
+        this.setState({ menuWidth: 0 });
+    }
+    showMenu() {
+        this.setState({ menuWidth: 50 });
     }
     addOccasion() {
         const ad = this.state.appData,
@@ -50,47 +63,63 @@ export default class NewOccasion extends React.Component {
             sMonthName = Utils.sMonthsEng[sdate.getMonth()],
             sDay = Utils.toSuffixed(sdate.getDate()),
             muxedDate = `${this.state.jdate.toShortString(false)} (${sdate.toLocaleDateString()})`;
-        return <ScrollView style={GeneralStyles.container}>
-            <Text style={styles.header}>{muxedDate}</Text>
-            <View style={GeneralStyles.formRow}>
-                <Text style={GeneralStyles.label}>Occasion Title</Text>
-                <TextInput
-                    autoFocus
-                    placeholder='Occasion Title'
-                    value={this.state.title}
-                    onChangeText={(text) => this.setState({ title: text })} />
-            </View>
-            <View style={GeneralStyles.formRow}>
-                <Text style={GeneralStyles.label}>Occasion Type</Text>
-                <Picker style={GeneralStyles.picker}
-                    selectedValue={this.state.occasionType || 0}
-                    onValueChange={value => this.setState({ occasionType: value })}>
-                    <Picker.Item label={`One Time Occasion on ${muxedDate}`}
-                        value={UserOccasionTypes.OneTime} />
-                    <Picker.Item label={`Annual occasion on the ${jDay} day of ${jmonthName}`}
-                        value={UserOccasionTypes.HebrewDateRecurringYearly} />
-                    <Picker.Item label={`Monthly occasion On the ${jDay} day of each Jewish Month`}
-                        value={UserOccasionTypes.HebrewDateRecurringMonthly} />
-                    <Picker.Item label={`Annual occasion on the the ${sDay} day of ${sMonthName} `}
-                        value={UserOccasionTypes.SecularDateRecurringYearly} />
-                    <Picker.Item label={`Monthy occasion on the ${sDay} day of each Secular Month`}
-                        value={UserOccasionTypes.SecularDateRecurringMonthly} />
-                </Picker>
-            </View>
-            <View style={GeneralStyles.formRow}>
-                <Text style={GeneralStyles.label}>Comments</Text>
-                <TextInput
-                    multiline
-                    placeholder='Comments'
-                    value={this.state.comment}
-                    onChangeText={(text) => this.setState({ comment: text })} />
-            </View>
+        return <View style={GeneralStyles.container}>
+            <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
+                onSwipeLeft={this.hideMenu}
+                onSwipeRight={this.showMenu}>
+                <SideMenu
+                    width={this.state.menuWidth}
+                    onUpdate={this.onUpdate}
+                    appData={this.state.appData}
+                    navigate={this.navigate}
+                    hideEntries={true}
+                    hideKavuahs={true} />
+                <ScrollView style={{ flex: 1 }}>
+                    <View style={GeneralStyles.headerView}>
+                        <Text style={GeneralStyles.headerText}>
+                            {muxedDate}</Text>
+                    </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Occasion Title</Text>
+                        <TextInput
+                            autoFocus
+                            placeholder='Occasion Title'
+                            value={this.state.title}
+                            onChangeText={(text) => this.setState({ title: text })} />
+                    </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Occasion Type</Text>
+                        <Picker style={GeneralStyles.picker}
+                            selectedValue={this.state.occasionType || 0}
+                            onValueChange={value => this.setState({ occasionType: value })}>
+                            <Picker.Item label={`One Time Occasion on ${muxedDate}`}
+                                value={UserOccasionTypes.OneTime} />
+                            <Picker.Item label={`Annual occasion on the ${jDay} day of ${jmonthName}`}
+                                value={UserOccasionTypes.HebrewDateRecurringYearly} />
+                            <Picker.Item label={`Monthly occasion On the ${jDay} day of each Jewish Month`}
+                                value={UserOccasionTypes.HebrewDateRecurringMonthly} />
+                            <Picker.Item label={`Annual occasion on the the ${sDay} day of ${sMonthName} `}
+                                value={UserOccasionTypes.SecularDateRecurringYearly} />
+                            <Picker.Item label={`Monthy occasion on the ${sDay} day of each Secular Month`}
+                                value={UserOccasionTypes.SecularDateRecurringMonthly} />
+                        </Picker>
+                    </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Comments</Text>
+                        <TextInput
+                            multiline
+                            placeholder='Comments'
+                            value={this.state.comment}
+                            onChangeText={(text) => this.setState({ comment: text })} />
+                    </View>
 
-            <Text>{'\n'}</Text>
-            <View style={GeneralStyles.formRow}>
-                <Button title='Add Occasion' onPress={this.addOccasion.bind(this)} />
-            </View>
-        </ScrollView>;
+                    <Text>{'\n'}</Text>
+                    <View style={GeneralStyles.formRow}>
+                        <Button title='Add Occasion' onPress={this.addOccasion} />
+                    </View>
+                </ScrollView>
+            </GestureRecognizer>
+        </View>;
     }
 }
 const styles = StyleSheet.create({

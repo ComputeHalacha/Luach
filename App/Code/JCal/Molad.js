@@ -14,16 +14,16 @@ export default class Molad {
         if (monthAdj < 0) {
             monthAdj += jDate.monthsJYear(year);
         }
-        totalMonths = parseInt(monthAdj + 235 * parseInt((year - 1) / 19) + 12 * ((year - 1) % 19) +
+        totalMonths = Utils.toInt(monthAdj + 235 * Utils.toInt((year - 1) / 19) + 12 * ((year - 1) % 19) +
             ((((year - 1) % 19) * 7) + 1) / 19);
         partsElapsed = 204 + (793 * (totalMonths % 1080));
-        hoursElapsed = 5 + (12 * totalMonths) + 793 * parseInt(totalMonths / 1080) +
-            parseInt(partsElapsed / 1080) - 6;
-        parts = parseInt((partsElapsed % 1080) + 1080 * (hoursElapsed % 24));
+        hoursElapsed = 5 + (12 * totalMonths) + 793 * Utils.toInt(totalMonths / 1080) +
+            Utils.toInt(partsElapsed / 1080) - 6;
+        parts = Utils.toInt((partsElapsed % 1080) + 1080 * (hoursElapsed % 24));
 
         return {
-            jDate: new jDate((1 + (29 * parseInt(totalMonths))) + parseInt((hoursElapsed / 24))),
-            time: { hour: parseInt(hoursElapsed) % 24, minute: parseInt((parts % 1080) / 18) },
+            jDate: new jDate((1 + (29 * Utils.toInt(totalMonths))) + Utils.toInt((hoursElapsed / 24))),
+            time: { hour: Utils.toInt(hoursElapsed) % 24, minute: Utils.toInt((parts % 1080) / 18) },
             chalakim: parts % 18
         };
     }

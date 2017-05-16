@@ -3,6 +3,8 @@ import { ScrollView, View, Text, Image, TextInput, TouchableHighlight } from 're
 import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Location from '../Code/JCal/Location';
+import GestureRecognizer from 'react-native-swipe-gestures';
+import SideMenu from './SideMenu';
 import { GeneralStyles } from './styles';
 import DataUtils from '../Code/Data/DataUtils';
 
@@ -16,13 +18,23 @@ export default class FindLocation extends Component {
         this.onUpdate = onUpdate;
         this.appData = appData;
         this.dispatch = this.props.navigation.dispatch;
+        this.navigate = this.props.navigation.navigate;
 
         const loc = appData.Settings.location || Location.getJerusalem();
         this.locName = loc.Name;
         this.state = {
-            list: [loc]
+            list: [loc],
+            menuWidth: 50
         };
         this.findLocation = this.findLocation.bind(this);
+        this.showMenu = this.showMenu.bind(this);
+        this.hideMenu = this.hideMenu.bind(this);
+    }
+    hideMenu() {
+        this.setState({ menuWidth: 0 });
+    }
+    showMenu() {
+        this.setState({ menuWidth: 50 });
     }
     update(location) {
         const appData = this.appData;
@@ -40,47 +52,59 @@ export default class FindLocation extends Component {
         }
     }
     render() {
-        return <ScrollView style={GeneralStyles.container}>
-            <View style={GeneralStyles.formRow}>
-                <Text style={GeneralStyles.label}>Search Location List</Text>
-                <TextInput style={GeneralStyles.textInput}
-                    defaultValue={this.locName}
-                    autoFocus={true}
-                    placeholder='Search for a location'
-                    onChangeText={value => this.findLocation(value)} />
-            </View>
-            {this.state.list.length > 0 &&
-                (<View>
-                    <View style={GeneralStyles.headerView}>
-                        <Text style={GeneralStyles.headerText}>Select a location...</Text>
+        return <View style={GeneralStyles.container}>
+            <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
+                onSwipeLeft={this.hideMenu}
+                onSwipeRight={this.showMenu}>
+                <SideMenu
+                    width={this.state.menuWidth}
+                    onUpdate={this.onUpdate}
+                    appData={this.appData}
+                    navigate={this.navigate}
+                    hideMonthView={true} />
+                <ScrollView style={{ flex: 1 }}>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Search Location List</Text>
+                        <TextInput style={GeneralStyles.textInput}
+                            defaultValue={this.locName}
+                            autoFocus={true}
+                            placeholder='Search for a location'
+                            onChangeText={value => this.findLocation(value)} />
                     </View>
-                    {this.state.list.map((location, index) =>
-                        <View key={index} style={GeneralStyles.inItemButtonList}>
-                            <TouchableHighlight
-                                underlayColor='#afa'
-                                style={{ flex: 1 }}
-                                onPress={() => this.update(location)}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Icon
-                                        name='forward'
-                                        color='#393'
-                                        size={25} />
-                                    <Text> {location.Name}</Text>
-                                </View>
-                            </TouchableHighlight>
+                    {this.state.list.length > 0 &&
+                        (<View>
+                            <View style={GeneralStyles.headerView}>
+                                <Text style={GeneralStyles.headerText}>Select a location...</Text>
+                            </View>
+                            {this.state.list.map((location, index) =>
+                                <View key={index} style={GeneralStyles.inItemButtonList}>
+                                    <TouchableHighlight
+                                        underlayColor='#afa'
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.update(location)}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <Icon
+                                                name='forward'
+                                                color='#393'
+                                                size={25} />
+                                            <Text> {location.Name}</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                </View>)
+                            }
+                        </View>)
+                        ||
+                        (<View style={GeneralStyles.emptyListView}>
+                            <Text style={GeneralStyles.emptyListText}>
+                                There are no Locations in the list that match your search...</Text>
+                            <Image
+                                source={require('../Images/logo.png')}
+                                resizeMode='contain'
+                                style={GeneralStyles.emptyListImage} />
                         </View>)
                     }
-                </View>)
-                ||
-                (<View style={GeneralStyles.emptyListView}>
-                    <Text style={GeneralStyles.emptyListText}>
-                        There are no Locations in the list that match your search...</Text>
-                    <Image
-                        source={require('../Images/logo.png')}
-                        resizeMode='contain'
-                        style={GeneralStyles.emptyListImage} />
-                </View>)
-            }
-        </ScrollView>;
+                </ScrollView>
+            </GestureRecognizer>
+        </View>;
     }
 }

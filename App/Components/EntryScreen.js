@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { ScrollView, Text, View, Alert, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
+import GestureRecognizer from 'react-native-swipe-gestures';
+import SideMenu from './SideMenu';
 import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';
 import JDate from '../Code/JCal/jDate';
@@ -21,13 +23,16 @@ export default class EntryScreen extends Component {
         this.currLocation = currLocation;
         this.onUpdate = onUpdate;
         this.state = {
-            appData: appData
+            appData: appData,
+            menuWidth: 50
         };
         this.newEntry = this.newEntry.bind(this);
         this.update = this.update.bind(this);
         this.findKavuahs = this.findKavuahs.bind(this);
         this.deleteEntry = this.deleteEntry.bind(this);
         this.newKavuah = this.newKavuah.bind(this);
+        this.showMenu = this.showMenu.bind(this);
+        this.hideMenu = this.hideMenu.bind(this);
     }
     update(appData) {
         if (appData) {
@@ -44,6 +49,12 @@ export default class EntryScreen extends Component {
             appData: this.state.appData,
             onUpdate: this.update
         });
+    }
+    hideMenu() {
+        this.setState({ menuWidth: 0 });
+    }
+    showMenu() {
+        this.setState({ menuWidth: 50 });
     }
     deleteEntry(entry) {
         const appData = this.state.appData;
@@ -112,84 +123,98 @@ export default class EntryScreen extends Component {
     }
     render() {
         return (
-            <ScrollView style={GeneralStyles.container}>
-                <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
-                    <TouchableHighlight onPress={this.newEntry}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Icon
-                                size={12}
-                                reverse
-                                name='add'
-                                color='#484'
-                            />
-                            <Text style={{
-                                fontSize: 12,
-                                color: '#262',
-                                fontStyle: 'italic'
-                            }}>New Entry</Text>
+            <View style={GeneralStyles.container}>
+                <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
+                    onSwipeLeft={this.hideMenu}
+                    onSwipeRight={this.showMenu}>
+                    <SideMenu
+                        width={this.state.menuWidth}
+                        onUpdate={this.onUpdate}
+                        appData={this.state.appData}
+                        navigate={this.navigate}
+                        hideOccasions={true}
+                        hideEntries={true}
+                        hideSettings={true} />
+                    <ScrollView style={{ flex: 1 }}>
+                        <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
+                            <TouchableHighlight onPress={this.newEntry}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Icon
+                                        size={12}
+                                        reverse
+                                        name='add'
+                                        color='#484'
+                                    />
+                                    <Text style={{
+                                        fontSize: 12,
+                                        color: '#262',
+                                        fontStyle: 'italic'
+                                    }}>New Entry</Text>
+                                </View>
+                            </TouchableHighlight>
+                            <TouchableHighlight onPress={this.findKavuahs}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Icon
+                                        size={12}
+                                        reverse
+                                        name='search'
+                                        color='#669'
+                                    />
+                                    <Text style={{
+                                        fontSize: 12,
+                                        color: '#669',
+                                        fontStyle: 'italic'
+                                    }}>Calculate Possible Kavuahs</Text>
+                                </View>
+                            </TouchableHighlight>
                         </View>
-                    </TouchableHighlight>
-                    <TouchableHighlight onPress={this.findKavuahs}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Icon
-                                size={12}
-                                reverse
-                                name='search'
-                                color='#669'
-                            />
-                            <Text style={{
-                                fontSize: 12,
-                                color: '#669',
-                                fontStyle: 'italic'
-                            }}>Calculate Possible Kavuahs</Text>
-                        </View>
-                    </TouchableHighlight>
-                </View>
-                <CustomList
-                    data={this.state.appData.EntryList && this.state.appData.EntryList.list}
-                    nightDay={entry => entry.nightDay}
-                    title={entry => entry.toLongString()}
-                    emptyListText='There are no Entries in the list'
-                    secondSection={entry =>
-                        <View style={GeneralStyles.inItemButtonList}>
-                            <TouchableHighlight
-                                onPress={() => this.newKavuah(entry)}
-                                underlayColor='#aaf'
-                                style={{ flex: 1 }}>
-                                <View style={{ alignItems: 'center' }}>
-                                    <Icon
-                                        name='device-hub'
-                                        color='#aaf'
-                                        size={20} />
-                                    <Text style={GeneralStyles.inItemLinkText}>New Kavuah</Text>
-                                </View>
-                            </TouchableHighlight>
-                            <TouchableHighlight
-                                underlayColor='#696'
-                                style={{ flex: 1 }}
-                                onPress={() => this.navigate('Home', { currDate: entry.date, appData: this.state.appData })}>
-                                <View style={{ alignItems: 'center' }}>
-                                    <Icon
-                                        name='event-note'
-                                        color='#696'
-                                        size={20} />
-                                    <Text style={GeneralStyles.inItemLinkText}>Go to Date</Text>
-                                </View>
-                            </TouchableHighlight>
-                            <TouchableHighlight
-                                underlayColor='#faa'
-                                style={{ flex: 1 }}
-                                onPress={() => this.deleteEntry(entry)}>
-                                <View style={{ alignItems: 'center' }}>
-                                    <Icon
-                                        name='delete-forever'
-                                        color='#faa'
-                                        size={20} />
-                                    <Text style={GeneralStyles.inItemLinkText}>Remove</Text>
-                                </View>
-                            </TouchableHighlight>
-                        </View>}
-                />
-            </ScrollView>);
+                        <CustomList
+                            data={this.state.appData.EntryList && this.state.appData.EntryList.descending}
+                            nightDay={entry => entry.nightDay}
+                            title={entry => entry.toLongString()}
+                            emptyListText='There are no Entries in the list'
+                            secondSection={entry =>
+                                <View style={GeneralStyles.inItemButtonList}>
+                                    <TouchableHighlight
+                                        onPress={() => this.newKavuah(entry)}
+                                        underlayColor='#aaf'
+                                        style={{ flex: 1 }}>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Icon
+                                                name='device-hub'
+                                                color='#aaf'
+                                                size={20} />
+                                            <Text style={GeneralStyles.inItemLinkText}>New Kavuah</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        underlayColor='#696'
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.navigate('Home', { currDate: entry.date, appData: this.state.appData })}>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Icon
+                                                name='event-note'
+                                                color='#696'
+                                                size={20} />
+                                            <Text style={GeneralStyles.inItemLinkText}>Go to Date</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        underlayColor='#faa'
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.deleteEntry(entry)}>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Icon
+                                                name='delete-forever'
+                                                color='#faa'
+                                                size={20} />
+                                            <Text style={GeneralStyles.inItemLinkText}>Remove</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                </View>}
+                        />
+                    </ScrollView>
+                </GestureRecognizer>
+            </View>);
     }
 }

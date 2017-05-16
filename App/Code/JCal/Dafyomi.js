@@ -2,7 +2,7 @@ import Utils from './Utils.js';
 import jDate from './jDate.js';
 
 'use strict';
-/***********************************************************************************************************
+/** *********************************************************************************************************
  * Computes the Day Yomi for the given day.
  * Sample of use - to get todays daf:
  *     const dafEng = Dafyomi.toString(new jDate(new Date()));
@@ -65,12 +65,12 @@ export default class Dafyomi {
         if (absoluteDate < osday)
             return null; /* daf yomi hadn't started yet */
         if (absoluteDate >= nsday) {
-            cno = 8 + parseInt(((absoluteDate - nsday) / 2711));
+            cno = 8 + Utils.toInt(((absoluteDate - nsday) / 2711));
             dno = (absoluteDate - nsday) % 2711;
         }
         else {
-            cno = 1 + parseInt((absoluteDate - osday) / 2702);
-            dno = parseInt((absoluteDate - osday) / 2702);
+            cno = 1 + Utils.toInt((absoluteDate - osday) / 2702);
+            dno = Utils.toInt((absoluteDate - osday) / 2702);
         }
 
         /* Find the daf taking note that the cycle changed slightly after cycle 7. */

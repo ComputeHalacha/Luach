@@ -28,7 +28,7 @@ export default class Utils {
             retval = '';
 
         if (n >= 1000) {
-            retval += Utils.jsd[parseInt((n - (n % 1000)) / 1000) - 1] + '\'';
+            retval += Utils.jsd[Utils.toInt((n - (n % 1000)) / 1000) - 1] + '\'';
             n = n % 1000;
         }
 
@@ -38,7 +38,7 @@ export default class Utils {
         }
 
         if (n >= 100) {
-            retval += Utils.jhd[parseInt((n - (n % 100)) / 100) - 1];
+            retval += Utils.jhd[Utils.toInt((n - (n % 100)) / 100) - 1];
             n = n % 100;
         }
 
@@ -50,7 +50,7 @@ export default class Utils {
         }
         else {
             if (n > 9) {
-                retval += Utils.jtd[parseInt((n - (n % 10)) / 10) - 1];
+                retval += Utils.jtd[Utils.toInt((n - (n % 10)) / 10) - 1];
             }
             if ((n % 10) > 0) {
                 retval += Utils.jsd[(n % 10) - 1];
@@ -89,28 +89,28 @@ export default class Utils {
         let suffix = 'th';
         if (t.length === 1 || (t[t.length - 2] !== '1')) {
             switch (t[t.length - 1]) {
-            case '1':
-                suffix = 'st';
-                break;
-            case '2':
-                suffix = 'nd';
-                break;
-            case '3':
-                suffix = 'rd';
-                break;
+                case '1':
+                    suffix = 'st';
+                    break;
+                case '2':
+                    suffix = 'nd';
+                    break;
+                case '3':
+                    suffix = 'rd';
+                    break;
             }
         }
         return t + suffix;
     }
 
-     /**
-     * Get day of week using Javascripts getDay function.
-     * Important note: months starts at 1 not 0 like javascript
-     * The DOW returned has Sunday = 0
-     * @param {Number} year
-     * @param {Number} month
-     * @param {Number} day
-     */
+    /**
+    * Get day of week using Javascripts getDay function.
+    * Important note: months starts at 1 not 0 like javascript
+    * The DOW returned has Sunday = 0
+    * @param {Number} year
+    * @param {Number} month
+    * @param {Number} day
+    */
     static getSdDOW(year, month, day) {
         return new Date(year, month - 1, day).getDay();
     }
@@ -142,13 +142,13 @@ export default class Utils {
         return result;
     }
 
-     /**
-     * Add the given number of minutes to the given time.
-     * The argument needs to be an object in the format {hour : 12, minute :42 }
-     *
-     * @param {{hour:Number, minute:Number}} hm
-     * @param {Number} minutes
-     */
+    /**
+    * Add the given number of minutes to the given time.
+    * The argument needs to be an object in the format {hour : 12, minute :42 }
+    *
+    * @param {{hour:Number, minute:Number}} hm
+    * @param {Number} minutes
+    */
     static addMinutes(hm, minutes) {
         return Utils.fixHourMinute({ hour: hm.hour, minute: hm.minute + minutes });
     }
@@ -201,12 +201,12 @@ export default class Utils {
         const date = new Date(),
             jan = new Date(date.getFullYear(), 0, 1),
             jul = new Date(date.getFullYear(), 6, 1);
-        return -parseInt(Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset()) / 60);
+        return -Utils.toInt(Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset()) / 60);
     }
 
     /** Determines if the given date is within DST on the users system */
     static isDateDST(date) {
-        return (-parseInt(date.getTimezoneOffset() / 60)) !== Utils.currUtcOffset();
+        return (-Utils.toInt(date.getTimezoneOffset() / 60)) !== Utils.currUtcOffset();
     }
 
 
@@ -292,5 +292,17 @@ export default class Utils {
             israelTimeOffset = 2 + -Utils.currUtcOffset();
         //This will give us the current correct date and time in Israel
         return new Date(now.setHours(now.getHours() + israelTimeOffset));
+    }
+
+    /**
+     * Converts the given complex number to an integer by removing the decimal part.
+     * Returns same results as Math.floor for positive numbers and Math.ceil for negative ones.
+     * Almost identical functionality to Math.trunc and parseInt.
+     * The difference is if the argument is NaN. Math.trunc returns NaN while ths fuction returns 0.
+     * In performance tests, this function was found to be quicker than the alternatives.
+     * @param {Number} float The complex number to convert to an integer
+     */
+    static toInt(float) {
+        return float | 0;
     }
 }

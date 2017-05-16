@@ -104,7 +104,7 @@ export default class Zmanim {
 
         const riseMinutes = (rise.hour * 60) + rise.minute,
             setMinutes = (set.hour * 60) + set.minute,
-            chatz = parseInt((setMinutes - riseMinutes) / 2);
+            chatz = Utils.toInt((setMinutes - riseMinutes) / 2);
 
         return Utils.addMinutes(rise, chatz);
     }
@@ -192,8 +192,8 @@ export default class Zmanim {
         if (time < 0) {
             time += 24;
         }
-        hour = parseInt(time);
-        min = parseInt(parseInt((time - hour) * 60 + 0.5));
+        hour = Utils.toInt(time);
+        min = Utils.toInt((time - hour) * 60 + 0.5);
 
         const inCurrTZ = location.UTCOffset === Utils.currUtcOffset();
         if (inCurrTZ && Utils.isDateDST(date)) {

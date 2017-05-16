@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { ScrollView, Text, View, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
+import GestureRecognizer from 'react-native-swipe-gestures';
+import SideMenu from './SideMenu';
 import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';
 import { popUpMessage } from '../Code/GeneralUtils';
@@ -19,10 +21,19 @@ export default class OccasionsScreen extends Component {
         this.onUpdate = onUpdate;
         this.state = {
             appData: appData,
-            occasionList: appData.UserOccasions
+            occasionList: appData.UserOccasions,
+            menuWidth: 50
         };
 
         this.deleteOccasion = this.deleteOccasion.bind(this);
+        this.showMenu = this.showMenu.bind(this);
+        this.hideMenu = this.hideMenu.bind(this);
+    }
+    hideMenu() {
+        this.setState({ menuWidth: 0 });
+    }
+    showMenu() {
+        this.setState({ menuWidth: 50 });
     }
     deleteOccasion(occasion) {
         DataUtils.DeleteUserOccasion(occasion).then(() => {
@@ -52,37 +63,49 @@ export default class OccasionsScreen extends Component {
     }
     render() {
         return (
-            <ScrollView style={GeneralStyles.container}>
-                    <CustomList
-                        data={this.state.occasionList}
-                        iconName='list'
-                        emptyListText='There are no Occasions in the list'
-                        secondSection={occasion => <View style={GeneralStyles.inItemButtonList}>
-                            <TouchableHighlight
-                                underlayColor='#faa'
-                                style={{ flex: 1 }}
-                                onPress={() => this.deleteOccasion(occasion)}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Icon
-                                        name='delete-forever'
-                                        color='#faa'
-                                        size={25} />
-                                    <Text> Remove</Text>
-                                </View>
-                            </TouchableHighlight>
-                            <TouchableHighlight
-                                underlayColor='#696'
-                                style={{ flex: 1 }}
-                                onPress={() => this.navigate('Home', { currDate: occasion.jdate, appData: this.state.appData })}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Icon
-                                        name='event-note'
-                                        color='#696'
-                                        size={25} />
-                                    <Text> Go to Date</Text>
-                                </View>
-                            </TouchableHighlight>
-                        </View>} />
-            </ScrollView>);
+            <View style={GeneralStyles.container}>
+                <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
+                    onSwipeLeft={this.hideMenu}
+                    onSwipeRight={this.showMenu}>
+                    <SideMenu
+                        width={this.state.menuWidth}
+                        onUpdate={this.onUpdate}
+                        appData={this.state.appData}
+                        navigate={this.navigate}
+                        hideOccasions={true} />
+                    <ScrollView style={{ flex: 1 }}>
+                        <CustomList
+                            data={this.state.occasionList}
+                            iconName='list'
+                            emptyListText='There are no Events in the list'
+                            secondSection={occasion => <View style={GeneralStyles.inItemButtonList}>
+                                <TouchableHighlight
+                                    underlayColor='#faa'
+                                    style={{ flex: 1 }}
+                                    onPress={() => this.deleteOccasion(occasion)}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Icon
+                                            name='delete-forever'
+                                            color='#faa'
+                                            size={25} />
+                                        <Text> Remove</Text>
+                                    </View>
+                                </TouchableHighlight>
+                                <TouchableHighlight
+                                    underlayColor='#696'
+                                    style={{ flex: 1 }}
+                                    onPress={() => this.navigate('Home', { currDate: occasion.jdate, appData: this.state.appData })}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Icon
+                                            name='event-note'
+                                            color='#696'
+                                            size={25} />
+                                        <Text> Go to Date</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>} />
+                    </ScrollView>
+                </GestureRecognizer>
+            </View>);
     }
 }

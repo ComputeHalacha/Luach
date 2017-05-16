@@ -41,7 +41,8 @@ const GeneralStyles = StyleSheet.create({
     buttonList: {
         flex: 1,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent:'space-around'
     },
     inItemButtonList: {
         flex: 1,
@@ -56,7 +57,8 @@ const GeneralStyles = StyleSheet.create({
     headerButtons: {
         backgroundColor: '#eef',
         borderBottomWidth: 1,
-        borderBottomColor: '#99b'
+        borderBottomColor: '#99b',
+        padding: 5
     },
     dateEng: { color: '#080' },
     dateHeb: { color: '#008' },

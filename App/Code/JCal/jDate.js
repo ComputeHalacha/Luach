@@ -499,7 +499,7 @@ export default class jDate {
     /**Calculate the Jewish year, month and day for the given absolute date.*/
     static fromAbs(absDay) {
         //To save on calculations, start with a few years before date
-        let year = 3761 + parseInt(absDay / (absDay > 0 ? 366 : 300)),
+        let year = 3761 + Utils.toInt(absDay / (absDay > 0 ? 366 : 300)),
             month,
             day;
 
@@ -598,12 +598,12 @@ export default class jDate {
             return cached.elapsed;
         }
 
-        const months = parseInt((235 * parseInt((year - 1) / 19)) + // Leap months this cycle
+        const months = Utils.toInt((235 * Utils.toInt((year - 1) / 19)) + // Leap months this cycle
             (12 * ((year - 1) % 19)) +                        // Regular months in this cycle.
             (7 * ((year - 1) % 19) + 1) / 19),                // Months in complete cycles so far.
             parts = 204 + 793 * (months % 1080),
-            hours = 5 + 12 * months + 793 * parseInt(months / 1080) + parseInt(parts / 1080),
-            conjDay = parseInt(1 + 29 * months + hours / 24),
+            hours = 5 + 12 * months + 793 * Utils.toInt(months / 1080) + Utils.toInt(parts / 1080),
+            conjDay = Utils.toInt(1 + 29 * months + hours / 24),
             conjParts = 1080 * (hours % 24) + parts % 1080;
 
         let altDay;
