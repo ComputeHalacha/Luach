@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Text, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import SideMenu from './SideMenu';
 import CustomList from './CustomList';
 import JDate from '../Code/JCal/jDate';
@@ -30,18 +29,9 @@ export default class FlaggedDatesScreen extends Component {
                 else {
                     return o.jdate.Abs === this.jdate.Abs;
                 }
-            }),
-            menuWidth: 50
+            })
         };
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
         this.goToDate = this.goToDate.bind(this);
-    }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
     }
     goToDate(jdate) {
         this.navigate('Home', { currDate: jdate, appData: this.state.appData });
@@ -49,11 +39,8 @@ export default class FlaggedDatesScreen extends Component {
     render() {
         return (
             <View style={GeneralStyles.container}>
-                <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                    onSwipeLeft={this.hideMenu}
-                    onSwipeRight={this.showMenu}>
+                <View style={{ flexDirection: 'row', flex: 1 }}>
                     <SideMenu
-                        width={this.state.menuWidth}
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
                         navigate={this.navigate}
@@ -84,7 +71,7 @@ export default class FlaggedDatesScreen extends Component {
                                 </TouchableHighlight>
                             </View>} />
                     </ScrollView>
-                </GestureRecognizer>
+                </View>
             </View>);
     }
 }

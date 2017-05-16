@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { ScrollView, TouchableHighlight, View, Text, TextInput, Picker, Switch } from 'react-native';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import SideMenu from './SideMenu';
 import Location from '../Code/JCal/Location';
 import { Icon } from 'react-native-elements';
@@ -17,19 +16,10 @@ export default class SettingsScreen extends Component {
         const { appData, onUpdate } = this.props.navigation.state.params;
         this.onUpdate = onUpdate;
         this.state = {
-            appData: appData,
-            menuWidth: 50
+            appData: appData
         };
         this.update = this.update.bind(this);
         this.saveAndUpdate = this.saveAndUpdate.bind(this);
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
-    }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
     }
     saveAndUpdate(appData) {
         appData.Settings.save();
@@ -64,11 +54,8 @@ export default class SettingsScreen extends Component {
 
         return (
             <View style={GeneralStyles.container}>
-                <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                    onSwipeLeft={this.hideMenu}
-                    onSwipeRight={this.showMenu}>
+                <View style={{ flexDirection: 'row', flex: 1 }}>
                     <SideMenu
-                        width={this.state.menuWidth}
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
                         navigate={this.navigate}
@@ -180,7 +167,7 @@ export default class SettingsScreen extends Component {
                                 value={PIN} />
                         </View>
                     </ScrollView>
-                </GestureRecognizer>
+                </View>
             </View>);
     }
 }

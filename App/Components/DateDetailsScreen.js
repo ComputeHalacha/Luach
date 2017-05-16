@@ -1,9 +1,7 @@
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import CustomList from './CustomList';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import SideMenu from './SideMenu';
-import jDate from '../Code/JCal/jDate';
 import { GeneralStyles } from './styles';
 
 export default class DateDetailsScreen extends React.Component {
@@ -18,17 +16,9 @@ export default class DateDetailsScreen extends React.Component {
         this.navigate = navigation.navigate;
         this.onUpdate = onUpdate;
         this.appData = appData;
-        this.state = { jdate: jdate, location: location, menuWidth: 50 };
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
+        this.state = { jdate: jdate, location: location };
         this.goPrev = this.goPrev.bind(this);
         this.goNext = this.goNext.bind(this);
-    }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
     }
     goPrev() {
         const jdate = this.state.jdate;
@@ -41,11 +31,8 @@ export default class DateDetailsScreen extends React.Component {
     render() {
         const list = this.state.jdate.getAllDetails(this.state.location);
         return <View style={GeneralStyles.container}>
-            <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                onSwipeLeft={this.hideMenu}
-                onSwipeRight={this.showMenu}>
+            <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
-                    width={this.state.menuWidth}
                     onUpdate={this.onUpdate}
                     appData={this.appData}
                     navigate={this.navigate}
@@ -72,7 +59,7 @@ export default class DateDetailsScreen extends React.Component {
                         })}
                         secondSection={i => <Text style={{ textAlign: 'right', flex: 1 }}>{i.value}</Text>} />
                 </ScrollView>
-            </GestureRecognizer>
+            </View>
         </View>;
     }
 }

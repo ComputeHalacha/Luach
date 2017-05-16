@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Alert, Switch, Text, TouchableHighlight } from 'react-native';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import SideMenu from './SideMenu';
 import CustomList from './CustomList';
 import { Icon } from 'react-native-elements';
@@ -23,8 +22,7 @@ export default class KavuahScreen extends Component {
         this.onUpdate = params.onUpdate;
         this.state = {
             appData: appData,
-            kavuahList: appData.KavuahList,
-            menuWidth: 50
+            kavuahList: appData.KavuahList
         };
         this.update = this.update.bind(this);
         this.deleteKavuah = this.deleteKavuah.bind(this);
@@ -32,14 +30,6 @@ export default class KavuahScreen extends Component {
         this.newKavuah = this.newKavuah.bind(this);
         this.save = this.save.bind(this);
         this.update = this.update.bind(this);
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
-    }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
     }
     update(appData) {
         if (this.onUpdate) {
@@ -110,11 +100,8 @@ export default class KavuahScreen extends Component {
     render() {
         return (
             <View style={GeneralStyles.container}>
-                <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                    onSwipeLeft={this.hideMenu}
-                    onSwipeRight={this.showMenu}>
+                <View style={{ flexDirection: 'row', flex: 1 }}>
                     <SideMenu
-                        width={this.state.menuWidth}
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
                         navigate={this.navigate}
@@ -179,7 +166,7 @@ export default class KavuahScreen extends Component {
                             </View>}
                         />
                     </ScrollView>
-                </GestureRecognizer>
+                </View>
             </View>);
     }
 }

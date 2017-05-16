@@ -2,7 +2,6 @@ import React from 'react';
 import { ScrollView, View, Text, Picker, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import SideMenu from './SideMenu';
 import Entry from '../Code/Chashavshavon/Entry';
 import { Kavuah } from '../Code/Chashavshavon/Kavuah';
@@ -33,8 +32,7 @@ export default class NewEntry extends React.Component {
         this.state = {
             appData: appData,
             jdate: jdate,
-            nightDay: isNight ? NightDay.Night : NightDay.Day,
-            menuWidth: 50
+            nightDay: isNight ? NightDay.Night : NightDay.Day
         };
         this.location = location;
 
@@ -42,14 +40,6 @@ export default class NewEntry extends React.Component {
         this.dispatch = navigation.dispatch;
 
         this.addEntry = this.addEntry.bind(this);
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
-    }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
     }
     addEntry() {
         const appData = this.state.appData,
@@ -101,11 +91,8 @@ export default class NewEntry extends React.Component {
             twoYearsBack = lastYear - 1,
             daysOfMonth = Array.from({ length: 30 }, (v, i) => i + 1);
         return <View style={GeneralStyles.container}>
-            <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                onSwipeLeft={this.hideMenu}
-                onSwipeRight={this.showMenu}>
+            <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
-                    width={this.state.menuWidth}
                     onUpdate={this.onUpdate}
                     appData={this.state.appData}
                     navigate={this.navigate}
@@ -163,7 +150,7 @@ export default class NewEntry extends React.Component {
                         <Button title='Add Entry' onPress={this.addEntry} />
                     </View>
                 </ScrollView>
-            </GestureRecognizer>
+            </View>
         </View>;
     }
 }

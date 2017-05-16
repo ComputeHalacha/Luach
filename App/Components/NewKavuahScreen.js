@@ -2,7 +2,6 @@ import React from 'react';
 import { ScrollView, View, Text, Picker, Switch, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import SideMenu from './SideMenu';
 import { KavuahTypes, Kavuah } from '../Code/Chashavshavon/Kavuah';
 import DataUtils from '../Code/Data/DataUtils';
@@ -30,26 +29,17 @@ export default class NewKavuah extends React.Component {
             kavuahType: KavuahTypes.Haflagah,
             specialNumber: settingEntry && settingEntry.haflaga,
             cancelsOnahBeinunis: true,
-            active: true,
-            menuWidth: 50
+            active: true
         };
         this.getSpecialNumber = this.getSpecialNumber.bind(this);
         this.getSpecialNumberFromEntry = this.getSpecialNumberFromEntry.bind(this);
         this.getSpecialNumberFromKavuahType = this.getSpecialNumberFromKavuahType.bind(this);
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
     }
     componentWillMount() {
         if (!this.state.settingEntry) {
             Alert.alert('Kavuahs can only be added after an Entry has been added!');
             this.dispatch(NavigationActions.back());
         }
-    }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
     }
     addKavuah() {
         if (!this.state.specialNumber) {
@@ -101,11 +91,8 @@ export default class NewKavuah extends React.Component {
         const nums = Array.from({ length: 100 }, (v, i) => i + 1);
 
         return <View style={GeneralStyles.container}>
-            <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                onSwipeLeft={this.hideMenu}
-                onSwipeRight={this.showMenu}>
+            <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
-                    width={this.state.menuWidth}
                     onUpdate={this.onUpdate}
                     appData={this.state.appData}
                     navigate={this.navigate}
@@ -168,7 +155,7 @@ export default class NewKavuah extends React.Component {
                         <Button title='Add Kavuah' onPress={this.addKavuah.bind(this)} />
                     </View>
                 </ScrollView>
-            </GestureRecognizer>
+            </View>
         </View>;
     }
 }

@@ -1,6 +1,5 @@
 import React from 'react';
 import { AppState, FlatList, Text, View, Image, Modal, TextInput, BackHandler } from 'react-native';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import { isSmallScreen } from '../Code/GeneralUtils';
 import SingleDayDisplay from './SingleDayDisplay';
 import SideMenu from './SideMenu';
@@ -81,8 +80,6 @@ export class HomeScreen extends React.Component {
         this.prevDay = this.prevDay.bind(this);
         this.goToday = this.goToday.bind(this);
         this.scrollToTop = this.scrollToTop.bind(this);
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
 
         //If this screen was navigated to from another screen.
         if (props.navigation.state && props.navigation.state.params) {
@@ -156,8 +153,7 @@ export class HomeScreen extends React.Component {
             today: today,
             currDate: today,
             currLocation: Location.getJerusalem(),
-            showFlash: true,
-            menuWidth: 50
+            showFlash: true
         };
 
         //Get the data from the database
@@ -194,8 +190,7 @@ export class HomeScreen extends React.Component {
             currLocation: appData.Settings.location,
             showFlash: false,
             showLogin: false,
-            loadingDone: true,
-            menuWidth: 50
+            loadingDone: true
         };
     }
     setFlash() {
@@ -261,12 +256,6 @@ export class HomeScreen extends React.Component {
         }
         return singleDay;
     }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
-    }
     renderItem({ item }) {
         const { day, hasProbs, occasions, entries } = item;
         return <SingleDayDisplay
@@ -288,11 +277,8 @@ export class HomeScreen extends React.Component {
                     <Login onLoginAttempt={this.loginAttempt} />)
                     ||
                     <View style={{ flex: 1 }}>
-                        <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                            onSwipeLeft={this.hideMenu}
-                            onSwipeRight={this.showMenu}>
+                        <View style={{ flexDirection: 'row', flex: 1 }}>
                             <SideMenu
-                                width={this.state.menuWidth}
                                 onUpdate={this.updateAppData}
                                 appData={this.state.appData}
                                 navigate={this.navigate}
@@ -307,7 +293,7 @@ export class HomeScreen extends React.Component {
                                 renderItem={this.renderItem}
                                 keyExtractor={item => this.state.daysList.indexOf(item)}
                                 onEndReached={this._addDaysToEnd} />
-                        </GestureRecognizer>
+                        </View>
                         {this.state.showFlash &&
                             <Flash />
                         }

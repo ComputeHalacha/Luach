@@ -1,8 +1,13 @@
 import { PixelRatio, Dimensions, Platform, ToastAndroid, Alert } from 'react-native';
 
-/**Gets the current screen width in points */
+/**Gets the current window width in points */
 export function getScreenWidth() {
     return Dimensions.get('window').width;
+}
+
+/** Gets the current window height in points */
+export function getScreenHeight() {
+    return Dimensions.get('window').height;
 }
 
 /**Is the current screen width less than 650 pixels? */
