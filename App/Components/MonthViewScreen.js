@@ -117,8 +117,8 @@ export default class MonthViewScreen extends React.Component {
                         }
                         <View style={styles.singleDayTextContent}>
                             <View style={styles.singleDayNumbersView}>
-                                <Text>{singleDay && Utils.toJNum(jdate.Day)}</Text>
-                                <Text>{singleDay && singleDay.sdate.getDate().toString()}</Text>
+                                <Text style={styles.sdate}>{singleDay && singleDay.sdate.getDate().toString()}</Text>
+                                <Text style={styles.jdate}>{singleDay && Utils.toJNum(jdate.Day)}</Text>
                             </View>
                             {(shabbos || holiday) &&
                                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -173,22 +173,22 @@ export default class MonthViewScreen extends React.Component {
                 </Grid>
             </GestureRecognizer>
             <View style={styles.footerBar}>
-                <TouchableOpacity onPress={this.goPrev}>
-                    <View>
-                        <Icon name='arrow-back' color='#888' size={15} />
+                <TouchableOpacity onPress={this.goPrev} style={styles.sideButton}>
+                    <View style={[styles.footerView, { borderRightWidth: 1 }]}>
+                        <Icon iconStyle={styles.footerIcon} name='arrow-back' />
                         <Text style={styles.footerBarText}>Previous</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.goToday}>
-                    <View>
-                        <Icon color='#779' name='view-carousel' />
-                        <Text style={styles.footerBarText} >Today</Text>
+                <TouchableOpacity onPress={this.goToday} style={styles.sideButton}>
+                    <View style={styles.footerView}>
+                        <Icon iconStyle={styles.footerIcon} name='view-carousel' />
+                        <Text style={styles.footerBarText}>Today</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.goNext}>
-                    <View>
-                        <Icon color='#888' name='arrow-forward' size={15} />
-                        <Text style={styles.footerBarText} >  Next  </Text>
+                <TouchableOpacity onPress={this.goNext} style={styles.sideButton}>
+                    <View style={[styles.footerView, { borderLeftWidth: 1 }]}>
+                        <Icon iconStyle={styles.footerIcon} name='arrow-forward' />
+                        <Text style={styles.footerBarText}>Next</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -259,16 +259,40 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    jdate:{fontSize:11, fontWeight:'bold', color:'#008'},
+    sdate:{fontSize:11, color:'#080'},
     footerBar: {
         flex: 0,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: '#dde',
-        paddingLeft: 8,
-        paddingRight: 8,
+        borderColor: '#777',
+        padding: 0,
+        margin: 0,
         borderTopWidth: 1,
-        borderColor: '#aaa'
+        width: '100%',
+        height: 50
     },
-    footerBarText: { color: '#777', fontSize: 12 }
+    sideButton: {
+        flex: 1
+    },
+    footerView: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderColor: '#888',
+        backgroundColor: '#666',
+        paddingTop: 5,
+        paddingBottom: 5,
+        width: '100%'
+    },
+    footerBarText: {
+        fontSize: 10,
+        color: '#eee',
+        textAlign: 'center',
+        flexWrap: 'wrap'
+    },
+    footerIcon: {
+        fontSize: 20,
+        color: '#eee'
+    }
 });
