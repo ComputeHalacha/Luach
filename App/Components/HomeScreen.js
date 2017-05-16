@@ -69,6 +69,8 @@ export class HomeScreen extends React.Component {
 
         this.navigate = props.navigation.navigate;
 
+        this.appState = AppState.currentState;
+
         this.loginAttempt = this.loginAttempt.bind(this);
         this.renderItem = this.renderItem.bind(this);
         this._addDaysToEnd = this._addDaysToEnd.bind(this);
@@ -90,6 +92,7 @@ export class HomeScreen extends React.Component {
         else {
             this._initialShowing();
         }
+
         //In case the day changed while the app was open
         setInterval(() => {
             const today = new jDate();
@@ -106,9 +109,15 @@ export class HomeScreen extends React.Component {
     }
     _handleAppStateChange = (nextAppState) => {
         const appData = this.state.appData;
-        if (appData && appData.Settings.requirePIN && nextAppState === 'active') {
+        if (this.appState &&
+            this.appState === 'background' &&
+            nextAppState === 'active' &&
+            appData &&
+            appData.Settings &&
+            appData.Settings.requirePIN) {
             this.setState({ showLogin: true });
         }
+        this.appState = nextAppState;
     }
     /**
     * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
@@ -184,6 +193,7 @@ export class HomeScreen extends React.Component {
             today: today,
             currLocation: appData.Settings.location,
             showFlash: false,
+            showLogin: false,
             loadingDone: true,
             menuWidth: 50
         };

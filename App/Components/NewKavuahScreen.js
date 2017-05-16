@@ -21,7 +21,7 @@ export default class NewKavuah extends React.Component {
         this.dispatch = navigation.dispatch;
         this.navigate = this.props.navigation.navigate;
         this.entryList = appData.EntryList;
-        if (!settingEntry) {
+        if (this.entryList.list.length > 0 && !settingEntry) {
             settingEntry = this.entryList.list[this.entryList.list.length - 1];
         }
         this.state = {
@@ -38,6 +38,12 @@ export default class NewKavuah extends React.Component {
         this.getSpecialNumberFromKavuahType = this.getSpecialNumberFromKavuahType.bind(this);
         this.showMenu = this.showMenu.bind(this);
         this.hideMenu = this.hideMenu.bind(this);
+    }
+    componentWillMount() {
+        if (!this.state.settingEntry) {
+            Alert.alert('Kavuahs can only be added after an Entry has been added!');
+            this.dispatch(NavigationActions.back());
+        }
     }
     hideMenu() {
         this.setState({ menuWidth: 0 });
