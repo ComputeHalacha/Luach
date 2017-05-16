@@ -205,9 +205,11 @@ export default class DataUtils {
                 }
             });
     }
-    /**Gets all Kavuahs from the database.
-     *
-     * `entries`: An EntryList instance or an Array of entries where the settingEntry can be found.*/
+
+     /**
+      * Gets all Kavuahs from the database.
+      * @param {Entry|[Entry]} entries An EntryList instance or an Array of entries where the settingEntry can be found
+      */
     static async GetAllKavuahs(entries) {
         if (entries instanceof EntryList) {
             entries = entries.list;
