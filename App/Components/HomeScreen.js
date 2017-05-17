@@ -11,8 +11,6 @@ import { UserOccasion } from '../Code/JCal/UserOccasion';
 
 export default class HomeScreen extends React.Component {
     static navigationOptions = () => ({
-        title: 'Luach',
-        permalink: '',
         header: null
     });
 
@@ -33,27 +31,33 @@ export default class HomeScreen extends React.Component {
         this.scrollToTop = this.scrollToTop.bind(this);
 
         //If this screen was navigated to from another screen.
-        if (props.navigation.state && props.navigation.state.params) {
+        if (props.navigation && props.navigation.state && props.navigation.state.params) {
             this._navigatedShowing(props.navigation.state.params);
         }
         //We are on the initial showing of the app. We will load the appData from the database.
         else {
             this._initialShowing();
         }
+    }
+    componentDidMount() {
+        AppState.addEventListener('change', this._handleAppStateChange);
 
-        //In case the day changed while the app was open
-        setInterval(() => {
+        //Every minute, we check if the current day has changed
+        this.checkToday = setInterval(() => {
             const today = new jDate();
             if ((!this.state.today) || this.state.today.Abs !== today.Abs) {
                 this.setState({ today: today });
             }
-        }, 30000);
-    }
-    componentDidMount() {
-        AppState.addEventListener('change', this._handleAppStateChange);
+        }, 60000);
     }
     componentWillUnmount() {
         AppState.removeEventListener('change', this._handleAppStateChange);
+        if (this.checkToday) {
+            clearInterval(this.checkToday);
+        }
+        if (this.flashTimeout) {
+            clearTimeout(this.flashTimeout);
+        }
     }
     _handleAppStateChange = (nextAppState) => {
         const appData = this.state.appData;
@@ -144,7 +148,7 @@ export default class HomeScreen extends React.Component {
     }
     setFlash() {
         if (this.state.showFlash) {
-            setTimeout(() =>
+            this.flashTimeout = setTimeout(() =>
                 this.setState({ showFlash: false })
                 , 2500);
         }
