@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Alert, Switch, Text, TouchableHighlight } from 'react-native';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import SideMenu from './SideMenu';
 import CustomList from './CustomList';
 import { Icon } from 'react-native-elements';
@@ -23,32 +22,22 @@ export default class KavuahScreen extends Component {
         this.onUpdate = params.onUpdate;
         this.state = {
             appData: appData,
-            kavuahList: appData.KavuahList,
-            menuWidth: 50
+            kavuahList: appData.KavuahList
         };
-        this.update = this.update.bind(this);
         this.deleteKavuah = this.deleteKavuah.bind(this);
         this.findKavuahs = this.findKavuahs.bind(this);
         this.newKavuah = this.newKavuah.bind(this);
-        this.save = this.save.bind(this);
+        this.changeActive = this.changeActive.bind(this);
         this.update = this.update.bind(this);
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
-    }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
     }
     update(appData) {
-        if (this.onUpdate) {
-            this.onUpdate(appData);
-        }
         this.setState({
             appData: appData,
             kavuahList: appData.KavuahList
         });
+        if (this.onUpdate) {
+            this.onUpdate(appData);
+        }
     }
     newKavuah() {
         this.navigate('NewKavuah', {
@@ -99,22 +88,22 @@ export default class KavuahScreen extends Component {
             onUpdate: this.update
         });
     }
-    save(kavuah, name, value) {
+    changeActive(kavuah, active) {
+        kavuah.active = active;
+        DataUtils.KavuahToDatabase(kavuah);
+
         const appData = this.state.appData,
-            kav = appData.KavuahList.find(k => k === kavuah);
-        kav[name] = value;
-        DataUtils.KavuahToDatabase(kav).then(() => {
-            this.update(appData);
-        });
+            kavuahList = appData.KavuahList;
+        //To cause an update on setState for the FlatList (used in CustomList),
+        //the data source needs to be changed at a "shallow" level.
+        appData.KavuahList = [...kavuahList];
+        this.update(appData);
     }
     render() {
         return (
             <View style={GeneralStyles.container}>
-                <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                    onSwipeLeft={this.hideMenu}
-                    onSwipeRight={this.showMenu}>
+                <View style={{ flexDirection: 'row', flex: 1 }}>
                     <SideMenu
-                        width={this.state.menuWidth}
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
                         navigate={this.navigate}
@@ -161,7 +150,7 @@ export default class KavuahScreen extends Component {
                                     <Text>Active </Text>
                                     <Switch value={kavuah.active}
                                         onValueChange={value =>
-                                            this.save(kavuah, 'active', value)}
+                                            this.changeActive(kavuah, value)}
                                         title='Active' />
                                 </View>
                                 <TouchableHighlight
@@ -179,7 +168,7 @@ export default class KavuahScreen extends Component {
                             </View>}
                         />
                     </ScrollView>
-                </GestureRecognizer>
+                </View>
             </View>);
     }
 }

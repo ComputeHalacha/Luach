@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, ScrollView, View, Text, Picker, TextInput, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import SideMenu from './SideMenu';
 import { UserOccasionTypes, UserOccasion } from '../Code/JCal/UserOccasion';
 import DataUtils from '../Code/Data/DataUtils';
@@ -26,18 +25,9 @@ export default class NewOccasion extends React.Component {
             jdate: jdate,
             occasionType: UserOccasionTypes.OneTime,
             title: '',
-            comment: '',
-            menuWidth: 50
+            comment: ''
         };
         this.addOccasion = this.addOccasion.bind(this);
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
-    }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
     }
     addOccasion() {
         const ad = this.state.appData,
@@ -64,11 +54,8 @@ export default class NewOccasion extends React.Component {
             sDay = Utils.toSuffixed(sdate.getDate()),
             muxedDate = `${this.state.jdate.toShortString(false)} (${sdate.toLocaleDateString()})`;
         return <View style={GeneralStyles.container}>
-            <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                onSwipeLeft={this.hideMenu}
-                onSwipeRight={this.showMenu}>
+            <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
-                    width={this.state.menuWidth}
                     onUpdate={this.onUpdate}
                     appData={this.state.appData}
                     navigate={this.navigate}
@@ -118,18 +105,7 @@ export default class NewOccasion extends React.Component {
                         <Button title='Add Occasion' onPress={this.addOccasion} />
                     </View>
                 </ScrollView>
-            </GestureRecognizer>
+            </View>
         </View>;
     }
 }
-const styles = StyleSheet.create({
-    header: {
-        backgroundColor: '#fba',
-        color: '#fff',
-        padding: 5,
-        flex: 1,
-        textAlign: 'center',
-        fontWeight: 'bold',
-        fontSize: 16
-    }
-});

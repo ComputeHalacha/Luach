@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { ScrollView, Text, View, Alert, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import SideMenu from './SideMenu';
 import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';
@@ -23,16 +22,13 @@ export default class EntryScreen extends Component {
         this.currLocation = currLocation;
         this.onUpdate = onUpdate;
         this.state = {
-            appData: appData,
-            menuWidth: 50
+            appData: appData
         };
         this.newEntry = this.newEntry.bind(this);
         this.update = this.update.bind(this);
         this.findKavuahs = this.findKavuahs.bind(this);
         this.deleteEntry = this.deleteEntry.bind(this);
         this.newKavuah = this.newKavuah.bind(this);
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
     }
     update(appData) {
         if (appData) {
@@ -49,12 +45,6 @@ export default class EntryScreen extends Component {
             appData: this.state.appData,
             onUpdate: this.update
         });
-    }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
     }
     deleteEntry(entry) {
         const appData = this.state.appData;
@@ -124,11 +114,8 @@ export default class EntryScreen extends Component {
     render() {
         return (
             <View style={GeneralStyles.container}>
-                <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                    onSwipeLeft={this.hideMenu}
-                    onSwipeRight={this.showMenu}>
+                <View style={{ flexDirection: 'row', flex: 1 }}>
                     <SideMenu
-                        width={this.state.menuWidth}
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
                         navigate={this.navigate}
@@ -214,7 +201,7 @@ export default class EntryScreen extends Component {
                                 </View>}
                         />
                     </ScrollView>
-                </GestureRecognizer>
+                </View>
             </View>);
     }
 }

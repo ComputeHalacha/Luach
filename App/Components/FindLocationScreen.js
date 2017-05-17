@@ -3,7 +3,6 @@ import { ScrollView, View, Text, Image, TextInput, TouchableHighlight } from 're
 import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Location from '../Code/JCal/Location';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import SideMenu from './SideMenu';
 import { GeneralStyles } from './styles';
 import DataUtils from '../Code/Data/DataUtils';
@@ -23,18 +22,9 @@ export default class FindLocation extends Component {
         const loc = appData.Settings.location || Location.getJerusalem();
         this.locName = loc.Name;
         this.state = {
-            list: [loc],
-            menuWidth: 50
+            list: [loc]
         };
         this.findLocation = this.findLocation.bind(this);
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
-    }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
     }
     update(location) {
         const appData = this.appData;
@@ -53,11 +43,8 @@ export default class FindLocation extends Component {
     }
     render() {
         return <View style={GeneralStyles.container}>
-            <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                onSwipeLeft={this.hideMenu}
-                onSwipeRight={this.showMenu}>
+            <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
-                    width={this.state.menuWidth}
                     onUpdate={this.onUpdate}
                     appData={this.appData}
                     navigate={this.navigate}
@@ -104,7 +91,7 @@ export default class FindLocation extends Component {
                         </View>)
                     }
                 </ScrollView>
-            </GestureRecognizer>
+            </View>
         </View>;
     }
 }

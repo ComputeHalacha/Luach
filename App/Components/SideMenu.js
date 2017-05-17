@@ -1,6 +1,7 @@
 import React from 'react';
 import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
+import {getScreenHeight} from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 
 /**
@@ -8,7 +9,6 @@ import jDate from '../Code/JCal/jDate';
  * navigate,
  * appData
  * onUpdate
- * width
  * currDate
  * isDataLoading
  * onGoToday - if falsey, will navigate to the home screen
@@ -37,7 +37,7 @@ export default class SideMenu extends React.Component {
                 appData: this.props.appData,
                 onUpdate: this.props.onUpdate
             };
-        return <View style={[styles.mainView, { width: this.props.width }]}>
+        return <View style={styles.mainView}>
             <TouchableHighlight
                 underlayColor='#eef'
                 onPress={this.props.onGoToday ||
@@ -159,6 +159,8 @@ export default class SideMenu extends React.Component {
 const styles = StyleSheet.create({
     mainView: {
         height: '100%',
+        width:47,
+        minHeight: Math.trunc(getScreenHeight() * 0.9),
         flex: 0,
         borderRightWidth: 1,
         borderColor: '#777',

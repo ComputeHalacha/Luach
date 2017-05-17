@@ -1,66 +1,16 @@
 import React from 'react';
-import { AppState, FlatList, Text, View, Image, Modal, TextInput, BackHandler } from 'react-native';
-import GestureRecognizer from 'react-native-swipe-gestures';
-import { isSmallScreen } from '../Code/GeneralUtils';
+import { AppState, FlatList, View } from 'react-native';
 import SingleDayDisplay from './SingleDayDisplay';
+import Login from './Login';
+import Flash from './Flash';
 import SideMenu from './SideMenu';
 import jDate from '../Code/JCal/jDate';
 import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
 import { UserOccasion } from '../Code/JCal/UserOccasion';
 
-const Login = props =>
-    <Modal onRequestClose={() => BackHandler.exitApp()}>
-        <View style={{ flex: 1, backgroundColor: '#444', alignItems: 'center' }}>
-            <View style={{ backgroundColor: '#eef', flex: 0, width: '75%', borderWidth: 1, borderRadius: 6, padding: 15, alignItems: 'center', marginTop: '10%' }}>
-                <Image style={{ width: 50, height: 50 }} resizeMode='stretch' source={require('../Images/logo.png')} />
-                <Text style={{ color: '#556', fontSize: 35, fontWeight: 'bold', paddingBottom: 20 }}>Luach</Text>
-                <Text>Please enter your 4 digit PIN</Text>
-                <TextInput
-                    style={{ width: 150, fontSize: 20, textAlign: 'center' }}
-                    keyboardType='numeric'
-                    returnKeyType='next'
-                    maxLength={4}
-                    onChangeText={value => props.onLoginAttempt(value)}
-                    autoFocus={true}
-                    secureTextEntry={true}
-                    iosclearTextOnFocus={true} />
-            </View>
-        </View>
-    </Modal>,
-    Flash = () =>
-        <View style={{
-            backgroundColor: '#eef',
-            borderTopWidth: 2,
-            borderColor: '#99a',
-            padding: 15,
-            flex: 0
-        }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{
-                    fontSize: 25,
-                    color: '#909ACF',
-                    fontWeight: 'bold'
-                }}>Luach</Text>
-                <Image
-                    style={{ width: 20, height: 20, marginLeft: 5 }}
-                    resizeMode='stretch'
-                    source={require('../Images/logo.png')} />
-            </View>
-            <View style={{ flexDirection: isSmallScreen ? 'row' : 'column' }}>
-                <Text style={{
-                    fontSize: 11,
-                    color: '#a66',
-                    fontWeight: 'bold'
-                }}>PLEASE NOTE:<Text
-                    style={{ fontWeight: 'normal' }}> DO NOT rely exclusivley upon this application</Text></Text>
-            </View>
-        </View>;
-
-export class HomeScreen extends React.Component {
+export default class HomeScreen extends React.Component {
     static navigationOptions = () => ({
-        title: 'Luach',
-        permalink: '',
         header: null
     });
 
@@ -69,9 +19,7 @@ export class HomeScreen extends React.Component {
 
         this.navigate = props.navigation.navigate;
 
-        this.appState = AppState.currentState;
-
-        this.loginAttempt = this.loginAttempt.bind(this);
+        this.onLoggedIn = this.onLoggedIn.bind(this);
         this.renderItem = this.renderItem.bind(this);
         this._addDaysToEnd = this._addDaysToEnd.bind(this);
         this.setDayInformation = this.setDayInformation.bind(this);
@@ -81,43 +29,45 @@ export class HomeScreen extends React.Component {
         this.prevDay = this.prevDay.bind(this);
         this.goToday = this.goToday.bind(this);
         this.scrollToTop = this.scrollToTop.bind(this);
-        this.showMenu = this.showMenu.bind(this);
-        this.hideMenu = this.hideMenu.bind(this);
 
         //If this screen was navigated to from another screen.
-        if (props.navigation.state && props.navigation.state.params) {
+        if (props.navigation && props.navigation.state && props.navigation.state.params) {
             this._navigatedShowing(props.navigation.state.params);
         }
         //We are on the initial showing of the app. We will load the appData from the database.
         else {
             this._initialShowing();
         }
+    }
+    componentDidMount() {
+        AppState.addEventListener('change', this._handleAppStateChange);
 
-        //In case the day changed while the app was open
-        setInterval(() => {
+        //Every minute, we check if the current day has changed
+        this.checkToday = setInterval(() => {
             const today = new jDate();
             if ((!this.state.today) || this.state.today.Abs !== today.Abs) {
                 this.setState({ today: today });
             }
-        }, 30000);
-    }
-    componentDidMount() {
-        AppState.addEventListener('change', this._handleAppStateChange);
+        }, 60000);
     }
     componentWillUnmount() {
         AppState.removeEventListener('change', this._handleAppStateChange);
+        if (this.checkToday) {
+            clearInterval(this.checkToday);
+        }
+        if (this.flashTimeout) {
+            clearTimeout(this.flashTimeout);
+        }
     }
     _handleAppStateChange = (nextAppState) => {
         const appData = this.state.appData;
-        if (this.appState &&
-            this.appState === 'background' &&
-            nextAppState === 'active' &&
+        if (nextAppState === 'active' &&
             appData &&
             appData.Settings &&
-            appData.Settings.requirePIN) {
+            appData.Settings.requirePIN &&
+            appData.Settings.PIN.length === 4) {
             this.setState({ showLogin: true });
         }
-        this.appState = nextAppState;
     }
     /**
     * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
@@ -156,8 +106,7 @@ export class HomeScreen extends React.Component {
             today: today,
             currDate: today,
             currLocation: Location.getJerusalem(),
-            showFlash: true,
-            menuWidth: 50
+            showFlash: true
         };
 
         //Get the data from the database
@@ -194,22 +143,19 @@ export class HomeScreen extends React.Component {
             currLocation: appData.Settings.location,
             showFlash: false,
             showLogin: false,
-            loadingDone: true,
-            menuWidth: 50
+            loadingDone: true
         };
     }
     setFlash() {
         if (this.state.showFlash) {
-            setTimeout(() =>
+            this.flashTimeout = setTimeout(() =>
                 this.setState({ showFlash: false })
                 , 2500);
         }
     }
-    loginAttempt(pin) {
-        if (pin === this.state.appData.Settings.PIN) {
-            this.setState({ showLogin: false });
-            this.setFlash();
-        }
+    onLoggedIn() {
+        this.setState({ showLogin: false });
+        this.setFlash();
     }
     scrollToTop() {
         //scrollToOffset may not scroll all the way to the top without the setImmediate.
@@ -261,12 +207,6 @@ export class HomeScreen extends React.Component {
         }
         return singleDay;
     }
-    hideMenu() {
-        this.setState({ menuWidth: 0 });
-    }
-    showMenu() {
-        this.setState({ menuWidth: 50 });
-    }
     renderItem({ item }) {
         const { day, hasProbs, occasions, entries } = item;
         return <SingleDayDisplay
@@ -285,14 +225,11 @@ export class HomeScreen extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 {(this.state.showLogin &&
-                    <Login onLoginAttempt={this.loginAttempt} />)
+                    <Login onLoggedIn={this.onLoggedIn} pin={this.state.appData.Settings.PIN} />)
                     ||
                     <View style={{ flex: 1 }}>
-                        <GestureRecognizer style={{ flexDirection: 'row', flex: 1 }}
-                            onSwipeLeft={this.hideMenu}
-                            onSwipeRight={this.showMenu}>
+                        <View style={{ flexDirection: 'row', flex: 1 }}>
                             <SideMenu
-                                width={this.state.menuWidth}
                                 onUpdate={this.updateAppData}
                                 appData={this.state.appData}
                                 navigate={this.navigate}
@@ -307,7 +244,7 @@ export class HomeScreen extends React.Component {
                                 renderItem={this.renderItem}
                                 keyExtractor={item => this.state.daysList.indexOf(item)}
                                 onEndReached={this._addDaysToEnd} />
-                        </GestureRecognizer>
+                        </View>
                         {this.state.showFlash &&
                             <Flash />
                         }
