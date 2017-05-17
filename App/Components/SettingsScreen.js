@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, TouchableHighlight, View, Text, TextInput, Picker, Switch } from 'react-native';
+import { ScrollView, TouchableHighlight, View, KeyboardAvoidingView, Text, TextInput, Picker, Switch } from 'react-native';
 import SideMenu from './SideMenu';
 import Location from '../Code/JCal/Location';
 import { Icon } from 'react-native-elements';
@@ -16,10 +16,12 @@ export default class SettingsScreen extends Component {
         const { appData, onUpdate } = this.props.navigation.state.params;
         this.onUpdate = onUpdate;
         this.state = {
-            appData: appData
+            appData: appData,
+            enteredPin: appData.Settings.PIN
         };
         this.update = this.update.bind(this);
         this.saveAndUpdate = this.saveAndUpdate.bind(this);
+        this.changePIN = this.changePIN.bind(this);
     }
     saveAndUpdate(appData) {
         appData.Settings.save();
@@ -33,6 +35,15 @@ export default class SettingsScreen extends Component {
             sets = appData.Settings;
         sets[name] = value;
         this.saveAndUpdate(appData);
+    }
+    changePIN(pin) {
+        const validPin = /^\d{4}$/.test(pin);
+        if (validPin) {
+            const appData = this.state.appData;
+            appData.Settings.PIN = pin;
+            this.saveAndUpdate(appData);
+        }
+        this.setState({ invalidPin: !validPin, enteredPin: pin });
     }
     render() {
         const nums = Array.from({ length: 24 }, (v, i) => i + 1),
@@ -49,8 +60,7 @@ export default class SettingsScreen extends Component {
             showProbFlagOnHome = setDefault(sets && sets.showProbFlagOnHome, true),
             showEntryFlagOnHome = setDefault(sets && sets.showEntryFlagOnHome, true),
             navigateBySecularDate = sets && sets.navigateBySecularDate,
-            requirePIN = setDefault(sets && sets.requirePIN, true),
-            PIN = setDefault(sets && sets.PIN, '1234');
+            requirePIN = setDefault(sets && sets.requirePIN, true);
 
         return (
             <View style={GeneralStyles.container}>
@@ -159,19 +169,25 @@ export default class SettingsScreen extends Component {
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>4 digit PIN Number</Text>
+                            <KeyboardAvoidingView
+                                style={{
+                                    display: this.state.invalidPin ? 'flex' : 'none',
+                                    marginTop: 5,
+                                    marginLeft: 10
+                                }}>
+                                <Text style={{ color: '#f55', fontSize: 12, fontWeight: 'bold' }}>PIN must have 4 digits</Text>
+                            </KeyboardAvoidingView>
                             <TextInput style={GeneralStyles.textInput}
                                 keyboardType='numeric'
                                 returnKeyType='next'
                                 maxLength={4}
-                                onValueChange={value => {
-                                    if (value.length === 4) {
-                                        this.update('PIN', value);
-                                    }
+                                onChangeText={value => {
+                                    this.changePIN(value);
                                 }}
-                                value={PIN} />
+                                value={this.state.enteredPin} />
                         </View>
                     </ScrollView>
                 </View>
-            </View>);
+            </View >);
     }
 }
