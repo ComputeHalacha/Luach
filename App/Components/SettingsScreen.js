@@ -163,7 +163,11 @@ export default class SettingsScreen extends Component {
                                 keyboardType='numeric'
                                 returnKeyType='next'
                                 maxLength={4}
-                                onValueChange={value => this.update('PIN', value)}
+                                onValueChange={value => {
+                                    if (value.length === 4) {
+                                        this.update('PIN', value);
+                                    }
+                                }}
                                 value={PIN} />
                         </View>
                     </ScrollView>

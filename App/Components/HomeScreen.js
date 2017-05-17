@@ -1,62 +1,15 @@
 import React from 'react';
-import { AppState, FlatList, Text, View, Image, Modal, TextInput, BackHandler } from 'react-native';
-import { isSmallScreen } from '../Code/GeneralUtils';
+import { AppState, FlatList, View } from 'react-native';
 import SingleDayDisplay from './SingleDayDisplay';
+import Login from './Login';
+import Flash from './Flash';
 import SideMenu from './SideMenu';
 import jDate from '../Code/JCal/jDate';
 import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
 import { UserOccasion } from '../Code/JCal/UserOccasion';
 
-const Login = props =>
-    <Modal onRequestClose={() => BackHandler.exitApp()}>
-        <View style={{ flex: 1, backgroundColor: '#444', alignItems: 'center' }}>
-            <View style={{ backgroundColor: '#eef', flex: 0, width: '75%', borderWidth: 1, borderRadius: 6, padding: 15, alignItems: 'center', marginTop: '10%' }}>
-                <Image style={{ width: 50, height: 50 }} resizeMode='stretch' source={require('../Images/logo.png')} />
-                <Text style={{ color: '#556', fontSize: 35, fontWeight: 'bold', paddingBottom: 20 }}>Luach</Text>
-                <Text>Please enter your 4 digit PIN</Text>
-                <TextInput
-                    style={{ width: 150, fontSize: 20, textAlign: 'center' }}
-                    keyboardType='numeric'
-                    returnKeyType='next'
-                    maxLength={4}
-                    onChangeText={value => props.onLoginAttempt(value)}
-                    autoFocus={true}
-                    secureTextEntry={true}
-                    iosclearTextOnFocus={true} />
-            </View>
-        </View>
-    </Modal>,
-    Flash = () =>
-        <View style={{
-            backgroundColor: '#eef',
-            borderTopWidth: 2,
-            borderColor: '#99a',
-            padding: 15,
-            flex: 0
-        }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{
-                    fontSize: 25,
-                    color: '#909ACF',
-                    fontWeight: 'bold'
-                }}>Luach</Text>
-                <Image
-                    style={{ width: 20, height: 20, marginLeft: 5 }}
-                    resizeMode='stretch'
-                    source={require('../Images/logo.png')} />
-            </View>
-            <View style={{ flexDirection: isSmallScreen ? 'row' : 'column' }}>
-                <Text style={{
-                    fontSize: 11,
-                    color: '#a66',
-                    fontWeight: 'bold'
-                }}>PLEASE NOTE:<Text
-                    style={{ fontWeight: 'normal' }}> DO NOT rely exclusivley upon this application</Text></Text>
-            </View>
-        </View>;
-
-export class HomeScreen extends React.Component {
+export default class HomeScreen extends React.Component {
     static navigationOptions = () => ({
         title: 'Luach',
         permalink: '',
@@ -68,9 +21,7 @@ export class HomeScreen extends React.Component {
 
         this.navigate = props.navigation.navigate;
 
-        this.appState = AppState.currentState;
-
-        this.loginAttempt = this.loginAttempt.bind(this);
+        this.onLoggedIn = this.onLoggedIn.bind(this);
         this.renderItem = this.renderItem.bind(this);
         this._addDaysToEnd = this._addDaysToEnd.bind(this);
         this.setDayInformation = this.setDayInformation.bind(this);
@@ -106,15 +57,13 @@ export class HomeScreen extends React.Component {
     }
     _handleAppStateChange = (nextAppState) => {
         const appData = this.state.appData;
-        if (this.appState &&
-            this.appState === 'background' &&
-            nextAppState === 'active' &&
+        if (nextAppState === 'active' &&
             appData &&
             appData.Settings &&
-            appData.Settings.requirePIN) {
+            appData.Settings.requirePIN &&
+            appData.Settings.PIN.length === 4) {
             this.setState({ showLogin: true });
         }
-        this.appState = nextAppState;
     }
     /**
     * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
@@ -200,11 +149,9 @@ export class HomeScreen extends React.Component {
                 , 2500);
         }
     }
-    loginAttempt(pin) {
-        if (pin === this.state.appData.Settings.PIN) {
-            this.setState({ showLogin: false });
-            this.setFlash();
-        }
+    onLoggedIn() {
+        this.setState({ showLogin: false });
+        this.setFlash();
     }
     scrollToTop() {
         //scrollToOffset may not scroll all the way to the top without the setImmediate.
@@ -274,7 +221,7 @@ export class HomeScreen extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 {(this.state.showLogin &&
-                    <Login onLoginAttempt={this.loginAttempt} />)
+                    <Login onLoggedIn={this.onLoggedIn} pin={this.state.appData.Settings.PIN} />)
                     ||
                     <View style={{ flex: 1 }}>
                         <View style={{ flexDirection: 'row', flex: 1 }}>

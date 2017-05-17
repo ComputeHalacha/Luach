@@ -24,21 +24,20 @@ export default class KavuahScreen extends Component {
             appData: appData,
             kavuahList: appData.KavuahList
         };
-        this.update = this.update.bind(this);
         this.deleteKavuah = this.deleteKavuah.bind(this);
         this.findKavuahs = this.findKavuahs.bind(this);
         this.newKavuah = this.newKavuah.bind(this);
-        this.save = this.save.bind(this);
+        this.changeActive = this.changeActive.bind(this);
         this.update = this.update.bind(this);
     }
     update(appData) {
-        if (this.onUpdate) {
-            this.onUpdate(appData);
-        }
         this.setState({
             appData: appData,
             kavuahList: appData.KavuahList
         });
+        if (this.onUpdate) {
+            this.onUpdate(appData);
+        }
     }
     newKavuah() {
         this.navigate('NewKavuah', {
@@ -89,13 +88,16 @@ export default class KavuahScreen extends Component {
             onUpdate: this.update
         });
     }
-    save(kavuah, name, value) {
+    changeActive(kavuah, active) {
+        kavuah.active = active;
+        DataUtils.KavuahToDatabase(kavuah);
+
         const appData = this.state.appData,
-            kav = appData.KavuahList.find(k => k === kavuah);
-        kav[name] = value;
-        DataUtils.KavuahToDatabase(kav).then(() => {
-            this.update(appData);
-        });
+            kavuahList = appData.KavuahList;
+        //To cause an update on setState for the FlatList (used in CustomList),
+        //the data source needs to be changed at a "shallow" level.
+        appData.KavuahList = [...kavuahList];
+        this.update(appData);
     }
     render() {
         return (
@@ -148,7 +150,7 @@ export default class KavuahScreen extends Component {
                                     <Text>Active </Text>
                                     <Switch value={kavuah.active}
                                         onValueChange={value =>
-                                            this.save(kavuah, 'active', value)}
+                                            this.changeActive(kavuah, value)}
                                         title='Active' />
                                 </View>
                                 <TouchableHighlight
