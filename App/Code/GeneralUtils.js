@@ -15,6 +15,11 @@ export function isSmallScreen() {
     return (getScreenWidth() * PixelRatio.get()) < 650;
 }
 
+/**Is the current screen width more than 1390 pixels? */
+export function isLargeScreen() {
+    return (getScreenWidth() * PixelRatio.get()) > 1390;
+}
+
 /**Returns true if thing is an instance of either a string primitive or String object.*/
 export function isString(thing) {
     return (typeof thing === 'string' || thing instanceof String);
@@ -65,4 +70,20 @@ export function popUpMessage(message, optionalTitle) {
     else {
         Alert.alert(optionalTitle, message);
     }
+}
+
+/**
+ * Returns an array containing a range of integers
+ * @param {Number} [start] The number to start at. The start number included. If only one argument is supplied, start will be set to 0.
+ * @param {Number} end The top end of the range. The end number is not included.
+ * @returns {[Number]}
+ */
+export function range(start, end) {
+    if (arguments.length === 1) {
+        end = start;
+        start = 0;
+    }
+    return Array.from(
+        { length: end - start },
+        (v, i) => start + i);
 }

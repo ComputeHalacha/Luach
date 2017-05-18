@@ -4,6 +4,7 @@ import SingleDayDisplay from './SingleDayDisplay';
 import Login from './Login';
 import Flash from './Flash';
 import SideMenu from './SideMenu';
+import { isLargeScreen } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
@@ -191,7 +192,9 @@ export default class HomeScreen extends React.Component {
         const daysList = [this.setDayInformation({ day: jdate }, appData)];
         daysList.push(this.setDayInformation({ day: jdate.addDays(1) }, appData));
         daysList.push(this.setDayInformation({ day: jdate.addDays(2) }, appData));
-
+        if (isLargeScreen()) {
+            daysList.push(this.setDayInformation({ day: jdate.addDays(3) }, appData));
+        }
         return daysList;
     }
     setDayInformation(singleDay, appData) {
