@@ -65,7 +65,7 @@ export function setDefault(paramValue, defValue) {
 
 export function popUpMessage(message, optionalTitle) {
     if (Platform.OS === 'android') {
-        ToastAndroid.show(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
+        ToastAndroid.show(message, ToastAndroid.SHORT, ToastAndroid.TOP);
     }
     else {
         Alert.alert(optionalTitle, message);
@@ -73,7 +73,7 @@ export function popUpMessage(message, optionalTitle) {
 }
 
 /**
- * Returns an array containing a range of integers
+ * Returns an array containing a range of integers.
  * @param {Number} [start] The number to start at. The start number included. If only one argument is supplied, start will be set to 0.
  * @param {Number} end The top end of the range. The end number is not included.
  * @returns {[Number]}
