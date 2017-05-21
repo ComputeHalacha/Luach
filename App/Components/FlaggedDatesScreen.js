@@ -61,12 +61,16 @@ export default class FlaggedDatesScreen extends Component {
                                     underlayColor='#faa'
                                     style={{ flex: 1 }}
                                     onPress={() => this.goToDate(po.jdate)}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
+                                        <Text style={[GeneralStyles.inItemLinkText, {
+                                            color: '#585',
+                                            padding: 3
+                                        }]}>Go to Date</Text>
                                         <Icon
                                             name='event-note'
-                                            color='#393'
-                                            size={25} />
-                                        <Text> Go to Date</Text>
+                                            color='#585'
+                                            size={15} />
+
                                     </View>
                                 </TouchableHighlight>
                             </View>} />
