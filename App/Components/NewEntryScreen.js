@@ -9,7 +9,7 @@ import Utils from '../Code/JCal/Utils';
 import jDate from '../Code/JCal/jDate';
 import { NightDay, Onah } from '../Code/Chashavshavon/Onah';
 import DataUtils from '../Code/Data/DataUtils';
-import { popUpMessage } from '../Code/GeneralUtils';
+import { popUpMessage, range } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class NewEntry extends React.Component {
@@ -89,7 +89,7 @@ export default class NewEntry extends React.Component {
         const jdate = this.state.jdate,
             lastYear = jdate.Year - 1,
             twoYearsBack = lastYear - 1,
-            daysOfMonth = Array.from({ length: 30 }, (v, i) => i + 1);
+            daysOfMonth = range(1, 31);
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu

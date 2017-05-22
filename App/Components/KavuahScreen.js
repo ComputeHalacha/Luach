@@ -112,7 +112,7 @@ export default class KavuahScreen extends Component {
                     <ScrollView style={{ flex: 1 }}>
                         <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
                             <TouchableHighlight onPress={this.newKavuah}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ alignItems: 'center' }}>
                                     <Icon
                                         size={12}
                                         reverse
@@ -126,7 +126,7 @@ export default class KavuahScreen extends Component {
                                 </View>
                             </TouchableHighlight>
                             <TouchableHighlight onPress={this.findKavuahs}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ alignItems: 'center' }}>
                                     <Icon
                                         size={12}
                                         reverse
@@ -144,6 +144,7 @@ export default class KavuahScreen extends Component {
                             data={this.state.kavuahList}
                             title={kavuah => kavuah.toLongString()}
                             iconName='device-hub'
+                            iconColor={kavuah => kavuah.active ? '#99f' : '#ddd'}
                             emptyListText='There are no Kavuahs in the list'
                             secondSection={kavuah => <View style={GeneralStyles.inItemButtonList}>
                                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
@@ -169,6 +170,6 @@ export default class KavuahScreen extends Component {
                         />
                     </ScrollView>
                 </View>
-            </View>);
+            </View >);
     }
 }
