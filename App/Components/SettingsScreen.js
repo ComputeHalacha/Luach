@@ -3,7 +3,7 @@ import { ScrollView, TouchableHighlight, View, KeyboardAvoidingView, Text, TextI
 import SideMenu from './SideMenu';
 import Location from '../Code/JCal/Location';
 import { Icon } from 'react-native-elements';
-import { setDefault } from '../Code/GeneralUtils';
+import { setDefault, range } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class SettingsScreen extends Component {
@@ -46,7 +46,7 @@ export default class SettingsScreen extends Component {
         this.setState({ invalidPin: !validPin, enteredPin: pin });
     }
     render() {
-        const nums = Array.from({ length: 24 }, (v, i) => i + 1),
+        const nums = range(1, 25),
             sets = this.state.appData && this.state.appData.Settings,
             location = sets && sets.location || Location.getJerusalem(),
             showOhrZeruah = setDefault(sets && sets.showOhrZeruah, true),

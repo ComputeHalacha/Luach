@@ -125,7 +125,7 @@ export default class EntryScreen extends Component {
                     <ScrollView style={{ flex: 1 }}>
                         <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
                             <TouchableHighlight onPress={this.newEntry}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ alignItems: 'center' }}>
                                     <Icon
                                         size={12}
                                         reverse
@@ -140,7 +140,7 @@ export default class EntryScreen extends Component {
                                 </View>
                             </TouchableHighlight>
                             <TouchableHighlight onPress={this.findKavuahs}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ alignItems: 'center' }}>
                                     <Icon
                                         size={12}
                                         reverse
@@ -181,8 +181,8 @@ export default class EntryScreen extends Component {
                                         <View style={{ alignItems: 'center' }}>
                                             <Icon
                                                 name='event-note'
-                                                color='#696'
-                                                size={20} />
+                                                color='#585'
+                                                size={15} />
                                             <Text style={GeneralStyles.inItemLinkText}>Go to Date</Text>
                                         </View>
                                     </TouchableHighlight>

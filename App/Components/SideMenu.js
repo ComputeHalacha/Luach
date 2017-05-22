@@ -1,7 +1,7 @@
 import React from 'react';
 import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
-import {getScreenHeight} from '../Code/GeneralUtils';
+import { getScreenHeight } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 
 /**
@@ -159,7 +159,8 @@ export default class SideMenu extends React.Component {
 const styles = StyleSheet.create({
     mainView: {
         height: '100%',
-        width:47,
+        minWidth: 50,
+        width: '15%',
         minHeight: Math.trunc(getScreenHeight() * 0.9),
         flex: 0,
         borderRightWidth: 1,

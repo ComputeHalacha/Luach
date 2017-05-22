@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import {isSmallScreen} from '../Code/GeneralUtils';
 
 const GeneralStyles = StyleSheet.create({
     container: {
@@ -47,7 +48,7 @@ const GeneralStyles = StyleSheet.create({
     inItemButtonList: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center'
     },
     inItemLinkText: {

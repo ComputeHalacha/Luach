@@ -5,7 +5,7 @@ import { NavigationActions } from 'react-navigation';
 import SideMenu from './SideMenu';
 import { KavuahTypes, Kavuah } from '../Code/Chashavshavon/Kavuah';
 import DataUtils from '../Code/Data/DataUtils';
-import { popUpMessage } from '../Code/GeneralUtils';
+import { popUpMessage, range } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class NewKavuah extends React.Component {
@@ -88,7 +88,7 @@ export default class NewKavuah extends React.Component {
         return this.state.specialNumber;
     }
     render() {
-        const nums = Array.from({ length: 100 }, (v, i) => i + 1);
+        const nums = range(1, 101);
 
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
