@@ -27,7 +27,7 @@ class Kavuah {
             DilugDayOfMonth - number of days to increment (can be negative) number
             HaflagaMaayanPasuach and DayOfMonthMaayanPasuach the same as their regular couterparts. */
         this.specialNumber = specialNumber;
-        //Does this Kavuah cancel the onah beinunis?
+        //Does this Kavuah cancel the onah beinonis?
         this.cancelsOnahBeinunis = !!cancelsOnahBeinunis;
         this.active = setDefault(active, true);
         this.ignore = !!ignore;

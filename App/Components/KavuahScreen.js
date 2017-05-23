@@ -28,7 +28,9 @@ export default class KavuahScreen extends Component {
         this.findKavuahs = this.findKavuahs.bind(this);
         this.newKavuah = this.newKavuah.bind(this);
         this.changeActive = this.changeActive.bind(this);
+        this.changeCancelsOb = this.changeCancelsOb.bind(this);
         this.update = this.update.bind(this);
+        this.saveAndUpdate = this.saveAndUpdate.bind(this);
     }
     update(appData) {
         this.setState({
@@ -38,6 +40,16 @@ export default class KavuahScreen extends Component {
         if (this.onUpdate) {
             this.onUpdate(appData);
         }
+    }
+    saveAndUpdate(kavuah) {
+        DataUtils.KavuahToDatabase(kavuah);
+
+        const appData = this.state.appData,
+            kavuahList = appData.KavuahList;
+        //To cause an update on setState for the FlatList (used in CustomList),
+        //the data source needs to be changed at a "shallow" level.
+        appData.KavuahList = [...kavuahList];
+        this.update(appData);
     }
     newKavuah() {
         this.navigate('NewKavuah', {
@@ -90,14 +102,11 @@ export default class KavuahScreen extends Component {
     }
     changeActive(kavuah, active) {
         kavuah.active = active;
-        DataUtils.KavuahToDatabase(kavuah);
-
-        const appData = this.state.appData,
-            kavuahList = appData.KavuahList;
-        //To cause an update on setState for the FlatList (used in CustomList),
-        //the data source needs to be changed at a "shallow" level.
-        appData.KavuahList = [...kavuahList];
-        this.update(appData);
+        this.saveAndUpdate(kavuah);
+    }
+    changeCancelsOb(kavuah, cancelsOnahBeinunis) {
+        kavuah.cancelsOnahBeinunis = cancelsOnahBeinunis;
+        this.saveAndUpdate(kavuah);
     }
     render() {
         return (
@@ -147,16 +156,23 @@ export default class KavuahScreen extends Component {
                             iconColor={kavuah => kavuah.active ? '#99f' : '#ddd'}
                             emptyListText='There are no Kavuahs in the list'
                             secondSection={kavuah => <View style={GeneralStyles.inItemButtonList}>
-                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                                    <Text>Active </Text>
+                                <View style={{ flex: 1, alignItems: 'center', }}>
                                     <Switch value={kavuah.active}
                                         onValueChange={value =>
                                             this.changeActive(kavuah, value)}
                                         title='Active' />
+                                    <Text style={GeneralStyles.inItemLinkText}>Active</Text>
+                                </View>
+                                <View style={{ flex: 1, alignItems: 'center', }}>
+                                    <Switch value={kavuah.cancelsOnahBeinunis}
+                                        onValueChange={value =>
+                                            this.changeCancelsOb(kavuah, value)}
+                                        title='Active' />
+                                    <Text style={GeneralStyles.inItemLinkText}>Cancels Onah Beinonis</Text>
                                 </View>
                                 <TouchableHighlight
                                     underlayColor='#faa'
-                                    style={{ flex: 1 }}
+                                    style={{ flex: 1, }}
                                     onPress={() => this.deleteKavuah(kavuah)}>
                                     <View style={{ alignItems: 'center' }}>
                                         <Icon
