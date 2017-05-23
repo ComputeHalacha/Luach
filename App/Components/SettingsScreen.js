@@ -104,13 +104,13 @@ export default class SettingsScreen extends Component {
                                 value={!!showOhrZeruah} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Flag Onah Beinunis (30 and 31) for a full 24 Hours?</Text>
+                            <Text style={GeneralStyles.label}>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours?</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('onahBeinunis24Hours', value)}
                                 value={!!onahBeinunis24Hours} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Keep day Thirty One for Onah Beinunis?</Text>
+                            <Text style={GeneralStyles.label}>Keep day Thirty One for Onah Beinonis?</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('keepThirtyOne', value)}
                                 value={!!keepThirtyOne} />

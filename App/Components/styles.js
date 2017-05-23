@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import {isSmallScreen} from '../Code/GeneralUtils';
+import { isSmallScreen } from '../Code/GeneralUtils';
 
 const GeneralStyles = StyleSheet.create({
     container: {
@@ -43,7 +43,7 @@ const GeneralStyles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent:'space-around'
+        justifyContent: 'space-around'
     },
     inItemButtonList: {
         flex: 1,
@@ -53,7 +53,8 @@ const GeneralStyles = StyleSheet.create({
     },
     inItemLinkText: {
         fontSize: 10,
-        fontStyle: 'italic'
+        fontStyle: 'italic',
+        textAlign: 'center'
     },
     headerButtons: {
         backgroundColor: '#eef',

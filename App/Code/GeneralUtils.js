@@ -10,32 +10,32 @@ export function getScreenHeight() {
     return Dimensions.get('window').height;
 }
 
-/**Is the current screen width less than 650 pixels? */
+/** Is the current screen width less than 650 pixels? */
 export function isSmallScreen() {
     return (getScreenWidth() * PixelRatio.get()) < 650;
 }
 
-/**Is the current screen width more than 1390 pixels? */
+/** Is the current screen width more than 1390 pixels? */
 export function isLargeScreen() {
     return (getScreenWidth() * PixelRatio.get()) > 1390;
 }
 
-/**Returns true if thing is an instance of either a string primitive or String object.*/
+/** Returns true if thing is an instance of either a string primitive or String object.*/
 export function isString(thing) {
     return (typeof thing === 'string' || thing instanceof String);
 }
 
-/**Returns true if thing is an instance of either a number primitive or Number object.*/
+/** Returns true if thing is an instance of either a number primitive or Number object.*/
 export function isNumber(thing) {
     return (typeof thing === 'number' || thing instanceof Number);
 }
 
-/**Checks a Date object if it represents a valid date or not.*/
+/** Checks a Date object if it represents a valid date or not.*/
 export function isValidDate(dt) {
     return (!isNaN(dt.valueOf()));
 }
 
-/**Returns whether or not the given, array, string, or argument list contains the given item or substring.
+/** Returns whether or not the given, array, string, or argument list contains the given item or substring.
  *
  * This function is awfully similar to Array.includes, but has the added plus of accepting any number or type of arguments.*/
 export function has(o, ...arr) {
@@ -47,7 +47,7 @@ export function has(o, ...arr) {
     }
 }
 
-/**Returns the default value only if the param value is undefined, null or NaN.
+/** Returns the default value only if the param value is undefined, null or NaN.
  *
  * Otherwise, the original param value is returned.
  *
@@ -74,7 +74,7 @@ export function popUpMessage(message, optionalTitle) {
 
 /**
  * Returns an array containing a range of integers.
- * @param {Number} [start] The number to start at. The start number included. If only one argument is supplied, start will be set to 0.
+ * @param {Number} [start] The number to start at. The start number is included in the results. If only one argument is supplied, start will be set to 0.
  * @param {Number} end The top end of the range. The end number is not included.
  * @returns {[Number]}
  */
