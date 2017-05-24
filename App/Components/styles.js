@@ -68,6 +68,12 @@ const GeneralStyles = StyleSheet.create({
         fontSize: 7,
         height: 25
     },
+    btnAddNew: {
+        flex: 0,
+        alignSelf: 'center',
+        width: 200,
+        marginTop: 25
+    },
     emptyListView: {
         alignItems: 'center',
         flex: 1,

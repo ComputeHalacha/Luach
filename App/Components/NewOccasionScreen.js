@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Text, Picker, TextInput, Alert } from 'react-native';
-import { Button } from 'react-native-elements';
+import { ScrollView, View, Text, Picker, TextInput, Button } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import SideMenu from './SideMenu';
 import { UserOccasionTypes, UserOccasion } from '../Code/JCal/UserOccasion';
@@ -99,10 +98,12 @@ export default class NewOccasion extends React.Component {
                             value={this.state.comment}
                             onChangeText={(text) => this.setState({ comment: text })} />
                     </View>
-
-                    <Text>{'\n'}</Text>
-                    <View style={GeneralStyles.formRow}>
-                        <Button title='Add Occasion' onPress={this.addOccasion} />
+                    <View style={GeneralStyles.btnAddNew}>
+                        <Button
+                            title='Add Event/Occasion'
+                            onPress={this.addOccasion}
+                            accessibilityLabel='Add this new Event/Occasion'
+                            color='#99b' />
                     </View>
                 </ScrollView>
             </View>

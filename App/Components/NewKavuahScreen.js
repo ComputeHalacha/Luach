@@ -1,6 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, Picker, Switch, Alert } from 'react-native';
-import { Button } from 'react-native-elements';
+import { ScrollView, View, Text, Picker, Switch, Alert, Button } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import SideMenu from './SideMenu';
 import { KavuahTypes, Kavuah } from '../Code/Chashavshavon/Kavuah';
@@ -151,8 +150,12 @@ export default class NewKavuah extends React.Component {
                             onValueChange={value => this.setState({ active: value })} />
                     </View>
                     <Text>{'\n'}</Text>
-                    <View style={GeneralStyles.formRow}>
-                        <Button title='Add Kavuah' onPress={this.addKavuah.bind(this)} />
+                    <View style={GeneralStyles.btnAddNew}>
+                        <Button
+                            title='Add Kavuah'
+                            onPress={this.addKavuah.bind(this)}
+                            accessibilityLabel='Add this new Kavuah'
+                            color='#99b' />
                     </View>
                 </ScrollView>
             </View>
