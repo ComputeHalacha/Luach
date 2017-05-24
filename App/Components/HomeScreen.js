@@ -75,21 +75,21 @@ export default class HomeScreen extends React.Component {
     * This should be done after updating settings, occasions, entries or kavuahs.
     */
     updateAppData(appData) {
-        const ad = appData && appData instanceof AppData ? appData : this.state.appData,
-            //As the data has been changed, we need to recalculate the problem onahs.
-            elist = ad.EntryList,
-            klist = ad.KavuahList,
+        //As the data has been changed, we need to recalculate the problem onahs.
+        const elist = appData.EntryList,
+            klist = appData.KavuahList,
             probs = elist.getProblemOnahs(klist);
-        ad.ProblemOnahs = probs;
+
+        appData.ProblemOnahs = probs;
 
         //In case the problems or occasions have been changed, we need to update the days list
         const daysList = this.state.daysList;
         for (let singleDay of daysList) {
-            this.setDayInformation(singleDay, ad);
+            this.setDayInformation(singleDay, appData);
         }
         this.setState({
-            appData: ad,
-            currLocation: ad.Settings.location,
+            appData: appData,
+            currLocation: appData.Settings.location,
             daysList: daysList
         });
     }

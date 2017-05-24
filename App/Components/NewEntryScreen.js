@@ -1,6 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, Picker, Alert } from 'react-native';
-import { Button } from 'react-native-elements';
+import { ScrollView, View, Text, Picker, Button, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import SideMenu from './SideMenu';
 import Entry from '../Code/Chashavshavon/Entry';
@@ -145,9 +144,12 @@ export default class NewEntry extends React.Component {
                             <Picker.Item label='Day' value={NightDay.Day} key={NightDay.Day} />
                         </Picker>
                     </View>
-                    <Text>{'\n'}</Text>
-                    <View style={GeneralStyles.formRow}>
-                        <Button title='Add Entry' onPress={this.addEntry} />
+                    <View style={GeneralStyles.btnAddNew}>
+                        <Button
+                            title='Add Entry'
+                            onPress={this.addEntry}
+                            accessibilityLabel='Add this new Entry'
+                            color='#99b' />
                     </View>
                 </ScrollView>
             </View>

@@ -158,11 +158,10 @@ export default class SideMenu extends React.Component {
 
 const styles = StyleSheet.create({
     mainView: {
-        height: '100%',
         minWidth: 50,
         width: '15%',
-        minHeight: Math.trunc(getScreenHeight() * 0.9),
-        flex: 0,
+        minHeight: Math.trunc(getScreenHeight() * 0.8),
+        flex: -1,
         borderRightWidth: 1,
         borderColor: '#777',
         padding: 0,
