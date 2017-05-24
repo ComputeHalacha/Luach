@@ -88,7 +88,7 @@ export default class NewKavuah extends React.Component {
         return this.state.specialNumber;
     }
     render() {
-        const nums = range(1, 101);
+        const nums = range(-100, 101);
 
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
