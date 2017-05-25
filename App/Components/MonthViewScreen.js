@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { Icon, Grid, Row, Col } from 'react-native-elements';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { getScreenWidth } from '../Code/GeneralUtils';
@@ -28,6 +28,7 @@ export default class MonthViewScreen extends React.Component {
         this.goPrev = this.goPrev.bind(this);
         this.goNext = this.goNext.bind(this);
         this.goToday = this.goToday.bind(this);
+        this.goThisMonth = this.goThisMonth.bind(this);
         this.toggleMonthType = this.toggleMonthType.bind(this);
     }
     goPrev() {
@@ -39,6 +40,9 @@ export default class MonthViewScreen extends React.Component {
         this.setState({ month: currMonth.next });
     }
     goToday() {
+        this.navigate('Home', { appData: this.appData });
+    }
+    goThisMonth() {
         this.setState({ month: new Month(Today, this.appData) });
     }
     getFlag(nightDay) {
@@ -173,19 +177,28 @@ export default class MonthViewScreen extends React.Component {
                 </Grid>
             </GestureRecognizer>
             <View style={styles.footerBar}>
-                <TouchableOpacity onPress={this.goPrev} style={styles.sideButton}>
+                <TouchableOpacity onPress={this.goToday}>
+                    <View style={styles.todayView}>
+                        <Image
+                            style={{ width: 15, height: 15 }}
+                            resizeMode='stretch'
+                            source={require('../Images/logo.png')} />
+                        <Text style={styles.footerBarText}>Today</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.goPrev} style={styles.footerButton}>
                     <View style={[styles.footerView, { borderRightWidth: 1 }]}>
                         <Icon iconStyle={styles.footerIcon} name='arrow-back' />
                         <Text style={styles.footerBarText}>Previous</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.goToday} style={styles.sideButton}>
+                <TouchableOpacity onPress={this.goThisMonth} style={styles.footerButton}>
                     <View style={styles.footerView}>
                         <Icon iconStyle={styles.footerIcon} name='view-carousel' />
-                        <Text style={styles.footerBarText}>Today</Text>
+                        <Text style={styles.footerBarText}>This Month</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.goNext} style={styles.sideButton}>
+                <TouchableOpacity onPress={this.goNext} style={styles.footerButton}>
                     <View style={[styles.footerView, { borderLeftWidth: 1 }]}>
                         <Icon iconStyle={styles.footerIcon} name='arrow-forward' />
                         <Text style={styles.footerBarText}>Next</Text>
@@ -259,8 +272,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-    jdate:{fontSize:11, fontWeight:'bold', color:'#008'},
-    sdate:{fontSize:11, color:'#080'},
+    jdate: { fontSize: 11, fontWeight: 'bold', color: '#008' },
+    sdate: { fontSize: 11, color: '#080' },
     footerBar: {
         flex: 0,
         flexDirection: 'row',
@@ -270,9 +283,9 @@ const styles = StyleSheet.create({
         margin: 0,
         borderTopWidth: 1,
         width: '100%',
-        height: 50
+        height: 42
     },
-    sideButton: {
+    footerButton: {
         flex: 1
     },
     footerView: {
@@ -282,8 +295,20 @@ const styles = StyleSheet.create({
         borderColor: '#888',
         backgroundColor: '#666',
         paddingTop: 5,
-        paddingBottom: 5,
-        width: '100%'
+        paddingBottom: 5
+    },
+    todayView: {
+        flex: 0,
+        width: '10%',
+        minWidth: 50,
+        height: '100%',
+        borderRightWidth: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderColor: '#888',
+        backgroundColor: '#666',
+        paddingTop: 5,
+        paddingBottom: 5
     },
     footerBarText: {
         fontSize: 10,

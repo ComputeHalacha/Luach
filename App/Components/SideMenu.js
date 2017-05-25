@@ -14,6 +14,7 @@ import jDate from '../Code/JCal/jDate';
  * onGoToday - if falsey, will navigate to the home screen
  * onGoPrevious
  * onGoNext
+ * hideToday
  * hideMonthView
  * hideFlaggedDates
  * hideEntries
@@ -38,19 +39,21 @@ export default class SideMenu extends React.Component {
                 onUpdate: this.props.onUpdate
             };
         return <View style={styles.mainView}>
-            <TouchableHighlight
-                underlayColor='#eef'
-                onPress={this.props.onGoToday ||
-                    (() => this.navigate('Home', { ...params, currDate: jdate }))}
-                style={styles.sideButton}>
-                <View style={styles.menuView}>
-                    <Image
-                        style={{ width: 25, height: 25 }}
-                        resizeMode='stretch'
-                        source={require('../Images/logo.png')} />
-                    <Text style={styles.menuText}>Today</Text>
-                </View>
-            </TouchableHighlight>
+            {(!this.props.hideToday) &&
+                <TouchableHighlight
+                    underlayColor='#eef'
+                    onPress={this.props.onGoToday ||
+                        (() => this.navigate('Home', { ...params, currDate: jdate }))}
+                    style={styles.sideButton}>
+                    <View style={styles.menuView}>
+                        <Image
+                            style={{ width: 25, height: 25 }}
+                            resizeMode='stretch'
+                            source={require('../Images/logo.png')} />
+                        <Text style={styles.menuText}>Today</Text>
+                    </View>
+                </TouchableHighlight>
+            }
             {this.props.onGoPrevious &&
                 <TouchableHighlight
                     style={styles.sideButton}
