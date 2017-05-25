@@ -11,7 +11,8 @@ import { GeneralStyles } from './styles';
  *    rowHasChanged = function(row1, row2) to test if the row needs to be re-rendered. The default is row1===row2.
  *    emptyListText = The text to display if list is empty.
  *
- * All the following props accept either a flat value or (dataItem, index) => prop value.
+ *   The following props accept either a simple value or (dataItem, index) => prop value.
+ *   ----------------------------------------------------------------------------------
  *    mainViewStyle = style of main containing view
  *    titleStyle = style of main text
  *    title= function to extract main text from each item in the list
@@ -119,8 +120,8 @@ const styles = StyleSheet.create({
         flex: 1
     },
     mainViewStyle: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#e8e8f0',
+        borderBottomWidth: 2,
+        borderBottomColor: '#e0e0d0',
         flexDirection: 'row',
         paddingLeft: 15
     },
