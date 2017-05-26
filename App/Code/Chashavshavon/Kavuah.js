@@ -38,6 +38,9 @@ class Kavuah {
         if (!this.active) {
             txt = '[INACTIVE] ';
         }
+        if (this.ignore) {
+            txt = '[IGNORED] ';
+        }
         txt += (this.settingEntry.nightDay === NightDay.Night ? 'Night-time ' : 'Day-time ');
         switch (this.kavuahType) {
             case KavuahTypes.Haflagah:
@@ -110,11 +113,12 @@ class Kavuah {
      * @param {*} kavuahList The list of Kavuahs to used to determine if any found kavuah is a "new" one.
      */
     static getPossibleNewKavuahs(entryList, kavuahList) {
-        //Get all Kavuahs in the list that are active and are not ignored.
-        const klist = kavuahList.filter(k => k.active && !k.ignore);
+        //Get all Kavuahs in the list that are active - including ignored ones.
+        const klist = kavuahList.filter(k => k.active);
         //Find all possible Kavuahs.
         return Kavuah.getKavuahSuggestionList(entryList)
             //Filter out any Kavuahs that are already in the active list.
+            //Ignored Kavuahs will also not be returned.
             .filter(pk =>
                 !(klist.find(k => k.isMatchingKavuah(pk.kavuah)))
             );

@@ -111,7 +111,7 @@ export default class Month {
                 weeks.push(Array(7).fill(null));
             }
         }
-        //If the month ended with a shabbos, the last added week may be empty.
+        //If the month ended with a shabbos, the last added week will be empty.
         if (!weeks[weeks.length - 1].some(day => day)) {
             weeks.pop();
         }

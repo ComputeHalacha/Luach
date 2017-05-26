@@ -22,12 +22,15 @@ export default class KavuahScreen extends Component {
         this.onUpdate = params.onUpdate;
         this.state = {
             appData: appData,
-            kavuahList: appData.KavuahList
+            kavuahList: appData.KavuahList.filter(k => !k.ignore),
+            showIgnored: false
         };
         this.deleteKavuah = this.deleteKavuah.bind(this);
         this.findKavuahs = this.findKavuahs.bind(this);
         this.newKavuah = this.newKavuah.bind(this);
+        this.toggleIgnored = this.toggleIgnored.bind(this);
         this.changeActive = this.changeActive.bind(this);
+        this.changeIgnore = this.changeIgnore.bind(this);
         this.changeCancelsOb = this.changeCancelsOb.bind(this);
         this.update = this.update.bind(this);
         this.saveAndUpdate = this.saveAndUpdate.bind(this);
@@ -56,6 +59,21 @@ export default class KavuahScreen extends Component {
             appData: this.state.appData,
             onUpdate: this.update
         });
+    }
+    toggleIgnored() {
+        const appData = this.state.appData;
+        if (this.state.showIgnored) {
+            this.setState({
+                kavuahList: appData.KavuahList.filter(k => !k.ignore),
+                showIgnored: false
+            });
+        }
+        else {
+            this.setState({
+                kavuahList: appData.KavuahList,
+                showIgnored: true
+            });
+        }
     }
     deleteKavuah(kavuah) {
         const appData = this.state.appData;
@@ -104,6 +122,10 @@ export default class KavuahScreen extends Component {
         kavuah.active = active;
         this.saveAndUpdate(kavuah);
     }
+    changeIgnore(kavuah, ignore) {
+        kavuah.ignore = ignore;
+        this.saveAndUpdate(kavuah);
+    }
     changeCancelsOb(kavuah, cancelsOnahBeinunis) {
         kavuah.cancelsOnahBeinunis = cancelsOnahBeinunis;
         this.saveAndUpdate(kavuah);
@@ -118,73 +140,92 @@ export default class KavuahScreen extends Component {
                         navigate={this.navigate}
                         hideKavuahs={true}
                         hideMonthView={true} />
-                    <ScrollView style={{ flex: 1 }}>
-                        <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
-                            <TouchableHighlight onPress={this.newKavuah}>
-                                <View style={{ alignItems: 'center' }}>
-                                    <Icon
-                                        size={12}
-                                        reverse
-                                        name='add'
-                                        color='#484' />
-                                    <Text style={{
-                                        fontSize: 12,
-                                        color: '#262',
-                                        fontStyle: 'italic'
-                                    }}>New Kavuah</Text>
-                                </View>
-                            </TouchableHighlight>
-                            <TouchableHighlight onPress={this.findKavuahs}>
-                                <View style={{ alignItems: 'center' }}>
-                                    <Icon
-                                        size={12}
-                                        reverse
-                                        name='search'
-                                        color='#669' />
-                                    <Text style={{
-                                        fontSize: 12,
-                                        color: '#669',
-                                        fontStyle: 'italic'
-                                    }}>Calculate Possible Kavuahs</Text>
-                                </View>
-                            </TouchableHighlight>
-                        </View>
-                        <CustomList
-                            data={this.state.kavuahList}
-                            title={kavuah => kavuah.toLongString()}
-                            iconName='device-hub'
-                            iconColor={kavuah => kavuah.active ? '#99f' : '#ddd'}
-                            emptyListText='There are no Kavuahs in the list'
-                            secondSection={kavuah => <View style={GeneralStyles.inItemButtonList}>
-                                <View style={{ flex: 1, alignItems: 'center', }}>
-                                    <Switch value={kavuah.active}
-                                        onValueChange={value =>
-                                            this.changeActive(kavuah, value)}
-                                        title='Active' />
-                                    <Text style={GeneralStyles.inItemLinkText}>Active</Text>
-                                </View>
-                                <View style={{ flex: 1, alignItems: 'center', }}>
-                                    <Switch value={kavuah.cancelsOnahBeinunis}
-                                        onValueChange={value =>
-                                            this.changeCancelsOb(kavuah, value)}
-                                        title='Active' />
-                                    <Text style={GeneralStyles.inItemLinkText}>Cancels Onah Beinonis</Text>
-                                </View>
-                                <TouchableHighlight
-                                    underlayColor='#faa'
-                                    style={{ flex: 1, }}
-                                    onPress={() => this.deleteKavuah(kavuah)}>
+                    <View style={{ flex: 1 }}>
+                        <ScrollView style={{ flex: 1 }}>
+                            <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
+                                <TouchableHighlight onPress={this.newKavuah}>
                                     <View style={{ alignItems: 'center' }}>
                                         <Icon
-                                            name='delete-forever'
-                                            color='#faa'
-                                            size={20} />
-                                        <Text style={GeneralStyles.inItemLinkText}>Remove</Text>
+                                            size={12}
+                                            reverse
+                                            name='add'
+                                            color='#484' />
+                                        <Text style={{
+                                            fontSize: 12,
+                                            color: '#262',
+                                            fontStyle: 'italic'
+                                        }}>New Kavuah</Text>
                                     </View>
                                 </TouchableHighlight>
-                            </View>}
-                        />
-                    </ScrollView>
+                                <TouchableHighlight onPress={this.findKavuahs}>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <Icon
+                                            size={12}
+                                            reverse
+                                            name='search'
+                                            color='#669' />
+                                        <Text style={{
+                                            fontSize: 12,
+                                            color: '#669',
+                                            fontStyle: 'italic'
+                                        }}>Calculate Possible Kavuahs</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            </View>
+                            <CustomList
+                                data={this.state.kavuahList}
+                                title={kavuah => kavuah.toLongString()}
+                                iconName='device-hub'
+                                iconColor={kavuah => kavuah.active ? '#99f' : '#ddd'}
+                                emptyListText='There are no Kavuahs in the list'
+                                secondSection={kavuah => <View style={GeneralStyles.inItemButtonList}>
+                                    <View style={{ flex: 1, alignItems: 'center', }}>
+                                        <Switch value={kavuah.active}
+                                            onValueChange={value =>
+                                                this.changeActive(kavuah, value)}
+                                            title='Active' />
+                                        <Text style={GeneralStyles.inItemLinkText}>Active</Text>
+                                    </View>
+                                    <View style={{ flex: 1, alignItems: 'center', }}>
+                                        <Switch value={kavuah.cancelsOnahBeinunis}
+                                            onValueChange={value =>
+                                                this.changeCancelsOb(kavuah, value)}
+                                            title='Active' />
+                                        <Text style={GeneralStyles.inItemLinkText}>Cancels Onah Beinonis</Text>
+                                    </View>
+                                    {this.state.showIgnored &&
+                                        <View style={{ flex: 1, alignItems: 'center', }}>
+                                            <Switch value={kavuah.ignore}
+                                                onValueChange={value =>
+                                                    this.changeIgnore(kavuah, value)}
+                                                title='Ignore' />
+                                            <Text style={GeneralStyles.inItemLinkText}>Ignored</Text>
+                                        </View>
+                                    }
+                                    <TouchableHighlight
+                                        underlayColor='#faa'
+                                        style={{ flex: 1, }}
+                                        onPress={() => this.deleteKavuah(kavuah)}>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Icon
+                                                name='delete-forever'
+                                                color='#faa'
+                                                size={20} />
+                                            <Text style={GeneralStyles.inItemLinkText}>Remove</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                </View>}
+                            />
+                        </ScrollView>
+                        {this.state.appData.KavuahList.some(k => k.ignore) &&
+                            <View style={{ flex: 0, backgroundColor: '#eef', padding: 5, borderTopWidth: 2, borderColor: '#ccd' }}>
+                                <TouchableHighlight onPress={this.toggleIgnored}>
+                                    <Text style={{ textAlign: 'center', color: '#55f' }}>
+                                        {(this.state.showIgnored ? 'Hide' : 'Show') + ' Ignored Kavuahs'}</Text>
+                                </TouchableHighlight>
+                            </View>
+                        }
+                    </View>
                 </View>
             </View >);
     }

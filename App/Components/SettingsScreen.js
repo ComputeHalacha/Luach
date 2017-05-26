@@ -46,7 +46,7 @@ export default class SettingsScreen extends Component {
         this.setState({ invalidPin: !validPin, enteredPin: pin });
     }
     render() {
-        const nums = range(1, 25),
+        const nums = range(1, 24),
             sets = this.state.appData && this.state.appData.Settings,
             location = sets && sets.location || Location.getJerusalem(),
             showOhrZeruah = setDefault(sets && sets.showOhrZeruah, true),
