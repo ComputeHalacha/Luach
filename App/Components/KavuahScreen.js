@@ -4,7 +4,7 @@ import SideMenu from './SideMenu';
 import CustomList from './CustomList';
 import { Icon } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
-import { popUpMessage } from '../Code/GeneralUtils';
+import { warn, error, popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class KavuahScreen extends Component {
@@ -93,11 +93,9 @@ export default class KavuahScreen extends Component {
                     {
                         text: 'OK', onPress: () => {
                             if (kavuah.hasId) {
-                                DataUtils.DeleteKavuah(kavuah).catch(error => {
-                                    if (__DEV__) {
-                                        console.warn('Error trying to delete a kavuah from the database.');
-                                        console.error(error);
-                                    }
+                                DataUtils.DeleteKavuah(kavuah).catch(err => {
+                                    warn('Error trying to delete a kavuah from the database.');
+                                    error(err);
                                 });
                             }
                             if (index > -1) {

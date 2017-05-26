@@ -87,3 +87,30 @@ export function range(start, end) {
         { length: (end - start) + 1 },
         (v, i) => start + i);
 }
+/**
+ * Log message to console
+ * @param {*} txt
+ */
+export function log(txt) {
+    if (__DEV__) {
+        console.log(txt);
+    }
+}
+/**
+ * Warn message to console
+ * @param {*} txt
+ */
+export function warn(txt) {
+    if (__DEV__) {
+        console.warn(txt);
+    }
+}
+/**
+ * Error message to console
+ * @param {*} txt
+ */
+export function error(txt) {
+    if (__DEV__) {
+        console.error(txt);
+    }
+}

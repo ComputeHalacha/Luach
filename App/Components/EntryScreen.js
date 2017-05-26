@@ -5,7 +5,7 @@ import SideMenu from './SideMenu';
 import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';
 import JDate from '../Code/JCal/jDate';
-import { popUpMessage } from '../Code/GeneralUtils';
+import { warn, error, popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class EntryScreen extends Component {
@@ -68,19 +68,15 @@ export default class EntryScreen extends Component {
                     //Button 2
                     {
                         text: 'OK', onPress: () => {
-                            DataUtils.DeleteEntry(entry).catch(error => {
-                                if (__DEV__) {
-                                    console.warn('Error trying to delete an entry from the database.');
-                                    console.error(error);
-                                }
+                            DataUtils.DeleteEntry(entry).catch(err => {
+                                warn('Error trying to delete an entry from the database.');
+                                error(err);
                             });
                             for (let k of kavuahs) {
                                 let index = kavuahList.indexOf(k);
-                                DataUtils.DeleteKavuah(k).catch(error => {
-                                    if (__DEV__) {
-                                        console.warn('Error trying to delete a Kavuah from the database.');
-                                        console.error(error);
-                                    }
+                                DataUtils.DeleteKavuah(k).catch(err => {
+                                    warn('Error trying to delete a Kavuah from the database.');
+                                    error(err);
                                 });
                                 kavuahList.splice(index, 1);
                             }

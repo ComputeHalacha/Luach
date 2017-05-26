@@ -6,17 +6,17 @@ import { GeneralStyles } from './styles';
 
 export default class DateDetailsScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
-        title: 'Zmanim for ' + navigation.state.params.location.Name
+        title: 'Zmanim for ' + navigation.state.params.appData.Settings.location.Name
     });
 
     constructor(props) {
         super(props);
         const navigation = this.props.navigation,
-            { jdate, location, onUpdate, appData } = navigation.state.params;
+            { jdate, onUpdate, appData } = navigation.state.params;
         this.navigate = navigation.navigate;
         this.onUpdate = onUpdate;
         this.appData = appData;
-        this.state = { jdate: jdate, location: location };
+        this.state = { jdate: jdate };
         this.goPrev = this.goPrev.bind(this);
         this.goNext = this.goNext.bind(this);
     }
@@ -29,7 +29,7 @@ export default class DateDetailsScreen extends React.Component {
         this.setState({ jdate: jdate.addDays(1) });
     }
     render() {
-        const list = this.state.jdate.getAllDetails(this.state.location);
+        const list = this.state.jdate.getAllDetails(this.appData.Settings.location);
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu

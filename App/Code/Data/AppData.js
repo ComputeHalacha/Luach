@@ -1,6 +1,7 @@
 import DataUtils from './DataUtils';
 import Settings from '../Settings';
 import EntryList from '../Chashavshavon/EntryList';
+import { error, warn } from '../GeneralUtils';
 
 /**
  * List of setting fields that have been added after the initial app launch.
@@ -52,40 +53,32 @@ export default class AppData {
         let settings, occasions, entryList, kavuahList, problemOnahs;
         await DataUtils.SettingsFromDatabase()
             .then(s => settings = s)
-            .catch(error => {
-                if (__DEV__) {
-                    console.warn('Error running SettingsFromDatabase.');
-                    console.error(error);
-                }
+            .catch(err => {
+                warn('Error running SettingsFromDatabase.');
+                error(err);
             });
         await DataUtils.GetAllUserOccasions()
             .then(ol => {
                 occasions = ol;
             })
-            .catch(error => {
-                if (__DEV__) {
-                    console.warn('Error running GetAllUserOccasions.');
-                    console.error(error);
-                }
+            .catch(err => {
+                warn('Error running GetAllUserOccasions.');
+                error(err);
             });
         await DataUtils.EntryListFromDatabase(settings)
             .then(e => entryList = e)
-            .catch(error => {
-                if (__DEV__) {
-                    console.warn('Error running EntryListFromDatabase.');
-                    console.error(error);
-                }
+            .catch(err => {
+                warn('Error running EntryListFromDatabase.');
+                error(err);
             });
         await DataUtils.GetAllKavuahs(entryList)
             .then(k => {
                 kavuahList = k;
                 problemOnahs = entryList.getProblemOnahs(kavuahList);
             })
-            .catch(error => {
-                if (__DEV__) {
-                    console.warn('Error running GetAllKavuahs.');
-                    console.error(error);
-                }
+            .catch(err => {
+                warn('Error running GetAllKavuahs.');
+                error(err);
             });
 
         return new AppData(settings, occasions, entryList, kavuahList, problemOnahs);
