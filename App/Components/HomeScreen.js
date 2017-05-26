@@ -4,11 +4,10 @@ import SingleDayDisplay from './SingleDayDisplay';
 import Login from './Login';
 import Flash from './Flash';
 import SideMenu from './SideMenu';
-import { isLargeScreen } from '../Code/GeneralUtils';
+import { isLargeScreen, log } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
-import Location from '../Code/JCal/Location';
 import AppData from '../Code/Data/AppData';
-import { UserOccasion } from '../Code/JCal/UserOccasion';
+
 
 export default class HomeScreen extends React.Component {
     static navigationOptions = () => ({
@@ -23,7 +22,6 @@ export default class HomeScreen extends React.Component {
         this.onLoggedIn = this.onLoggedIn.bind(this);
         this.renderItem = this.renderItem.bind(this);
         this._addDaysToEnd = this._addDaysToEnd.bind(this);
-        this.setDayInformation = this.setDayInformation.bind(this);
         this.getDaysList = this.getDaysList.bind(this);
         this.updateAppData = this.updateAppData.bind(this);
         this._navigatedShowing = this._navigatedShowing.bind(this);
@@ -60,6 +58,56 @@ export default class HomeScreen extends React.Component {
             clearTimeout(this.flashTimeout);
         }
     }
+    componentWillUpdate(nextProps, nextState) {
+        const prevAppData = this.state.appData,
+            newAppData = nextState.appData;
+        if (!(prevAppData || newAppData)) {
+            log('REFRESHED :( - either new appdata or old appdata was nuthin`');
+            return true;
+        }
+        if (!prevAppData.Settings.isSameSettings(newAppData.Settings)) {
+            log('REFRESHED :( - Settings were not the same');
+            return true;
+        }
+        if (prevAppData.UserOccasions.length !== newAppData.UserOccasions.length) {
+            log('REFRESHED :( - User Occasions list were not the same length');
+            return true;
+        }
+        if (!prevAppData.UserOccasions.every(uo =>
+            newAppData.UserOccasions.some(uon => uon.isSameOccasion(uo)))) {
+            log('REFRESHED :( - Occasions were not all the same');
+            return true;
+        }
+        if (prevAppData.EntryList.list.length !== newAppData.EntryList.list.length) {
+            log('REFRESHED :( - Entries list were not the same length');
+            return true;
+        }
+        if (!prevAppData.EntryList.list.every(e =>
+            newAppData.EntryList.list.some(en => en.isSameEntry(e)))) {
+            log('REFRESHED :( - Entries were not all the same');
+            return true;
+        }
+        if (prevAppData.KavuahList.length !== newAppData.KavuahList.length) {
+            log('REFRESHED :( - Kavuah list were not the same length');
+            return true;
+        }
+        if (!prevAppData.KavuahList.every(k =>
+            newAppData.KavuahList.some(kn => kn.isMatchingKavuah(k)))) {
+            log('REFRESHED :( - Kavuahs were not all the same');
+            return true;
+        }
+        if (prevAppData.ProblemOnahs.length !== newAppData.ProblemOnahs.length) {
+            log('REFRESHED :( - Probs list were not the same length');
+            return true;
+        }
+        if (!prevAppData.ProblemOnahs.every(po =>
+            newAppData.ProblemOnahs.some(pon => pon.isSameProb(po)))) {
+            log('REFRESHED :( - Probs were not all the same');
+            return true;
+        }
+        log('SAVED REFRESH!!! YIPEEEEEE!!');
+        return false;
+    }
     _handleAppStateChange = (nextAppState) => {
         const appData = this.state.appData;
         if (nextAppState === 'active' &&
@@ -76,29 +124,16 @@ export default class HomeScreen extends React.Component {
     */
     updateAppData(appData) {
         //As the data has been changed, we need to recalculate the problem onahs.
-        const elist = appData.EntryList,
-            klist = appData.KavuahList,
-            probs = elist.getProblemOnahs(klist);
-
-        appData.ProblemOnahs = probs;
-
-        //In case the problems or occasions have been changed, we need to update the days list
-        const daysList = this.state.daysList;
-        for (let singleDay of daysList) {
-            this.setDayInformation(singleDay, appData);
-        }
-        this.setState({
-            appData: appData,
-            currLocation: appData.Settings.location,
-            daysList: daysList
-        });
+        const newProbs = appData.EntryList.getProblemOnahs(appData.KavuahList);
+        appData.ProblemOnahs = newProbs;
+        this.setState({ appData: appData });
     }
     _initialShowing() {
         const today = new jDate();
         AppData.upgradeDatabase();
 
         const appData = new AppData(),
-            daysList = this.getDaysList(today, appData);
+            daysList = this.getDaysList(today);
 
         //As we will be going to the database which takes some time, we set initial values for the state.
         this.state = {
@@ -106,7 +141,6 @@ export default class HomeScreen extends React.Component {
             appData: appData,
             today: today,
             currDate: today,
-            currLocation: Location.getJerusalem(),
             showFlash: true
         };
 
@@ -115,15 +149,8 @@ export default class HomeScreen extends React.Component {
             if (!ad.Settings.requirePIN) {
                 this.setFlash();
             }
-
-            //Set each days props - such as entries, occasions and probs.
-            for (let singleDay of daysList) {
-                this.setDayInformation(singleDay, ad);
-            }
             this.setState({
                 appData: ad,
-                daysList: daysList,
-                currLocation: ad.Settings.location,
                 loadingDone: true,
                 showLogin: ad.Settings.requirePIN
             });
@@ -138,10 +165,9 @@ export default class HomeScreen extends React.Component {
         //We don't need to use setState here as this function is only called from the constructor.
         this.state = {
             appData: appData,
-            daysList: this.getDaysList(currDate, appData),
+            daysList: this.getDaysList(currDate),
             currDate: currDate,
             today: today,
-            currLocation: appData.Settings.location,
             showFlash: false,
             showLogin: false,
             loadingDone: true
@@ -175,8 +201,8 @@ export default class HomeScreen extends React.Component {
     }
     _addDaysToEnd() {
         const daysList = this.state.daysList,
-            day = daysList[daysList.length - 1].day.addDays(1);
-        daysList.push(this.setDayInformation({ day }));
+            day = daysList[daysList.length - 1].addDays(1);
+        daysList.push(day);
         this.setState({
             daysList: daysList
         });
@@ -187,39 +213,24 @@ export default class HomeScreen extends React.Component {
     goToday() {
         this._goToDate(this.state.today);
     }
-    getDaysList(jdate, appData) {
-        appData = appData || this.state.appData;
-        const daysList = [this.setDayInformation({ day: jdate }, appData)];
-        daysList.push(this.setDayInformation({ day: jdate.addDays(1) }, appData));
-        daysList.push(this.setDayInformation({ day: jdate.addDays(2) }, appData));
+    getDaysList(jdate) {
+        const daysList = [jdate];
+        daysList.push(jdate.addDays(1));
+        daysList.push(jdate.addDays(2));
         if (isLargeScreen()) {
-            daysList.push(this.setDayInformation({ day: jdate.addDays(3) }, appData));
+            daysList.push(jdate.addDays(3));
         }
         return daysList;
     }
-    setDayInformation(singleDay, appData) {
-        appData = appData || this.state.appData;
-
-        if (appData) {
-            singleDay.hasProbs = appData.Settings.showProbFlagOnHome &&
-                appData.ProblemOnahs.some(po => po.jdate.Abs === singleDay.day.Abs);
-            singleDay.occasions = appData.UserOccasions.length > 0 ?
-                UserOccasion.getOccasionsForDate(singleDay.day, appData.UserOccasions) : [];
-            singleDay.entries = appData.Settings.showEntryFlagOnHome ?
-                appData.EntryList.list.filter(e => e.date.Abs === singleDay.day.Abs) : [];
-        }
-        return singleDay;
-    }
+    /**
+     * Render a single day
+     * @param {{item:jDate}} param0 item will be a single jDate
+     */
     renderItem({ item }) {
-        const { day, hasProbs, occasions, entries } = item;
         return <SingleDayDisplay
-            key={day.Abs}
-            jdate={day}
-            location={this.state.currLocation || Location.getJerusalem()}
-            flag={hasProbs}
-            occasions={occasions}
-            entries={entries}
-            isToday={this.state.today.Abs === day.Abs}
+            key={item.Abs}
+            jdate={item}
+            isToday={this.state.today.Abs === item.Abs}
             appData={this.state.appData}
             navigate={this.navigate}
             onUpdate={this.updateAppData} />;

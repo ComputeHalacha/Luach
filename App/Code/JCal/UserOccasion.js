@@ -43,6 +43,15 @@ class UserOccasion {
         }
         return str;
     }
+    isSameOccasion(occasion) {
+        if (!occasion) {
+            return false;
+        }
+        return this.title === occasion.title &&
+            this.occasionType === occasion.occasionType &&
+            this.dateAbs === occasion.dateAbs &&
+            this.comments === occasion.comments;
+    }
     get jdate() {
         if (!this._jdate) {
             this._jdate = new jDate(this.dateAbs);

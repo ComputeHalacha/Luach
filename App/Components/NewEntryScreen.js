@@ -8,7 +8,7 @@ import Utils from '../Code/JCal/Utils';
 import jDate from '../Code/JCal/jDate';
 import { NightDay, Onah } from '../Code/Chashavshavon/Onah';
 import DataUtils from '../Code/Data/DataUtils';
-import { popUpMessage, range } from '../Code/GeneralUtils';
+import { warn, error, popUpMessage, range } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class NewEntry extends React.Component {
@@ -19,7 +19,8 @@ export default class NewEntry extends React.Component {
     constructor(props) {
         super(props);
         const navigation = this.props.navigation,
-            { jdate, location, isToday, appData, onUpdate } = navigation.state.params,
+            { jdate, isToday, appData, onUpdate } = navigation.state.params,
+            location = appData.Settings.location,
             sunset = jdate.getSunriseSunset(location).sunset,
             sunsetMs = Utils.totalMinutes(sunset) * 60000,
             isNight = (sunsetMs <= new Date().getTime());
@@ -33,7 +34,7 @@ export default class NewEntry extends React.Component {
             jdate: jdate,
             nightDay: isNight ? NightDay.Night : NightDay.Day
         };
-        this.location = location;
+
 
         this.navigate = navigation.navigate;
         this.dispatch = navigation.dispatch;
@@ -77,11 +78,9 @@ export default class NewEntry extends React.Component {
                 this.dispatch(NavigationActions.back());
             }
         }
-        ).catch(error => {
-            if (__DEV__) {
-                console.warn('Error trying to add entry to the database.');
-                console.error(error);
-            }
+        ).catch(err => {
+            warn('Error trying to add entry to the database.');
+            error(err);
         });
     }
     render() {

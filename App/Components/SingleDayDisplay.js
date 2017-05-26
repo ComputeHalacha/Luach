@@ -2,8 +2,16 @@ import React, { Component } from 'react';
 import { Button, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
+import { UserOccasion } from '../Code/JCal/UserOccasion';
 /**
  * Display a home screen box for a single jewish date.
+ *
+ * PROPS ------------------------------
+ *   jdate
+ *   isToday
+ *   appData
+ *   navigate
+ *   onUpdate
  */
 export default class SingleDayDisplay extends Component {
     constructor(props) {
@@ -32,7 +40,14 @@ export default class SingleDayDisplay extends Component {
         this.navigate('FlaggedDates', this.props);
     }
     render() {
-        const { jdate, location, isToday } = this.props,
+        const { appData, jdate, isToday } = this.props,
+            location = appData.Settings.location,
+            flag = appData.Settings.showProbFlagOnHome &&
+                appData.ProblemOnahs.some(po => po.jdate.Abs === jdate.Abs),
+            occasions = appData.UserOccasions.length > 0 ?
+                UserOccasion.getOccasionsForDate(jdate, appData.UserOccasions) : [],
+            entries = appData.Settings.showEntryFlagOnHome ?
+                appData.EntryList.list.filter(e => e.date.Abs === jdate.Abs) : [],
             sdate = jdate.getDate(),
             dailyInfos = jdate.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
@@ -41,10 +56,8 @@ export default class SingleDayDisplay extends Component {
                 Utils.getTimeString(suntimes.sunrise) : 'Sun does not rise',
             sunset = suntimes && suntimes.sunset ?
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
-            occasions = this.props.occasions,
             occasionText = occasions && occasions.length > 0 ?
                 occasions.map((o, i) => <Text style={styles.occasionText} key={i}>{o.title}</Text>) : null,
-            entries = this.props.entries,
             entriesText = entries && entries.length > 0 &&
                 entries.map((e, i) => (<Text style={styles.entriesText} key={i}>{e.toKnownDateString()}</Text>)),
             todayText = isToday ? (<Text style={styles.todayText}>TODAY</Text>) : null;
@@ -53,7 +66,7 @@ export default class SingleDayDisplay extends Component {
                 style={[styles.container, {
                     backgroundColor:
                     (entries && entries.length > 0 ? '#fee' :
-                        (this.props.flag ? '#fe9' : (isToday ? '#eef' : '#fff')))
+                        (flag ? '#fe9' : (isToday ? '#eef' : '#fff')))
                 }]}>
                 <View style={{ margin: 15, flex: 1 }}>
                     <View style={{ flexDirection: 'row' }}>
@@ -101,7 +114,7 @@ export default class SingleDayDisplay extends Component {
                             {entriesText}
                         </View>
                     }
-                    {this.props.flag &&
+                    {flag &&
                         <TouchableWithoutFeedback style={styles.additionsViews} onPress={this.showProblems}>
                             <View style={styles.additionsViews}>
                                 <View style={{

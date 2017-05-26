@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements';
 import SideMenu from './SideMenu';
 import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';
-import { popUpMessage } from '../Code/GeneralUtils';
+import { warn, error, popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class OccasionsScreen extends Component {
@@ -44,11 +44,9 @@ export default class OccasionsScreen extends Component {
                     'Remove occasion');
             }
         }
-        ).catch(error => {
-            if (__DEV__) {
-                console.warn('Error trying to delete an occasion from the database.');
-                console.error(error);
-            }
+        ).catch(err => {
+            warn('Error trying to delete an occasion from the database.');
+            error(err);
         });
     }
     render() {

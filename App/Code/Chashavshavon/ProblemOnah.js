@@ -15,6 +15,9 @@ export default class ProblemOnah extends Onah {
             this.jdate.toString() +
             ` (${goyDate.toLocaleDateString()}) is the ${this.name}`;
     }
+    isSameProb(prob) {
+        return this.isSameOnah(prob) && this.name === prob.name;
+    }
     /**
      * Filter a list of problem onahs for the ones pertaining to the given date.
      * @param {JDate} jdate
