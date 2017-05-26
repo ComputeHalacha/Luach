@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, Text, View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NightDay } from '../Code/Chashavshavon/Onah';
 import { GeneralStyles } from './styles';
+import { isString } from '../Code/GeneralUtils';
 
 /*******************************************************************************************************************
  * PROPS ------------------------------------------
@@ -84,9 +85,13 @@ export default class CustomList extends Component {
                         containerStyle={styles.iconContainerStyle} />)
             }
             <View style={[styles.textSectionViewStyle, textSectionViewStyle]}>
-                <Text style={[styles.titleStyle, titleStyle]}>
-                    {title}
-                </Text>
+                {(isString(title) &&
+                    <Text style={[styles.titleStyle, titleStyle]}>
+                        {title}
+                    </Text>)
+                    ||
+                    [title]
+                }
                 {secondSection}
             </View>
         </View>);

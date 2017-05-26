@@ -88,7 +88,7 @@ export default class NewEntry extends React.Component {
         const jdate = this.state.jdate,
             lastYear = jdate.Year - 1,
             twoYearsBack = lastYear - 1,
-            daysOfMonth = range(1, 31);
+            daysOfMonth = range(1, 30);
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu

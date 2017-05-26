@@ -117,7 +117,7 @@ export default class EntryList {
     }
     getProblemOnahs(kavuahList) {
         let probOnahs = [];
-        const cancelOnahBeinenis = kavuahList.some(k => k.active && k.cancelsOnahBeinunis);
+        const cancelOnahBeinenis = kavuahList.some(k => k.active && (!k.ignore) && k.cancelsOnahBeinunis);
 
         //A list of Onahs that need to be kept. This first list is worked out from the list of Entries.
         //Problem Onahs are searched for from the date of each entry until the number of months specified in the

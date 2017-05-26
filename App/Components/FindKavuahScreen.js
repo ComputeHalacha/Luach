@@ -29,7 +29,8 @@ export default class FindKavuahScreen extends Component {
 
         this.update = this.update.bind(this);
         this.addKavuah = this.addKavuah.bind(this);
-        this.deletePossibleKavuah = this.deletePossibleKavuah.bind(this);
+        this.removePossibleKavuah = this.removePossibleKavuah.bind(this);
+        this.ignorePossibleKavuah = this.ignorePossibleKavuah.bind(this);
     }
     componentWillMount() {
         const appData = this.state.appData;
@@ -63,10 +64,29 @@ export default class FindKavuahScreen extends Component {
             Alert.alert(`The Kavuah ${kavuah.toString()} has been added to the list`);
             //Now that it's been added to the database, it is no longer a "possible"" Kavuah.
             this.update(appData);
-            this.deletePossibleKavuah(pk);
+            this.removePossibleKavuah(pk);
         });
     }
-    deletePossibleKavuah(pk) {
+    ignorePossibleKavuah(pk) {
+        const appData = this.state.appData,
+            kList = appData.KavuahList,
+            foundInList = kList.find(k => k.isMatchingKavuah(pk.kavuah)),
+            kavuah = foundInList || pk.kavuah;
+
+        kavuah.active = true;
+        kavuah.ignore = true;
+
+        DataUtils.KavuahToDatabase(kavuah).then(() => {
+            if (!foundInList) {
+                kList.push(pk.kavuah);
+            }
+            appData.KavuahList = kList;
+            //Now that it's been added to the database, it is no longer a "possible"" Kavuah.
+            this.update(appData);
+            this.removePossibleKavuah(pk);
+        });
+    }
+    removePossibleKavuah(pk) {
         let list = this.state.possibleKavuahList,
             index = list.indexOf(pk);
         if (index > -1) {
@@ -90,25 +110,27 @@ export default class FindKavuahScreen extends Component {
         }
     }
     render() {
-        return (
-            <View style={GeneralStyles.container}>
-                <View style={{ flexDirection: 'row', flex: 1 }}>
-                    <SideMenu
-                        onUpdate={this.onUpdate}
-                        appData={this.state.appData}
-                        navigate={this.navigate}
-                        hideOccasions={true}
-                        hideSettings={true} />
-                    <ScrollView style={{ flex: 1 }}>
-                        <CustomList
-                            data={this.state.possibleKavuahList}
-                            title={(pk, index) => `Possible Kavuah #${(index + 1).toString()}: ${pk.kavuah.toString()}`}
-                            emptyListText='The application did not find any Kavuah combinations'
-                            titleStyle={{ fontWeight: 'bold', color: '#55b' }}
-                            iconName='device-hub'
-                            iconSize={25}
-                            iconColor='#f00'
-                            secondSection={pk => <View style={GeneralStyles.inItemButtonList}>
+        const pk = this.state.possibleKavuahList.length > 0 &&
+            this.state.possibleKavuahList[0];
+        return <View style={GeneralStyles.container}>
+            <View style={{ flexDirection: 'row', flex: 1 }}>
+                <SideMenu
+                    onUpdate={this.onUpdate}
+                    appData={this.state.appData}
+                    navigate={this.navigate}
+                    hideOccasions={true}
+                    hideSettings={true} />
+                <ScrollView style={{ flex: 1 }}>
+                    {(pk &&
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon name='device-hub'
+                                size={70}
+                                color='#f00' />
+                            <Text style={{ padding: 15, fontWeight: 'bold', fontSize: 15, color: '#f00', flexWrap: 'wrap' }}>
+                                {'POSSIBLE KAVUAH FOUND'}</Text>
+                            <Text style={{ fontWeight: 'bold', color: '#669', marginBottom: 20, flexWrap: 'wrap', textAlign: 'center' }}>
+                                {pk.kavuah.toString()}</Text>
+                            <View style={GeneralStyles.inItemButtonList}>
                                 <TouchableHighlight
                                     underlayColor='#aaf'
                                     style={{ flex: 1 }}
@@ -118,26 +140,47 @@ export default class FindKavuahScreen extends Component {
                                             reverse
                                             name='add'
                                             color='#696'
-                                            size={25} />
-                                        <Text style={{ color: '#080' }}> Add this Kavuah</Text>
+                                            size={15} />
+                                        <Text style={{ color: '#080', textAlign: 'center', fontSize: 10 }}>Add Kavuah</Text>
+                                    </View>
+                                </TouchableHighlight>
+                                <TouchableHighlight
+                                    underlayColor='#aaa'
+                                    style={{ flex: 1 }}
+                                    onPress={() => this.removePossibleKavuah(pk)}>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <Icon
+                                            reverse
+                                            name='delete-forever'
+                                            color='#aaa'
+                                            size={15} />
+                                        <Text style={{ color: '#aaa', textAlign: 'center', fontSize: 10 }}>Don't Add Now</Text>
                                     </View>
                                 </TouchableHighlight>
                                 <TouchableHighlight
                                     underlayColor='#faa'
                                     style={{ flex: 1 }}
-                                    onPress={() => this.deletePossibleKavuah(pk)}>
+                                    onPress={() => this.ignorePossibleKavuah(pk)}>
                                     <View style={{ alignItems: 'center' }}>
                                         <Icon
                                             reverse
                                             name='delete-forever'
                                             color='#faa'
-                                            size={25} />
-                                        <Text style={{ color: '#faa' }}> Don't add this Kavuah</Text>
+                                            size={15} />
+                                        <Text style={{ color: '#faa', textAlign: 'center', fontSize: 10 }}>Always Ignore</Text>
                                     </View>
                                 </TouchableHighlight>
-                            </View>} />
-                    </ScrollView>
-                </View>
-            </View>);
+                            </View>
+                            <View style={{ marginTop: 10, padding: 10 }}>
+                                <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Explanation</Text>
+                                <Text style={{ fontStyle: 'italic', marginTop: 8 }}>Don't Add Now</Text>
+                                <Text>This option should be chosen if you are not yet sure whether or not to add this Kavuah. The next time the list of Entries is checked for possible Kavuahs, this Kavuah will be shown again as a possible Kavuah.</Text>
+                                <Text style={{ fontStyle: 'italic', marginTop: 8 }}>Always Ignore</Text>
+                                <Text>This option should be chosen if you are sure that this Kavuah should not be added. It will not show up again as a possible Kavuah when the list of Entries is searched for possible Kavuahs.</Text>
+                            </View>
+                        </View>)}
+                </ScrollView>
+            </View>
+        </View>;
     }
 }

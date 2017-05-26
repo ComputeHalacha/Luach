@@ -74,16 +74,16 @@ export function popUpMessage(message, optionalTitle) {
 
 /**
  * Returns an array containing a range of integers.
- * @param {Number} [start] The number to start at. The start number is included in the results. If only one argument is supplied, start will be set to 0.
- * @param {Number} end The top end of the range. The end number is not included.
+ * @param {Number} [start] The number to start at. The start number is included in the results. If only one argument is supplied, start will be set to 1.
+ * @param {Number} end The top end of the range. Unlike Pythons range function, The end number is included in the results.
  * @returns {[Number]}
  */
 export function range(start, end) {
     if (arguments.length === 1) {
         end = start;
-        start = 0;
+        start = 1;
     }
     return Array.from(
-        { length: end - start },
+        { length: (end - start) + 1 },
         (v, i) => start + i);
 }
