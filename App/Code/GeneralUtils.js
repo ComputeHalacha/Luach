@@ -1,4 +1,5 @@
 import { PixelRatio, Dimensions, Platform, ToastAndroid, Alert } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 
 /**Gets the current window width in points */
 export function getScreenWidth() {
@@ -113,4 +114,19 @@ export function error(txt) {
     if (__DEV__) {
         console.error(txt);
     }
+}
+
+/**
+ * Clears the while navigation stack and goes to the home screen.
+ * @param {*} dispatcher
+ * @param {*} appData
+ */
+export function goHomeToday(navigator, appData) {
+    const resetAction = NavigationActions.reset({
+        index: 0,
+        actions: [
+            NavigationActions.navigate({ routeName: 'Home', params: { appData: appData } })
+        ]
+    });
+    navigator.dispatch(resetAction);
 }

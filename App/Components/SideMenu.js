@@ -1,7 +1,7 @@
 import React from 'react';
 import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { getScreenHeight } from '../Code/GeneralUtils';
+import { getScreenHeight, goHomeToday } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 
 /**
@@ -29,7 +29,7 @@ export default class SideMenu extends React.Component {
         this.navigate = (uri, propList) => {
             //Make sure that the keyboard is closed before going elsewhere
             Keyboard.dismiss();
-            props.navigate(uri, propList);
+            props.navigator.navigate(uri, propList);
         };
     }
     render() {
@@ -43,7 +43,7 @@ export default class SideMenu extends React.Component {
                 <TouchableHighlight
                     underlayColor='#eef'
                     onPress={this.props.onGoToday ||
-                        (() => this.navigate('Home', { ...params, currDate: jdate }))}
+                        (() => goHomeToday(this.props.navigator, this.props.appData))}
                     style={styles.sideButton}>
                     <View style={styles.menuView}>
                         <Image

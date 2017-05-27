@@ -93,7 +93,7 @@ export default class NewEntry extends React.Component {
                 <SideMenu
                     onUpdate={this.onUpdate}
                     appData={this.state.appData}
-                    navigate={this.navigate}
+                    navigator={this.props.navigation}
                     hideOccasions={true} />
                 <ScrollView style={{ flex: 1 }}>
                     {this.showWarning &&

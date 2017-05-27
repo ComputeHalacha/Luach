@@ -17,7 +17,6 @@ export default class NewKavuah extends React.Component {
         let { appData, onUpdate, settingEntry } = navigation.state.params;
         this.onUpdate = onUpdate;
         this.dispatch = navigation.dispatch;
-        this.navigate = this.props.navigation.navigate;
         this.entryList = appData.EntryList;
         if (this.entryList.list.length > 0 && !settingEntry) {
             settingEntry = this.entryList.list[this.entryList.list.length - 1];
@@ -94,7 +93,7 @@ export default class NewKavuah extends React.Component {
                 <SideMenu
                     onUpdate={this.onUpdate}
                     appData={this.state.appData}
-                    navigate={this.navigate}
+                    navigator={this.props.navigation}
                     hideOccasions={true} />
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.formRow}>

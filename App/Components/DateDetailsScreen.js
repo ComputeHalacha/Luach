@@ -35,7 +35,7 @@ export default class DateDetailsScreen extends React.Component {
                 <SideMenu
                     onUpdate={this.onUpdate}
                     appData={this.appData}
-                    navigate={this.navigate}
+                    navigator={this.props.navigation}
                     onGoPrevious={this.goPrev}
                     onGoNext={this.goNext}
                     hideFlaggedDates={true}

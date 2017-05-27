@@ -18,7 +18,6 @@ export default class NewOccasion extends React.Component {
         let { appData, onUpdate, jdate } = navigation.state.params;
         this.onUpdate = onUpdate;
         this.dispatch = navigation.dispatch;
-        this.navigate = navigation.navigate;
         this.state = {
             appData: appData,
             jdate: jdate,
@@ -57,7 +56,7 @@ export default class NewOccasion extends React.Component {
                 <SideMenu
                     onUpdate={this.onUpdate}
                     appData={this.state.appData}
-                    navigate={this.navigate}
+                    navigator={this.props.navigation}
                     hideEntries={true}
                     hideKavuahs={true} />
                 <ScrollView style={{ flex: 1 }}>

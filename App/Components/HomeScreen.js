@@ -246,7 +246,7 @@ export default class HomeScreen extends React.Component {
                             <SideMenu
                                 onUpdate={this.updateAppData}
                                 appData={this.state.appData}
-                                navigate={this.navigate}
+                                navigator={this.props.navigation}
                                 currDate={this.state.currDate}
                                 isDataLoading={!this.state.loadingDone}
                                 onGoToday={this.goToday}
