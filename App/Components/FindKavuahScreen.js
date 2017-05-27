@@ -3,7 +3,6 @@ import { ScrollView, View, Alert, Text, TouchableHighlight } from 'react-native'
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 import SideMenu from './SideMenu';
-import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';
 import { Kavuah } from '../Code/Chashavshavon/Kavuah';
 import { GeneralStyles } from './styles';
@@ -117,7 +116,7 @@ export default class FindKavuahScreen extends Component {
                 <SideMenu
                     onUpdate={this.onUpdate}
                     appData={this.state.appData}
-                    navigate={this.navigate}
+                    navigator={this.props.navigation}
                     hideOccasions={true}
                     hideSettings={true} />
                 <ScrollView style={{ flex: 1 }}>

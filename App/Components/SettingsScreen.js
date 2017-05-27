@@ -68,7 +68,7 @@ export default class SettingsScreen extends Component {
                     <SideMenu
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
-                        navigate={this.navigate}
+                        navigator={this.props.navigation}
                         hideSettings={true}
                         hideMonthView={true} />
                     <ScrollView style={{ flex: 1 }}>

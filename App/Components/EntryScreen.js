@@ -114,7 +114,7 @@ export default class EntryScreen extends Component {
                     <SideMenu
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
-                        navigate={this.navigate}
+                        navigator={this.props.navigation}
                         hideOccasions={true}
                         hideEntries={true}
                         hideSettings={true} />

@@ -135,7 +135,7 @@ export default class KavuahScreen extends Component {
                     <SideMenu
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
-                        navigate={this.navigate}
+                        navigator={this.props.navigation}
                         hideKavuahs={true}
                         hideMonthView={true} />
                     <View style={{ flex: 1 }}>

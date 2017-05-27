@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { Icon, Grid, Row, Col } from 'react-native-elements';
 import GestureRecognizer from 'react-native-swipe-gestures';
-import { getScreenWidth } from '../Code/GeneralUtils';
+import { getScreenWidth, goHomeToday } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 import Utils from '../Code/JCal/Utils';
 import Month from '../Code/Month';
@@ -40,7 +40,7 @@ export default class MonthViewScreen extends React.Component {
         this.setState({ month: currMonth.next });
     }
     goToday() {
-        this.navigate('Home', { appData: this.appData });
+        goHomeToday(this.props.navigation, this.appData);
     }
     goThisMonth() {
         this.setState({ month: new Month(Today, this.appData) });

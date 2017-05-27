@@ -47,7 +47,7 @@ export default class FindLocation extends Component {
                 <SideMenu
                     onUpdate={this.onUpdate}
                     appData={this.appData}
-                    navigate={this.navigate}
+                    navigator={this.props.navigation}
                     hideMonthView={true} />
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.formRow}>
