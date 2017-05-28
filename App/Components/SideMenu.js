@@ -6,12 +6,12 @@ import jDate from '../Code/JCal/jDate';
 
 /**
  * PROPS ******
- * navigate,
+ * navigator,
  * appData
  * onUpdate
  * currDate
  * isDataLoading
- * onGoToday - if falsey, will navigate to the home screen
+ * onGoToday - if falsey, will navigate to today on the home screen and clear the screen stack
  * onGoPrevious
  * onGoNext
  * hideToday

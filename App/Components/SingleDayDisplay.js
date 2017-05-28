@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
+import { log } from '../Code/GeneralUtils';
 import { UserOccasion } from '../Code/JCal/UserOccasion';
 /**
  * Display a home screen box for a single jewish date.
@@ -23,6 +24,47 @@ export default class SingleDayDisplay extends Component {
         this.showDateDetails = this.showDateDetails.bind(this);
         this.showProblems = this.showProblems.bind(this);
         this.monthView = this.monthView.bind(this);
+    }
+    componentWillUpdate(nextProps) {
+        const prevAppData = this.props.appData,
+            newAppData = nextProps.appData;
+        if (!(prevAppData || newAppData)) {
+            log('Refreshed Single Day:( - either new appdata or old appdata was nuthin`');
+            return true;
+        }
+        if (!prevAppData.Settings.isSameSettings(newAppData.Settings)) {
+            log('Refreshed Single Day:( - Settings were not the same');
+            return true;
+        }
+        if (prevAppData.UserOccasions.length !== newAppData.UserOccasions.length) {
+            log('Refreshed Single Day:( - User Occasions list were not the same length');
+            return true;
+        }
+        if (!prevAppData.UserOccasions.every(uo =>
+            newAppData.UserOccasions.some(uon => uon.isSameOccasion(uo)))) {
+            log('Refreshed Single Day:( - Occasions were not all the same');
+            return true;
+        }
+        if (prevAppData.EntryList.list.length !== newAppData.EntryList.list.length) {
+            log('Refreshed Single Day:( - Entries list were not the same length');
+            return true;
+        }
+        if (!prevAppData.EntryList.list.every(e =>
+            newAppData.EntryList.list.some(en => en.isSameEntry(e)))) {
+            log('Refreshed Single Day:( - Entries were not all the same');
+            return true;
+        }
+        if (prevAppData.ProblemOnahs.length !== newAppData.ProblemOnahs.length) {
+            log('Refreshed Single Day:( - Probs list were not the same length');
+            return true;
+        }
+        if (!prevAppData.ProblemOnahs.every(po =>
+            newAppData.ProblemOnahs.some(pon => pon.isSameProb(po)))) {
+            log('Refreshed Single Day:( - Probs were not all the same');
+            return true;
+        }
+        log('SAVED REFRESH FOR SINGLE DAY YIPEEEEEE!!');
+        return false;
     }
     newEntry() {
         this.navigate('NewEntry', this.props);
