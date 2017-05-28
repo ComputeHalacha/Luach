@@ -10,6 +10,8 @@ import { error, warn } from '../GeneralUtils';
 const addedSettingsFields = [
     //Added 5/10/17
     { name: 'keepThirtyOne', type: 'BOOLEAN', allowNull: false, defaultValue: '1' },
+    //Added 5/28/17
+    { name: 'showIgnoredKavuahs', type: 'BOOLEAN', allowNull: true },
 ];
 
 export default class AppData {

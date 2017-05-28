@@ -22,7 +22,8 @@ export default class KavuahScreen extends Component {
         this.onUpdate = params.onUpdate;
         this.state = {
             appData: appData,
-            kavuahList: appData.KavuahList.filter(k => !k.ignore),
+            kavuahList: appData.Settings.showIgnoredKavuahs ?
+                appData.KavuahList : appData.KavuahList.filter(k => !k.ignore),
             showIgnored: false
         };
         this.deleteKavuah = this.deleteKavuah.bind(this);
@@ -61,17 +62,20 @@ export default class KavuahScreen extends Component {
         });
     }
     toggleIgnored() {
-        const appData = this.state.appData;
-        if (this.state.showIgnored) {
+        const appData = this.state.appData,
+            showIgnored = this.state.appData.Settings.showIgnoredKavuahs;
+        appData.Settings.showIgnoredKavuahs = !showIgnored;
+        appData.Settings.save();
+        if (showIgnored) {
             this.setState({
                 kavuahList: appData.KavuahList.filter(k => !k.ignore),
-                showIgnored: false
+                appData: appData
             });
         }
         else {
             this.setState({
                 kavuahList: appData.KavuahList,
-                showIgnored: true
+                appData: appData
             });
         }
     }
@@ -170,6 +174,14 @@ export default class KavuahScreen extends Component {
                                     </View>
                                 </TouchableHighlight>
                             </View>
+                            {this.state.appData.KavuahList.some(k => k.ignore) &&
+                                <TouchableHighlight onPress={this.toggleIgnored} style={{ flex: 0 }} underlayColor='#aaa'>
+                                    <View style={{ backgroundColor: '#f5f5f5', padding: 5, borderBottomWidth: 1, borderColor: '#ccc' }}>
+                                        <Text style={{ textAlign: 'center', color: '#77d' }}>
+                                            {(this.state.appData.Settings.showIgnoredKavuahs ? 'Hide' : 'Show') + ' Ignored Kavuahs'}</Text>
+                                    </View>
+                                </TouchableHighlight>
+                            }
                             <CustomList
                                 data={this.state.kavuahList}
                                 title={kavuah => kavuah.toLongString()}
@@ -215,14 +227,6 @@ export default class KavuahScreen extends Component {
                                 </View>}
                             />
                         </ScrollView>
-                        {this.state.appData.KavuahList.some(k => k.ignore) &&
-                            <View style={{ flex: 0, backgroundColor: '#eef', padding: 5, borderTopWidth: 2, borderColor: '#ccd' }}>
-                                <TouchableHighlight onPress={this.toggleIgnored}>
-                                    <Text style={{ textAlign: 'center', color: '#55f' }}>
-                                        {(this.state.showIgnored ? 'Hide' : 'Show') + ' Ignored Kavuahs'}</Text>
-                                </TouchableHighlight>
-                            </View>
-                        }
                     </View>
                 </View>
             </View >);

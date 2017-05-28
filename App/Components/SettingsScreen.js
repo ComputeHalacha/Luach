@@ -60,6 +60,7 @@ export default class SettingsScreen extends Component {
             showProbFlagOnHome = setDefault(sets && sets.showProbFlagOnHome, true),
             showEntryFlagOnHome = setDefault(sets && sets.showEntryFlagOnHome, true),
             navigateBySecularDate = sets && sets.navigateBySecularDate,
+            showIgnoredKavuahs = sets && sets.showIgnoredKavuahs,
             requirePIN = setDefault(sets && sets.requirePIN, true);
 
         return (
@@ -160,6 +161,12 @@ export default class SettingsScreen extends Component {
                                     value={!!navigateBySecularDate} />
                                 <Text>By Secular/Gregorian Date</Text>
                             </View>
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Show explicitly ignored Kavuahs in the Kavuah list?</Text>
+                            <Switch style={GeneralStyles.switch}
+                                onValueChange={value => this.update('showIgnoredKavuahs', value)}
+                                value={!!showIgnoredKavuahs} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Require PIN to open application?</Text>
