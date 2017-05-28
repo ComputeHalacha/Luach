@@ -32,6 +32,7 @@ export default class DataUtils {
                     showProbFlagOnHome: dbSet.showProbFlagOnHome,
                     showEntryFlagOnHome: dbSet.showEntryFlagOnHome,
                     navigateBySecularDate: dbSet.navigateBySecularDate,
+                    showIgnoredKavuahs:dbSet.showIgnoredKavuahs,
                     requirePIN: dbSet.requirePIN,
                     PIN: dbSet.PIN
                 });
@@ -56,6 +57,7 @@ export default class DataUtils {
             showProbFlagOnHome=?,
             showEntryFlagOnHome=?,
             navigateBySecularDate=?,
+            showIgnoredKavuahs=?,
             requirePIN=?,
             PIN=?`,
             [
@@ -71,6 +73,7 @@ export default class DataUtils {
                 settings.showProbFlagOnHome,
                 settings.showEntryFlagOnHome,
                 settings.navigateBySecularDate,
+                settings.showIgnoredKavuahs,
                 settings.requirePIN,
                 settings.PIN
             ])
