@@ -5,7 +5,7 @@ import { Icon } from 'react-native-elements';
 import SideMenu from './SideMenu';
 import DataUtils from '../Code/Data/DataUtils';
 import { Kavuah } from '../Code/Chashavshavon/Kavuah';
-import {popUpMessage} from '../Code/GeneralUtils';
+import { popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class FindKavuahScreen extends Component {
@@ -129,6 +129,14 @@ export default class FindKavuahScreen extends Component {
                                 {'POSSIBLE KAVUAH FOUND'}</Text>
                             <Text style={{ fontWeight: 'bold', color: '#669', marginBottom: 20, flexWrap: 'wrap', textAlign: 'center' }}>
                                 {pk.kavuah.toString()}</Text>
+                            <View style={{ marginBottom: 10, padding: 10, backgroundColor: '#f5f5ff', borderRadius: 6 }}>
+                                <Text style={{ color: '#686', fontWeight: 'bold', fontSize: 10, alignSelf:'center' }}>
+                                    Entries used for this calculatation:</Text>
+                                {pk.entries.map((e, i) =>
+                                    <Text key={i} style={{ fontSize: 11, color: '#655', paddingLeft: 10 }}>
+                                        {`${(i + 1).toString()}. ${e.toString()}`}</Text>)
+                                }
+                            </View>
                             <View style={GeneralStyles.inItemButtonList}>
                                 <TouchableHighlight
                                     underlayColor='#aaf'
@@ -173,9 +181,14 @@ export default class FindKavuahScreen extends Component {
                             <View style={{ marginTop: 10, padding: 10 }}>
                                 <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Explanation</Text>
                                 <Text style={{ fontStyle: 'italic', marginTop: 8 }}>Don't Add Now</Text>
-                                <Text>This option should be chosen if you are not yet sure whether or not to add this Kavuah. The next time the list of Entries is checked for possible Kavuahs, this Kavuah will be shown again as a possible Kavuah.</Text>
+                                <Text>This option should be chosen if you are not yet sure whether or not
+                                    to add this Kavuah. The next time the list of Entries is checked for
+                                    possible Kavuahs, this Kavuah will be shown again as a possible Kavuah.</Text>
                                 <Text style={{ fontStyle: 'italic', marginTop: 8 }}>Always Ignore</Text>
-                                <Text>This option should be chosen if you are sure that this Kavuah should not be added. It will not show up again as a possible Kavuah when the list of Entries is searched for possible Kavuahs.</Text>
+                                <Text>This option should be chosen if you are sure that the above suggested Kavuah;
+                                    which was calulated from those Entries listed above, should not be added.
+                                    It will not show up again as a possible Kavuah when the list of
+                                    Entries is searched for possible Kavuahs.</Text>
                             </View>
                         </View>)}
                 </ScrollView>
