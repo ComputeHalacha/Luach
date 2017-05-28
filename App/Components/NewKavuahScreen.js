@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, Picker, Switch, Alert, Button } from 'react-native';
+import { ScrollView, View, Text, Picker, Switch, Button } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import SideMenu from './SideMenu';
 import { KavuahTypes, Kavuah } from '../Code/Chashavshavon/Kavuah';
@@ -35,15 +35,15 @@ export default class NewKavuah extends React.Component {
     }
     componentWillMount() {
         if (!this.state.settingEntry) {
-            Alert.alert('Kavuahs can only be added after an Entry has been added!');
+            popUpMessage('Kavuahs can only be added after an Entry has been added!');
             this.dispatch(NavigationActions.back());
         }
     }
     addKavuah() {
         if (!this.state.specialNumber) {
-            Alert.alert('Incorrect information',
-                'The "Kavuah Defining Number" was not set.\n' +
-                'If you do not understand how to fill this information, please contact your Rabbi for assistance.');
+            popUpMessage('The "Kavuah Defining Number" was not set.\n' +
+                'If you do not understand how to fill this information, please contact your Rabbi for assistance.',
+                'Incorrect information');
             return;
         }
         const ad = this.state.appData,
@@ -52,10 +52,10 @@ export default class NewKavuah extends React.Component {
                 this.state.specialNumber,
                 this.state.cancelsOnahBeinunis, this.state.active);
         if (!kavuah.specialNumberMatchesEntry) {
-            Alert.alert('Incorrect information',
-                'The "Kavuah Defining Number" does not match the Setting Entry information for the selected Kavuah Type.\n' +
+            popUpMessage('The "Kavuah Defining Number" does not match the Setting Entry information for the selected Kavuah Type.\n' +
                 'Please check that the chosen information is correct and try again.\n' +
-                'If you do not understand how to fill this information, please contact your Rabbi for assistance.');
+                'If you do not understand how to fill this information, please contact your Rabbi for assistance.',
+                'Incorrect information');
             return;
         }
         ad.KavuahList.push(kavuah);

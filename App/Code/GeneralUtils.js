@@ -115,11 +115,10 @@ export function error(txt) {
         console.error(txt);
     }
 }
-
 /**
- * Clears the while navigation stack and goes to the home screen.
- * @param {*} dispatcher
- * @param {*} appData
+ * Clears the navigation stack and goes to today on the home screen.
+ * @param {Navigator} dispatcher
+ * @param {AppData} appData
  */
 export function goHomeToday(navigator, appData) {
     const resetAction = NavigationActions.reset({

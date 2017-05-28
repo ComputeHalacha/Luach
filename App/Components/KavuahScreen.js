@@ -104,7 +104,7 @@ export default class KavuahScreen extends Component {
                                 this.update(appData);
                             }
                             popUpMessage(`The kavuah of ${kavuah.toString()} has been successfully removed.`,
-                                'Remove kavuah');
+                                'Remove Kavuah');
                         }
                     }
                 ]);

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Alert, Text, TouchableHighlight } from 'react-native';
+import { ScrollView, View, Text, TouchableHighlight } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 import SideMenu from './SideMenu';
 import DataUtils from '../Code/Data/DataUtils';
 import { Kavuah } from '../Code/Chashavshavon/Kavuah';
+import {popUpMessage} from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class FindKavuahScreen extends Component {
@@ -39,8 +40,7 @@ export default class FindKavuahScreen extends Component {
                 possibleKavuahList: possList
             });
             if (possList.length === 0) {
-                Alert.alert(`The application did not find any Kavuah combinations.
-                    Please remember: DO NOT RELY EXCLUSIVELY UPON THIS APPLICATION!`);
+                popUpMessage('The application did not find any Kavuah combinations.\nPlease remember: DO NOT RELY EXCLUSIVELY UPON THIS APPLICATION!');
                 this.dispatch(NavigationActions.back());
             }
         }
@@ -60,7 +60,7 @@ export default class FindKavuahScreen extends Component {
                 kList.push(pk.kavuah);
             }
             appData.KavuahList = kList;
-            Alert.alert(`The Kavuah ${kavuah.toString()} has been added to the list`);
+            popUpMessage(`The Kavuah ${kavuah.toString()} has been added to the list`);
             //Now that it's been added to the database, it is no longer a "possible"" Kavuah.
             this.update(appData);
             this.removePossibleKavuah(pk);

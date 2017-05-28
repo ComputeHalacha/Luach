@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, Picker, Button, Alert } from 'react-native';
+import { ScrollView, View, Text, Picker, Button } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import SideMenu from './SideMenu';
 import Entry from '../Code/Chashavshavon/Entry';
@@ -47,8 +47,8 @@ export default class NewEntry extends React.Component {
             onah = new Onah(this.state.jdate, this.state.nightDay),
             entry = new Entry(onah);
         if (entryList.list.find(e => e.isSameEntry(entry))) {
-            Alert.alert('Entry already exists',
-                `The entry for ${entry.toString()} is already in the list.`);
+            popUpMessage(`The entry for ${entry.toString()} is already in the list.`,
+                'Entry already exists');
             return;
         }
         DataUtils.EntryToDatabase(entry).then(() => {

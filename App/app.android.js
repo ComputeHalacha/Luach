@@ -14,7 +14,7 @@ import FindKavuahScreen from './Components/FindKavuahScreen';
 import FindLocationScreen from './Components/FindLocationScreen';
 import MontheViewScreen from './Components/MonthViewScreen';
 
-//If we are not in __DEV__ we want to turn off the built-in logger
+//If not in __DEV__  turn off the built-in logger
 const navOptions = __DEV__ ? undefined : { onNavigationStateChange: null };
 
 AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
