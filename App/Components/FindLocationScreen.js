@@ -4,6 +4,7 @@ import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Location from '../Code/JCal/Location';
 import SideMenu from './SideMenu';
+import { popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 import DataUtils from '../Code/Data/DataUtils';
 
@@ -22,7 +23,8 @@ export default class FindLocation extends Component {
         const loc = appData.Settings.location || Location.getJerusalem();
         this.locName = loc.Name;
         this.state = {
-            list: [loc]
+            list: null,
+            searching: false
         };
         this.findLocation = this.findLocation.bind(this);
     }
@@ -34,11 +36,19 @@ export default class FindLocation extends Component {
         }
         this.dispatch(NavigationActions.back());
     }
-    findLocation(search) {
+    findLocation(event) {
+        const search = event.nativeEvent.text;
         if (search) {
+            this.setState({ searching: true });
             DataUtils.SearchLocations(search).then(list =>
-                this.setState({ list: list })
+                this.setState({
+                    searching: false,
+                    list: list
+                })
             );
+        }
+        else {
+            popUpMessage('Please enter some text to search for...');
         }
     }
     render() {
@@ -56,39 +66,59 @@ export default class FindLocation extends Component {
                             defaultValue={this.locName}
                             autoFocus={true}
                             placeholder='Search for a location'
-                            onChangeText={value => this.findLocation(value)} />
+                            onEndEditing={value => this.findLocation(value)} />
                     </View>
-                    {this.state.list.length > 0 &&
-                        (<View>
-                            <View style={GeneralStyles.headerView}>
-                                <Text style={GeneralStyles.headerText}>Select a location...</Text>
-                            </View>
-                            {this.state.list.map((location, index) =>
-                                <View key={index} style={GeneralStyles.inItemButtonList}>
-                                    <TouchableHighlight
-                                        underlayColor='#afa'
-                                        style={{ flex: 1 }}
-                                        onPress={() => this.update(location)}>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                            <Icon
-                                                name='forward'
-                                                color='#393'
-                                                size={25} />
-                                            <Text> {location.Name}</Text>
-                                        </View>
-                                    </TouchableHighlight>
-                                </View>)
-                            }
-                        </View>)
-                        ||
-                        (<View style={GeneralStyles.emptyListView}>
+                    {(this.state.list === null &&
+                        <View style={GeneralStyles.emptyListView}>
                             <Text style={GeneralStyles.emptyListText}>
-                                There are no Locations in the list that match your search...</Text>
+                                Enter any part of a location name to search for...</Text>
                             <Image
                                 source={require('../Images/logo.png')}
                                 resizeMode='contain'
                                 style={GeneralStyles.emptyListImage} />
                         </View>)
+                        ||
+                        (this.state.searching &&
+                            <View style={GeneralStyles.emptyListView}>
+                                <Text style={[GeneralStyles.emptyListText, { color: '#595' }]}>
+                                    Searching for locations...</Text>
+                                <Image
+                                    source={require('../Images/logo.png')}
+                                    resizeMode='contain'
+                                    style={GeneralStyles.emptyListImage} />
+                            </View>)
+                        ||
+                        ((this.state.list.length > 0 &&
+                            <View>
+                                <View style={GeneralStyles.headerView}>
+                                    <Text style={GeneralStyles.headerText}>Select a location...</Text>
+                                </View>
+                                {this.state.list.map((location, index) =>
+                                    <View key={index} style={GeneralStyles.inItemButtonList}>
+                                        <TouchableHighlight
+                                            underlayColor='#afa'
+                                            style={{ flex: 1 }}
+                                            onPress={() => this.update(location)}>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <Icon
+                                                    name='forward'
+                                                    color='#393'
+                                                    size={25} />
+                                                <Text> {location.Name}</Text>
+                                            </View>
+                                        </TouchableHighlight>
+                                    </View>)
+                                }
+                            </View>)
+                            ||
+                            (<View style={GeneralStyles.emptyListView}>
+                                <Text style={[GeneralStyles.emptyListText, { color: '#b66' }]}>
+                                    There are no Locations in the list that match your search...</Text>
+                                <Image
+                                    source={require('../Images/logo.png')}
+                                    resizeMode='contain'
+                                    style={GeneralStyles.emptyListImage} />
+                            </View>))
                     }
                 </ScrollView>
             </View>

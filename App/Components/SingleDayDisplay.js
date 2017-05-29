@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
+import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
 import { log } from '../Code/GeneralUtils';
@@ -11,19 +11,20 @@ import { UserOccasion } from '../Code/JCal/UserOccasion';
  *   jdate
  *   isToday
  *   appData
- *   navigate
+ *   navigator
  *   onUpdate
  */
 export default class SingleDayDisplay extends Component {
     constructor(props) {
         super(props);
-        this.navigate = props.navigate;
+        this.navigator = props.navigator;
 
         this.newEntry = this.newEntry.bind(this);
         this.newOccasion = this.newOccasion.bind(this);
         this.showDateDetails = this.showDateDetails.bind(this);
         this.showProblems = this.showProblems.bind(this);
         this.monthView = this.monthView.bind(this);
+        this.changeLocation = this.changeLocation.bind(this);
     }
     componentWillUpdate(nextProps) {
         const prevAppData = this.props.appData,
@@ -67,19 +68,22 @@ export default class SingleDayDisplay extends Component {
         return false;
     }
     newEntry() {
-        this.navigate('NewEntry', this.props);
+        this.navigator.navigate('NewEntry', this.props);
     }
     newOccasion() {
-        this.navigate('NewOccasion', this.props);
+        this.navigator.navigate('NewOccasion', this.props);
     }
     monthView() {
-        this.navigate('MonthView', this.props);
+        this.navigator.navigate('MonthView', this.props);
     }
     showDateDetails() {
-        this.navigate('DateDetails', this.props);
+        this.navigator.navigate('DateDetails', this.props);
     }
     showProblems() {
-        this.navigate('FlaggedDates', this.props);
+        this.navigator.navigate('FlaggedDates', this.props);
+    }
+    changeLocation() {
+        this.navigator.navigate('FindLocation', this.props);
     }
     render() {
         const { appData, jdate, isToday } = this.props,
@@ -127,7 +131,9 @@ export default class SingleDayDisplay extends Component {
                     <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <View style={{ width: '65%', height: 75, flex: 0 }}>
-                            <Text style={styles.location}>{'In ' + location.Name}</Text>
+                            <TouchableOpacity onPress={this.changeLocation}>
+                                <Text style={styles.location}>{'In ' + location.Name}</Text>
+                            </TouchableOpacity>
                             <Text>{'Sun Rises at ' + sunrise}</Text>
                             <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
                         </View>

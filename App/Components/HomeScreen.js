@@ -17,7 +17,7 @@ export default class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
 
-        this.navigate = props.navigation.navigate;
+        this.navigator = props.navigation;
 
         this.onLoggedIn = this.onLoggedIn.bind(this);
         this.renderItem = this.renderItem.bind(this);
@@ -232,7 +232,7 @@ export default class HomeScreen extends React.Component {
             jdate={item}
             isToday={this.state.today.Abs === item.Abs}
             appData={this.state.appData}
-            navigate={this.navigate}
+            navigator={this.navigator}
             onUpdate={this.updateAppData} />;
     }
     render() {
