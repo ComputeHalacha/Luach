@@ -64,7 +64,7 @@ export default class SingleDayDisplay extends Component {
             log('Refreshed Single Day:( - Probs were not all the same');
             return true;
         }
-        log('SAVED REFRESH FOR SINGLE DAY YIPEEEEEE!!');
+        log('Single Day Refresh Prevented');
         return false;
     }
     newEntry() {

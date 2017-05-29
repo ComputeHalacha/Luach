@@ -4,7 +4,7 @@ import SingleDayDisplay from './SingleDayDisplay';
 import Login from './Login';
 import Flash from './Flash';
 import SideMenu from './SideMenu';
-import { isLargeScreen, log } from '../Code/GeneralUtils';
+import { isLargeScreen, log, goHomeToday } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 import AppData from '../Code/Data/AppData';
 
@@ -105,7 +105,7 @@ export default class HomeScreen extends React.Component {
             log('REFRESHED :( - Probs were not all the same');
             return true;
         }
-        log('SAVED REFRESH!!! YIPEEEEEE!!');
+        log('Home Screen Refresh prevented');
         return false;
     }
     _handleAppStateChange = (nextAppState) => {
@@ -141,7 +141,8 @@ export default class HomeScreen extends React.Component {
             appData: appData,
             today: today,
             currDate: today,
-            showFlash: true
+            showFlash: true,
+            refreshing: false
         };
 
         //Get the data from the database
@@ -170,7 +171,8 @@ export default class HomeScreen extends React.Component {
             today: today,
             showFlash: false,
             showLogin: false,
-            loadingDone: true
+            loadingDone: true,
+            refreshing: false
         };
     }
     setFlash() {
@@ -185,14 +187,18 @@ export default class HomeScreen extends React.Component {
         this.setFlash();
     }
     scrollToTop() {
-        //scrollToOffset may not scroll all the way to the top without the setImmediate.
-        setImmediate(() => this.flatList.scrollToOffset({ x: 0, y: 0, animated: true }));
+        //scrollToOffset may not scroll all the way to the top without the setTimeout.
+        setTimeout(() => this.flatList.scrollToOffset({ x: 0, y: 0, animated: true }), 1);
     }
     _goToDate(jdate) {
-        if (jdate.Abs !== this.state.currDate.Abs) {
+        if (this.state.daysList > 6 && jdate.Abs === this.state.today.Abs) {
+            goHomeToday(this.navigator, this.state.appData);
+        }
+        else if (jdate.Abs !== this.state.currDate.Abs) {
             this.setState({
                 daysList: this.getDaysList(jdate),
-                currDate: jdate
+                currDate: jdate,
+                refreshing: false
             }, this.scrollToTop);
         }
         else {
@@ -208,6 +214,7 @@ export default class HomeScreen extends React.Component {
         });
     }
     prevDay() {
+        this.setState({ refreshing: true });
         this._goToDate(this.state.currDate.addDays(-1));
     }
     goToday() {
@@ -249,15 +256,16 @@ export default class HomeScreen extends React.Component {
                                 navigator={this.props.navigation}
                                 currDate={this.state.currDate}
                                 isDataLoading={!this.state.loadingDone}
-                                onGoToday={this.goToday}
-                                onGoPrevious={this.prevDay} />
+                                onGoToday={this.goToday} />
                             <FlatList
                                 ref={flatList => this.flatList = flatList}
                                 style={{ flex: 1 }}
                                 data={this.state.daysList}
                                 renderItem={this.renderItem}
                                 keyExtractor={item => this.state.daysList.indexOf(item)}
-                                onEndReached={this._addDaysToEnd} />
+                                onEndReached={this._addDaysToEnd}
+                                onRefresh={this.prevDay}
+                                refreshing={this.state.refreshing} />
                         </View>
                         {this.state.showFlash &&
                             <Flash />

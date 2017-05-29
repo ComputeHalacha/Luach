@@ -22,7 +22,7 @@ import jDate from '../Code/JCal/jDate';
  * hideSettings
  * hideOccasions
  */
-export default class SideMenu extends React.Component {
+export default class SideMenu extends React.PureComponent {
     constructor(props) {
         super(props);
 
