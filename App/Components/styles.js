@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import { isSmallScreen } from '../Code/GeneralUtils';
 
 const GeneralStyles = StyleSheet.create({
     container: {
