@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Text, Image, TextInput, TouchableHighlight } from 'react-native';
+import { ScrollView, View, Text, Image, TextInput, TouchableHighlight, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
-import Location from '../Code/JCal/Location';
 import SideMenu from './SideMenu';
 import { popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
@@ -19,9 +18,6 @@ export default class FindLocation extends Component {
         this.appData = appData;
         this.dispatch = this.props.navigation.dispatch;
         this.navigate = this.props.navigation.navigate;
-
-        const loc = appData.Settings.location || Location.getJerusalem();
-        this.locName = loc.Name;
         this.state = {
             list: null,
             searching: false
@@ -52,6 +48,22 @@ export default class FindLocation extends Component {
         }
     }
     render() {
+        let message, color;
+        if (this.state.list === null) {
+            //initial state of the screen
+            message = 'Enter any part of a location name to search for...';
+            color = '#77b';
+        }
+        else if (this.state.list.length === 0) {
+            //After a search with no results
+            message = 'There are no Locations in the list that match your search...';
+            color = '#b66';
+        }
+        else if (this.state.searching) {
+            //During a search
+            message = 'Searching for locations...';
+            color = '#595';
+        }
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
@@ -63,65 +75,64 @@ export default class FindLocation extends Component {
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Search Location List</Text>
                         <TextInput style={GeneralStyles.textInput}
-                            defaultValue={this.locName}
                             autoFocus={true}
                             placeholder='Search for a location'
                             onEndEditing={value => this.findLocation(value)} />
                     </View>
-                    {(this.state.list === null &&
-                        <View style={GeneralStyles.emptyListView}>
-                            <Text style={GeneralStyles.emptyListText}>
-                                Enter any part of a location name to search for...</Text>
+                    {(message &&
+                        <View style={styles.messageView}>
+                            <Text style={[styles.messageText, { color: color }]}>
+                                {message}</Text>
                             <Image
                                 source={require('../Images/logo.png')}
                                 resizeMode='contain'
-                                style={GeneralStyles.emptyListImage} />
+                                style={styles.messageImage} />
                         </View>)
                         ||
-                        (this.state.searching &&
-                            <View style={GeneralStyles.emptyListView}>
-                                <Text style={[GeneralStyles.emptyListText, { color: '#595' }]}>
-                                    Searching for locations...</Text>
-                                <Image
-                                    source={require('../Images/logo.png')}
-                                    resizeMode='contain'
-                                    style={GeneralStyles.emptyListImage} />
-                            </View>)
-                        ||
-                        ((this.state.list.length > 0 &&
-                            <View>
-                                <View style={GeneralStyles.headerView}>
-                                    <Text style={GeneralStyles.headerText}>Select a location...</Text>
-                                </View>
-                                {this.state.list.map((location, index) =>
-                                    <View key={index} style={GeneralStyles.inItemButtonList}>
-                                        <TouchableHighlight
-                                            underlayColor='#afa'
-                                            style={{ flex: 1 }}
-                                            onPress={() => this.update(location)}>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Icon
-                                                    name='forward'
-                                                    color='#393'
-                                                    size={25} />
-                                                <Text> {location.Name}</Text>
-                                            </View>
-                                        </TouchableHighlight>
-                                    </View>)
-                                }
-                            </View>)
-                            ||
-                            (<View style={GeneralStyles.emptyListView}>
-                                <Text style={[GeneralStyles.emptyListText, { color: '#b66' }]}>
-                                    There are no Locations in the list that match your search...</Text>
-                                <Image
-                                    source={require('../Images/logo.png')}
-                                    resizeMode='contain'
-                                    style={GeneralStyles.emptyListImage} />
-                            </View>))
+                        <View>
+                            <View style={GeneralStyles.headerView}>
+                                <Text style={GeneralStyles.headerText}>{`Found ${this.state.list.length.toString()} Locations...`}</Text>
+                            </View>
+                            {this.state.list.map((location, index) =>
+                                <TouchableHighlight
+                                    key={index}
+                                    underlayColor='#afa'
+                                    style={{ flex: 1 }}
+                                    onPress={() => this.update(location)}>
+                                    <View style={styles.singleLocation}>
+                                        <Icon
+                                            name='forward'
+                                            color='#393'
+                                            size={15} />
+                                        <Text> {location.Name}</Text>
+                                    </View>
+                                </TouchableHighlight>)
+                            }
+                        </View>
                     }
                 </ScrollView>
             </View>
         </View>;
     }
 }
+const styles = StyleSheet.create({
+    messageView: {
+        alignItems: 'center'
+    },
+    messageText: {
+        fontSize: 16,
+        marginBottom: '20%',
+        marginLeft:'5%',
+    },
+    messageImage: {
+        width: 150,
+        height: 150
+    },
+    singleLocation: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#eee',
+        padding: 10
+    },
+});
