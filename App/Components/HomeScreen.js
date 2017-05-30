@@ -26,6 +26,7 @@ export default class HomeScreen extends React.Component {
         this.updateAppData = this.updateAppData.bind(this);
         this._navigatedShowing = this._navigatedShowing.bind(this);
         this.prevDay = this.prevDay.bind(this);
+        this.nextDay = this.nextDay.bind(this);
         this.goToday = this.goToday.bind(this);
         this.scrollToTop = this.scrollToTop.bind(this);
 
@@ -217,6 +218,9 @@ export default class HomeScreen extends React.Component {
         this.setState({ refreshing: true });
         this._goToDate(this.state.currDate.addDays(-1));
     }
+    nextDay() {
+        this._goToDate(this.state.currDate.addDays(1));
+    }
     goToday() {
         this._goToDate(this.state.today);
     }
@@ -256,7 +260,9 @@ export default class HomeScreen extends React.Component {
                                 navigator={this.props.navigation}
                                 currDate={this.state.currDate}
                                 isDataLoading={!this.state.loadingDone}
-                                onGoToday={this.goToday} />
+                                onGoToday={this.goToday}
+                                onGoPrevious={this.prevDay}
+                                onGoNext={this.nextDay} />
                             <FlatList
                                 ref={flatList => this.flatList = flatList}
                                 style={{ flex: 1 }}

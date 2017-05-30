@@ -25,19 +25,29 @@ export default class MonthViewScreen extends React.Component {
         this.israel = this.appData.Settings.location.Israel;
         this.state = { month: new Month(date, this.appData) };
 
-        this.goPrev = this.goPrev.bind(this);
-        this.goNext = this.goNext.bind(this);
+        this.goPrevYear = this.goPrevYear.bind(this);
+        this.goNextYear = this.goNextYear.bind(this);
+        this.goPrevMonth = this.goPrevMonth.bind(this);
+        this.goNextMonth = this.goNextMonth.bind(this);
         this.goToday = this.goToday.bind(this);
         this.goThisMonth = this.goThisMonth.bind(this);
         this.toggleMonthType = this.toggleMonthType.bind(this);
     }
-    goPrev() {
+    goPrevYear() {
         const currMonth = this.state.month;
-        this.setState({ month: currMonth.prev });
+        this.setState({ month: currMonth.prevYear });
     }
-    goNext() {
+    goNextYear() {
         const currMonth = this.state.month;
-        this.setState({ month: currMonth.next });
+        this.setState({ month: currMonth.nextYear });
+    }
+    goPrevMonth() {
+        const currMonth = this.state.month;
+        this.setState({ month: currMonth.prevMonth });
+    }
+    goNextMonth() {
+        const currMonth = this.state.month;
+        this.setState({ month: currMonth.nextMonth });
     }
     goToday() {
         goHomeToday(this.props.navigation, this.appData);
@@ -148,10 +158,11 @@ export default class MonthViewScreen extends React.Component {
             </View>
             <GestureRecognizer
                 style={{ flex: 1, backgroundColor: '#ddd' }}
-                onSwipeUp={this.goNext}
-                onSwipeDown={this.goPrev}
-                onSwipeLeft={this.goNext}
-                onSwipeRight={this.goPrev}>
+                config={{ velocityThreshold: 0.2, directionalOffsetThreshold: 40 }}
+                onSwipeUp={this.goNextYear}
+                onSwipeDown={this.goPrevYear}
+                onSwipeLeft={this.goNextMonth}
+                onSwipeRight={this.goPrevMonth}>
                 <Grid>
                     <Row containerStyle={{ height: 50 }}>
                         <Col style={styles.dayHeadView}>
@@ -186,7 +197,7 @@ export default class MonthViewScreen extends React.Component {
                         <Text style={styles.footerBarText}>Today</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.goPrev} style={styles.footerButton}>
+                <TouchableOpacity onPress={this.goPrevMonth} style={styles.footerButton}>
                     <View style={[styles.footerView, { borderRightWidth: 1 }]}>
                         <Icon iconStyle={styles.footerIcon} name='arrow-back' />
                         <Text style={styles.footerBarText}>Previous</Text>
@@ -198,14 +209,14 @@ export default class MonthViewScreen extends React.Component {
                         <Text style={styles.footerBarText}>This Month</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.goNext} style={styles.footerButton}>
+                <TouchableOpacity onPress={this.goNextMonth} style={styles.footerButton}>
                     <View style={[styles.footerView, { borderLeftWidth: 1 }]}>
                         <Icon iconStyle={styles.footerIcon} name='arrow-forward' />
                         <Text style={styles.footerBarText}>Next</Text>
                     </View>
                 </TouchableOpacity>
             </View>
-        </View>;
+        </View >;
     }
 }
 

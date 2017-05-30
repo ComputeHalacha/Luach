@@ -117,7 +117,29 @@ export default class Month {
         }
         return weeks;
     }
-    get prev() {
+    get prevYear() {
+        if (this.isJdate) {
+            return new Month(this.date.addYears(-1), this.appData);
+        }
+        else {
+            return new Month(new Date(
+                this.date.getFullYear() - 1,
+                this.date.getMonth(), 1),
+                this.appData);
+        }
+    }
+    get nextYear() {
+        if (this.isJdate) {
+            return new Month(this.date.addYears(1), this.appData);
+        }
+        else {
+            return new Month(new Date(
+                this.date.getFullYear() + 1,
+                this.date.getMonth(), 1),
+                this.appData);
+        }
+    }
+    get prevMonth() {
         if (this.isJdate) {
             return new Month(this.date.addMonths(-1), this.appData);
         }
@@ -128,7 +150,7 @@ export default class Month {
                 this.appData);
         }
     }
-    get next() {
+    get nextMonth() {
         if (this.isJdate) {
             return new Month(this.date.addMonths(1), this.appData);
         }
