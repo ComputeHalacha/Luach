@@ -13,6 +13,7 @@ import { UserOccasion } from '../Code/JCal/UserOccasion';
  *   appData
  *   navigator
  *   onUpdate
+ *   lastEntryDate
  */
 export default class SingleDayDisplay extends Component {
     constructor(props) {
@@ -109,10 +110,15 @@ export default class SingleDayDisplay extends Component {
                 occasions.map((o, i) => <Text style={styles.occasionText} key={i}>{o.title}</Text>) : null,
             entriesText = entries && entries.length > 0 &&
                 entries.map((e, i) => (
-                    <TouchableOpacity onPress={() => this.editEntry(e)}>
-                        <Text style={styles.entriesText} key={i}>{e.toKnownDateString()}</Text>
+                    <TouchableOpacity key={i} onPress={() => this.editEntry(e)}>
+                        <Text style={styles.entriesText}>{e.toKnownDateString()}</Text>
                     </TouchableOpacity>)),
             todayText = isToday ? (<Text style={styles.todayText}>TODAY</Text>) : null;
+        let daysSinceLastEntry;
+        if (appData.Settings.showEntryFlagOnHome && this.props.lastEntryDate) {
+            daysSinceLastEntry = <Text style={{ fontSize: 10 }}>{Utils.toSuffixed(this.props.lastEntryDate.diffDays(jdate) + 1) +
+                ' day since last Entry'}</Text>;
+        }
         return (
             <View
                 style={[styles.container, {
@@ -184,6 +190,11 @@ export default class SingleDayDisplay extends Component {
                                 </View>
                             </View>
                         </TouchableWithoutFeedback>
+                    }
+                    {daysSinceLastEntry &&
+                        <View style={styles.additionsViews}>
+                            {daysSinceLastEntry}
+                        </View>
                     }
                     {occasions && occasions.length > 0 &&
                         <View style={styles.additionsViews}>

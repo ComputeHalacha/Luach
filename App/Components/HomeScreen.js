@@ -151,10 +151,13 @@ export default class HomeScreen extends React.Component {
             if (!ad.Settings.requirePIN) {
                 this.setFlash();
             }
+            const lastEntry = ad.EntryList.list.length > 0 &&
+                ad.EntryList.descending[0];
             this.setState({
                 appData: ad,
                 loadingDone: true,
-                showLogin: ad.Settings.requirePIN
+                showLogin: ad.Settings.requirePIN,
+                lastEntryDate: lastEntry && lastEntry.date
             });
         });
     }
@@ -163,7 +166,10 @@ export default class HomeScreen extends React.Component {
         //We also allow another screen to naviate to any date by supplying a currDate property in the navigate props.
         const today = new jDate(),
             appData = params.appData,
-            currDate = params.currDate || today;
+            currDate = params.currDate || today,
+            lastEntry = appData.EntryList.list.length > 0 &&
+                appData.EntryList.descending[0];
+
         //We don't need to use setState here as this function is only called from the constructor.
         this.state = {
             appData: appData,
@@ -173,7 +179,8 @@ export default class HomeScreen extends React.Component {
             showFlash: false,
             showLogin: false,
             loadingDone: true,
-            refreshing: false
+            refreshing: false,
+            lastEntryDate: lastEntry && lastEntry.date
         };
     }
     setFlash() {
@@ -244,7 +251,10 @@ export default class HomeScreen extends React.Component {
             isToday={this.state.today.Abs === item.Abs}
             appData={this.state.appData}
             navigator={this.navigator}
-            onUpdate={this.updateAppData} />;
+            onUpdate={this.updateAppData}
+            lastEntryDate={(this.state.lastEntryDate &&
+                item.Abs > this.state.lastEntryDate.Abs) &&
+                this.state.lastEntryDate} />;
     }
     render() {
         return (

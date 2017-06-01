@@ -42,7 +42,7 @@
         </ul>
         <h2><strong><a name="TodayScreen">The Today Screen</a></strong></h2>
         <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-10">
                 <p>This is the screen that you will first come to when the the Luach app first opens.
                     <br /> It is called the Today Screen.
                 </p>
@@ -70,6 +70,11 @@
 
                 <p>On the right side of each day you will see a link to view the full Zmanim information for this day, and a
                     link to view the entire month in the <a href="#MonthViewScreen">Month View Screen</a>.</p>
+                <p>If an <a href="#Entries">Entry</a> occured on this day</a>, the background color of the day will be light
+                    red and a small label of bold red text with a brief synopsis of the Entry information will be shown.
+                    (see screenshot).</p>
+                <p>If this day is a <a href="#FlaggedDates">Flagged Date</a>, the background color of the day will be yellow
+                    and a red flag will be shown. (see screenshot).</p>
 
                 <p>On the bottom section of each day, you will see two buttons, New Entry and New Occasion.</p>
 
@@ -84,8 +89,10 @@
                 <p>Press on this button to create a new Entry for this day. To undersand what an <em>Entry</em> is in the Luach
                     app, see the <a href="#Entries">Entry section</a> below.</p>
             </div>
-            <div class="col-sm-4">
-                <img src="Images/TodayScreenSmall.png" style="width:100%" class="img-fluid" alt="The Today Screen" title="The Today Screen"
+            <div class="col-sm-2">
+                <img src="Images/Small/TodayScreen.png" style="width:100%;margin-bottom: 15px;" class="img-fluid" alt="The Today Screen"
+                    title="The Today Screen" />
+                <img src="Images/Small/ProblemTodayScreen.png" style="width:100%" class="img-fluid" alt="The Today Screen" title="The Today Screen"
                 />
             </div>
         </div>
@@ -113,10 +120,19 @@
             <br /> For example, staining and the like are usually not considered Halachik Entries even those that require
             the Niddah restrictions.
             <br /> Any seeing is not a regular monthly period, needs Rabbininc determination whether or not to record it
-            as an Entry.
-            <br /> In Luach, an Entry is generally assummed to be a regular period.
-            <br /> It is prudent to m
-            <br /> This is important to keep in mind when the app suggests a possible Kavuah
+            as a regular Entry.
+            <br /> In Luach, when an Entry is added, it is assumed to be a regular period. In the special cases where it
+            was determined that it should not be a regular Entry, there are two special options that can be set for each
+            Entry.
+            <br /> On the New Kavuah Screen, just above the "Add Entry" button, press on "Show Advanced Entry Options".
+            <img src="Images/Small/NewEntry_Advanced.png" style="float:right;margin:5px 0 5px 5px;" />
+            <br />You will then see two options that can be set for this Entry:
+            <ol>
+                <li>Not a halachic Veset period. Should not generate Flagged Dates</li>
+                <li>Ignore this Entry in Kavuah calculations</li>
+            </ol>
+            If you have reason to believe that the current Entry should not be registered as a regular period but you do not fully understand
+            these advanced options, leave them alone for now and consult your Rabbi.
         </p>
         <p>
             Luach uses the list of Entries to automatically calculate the
@@ -169,38 +185,59 @@
 
         <p>There are many ways that recurring preiods can be considered to have occured in a pattern.</p>
 
-        <p>Here is a list of a few of the more common ones: * <strong>Yom HaChodesh /  Day of Month</strong> - Three periods
-            that all occur on the same date and <em>Onah</em> of the Jewish Month. For example if a period started on the
-            Day of the 4th of Sivan, the Day of the 4th of Tammuz and the Day of the 4th of Av, this is considered a Kavuah
-            of the Yom HaChodesh. Note, it is usually considered a Kavuah in this scenario, even if there were other periods
-            in the days between these dates. As for everything else, a Rav should be consulted. * <strong>Haflaga / Interval</strong>            - Three periods in a row that started the same number of days after the period that preceded them. For example,
-            if a period started on the Day Onah on the 4th of Sivan, and the next period started 29 days later during the
-            Day Onah on the 2nd of Tammuz, and the following period started 29 days later during the Day Onah on the 1st
-            of Av, and the following period started 29 days later during the Day Onah on the 29th of Av, this is considered
-            a Kavuah of Haflaga. You may notice that to set this type of Kavuah, we need to calculate 4 periods as opossed
-            to the <em>Yom HaChodesh</em> Kavuah where just 3 preiods can set the pattern. * <strong>Yom HaShavuah / Day of Week</strong>            - Three periods that occur on the same day of the week with the same number of weeks between them. For example,
-            if a period started during the Day Onah on Monday the 4th of Sivan, and another period started 4 weeks later
-            on Monday the 2nd of Tammuz, and a third period started on Monday 4 weeks later on Moday the 1st of Ellul, this
-            a Kavuah of Yom Hashavuah. Similar to the Yom Hachodesh Kavuah, it usually does not matter if there were any
-            other periods in the interim. Note, even if there were no other periods between these three Monday ones, this
-            is not a Haflaga Kavuah as there were only two periods with a Haflaga of 29. * <strong>Dilug - Yom Hachodesh</strong>            - Three periods with the day of the month for each occuring on a recurring interval from one to the next. For
-            example if a period started on the Day of the 4th of Sivan, the Day of the 5th of Tammuz and the Day of the 6th
-            of Av, this is considered a Dilug Yom Hachodesh Kavuah of plus one day. In this scenario, it is expected that
-            on the 7th of Ellul another period will occur. Dilug Kavuahs can have any pattern of days including negative
-            ones. For example if a period started on the Day of the 4th of Sivan, the Day of the 3rd of Tammuz and the Day
-            of the 2nd of Av, this is considered a Kavuah of the Dilug Yom HaChodesh with an interval of minus one day. In
-            this scenario, it is expected that on the 1st of Ellul another period will occur. * <strong>Dilug - Haflaga</strong>            - - Three periods in a row where the interval from one to the next occurred in a recurring pattern. For example,
-            For example, if a period started on the Day Onah on the 4th of Sivan, and the next period started 28 days later
-            during the Day Onah on the 1st of Tammuz, and the following period started 29 days later during the Day Onah
-            on the 1st of Av, and the following period started 30 days later during the Day Onah on the 30th of Av, this
-            is considered a Kavuah of Dilug Haflaga with an interval of plus one day. In this scenario it is expected that
-            another period will occur 31 days later - on the 1st of Tishrei. Similar to the regular Haflag Kavuah, the Dilug
-            - Haflaga needs 4 periods to set it and it needs them to occur one after another with no other periods occuring
-            during the interim. * <strong>Sirug</strong> - Three periods in a row that are on the same Onah and the same
-            day of the Jewish month and the same number of months in the interval between the first and second periods and
-            the second and third periods. This is not a Yom Hachodesh Kavuah as the Yom Hachodesh needs a period on each
-            subsequent month, while the Sirug Kavuah has some months in middle that are skipped.</p>
-
+        <p>Here is a list of a few of the more common ones:
+            <ul>
+                <li><strong>Yom HaChodesh /  Day of Month</strong> - Three periods that all occur on the same date and <em>Onah</em>                    of the Jewish Month.
+                    <br /> For example if a period started on the Day of the 4th of Sivan, the Day of the 4th of Tammuz and
+                    the Day of the 4th of Av, this is considered a Kavuah of the Yom HaChodesh. Note, it is usually considered
+                    a Kavuah in this scenario, even if there were other periods in the days between these dates. As for everything
+                    else, a Rav should be consulted.
+                </li>
+                <li><strong>Haflaga / Interval</strong> - Three periods in a row that started the same number of days after the
+                    period that preceded them.
+                    <br /> For example, if a period started on the Day Onah on the 4th of Sivan, and the next period started
+                    29 days later during the Day Onah on the 2nd of Tammuz, and the following period started 29 days later
+                    during the Day Onah on the 1st of Av, and the following period started 29 days later during the Day Onah
+                    on the 29th of Av, this is considered a Kavuah of Haflaga. You may notice that to set this type of Kavuah,
+                    we need to calculate 4 periods as opossed to the <em>Yom HaChodesh</em> Kavuah where just 3 preiods can
+                    set the pattern.
+                </li>
+                <li><strong>Yom HaShavuah / Day of Week</strong> - Three periods that occur on the same day of the week with
+                    the same number of weeks between them.
+                    <br /> For example, if a period started during the Day Onah on Monday the 4th of Sivan, and another period
+                    started 4 weeks later on Monday the 2nd of Tammuz, and a third period started on Monday 4 weeks later
+                    on Moday the 1st of Ellul, this a Kavuah of Yom Hashavuah. Similar to the Yom Hachodesh Kavuah, it usually
+                    does not matter if there were any other periods in the interim. Note, even if there were no other periods
+                    between these three Monday ones, this is not a Haflaga Kavuah as there were only two periods with a Haflaga
+                    of 29.
+                </li>
+                <li><strong>Dilug - Yom Hachodesh</strong> - Three periods with the day of the month for each occuring on a recurring
+                    interval from one to the next.
+                    <br /> For example if a period started on the Day of the 4th of Sivan, the Day of the 5th of Tammuz and
+                    the Day of the 6th of Av, this is considered a Dilug Yom Hachodesh Kavuah of plus one day. In this scenario,
+                    it is expected that on the 7th of Ellul another period will occur.
+                    <br /> Dilug Kavuahs can have any pattern of days including negative ones.
+                    <br /> For example if a period started on the Day of the 4th of Sivan, the Day of the 3rd of Tammuz and
+                    the Day of the 2nd of Av, this is considered a Kavuah of the Dilug Yom HaChodesh with an interval of
+                    minus one day. In this scenario, it is expected that on the 1st of Ellul another period will occur.
+                </li>
+                <li><strong>Dilug - Haflaga</strong> - - Three periods in a row where the interval from one to the next occurred
+                    in a recurring pattern.
+                    <br /> For example, if a period started on the Day Onah on the 4th of Sivan, and the next period started
+                    28 days later during the Day Onah on the 1st of Tammuz, and the following period started 29 days later
+                    during the Day Onah on the 1st of Av, and the following period started 30 days later during the Day Onah
+                    on the 30th of Av, this is considered a Kavuah of Dilug Haflaga with an interval of plus one day. In
+                    this scenario it is expected that another period will occur 31 days later - on the 1st of Tishrei. Similar
+                    to the regular Haflag Kavuah, the Dilug - Haflaga needs 4 periods to set it and it needs them to occur
+                    one after another with no other periods occuring during the interim.
+                </li>
+                <li><strong>Sirug</strong> - Three periods in a row that are on the same Onah and the same day of the Jewish
+                    month and the same number of months in the interval between the first and second periods and the second
+                    and third periods. This is not a Yom Hachodesh Kavuah as the Yom Hachodesh needs a period on each subsequent
+                    month, while the Sirug Kavuah has some months in middle that are skipped.
+                </li>
+            </ul>
+        </p>
         <p>In the Luach app, while adding a new Kavuah, the following properties wiil need to be filled out:</p>
 
         <p><strong>Kavuah Type</strong></p>

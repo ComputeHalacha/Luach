@@ -223,7 +223,15 @@ export default class NewEntry extends React.Component {
                             multiline={true}
                             maxLength={500} />
                     </View>
-                    {this.state.showAdvancedOptions &&
+                    {(!this.state.showAdvancedOptions &&
+                        <TouchableOpacity onPress={() => this.setState({ showAdvancedOptions: true })}>
+                            <Text style={{
+                                color: '#66b',
+                                textAlign: 'center',
+                                fontSize: 12
+                            }}>Show Advanced Entry Options</Text>
+                        </TouchableOpacity>)
+                        ||
                         <View>
                             <View style={GeneralStyles.formRow}>
                                 <Text style={[GeneralStyles.label, { fontSize: 11 }]}>[Advanced] Not a halachic Veset period. Should not generate Flagged Dates</Text>
@@ -238,15 +246,6 @@ export default class NewEntry extends React.Component {
                                     value={!!this.state.ignoreForKavuah} />
                             </View>
                         </View>
-                    }
-                    {!this.state.showAdvancedOptions &&
-                        <TouchableOpacity onPress={() => this.setState({ showAdvancedOptions: true })}>
-                            <Text style={{
-                                color: '#66b',
-                                textAlign: 'center',
-                                fontSize: 12
-                            }}>Show Advanced Entry Options</Text>
-                        </TouchableOpacity>
                     }
                     <View style={GeneralStyles.btnAddNew}>
                         <Button
