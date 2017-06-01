@@ -127,7 +127,12 @@ export default class HomeScreen extends React.Component {
         //As the data has been changed, we need to recalculate the problem onahs.
         const newProbs = appData.EntryList.getProblemOnahs(appData.KavuahList);
         appData.ProblemOnahs = newProbs;
-        this.setState({ appData: appData });
+        const lastEntry = appData.EntryList.list.length > 0 &&
+            appData.EntryList.descending[0];
+        this.setState({
+            appData: appData,
+            lastEntryDate: lastEntry && lastEntry.date
+        });
     }
     _initialShowing() {
         const today = new jDate();

@@ -159,7 +159,20 @@ export default class EntryScreen extends Component {
                             secondSection={entry =>
                                 <View style={GeneralStyles.inItemButtonList}>
                                     <TouchableHighlight
-                                        underlayColor='#669'
+                                        underlayColor='#696'
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.navigate('Home', { currDate: entry.date, appData: this.state.appData })}>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Icon
+                                                name='event-note'
+                                                color='#585'
+                                                size={15}
+                                                containerStyle={GeneralStyles.inItemLinkIcon} />
+                                            <Text style={GeneralStyles.inItemLinkText}>Go to Date</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        underlayColor='#788778'
                                         style={{ flex: 1 }}
                                         onPress={() => this.navigate('NewEntry', {
                                             entry: entry,
@@ -169,9 +182,10 @@ export default class EntryScreen extends Component {
                                         })}>
                                         <View style={{ alignItems: 'center' }}>
                                             <Icon
-                                                name='event-note'
-                                                color='#558'
-                                                size={15} />
+                                                name='edit'
+                                                color='#99a999'
+                                                size={18}
+                                                containerStyle={GeneralStyles.inItemLinkIcon} />
                                             <Text style={GeneralStyles.inItemLinkText}>Edit</Text>
                                         </View>
                                     </TouchableHighlight>
@@ -183,20 +197,9 @@ export default class EntryScreen extends Component {
                                             <Icon
                                                 name='device-hub'
                                                 color='#aaf'
-                                                size={20} />
+                                                size={20}
+                                                containerStyle={GeneralStyles.inItemLinkIcon} />
                                             <Text style={GeneralStyles.inItemLinkText}>New Kavuah</Text>
-                                        </View>
-                                    </TouchableHighlight>
-                                    <TouchableHighlight
-                                        underlayColor='#696'
-                                        style={{ flex: 1 }}
-                                        onPress={() => this.navigate('Home', { currDate: entry.date, appData: this.state.appData })}>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <Icon
-                                                name='event-note'
-                                                color='#585'
-                                                size={15} />
-                                            <Text style={GeneralStyles.inItemLinkText}>Go to Date</Text>
                                         </View>
                                     </TouchableHighlight>
                                     <TouchableHighlight
@@ -207,7 +210,8 @@ export default class EntryScreen extends Component {
                                             <Icon
                                                 name='delete-forever'
                                                 color='#faa'
-                                                size={20} />
+                                                size={20}
+                                                containerStyle={GeneralStyles.inItemLinkIcon} />
                                             <Text style={GeneralStyles.inItemLinkText}>Remove</Text>
                                         </View>
                                     </TouchableHighlight>

@@ -56,6 +56,9 @@ const GeneralStyles = StyleSheet.create({
         fontStyle: 'italic',
         textAlign: 'center'
     },
+    inItemLinkIcon: {
+        height: 20
+    },
     headerButtons: {
         backgroundColor: '#eef',
         borderBottomWidth: 1,

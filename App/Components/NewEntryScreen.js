@@ -1,6 +1,7 @@
 import React from 'react';
-import { ScrollView, View, Text, Picker, Button, Switch, TextInput, TouchableOpacity } from 'react-native';
+import { ScrollView, View, Text, Picker, Button, Switch, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
+import { Icon } from 'react-native-elements';
 import SideMenu from './SideMenu';
 import Entry from '../Code/Chashavshavon/Entry';
 import { Kavuah } from '../Code/Chashavshavon/Kavuah';
@@ -12,11 +13,21 @@ import { warn, error, popUpMessage, range } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class NewEntry extends React.Component {
+
     static navigationOptions = ({ navigation }) => {
-        const entry = navigation.state.params.entry;
+        const { entry, appData, onUpdate } = navigation.state.params;
         return {
-            title: entry ?
-                'Edit Entry: ' + entry.toShortString() : 'New Entry'
+            title: entry ? 'Edit Entry' : 'New Entry',
+            headerRight: entry &&
+            <Icon name='delete-forever'
+                color='#a33'
+                size={20}
+                onPress={() => NewEntry.deleteEntry(entry, appData, ad => {
+                    if (onUpdate) {
+                        onUpdate(ad);
+                    }
+                    navigation.dispatch(NavigationActions.back());
+                })} />
         };
     };
 
@@ -151,6 +162,59 @@ export default class NewEntry extends React.Component {
             warn('Error trying to add save the changes to the database.');
             error(err);
         });
+    }
+    /**
+     * Delete an Entry from the database and from the given AppData, then run the onUpdate function with the altered AppData.
+     * @param {Entry} entry
+     * @param {AppData} appData
+     * @param {Function} onUpdate
+     */
+    static deleteEntry(entry, appData, onUpdate) {
+        let entryList = appData.EntryList,
+            kavuahList = appData.KavuahList;
+
+        const kavuahs = kavuahList.filter(k => k.settingEntry.isSameEntry(entry));
+        Alert.alert(
+            'Confirm Entry Removal',
+            kavuahs.length > 0 ?
+                `The following Kavuah/s were set by this Entry and will need to be removed if you remove this Entry:
+                        ${kavuahs.map(k => '\n\t* ' + k.toString())}
+                        Are you sure that you want to remove this/these Kavuah/s together with this entry?`:
+                'Are you sure that you want to completely remove this Entry?',
+            [   //Button 1
+                {
+                    text: 'Cancel',
+                    onPress: () => { return; },
+                    style: 'cancel'
+                },
+                //Button 2
+                {
+                    text: 'OK', onPress: () => {
+                        DataUtils.DeleteEntry(entry).catch(err => {
+                            warn('Error trying to delete an entry from the database.');
+                            error(err);
+                        });
+                        for (let k of kavuahs) {
+                            let index = kavuahList.indexOf(k);
+                            DataUtils.DeleteKavuah(k).catch(err => {
+                                warn('Error trying to delete a Kavuah from the database.');
+                                error(err);
+                            });
+                            kavuahList.splice(index, 1);
+                        }
+                        entryList.remove(entry, e => {
+                            entryList.calulateHaflagas();
+                            appData.EntryList = entryList;
+                            appData.KavuahList = kavuahList;
+                            popUpMessage(`The entry for ${e.toString()} has been successfully removed.`,
+                                'Remove entry');
+                            if (onUpdate) {
+                                onUpdate(appData);
+                            }
+                        });
+                    }
+                },
+            ]);
     }
     render() {
         const jdate = this.state.jdate,
