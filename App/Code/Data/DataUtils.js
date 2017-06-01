@@ -32,7 +32,7 @@ export default class DataUtils {
                     showProbFlagOnHome: dbSet.showProbFlagOnHome,
                     showEntryFlagOnHome: dbSet.showEntryFlagOnHome,
                     navigateBySecularDate: dbSet.navigateBySecularDate,
-                    showIgnoredKavuahs:dbSet.showIgnoredKavuahs,
+                    showIgnoredKavuahs: dbSet.showIgnoredKavuahs,
                     requirePIN: dbSet.requirePIN,
                     PIN: dbSet.PIN
                 });
@@ -89,7 +89,12 @@ export default class DataUtils {
                 if (results.list.length > 0) {
                     for (let e of results.list) {
                         const onah = new Onah(new jDate(e.dateAbs), e.day ? NightDay.Day : NightDay.Night);
-                        entryList.add(new Entry(onah, e.entryId));
+                        entryList.add(new Entry(
+                            onah,
+                            e.entryId,
+                            e.ignoreForFlaggedDates,
+                            e.igignoreForKavuah,
+                            e.comments));
                     }
                     entryList.calulateHaflagas();
                 }
@@ -278,9 +283,15 @@ export default class DataUtils {
     }
     static async EntryToDatabase(entry) {
         if (entry.hasId) {
-            await DataUtils._executeSql('UPDATE entries SET dateAbs=?, day=? WHERE entryId=?',
-                [entry.date.Abs, entry.nightDay === NightDay.Day, entry.entryId])
-                .then(() => {
+            await DataUtils._executeSql('UPDATE entries SET dateAbs=?, day=?, ignoreForFlaggedDates=?, ignoreForKavuah=?, comments=? WHERE entryId=?',
+                [
+                    entry.date.Abs,
+                    entry.nightDay === NightDay.Day,
+                    entry.ignoreForFlaggedDates,
+                    entry.ignoreForKavuah,
+                    entry.comments,
+                    entry.entryId
+                ]).then(() => {
                     log(`Updated Entry Id ${entry.entryId.toString()}`);
                 })
                 .catch(err => {
@@ -289,9 +300,15 @@ export default class DataUtils {
                 });
         }
         else {
-            await DataUtils._executeSql('INSERT INTO entries (dateAbs, day) VALUES (?, ?)',
-                [entry.date.Abs, entry.nightDay === NightDay.Day])
-                .then(results => entry.entryId = results.id)
+            await DataUtils._executeSql('INSERT INTO entries (dateAbs, day, ignoreForFlaggedDates, ignoreForKavuah, comments) VALUES (?, ?, ?, ?, ?)',
+                [
+                    entry.date.Abs,
+                    entry.nightDay === NightDay.Day,
+                    entry.ignoreForFlaggedDates,
+                    entry.ignoreForKavuah,
+                    entry.comments
+                ]).then(results =>
+                    entry.entryId = results.id)
                 .catch(err => {
                     warn('Error trying to insert entry into the database.');
                     error(err);
@@ -324,17 +341,17 @@ export default class DataUtils {
         return list;
     }
     /**
-     * Add a new setting field to the settings table
-     * @param {{name:String, type:String, allowNull:Boolean, defaultValue:String}} settingField
+     * Add a new table field.
+     * @param {{table:String, name:String, type:String, allowNull:Boolean, defaultValue:String}} newField
      */
-    static async AddSettingsField(settingField) {
-        await DataUtils._executeSql(`ALTER TABLE settings
-            ADD COLUMN ${settingField.name}
-                ${settingField.type}
-                ${settingField.allowNull ? '' : 'NOT '} NULL
-                ${settingField.defaultValue ? 'DEFAULT ' + settingField.defaultValue : ''}`)
+    static async AddTableField(newField) {
+        await DataUtils._executeSql(`ALTER TABLE ${newField.table}
+            ADD COLUMN ${newField.name}
+                ${newField.type}
+                ${newField.allowNull ? '' : 'NOT '} NULL
+                ${newField.defaultValue ? 'DEFAULT ' + newField.defaultValue : ''}`)
             .catch(err => {
-                warn(`Error trying to add the field "${settingField.name}" to the settings table`);
+                warn(`Error trying to add the field "${newField.name}" to the "${newField.table}" table`);
                 error(err);
             });
     }

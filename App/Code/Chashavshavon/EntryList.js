@@ -117,14 +117,17 @@ export default class EntryList {
     }
     getProblemOnahs(kavuahList) {
         let probOnahs = [];
-        const cancelOnahBeinenis = kavuahList.some(k => k.active && (!k.ignore) && k.cancelsOnahBeinunis);
+        const nonProbIgnoredList = this.list.filter(e => !e.ignoreForFlaggedDates),
+            cancelOnahBeinenis = kavuahList.some(k => k.active && (!k.ignore) && k.cancelsOnahBeinunis);
 
         //A list of Onahs that need to be kept. This first list is worked out from the list of Entries.
         //Problem Onahs are searched for from the date of each entry until the number of months specified in the
         //Property Setting "numberMonthsAheadToWarn"
-        for (let entry of this.list) {
+        for (let entry of nonProbIgnoredList) {
             if (!cancelOnahBeinenis) {
-                probOnahs = [...probOnahs, ...this.getOnahBeinunisProblemOnahs(entry)];
+                probOnahs = [
+                    ...probOnahs,
+                    ...this.getOnahBeinunisProblemOnahs(entry, nonProbIgnoredList)];
             }
             probOnahs = [...probOnahs, ...this.getEntryDependentKavuahProblemOnahs(entry, kavuahList)];
         }
@@ -148,7 +151,7 @@ export default class EntryList {
 
         return probOnahs;
     }
-    getOnahBeinunisProblemOnahs(entry) {
+    getOnahBeinunisProblemOnahs(entry, nonProbIgnoredList) {
         const onahs = [];
 
         //Day Thirty ***************************************************************
@@ -167,7 +170,7 @@ export default class EntryList {
         //Even if Settings.keepThirtyOne is false, the 31st day may be the Yom HaChodesh.
         if (dayThirtyOne.Day === entry.day || this.settings.keepThirtyOne) {
             let text = dayThirtyOne.Day === entry.day ? 'Yom HaChodesh' : '';
-            if (!!this.settings.keepThirtyOne) {
+            if (this.settings.keepThirtyOne) {
                 text += (text ? ' and ' : '') + 'Thirty First Day';
             }
             const thirtyOne = new ProblemOnah(
@@ -190,7 +193,7 @@ export default class EntryList {
 
             if (this.settings.keepLongerHaflagah) {
                 //First we look for a proceeding entry where the haflagah is longer than this one
-                const longerHaflaga = this.list.find(e => e.date.Abs > entry.date.Abs && e.haflaga > entry.haflaga),
+                const longerHaflaga = nonProbIgnoredList.find(e => e.date.Abs > entry.date.Abs && e.haflaga > entry.haflaga),
                     longerHaflagaDate = longerHaflaga ?
                         longerHaflaga.date :
                         //If no such entry was found, we keep on going...
@@ -223,7 +226,7 @@ export default class EntryList {
                 }
 
                 //Now for the non-overided haflagah from the actual entries
-                for (let en of this.list.filter(e =>
+                for (let en of nonProbIgnoredList.filter(e =>
                     e.date.Abs > entry.date.Abs && e.date.Abs < longerHaflagaDate.Abs)) {
                     longHaflaga = new ProblemOnah(
                         en.date.addDays(entry.haflaga - 1),

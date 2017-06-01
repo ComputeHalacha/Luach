@@ -159,6 +159,23 @@ export default class EntryScreen extends Component {
                             secondSection={entry =>
                                 <View style={GeneralStyles.inItemButtonList}>
                                     <TouchableHighlight
+                                        underlayColor='#669'
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.navigate('NewEntry', {
+                                            entry: entry,
+                                            location: this.currLocation,
+                                            appData: this.state.appData,
+                                            onUpdate: this.update
+                                        })}>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Icon
+                                                name='event-note'
+                                                color='#558'
+                                                size={15} />
+                                            <Text style={GeneralStyles.inItemLinkText}>Edit</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
                                         onPress={() => this.newKavuah(entry)}
                                         underlayColor='#aaf'
                                         style={{ flex: 1 }}>

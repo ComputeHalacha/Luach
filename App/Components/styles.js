@@ -72,7 +72,8 @@ const GeneralStyles = StyleSheet.create({
         flex: 0,
         alignSelf: 'center',
         width: 200,
-        marginTop: 25
+        marginTop: 25,
+        marginBottom: 25
     },
     emptyListView: {
         alignItems: 'center',

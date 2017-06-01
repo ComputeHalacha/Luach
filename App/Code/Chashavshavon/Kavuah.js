@@ -134,13 +134,14 @@ class Kavuah {
      */
     static getKavuahSuggestionList(entryList) {
         let kavuahList = [];
-        const queue = [];
+        const queue = [],
+            nonIgnoredEntryList = entryList.filter(e => !e.ignoreForKavuah);
 
-        for (let entry of entryList) {
+        for (let entry of nonIgnoredEntryList.filter(e => !e.ignoreForKavuah)) {
             //First we work out those Kavuahs that are not dependent on their entries being 3 in a row
-            kavuahList = kavuahList.concat(Kavuah.getDayOfMonthKavuah(entry, entryList))
-                .concat(Kavuah.getDilugDayOfMonthKavuah(entry, entryList))
-                .concat(Kavuah.getDayOfWeekKavuahs(entry, entryList));
+            kavuahList = kavuahList.concat(Kavuah.getDayOfMonthKavuah(entry, nonIgnoredEntryList))
+                .concat(Kavuah.getDilugDayOfMonthKavuah(entry, nonIgnoredEntryList))
+                .concat(Kavuah.getDayOfWeekKavuahs(entry, nonIgnoredEntryList));
 
             //For cheshboning out all other Kavuahs, we use 3 or 4 entries in a row.
             //First, add the current entry of the loop.

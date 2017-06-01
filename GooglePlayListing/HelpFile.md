@@ -2,10 +2,63 @@
 
 **VERY IMPORTANT NOTE!**
 The Luach Application is intented to be a helpful tool to keep track of a womens Halachic dates.
-***The Luach Application has no Halachic status whatsoever, and can not take the place of a Rabbinic authority in any matter***. If the app is relied upon for halachic matters in any shape or manner, there is a very high chance that severe trangressions of the laws of Taharas Hamishpacha will occur; many of which carry the penalty of *Kareis*.
+
+***The Luach Application has no Halachic status whatsoever, and can not take the place of a Rabbinic authority in any matter***.
+
+If the app is relied upon for halachic matters in any shape or manner, there is a very high chance that severe trangressions of the laws of Taharas Hamishpacha will occur; many of which carry the penalty of *Kareis*.
 
 
-**The following is a short explanation of the terms and features of Luach.**
+**This page gives you a short explanation of the terms and features of Luach.**
+
+* <a href="#TodayScreen">The Today Screen</a>
+* <a href="#MonthViewScreen">The Month View Screen</a>
+* <a href="#EntriesScreen">The Entries List Screen</a>
+* <a href="#KavuahsScreen">The Kavuahs List Screen</a>
+* <a href="#SettingsScreen">The Settings Screen</a>
+* <a href="#Entries">Entry</a>
+* <a href="#Kavuahs">Kavuah</a>
+* <a href="#FlaggedDates">Flagged Date</a>
+
+## **<a name="TodayScreen">The Today Screen</a>**
+
+![The Today Screen](Images/TodayScreenSmall.png "The Today Screen")
+
+This is the screen that you will first come to when the the Luach app first opens.
+It is called the Today Screen. 
+On the right, there is a list of days. When  Luach loads, the top day is always the current day.
+Within the box of each day, you will find some basic information about that day such as, 
+* The Jewish Date
+* The Secular Date
+* The Sedra of the current week
+* Any special information about this day such as Chol Ha`Moed, a fast day etc.
+
+Under that, you will see your current location and the times for sunrise and sunset for this day at this location.
+The location can be changed to almost any place in the world.
+To change the location, click on the name of the location. You can also change the location from the <a href="#SettingsScreen">Settings Screen</a>.
+
+On the right side of each day you will see a link to view the full Zmanim information for this day, and a link to view the entire month in the <a href="#MonthViewScreen">Month View Screen</a>.
+
+On the bottom section of each day, you will see two buttons, New Entry and New Occasion.
+
+### New Entry
+Press on this button to create a new Entry for this day. 
+You will be taken to the New Entry screen, with this day, already selected for you.
+To undersand what an *Entry* is in the Luach app, see the <a href="#Entries">Entry section</a> below.
+
+### New Entry
+Press on this button to create a new Entry for this day.
+To undersand what an *Entry* is in the Luach app, see the <a href="#Entries">Entry section</a> below.
+
+
+
+
+## **<a name="MonthViewScreen">The Month View Screen</a>**
+
+## **<a name="EntriesScreen">The Entries List Screen</a>**
+
+## **<a name="KavuahsScreen">The Kavuahs List Screen</a>**
+
+## **<a name="SettingsScreen">The Settings Screen</a>**
 
 ## **<a name="Entries">Entry</a>**
 
@@ -41,7 +94,7 @@ If the time of the start of the period is very close (within about 13 minutes) o
 The number of days or partial days between the previous Entry and this one.
 Upon the addition of an Entry, Luach automatically works out the *Haflaga* from the previous Entry.
 
-## **<a name="Kavuahss">Kavuah</a>**
+## **<a name="Kavuahs">Kavuah</a>**
 
 A Kavuah is a halachic term describing when a women has multiple periods in a recurring pattern.
 
@@ -73,14 +126,5 @@ The type of Kavuah that is being set. For a brief explanation of some of the Kav
 
 **Active**
 
+### Ignored Kavuahs
 ## **<a name="FlaggedDates">Flagged Date</a>**
-
-## **<a name="MainScreen">The Main Screen</a>**
-
-## **<a name="MonthViewScreen">The Month View Screen</a>**
-
-## **<a name="EntriesScreen">The Entries List Screen</a>**
-
-## **<a name="KavuahsScreen">The Kavuahs List Screen</a>**
-
-## **<a name="SettingsScreen">The Settings Screen</a>**

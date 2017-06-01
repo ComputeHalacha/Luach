@@ -85,6 +85,9 @@ export default class SingleDayDisplay extends Component {
     changeLocation() {
         this.navigator.navigate('FindLocation', this.props);
     }
+    editEntry(entry) {
+        this.navigator.navigate('NewEntry', { entry, ...this.props });
+    }
     render() {
         const { appData, jdate, isToday } = this.props,
             location = appData.Settings.location,
@@ -105,7 +108,10 @@ export default class SingleDayDisplay extends Component {
             occasionText = occasions && occasions.length > 0 ?
                 occasions.map((o, i) => <Text style={styles.occasionText} key={i}>{o.title}</Text>) : null,
             entriesText = entries && entries.length > 0 &&
-                entries.map((e, i) => (<Text style={styles.entriesText} key={i}>{e.toKnownDateString()}</Text>)),
+                entries.map((e, i) => (
+                    <TouchableOpacity onPress={() => this.editEntry(e)}>
+                        <Text style={styles.entriesText} key={i}>{e.toKnownDateString()}</Text>
+                    </TouchableOpacity>)),
             todayText = isToday ? (<Text style={styles.todayText}>TODAY</Text>) : null;
         return (
             <View

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, Picker, Button } from 'react-native';
+import { ScrollView, View, Text, Picker, Button, Switch, TextInput, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import SideMenu from './SideMenu';
 import Entry from '../Code/Chashavshavon/Entry';
@@ -12,27 +12,46 @@ import { warn, error, popUpMessage, range } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class NewEntry extends React.Component {
-    static navigationOptions = {
-        title: 'New Entry'
+    static navigationOptions = ({ navigation }) => {
+        const entry = navigation.state.params.entry;
+        return {
+            title: entry ?
+                'Edit Entry: ' + entry.toShortString() : 'New Entry'
+        };
     };
 
     constructor(props) {
         super(props);
-        const navigation = this.props.navigation,
-            { jdate, isToday, appData, onUpdate } = navigation.state.params,
-            location = appData.Settings.location,
-            sunset = jdate.getSunriseSunset(location).sunset,
-            sunsetMs = Utils.totalMinutes(sunset) * 60000,
-            isNight = (sunsetMs <= new Date().getTime());
-        if (isToday && isNight) {
-            this.showWarning = true;
+        const navigation = this.props.navigation;
+        const { entry, isToday, appData, onUpdate } = navigation.state.params,
+            location = appData.Settings.location;
+
+        let jdate, isNight;
+        if (entry) {
+            this.entry = entry;
+            jdate = entry.date;
+            isNight = entry.nightDay === NightDay.Night;
         }
+        else {
+            jdate = navigation.state.params.jdate;
+            const sunset = jdate.getSunriseSunset(location).sunset,
+                sunsetMs = Utils.totalMinutes(sunset) * 60000;
+            isNight = (sunsetMs <= new Date().getTime());
+            if (isToday && isNight) {
+                this.showWarning = true;
+            }
+        }
+
         this.onUpdate = onUpdate;
 
         this.state = {
             appData: appData,
             jdate: jdate,
-            nightDay: isNight ? NightDay.Night : NightDay.Day
+            nightDay: isNight ? NightDay.Night : NightDay.Day,
+            ignoreForFlaggedDates: entry && entry.ignoreForFlaggedDates,
+            ignoreForKavuah: entry && entry.ignoreForKavuah,
+            comments: (entry && entry.comments) || '',
+            showAdvancedOptions: (entry && (entry.ignoreForFlaggedDates || entry.ignoreForKavuah))
         };
 
 
@@ -40,12 +59,18 @@ export default class NewEntry extends React.Component {
         this.dispatch = navigation.dispatch;
 
         this.addEntry = this.addEntry.bind(this);
+        this.updateEntry = this.updateEntry.bind(this);
     }
     addEntry() {
         const appData = this.state.appData,
             entryList = appData.EntryList,
             onah = new Onah(this.state.jdate, this.state.nightDay),
-            entry = new Entry(onah);
+            entry = new Entry(
+                onah,
+                undefined,
+                this.state.ignoreForFlaggedDates,
+                this.state.ignoreForKavuah,
+                this.state.comments);
         if (entryList.list.find(e => e.isSameEntry(entry))) {
             popUpMessage(`The entry for ${entry.toString()} is already in the list.`,
                 'Entry already exists');
@@ -55,7 +80,6 @@ export default class NewEntry extends React.Component {
             entryList.add(entry);
             entryList.calulateHaflagas();
             appData.EntryList = entryList;
-            this.setState({ appData: appData });
             if (this.onUpdate) {
                 this.onUpdate(appData);
             }
@@ -80,6 +104,51 @@ export default class NewEntry extends React.Component {
         }
         ).catch(err => {
             warn('Error trying to add entry to the database.');
+            error(err);
+        });
+    }
+    updateEntry() {
+        const appData = this.state.appData,
+            entryList = appData.EntryList,
+            onah = new Onah(this.state.jdate, this.state.nightDay),
+            entry = this.entry;
+        entry.onah = onah;
+        entry.ignoreForFlaggedDates = this.state.ignoreForFlaggedDates;
+        entry.ignoreForKavuah = this.state.ignoreForKavuah;
+        entry.comments = this.state.comments;
+
+        if (entryList.list.find(e => e !== entry && e.isSameEntry(entry))) {
+            popUpMessage(`The entry for ${entry.toString()} is already in the list.`,
+                'Entry already exists');
+            return;
+        }
+        DataUtils.EntryToDatabase(entry).then(() => {
+            entryList.calulateHaflagas();
+            appData.EntryList = entryList;
+            if (this.onUpdate) {
+                this.onUpdate(appData);
+            }
+            popUpMessage(`The entry for ${entry.toString()} has been successfully saved.`,
+                'Change Entry');
+            if (appData.Settings.calcKavuahsOnNewEntry) {
+                const possList = Kavuah.getPossibleNewKavuahs(appData.EntryList.list, appData.KavuahList);
+                if (possList.length) {
+                    this.navigate('FindKavuahs', {
+                        appData: appData,
+                        onUpdate: this.onUpdate,
+                        possibleKavuahList: possList
+                    });
+                }
+                else {
+                    this.dispatch(NavigationActions.back());
+                }
+            }
+            else {
+                this.dispatch(NavigationActions.back());
+            }
+        }
+        ).catch(err => {
+            warn('Error trying to add save the changes to the database.');
             error(err);
         });
     }
@@ -134,6 +203,7 @@ export default class NewEntry extends React.Component {
                             <Picker.Item label={twoYearsBack.toString()} value={twoYearsBack} key={twoYearsBack} />
                         </Picker>
                     </View>
+
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Onah - Day or Night?</Text>
                         <Picker style={GeneralStyles.picker}
@@ -143,11 +213,47 @@ export default class NewEntry extends React.Component {
                             <Picker.Item label='Day' value={NightDay.Day} key={NightDay.Day} />
                         </Picker>
                     </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Comments</Text>
+                        <TextInput style={GeneralStyles.textInput}
+                            onEndEditing={event =>
+                                this.setState({ comments: event.nativeEvent.text })}
+                            defaultValue={this.state.comments}
+                            placeholder='Enter any comments'
+                            multiline={true}
+                            maxLength={500} />
+                    </View>
+                    {this.state.showAdvancedOptions &&
+                        <View>
+                            <View style={GeneralStyles.formRow}>
+                                <Text style={[GeneralStyles.label, { fontSize: 11 }]}>[Advanced] Not a halachic Veset period. Should not generate Flagged Dates</Text>
+                                <Switch style={GeneralStyles.switch}
+                                    onValueChange={value => this.setState({ ignoreForFlaggedDates: value })}
+                                    value={!!this.state.ignoreForFlaggedDates} />
+                            </View>
+                            <View style={GeneralStyles.formRow}>
+                                <Text style={[GeneralStyles.label, { fontSize: 11 }]}>[Advanced] Ignore this Entry in Kavuah calculations</Text>
+                                <Switch style={GeneralStyles.switch}
+                                    onValueChange={value => this.setState({ ignoreForKavuah: value })}
+                                    value={!!this.state.ignoreForKavuah} />
+                            </View>
+                        </View>
+                    }
+                    {!this.state.showAdvancedOptions &&
+                        <TouchableOpacity onPress={() => this.setState({ showAdvancedOptions: true })}>
+                            <Text style={{
+                                color: '#66b',
+                                textAlign: 'center',
+                                fontSize: 12
+                            }}>Show Advanced Entry Options</Text>
+                        </TouchableOpacity>
+                    }
                     <View style={GeneralStyles.btnAddNew}>
                         <Button
-                            title='Add Entry'
-                            onPress={this.addEntry}
-                            accessibilityLabel='Add this new Entry'
+                            title={this.entry ? 'Save Changes' : 'Add Entry'}
+                            onPress={this.entry ? this.updateEntry : this.addEntry}
+                            accessibilityLabel={this.entry ?
+                                'Save Changes to this Entry' : 'Add this new Entry'}
                             color='#99b' />
                     </View>
                 </ScrollView>
