@@ -9,6 +9,7 @@ import { UserOccasion } from '../Code/JCal/UserOccasion';
  *
  * PROPS ------------------------------
  *   jdate
+ *   sdate - only supplied if there is a chance that the jdate is after sunset
  *   isToday
  *   appData
  *   navigator
@@ -98,7 +99,7 @@ export default class SingleDayDisplay extends Component {
                 UserOccasion.getOccasionsForDate(jdate, appData.UserOccasions) : [],
             entries = appData.Settings.showEntryFlagOnHome ?
                 appData.EntryList.list.filter(e => e.date.Abs === jdate.Abs) : [],
-            sdate = jdate.getDate(),
+            sdate = this.props.sdate || jdate.getDate(),
             dailyInfos = jdate.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
             suntimes = jdate.getSunriseSunset(location),
@@ -113,7 +114,12 @@ export default class SingleDayDisplay extends Component {
                     <TouchableOpacity key={i} onPress={() => this.editEntry(e)}>
                         <Text style={styles.entriesText}>{e.toKnownDateString()}</Text>
                     </TouchableOpacity>)),
-            todayText = isToday ? (<Text style={styles.todayText}>TODAY</Text>) : null;
+            isDayOff = this.props.sdate && (sdate.getDate() !== jdate.getDate().getDate()),
+            jdateOffText = isDayOff &&
+                <Text style={{ fontSize: 11, fontStyle: 'italic', color: '#822' }}>
+                    NOTE: Jewish date is a day ahead of Secular date</Text>,
+            todayText = isToday && <Text style={styles.todayText}>
+                `${isDayOff ? 'HALACHIC ' : ''}TODAY`</Text>;
         let daysSinceLastEntry;
         if (appData.Settings.showEntryFlagOnHome && this.props.lastEntryDate) {
             const dayNum = this.props.lastEntryDate.diffDays(jdate) + 1;
@@ -145,6 +151,7 @@ export default class SingleDayDisplay extends Component {
                         <Text style={styles.dateEng}>
                             {Utils.toStringDate(sdate, true)}</Text>
                     </Text>
+                    {jdateOffText}
                     {dailyInfoText}
                     <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

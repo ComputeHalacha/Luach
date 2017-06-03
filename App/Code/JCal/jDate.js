@@ -519,17 +519,19 @@ export default class jDate {
     }
     static nowAtLocation(location) {
         const now = new Date(),
-            today = new jDate(now),
             sunriseSunset = Zmanim.getSunTimes(now, location),
-            nowMinutes = now.getHours() * 60 + now.getMinutes();
+            nowMinutes = (now.getHours() * 60) + now.getMinutes();
         if (nowMinutes <= Utils.totalMinutes(sunriseSunset.sunset)) {
-            return today.addDays(1);
+            return jDate.fromAbs(jDate.absSd(now) + 1);
         }
         else {
-            return today;
+            return new jDate(now);
         }
     }
-    /**Gets the absolute date of the given javascript Date object.*/
+    /**
+     * Gets the absolute date of the given javascript Date object.
+     * @param {Date} date
+     */
     static absSd(date) {
         const msPerDay = 86400000, //The number of milliseconds per each day
             dateMs = date.valueOf() - (date.getTimezoneOffset() * 60000), //The number of ms since 1/1/1970.
