@@ -116,8 +116,14 @@ export default class SingleDayDisplay extends Component {
             todayText = isToday ? (<Text style={styles.todayText}>TODAY</Text>) : null;
         let daysSinceLastEntry;
         if (appData.Settings.showEntryFlagOnHome && this.props.lastEntryDate) {
-            daysSinceLastEntry = <Text style={{ fontSize: 10 }}>{Utils.toSuffixed(this.props.lastEntryDate.diffDays(jdate) + 1) +
-                ' day since last Entry'}</Text>;
+            const dayNum = this.props.lastEntryDate.diffDays(jdate) + 1;
+            if (dayNum > 1) {
+                daysSinceLastEntry =
+                    <View style={styles.additionsViews}>
+                        <Text style={{ fontSize: 10 }}>{Utils.toSuffixed(dayNum) +
+                            ' day of last Entry'}</Text>
+                    </View>;
+            }
         }
         return (
             <View
@@ -191,11 +197,7 @@ export default class SingleDayDisplay extends Component {
                             </View>
                         </TouchableWithoutFeedback>
                     }
-                    {daysSinceLastEntry &&
-                        <View style={styles.additionsViews}>
-                            {daysSinceLastEntry}
-                        </View>
-                    }
+                    {daysSinceLastEntry}
                     {occasions && occasions.length > 0 &&
                         <View style={styles.additionsViews}>
                             {occasionText}

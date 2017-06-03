@@ -153,13 +153,13 @@ export default class SettingsScreen extends Component {
                                 value={!!showEntryFlagOnHome} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Main Screen date navigation</Text>
+                            <Text style={GeneralStyles.label}>Month View Screen default calendar</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 15 }}>
-                                <Text>By Jewish Date</Text>
+                                <Text>Jewish</Text>
                                 <Switch style={GeneralStyles.switch}
                                     onValueChange={value => this.update('navigateBySecularDate', value)}
                                     value={!!navigateBySecularDate} />
-                                <Text>By Secular/Gregorian Date</Text>
+                                <Text>Secular</Text>
                             </View>
                         </View>
                         <View style={GeneralStyles.formRow}>

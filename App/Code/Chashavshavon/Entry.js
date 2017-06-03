@@ -41,7 +41,11 @@ export default class Entry {
             ')';
     }
     toLongString() {
-        let str = (this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time') +
+        let str = '';
+        if (this.ignoreForFlaggedDates || this.ignoreForKavuah) {
+            str += 'NON-REGULAR ENTRY\n';
+        }
+        str += (this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time') +
             ' of ' + this.date.toString() + ' - ' + Utils.toStringDate(this.date.getDate(), true, true);
         if (this.haflaga) {
             str += ` [Haflaga of ${this.haflaga.toString()}]`;
@@ -58,7 +62,11 @@ export default class Entry {
         return str;
     }
     toKnownDateString() {
-        let str = `Entry for ${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'}`;
+        let str = '';
+        if (this.ignoreForFlaggedDates || this.ignoreForKavuah) {
+            str += 'NON-REGULAR ';
+        }
+        str += `Entry for ${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'}`;
         if (this.haflaga) {
             str += ` [Haflaga of ${this.haflaga.toString()}]`;
         }

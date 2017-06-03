@@ -44,7 +44,10 @@ export default class HomeScreen extends React.Component {
 
         //Every minute, we check if the current day has changed
         this.checkToday = setInterval(() => {
-            const today = new jDate();
+            //TODO--ONLY USE LOCATION IF SET IN SETTINGS
+            const today =
+                (this.state.appData && jDate.nowAtLocation(this.state.appData.Settings.location)) ||
+                new jDate();
             if ((!this.state.today) || this.state.today.Abs !== today.Abs) {
                 this.setState({ today: today });
             }
@@ -125,10 +128,11 @@ export default class HomeScreen extends React.Component {
     */
     updateAppData(appData) {
         //As the data has been changed, we need to recalculate the problem onahs.
-        const newProbs = appData.EntryList.getProblemOnahs(appData.KavuahList);
+        const newProbs = appData.EntryList.getProblemOnahs(appData.KavuahList),
+            lastEntry = appData.EntryList.lastRegularEntry();
+
         appData.ProblemOnahs = newProbs;
-        const lastEntry = appData.EntryList.list.length > 0 &&
-            appData.EntryList.descending[0];
+
         this.setState({
             appData: appData,
             lastEntryDate: lastEntry && lastEntry.date
@@ -156,10 +160,11 @@ export default class HomeScreen extends React.Component {
             if (!ad.Settings.requirePIN) {
                 this.setFlash();
             }
-            const lastEntry = ad.EntryList.list.length > 0 &&
-                ad.EntryList.descending[0];
+            const lastEntry = ad.EntryList.lastRegularEntry();
             this.setState({
                 appData: ad,
+                //TODO--ONLY USE LOCATION IF SET IN SETTINGS
+                today: jDate.nowAtLocation(ad.Settings.location),
                 loadingDone: true,
                 showLogin: ad.Settings.requirePIN,
                 lastEntryDate: lastEntry && lastEntry.date
@@ -169,11 +174,11 @@ export default class HomeScreen extends React.Component {
     _navigatedShowing(params) {
         //As this screen was navigated to from another screen, we will use the original appData.
         //We also allow another screen to naviate to any date by supplying a currDate property in the navigate props.
-        const today = new jDate(),
+        const today = jDate.nowAtLocation(appData.Settings.location),
+            //TODO--ONLY USE LOCATION IF SET IN SETTINGS
             appData = params.appData,
             currDate = params.currDate || today,
-            lastEntry = appData.EntryList.list.length > 0 &&
-                appData.EntryList.descending[0];
+            lastEntry = appData.EntryList.lastRegularEntry();
 
         //We don't need to use setState here as this function is only called from the constructor.
         this.state = {

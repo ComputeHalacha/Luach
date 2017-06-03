@@ -517,7 +517,18 @@ export default class jDate {
 
         return { year, month, day };
     }
-
+    static nowAtLocation(location) {
+        const now = new Date(),
+            today = new jDate(now),
+            sunriseSunset = Zmanim.getSunTimes(now, location),
+            nowMinutes = now.getHours() * 60 + now.getMinutes();
+        if (nowMinutes <= Utils.totalMinutes(sunriseSunset.sunset)) {
+            return today.addDays(1);
+        }
+        else {
+            return today;
+        }
+    }
     /**Gets the absolute date of the given javascript Date object.*/
     static absSd(date) {
         const msPerDay = 86400000, //The number of milliseconds per each day
