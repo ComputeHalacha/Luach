@@ -44,16 +44,9 @@ export default class HomeScreen extends React.Component {
 
         //Every minute, we check if the current day has changed
         this.checkToday = setInterval(() => {
-            const today = HomeScreen.getTodayJdate(this.state.appData),
-                //We only worry about a non matching sdate/jdate if app
-                //is set to jdate and the jdate may be tomorrow (after shkia).
-                sdate = this.state.appData.Settings.navigateBySecularDate ? null : new Date();
+            const today = HomeScreen.getTodayJdate(this.state.appData);
             if ((!this.state.today) || this.state.today.Abs !== today.Abs) {
-                this.setState(
-                    {
-                        today: today,
-                        todaySdate: sdate
-                    });
+                this.setState({ today: today, systemDate: new Date() });
             }
         }, 60000);
     }
@@ -168,14 +161,13 @@ export default class HomeScreen extends React.Component {
                 //As we now have a location, the current
                 //Jewish date may be different than the system date
                 today = HomeScreen.getTodayJdate(ad),
-                //We only worry about a non matching sdate/jdate if app
-                //is set to jdate and the jdate may be tomorrow (after shkia).
-                sdate = ad.Settings.navigateBySecularDate ? null : new Date();
-
+                daysList = today.Abs === this.state.daysList[0].Abs ?
+                    this.state.daysList : this.getDaysList(today);
             this.setState({
                 appData: ad,
+                daysList: daysList,
                 today: today,
-                todaySdate: sdate,
+                systemDate: new Date(),
                 currDate: today,
                 loadingDone: true,
                 showLogin: ad.Settings.requirePIN,
@@ -189,17 +181,14 @@ export default class HomeScreen extends React.Component {
         const appData = params.appData,
             today = HomeScreen.getTodayJdate(appData),
             currDate = params.currDate || today,
-            lastEntry = appData.EntryList.lastRegularEntry(),
-            //We only worry about a non matching sdate/jdate if app
-            //is set to jdate and the jdate may be tomorrow (after shkia).
-            sdate = appData.Settings.navigateBySecularDate ? null : new Date();
+            lastEntry = appData.EntryList.lastRegularEntry();
         //We don't need to use setState here as this function is only called from the constructor.
         this.state = {
             appData: appData,
             daysList: this.getDaysList(currDate),
             currDate: currDate,
             today: today,
-            todaySdate: sdate,
+            systemDate: new Date(),
             showFlash: false,
             showLogin: false,
             loadingDone: true,
@@ -285,9 +274,7 @@ export default class HomeScreen extends React.Component {
         return <SingleDayDisplay
             key={item.Abs}
             jdate={item}
-            //sdate is only supplied for todays date as for
-            //all other days it can be gotten from the jdate.
-            sdate={isToday && this.state.todaySdate}
+            systemDate={this.state.systemDate}
             isToday={isToday}
             appData={this.state.appData}
             navigator={this.navigator}

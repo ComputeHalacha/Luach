@@ -520,9 +520,10 @@ export default class jDate {
     static nowAtLocation(location) {
         const now = new Date(),
             sunriseSunset = Zmanim.getSunTimes(now, location),
-            nowMinutes = (now.getHours() * 60) + now.getMinutes();
-        if (nowMinutes <= Utils.totalMinutes(sunriseSunset.sunset)) {
-            return jDate.fromAbs(jDate.absSd(now) + 1);
+            nowMinutes = (now.getHours() * 60) + now.getMinutes(),
+            shkiaMinutes = Utils.totalMinutes(sunriseSunset.sunset);
+        if (nowMinutes >= shkiaMinutes) {
+            return new jDate(jDate.absSd(now) + 1);
         }
         else {
             return new jDate(now);

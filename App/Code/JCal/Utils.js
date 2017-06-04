@@ -72,7 +72,8 @@ export default class Utils {
      * @param {Boolean} dontCapitalize
      */
     static toStringDate(date, hideDayOfWeek, dontCapitalize) {
-        return (hideDayOfWeek ? (dontCapitalize ? 't' : 'T') : Utils.dowEng[date.getDay] + ', t') +
+        return (hideDayOfWeek ? (dontCapitalize ? 't' : 'T') :
+            Utils.dowEng[date.getDay()] + ', t') +
             'he ' +
             Utils.toSuffixed(date.getDate()) + ' of ' +
             Utils.sMonthsEng[date.getMonth()] + ' ' +
@@ -168,7 +169,7 @@ export default class Utils {
      * @param {{hour:Number, minute:Number}} time An object in the format {hour : 12, minute :42 }
      */
     static totalMinutes(time) {
-        return time.hour * 60 + time.minutes;
+        return (time.hour * 60) + time.minute;
     }
 
     /**

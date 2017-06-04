@@ -91,7 +91,7 @@ export default class SingleDayDisplay extends Component {
         this.navigator.navigate('NewEntry', { entry, ...this.props });
     }
     render() {
-        const { appData, jdate, isToday } = this.props,
+        const { appData, jdate, isToday, systemDate } = this.props,
             location = appData.Settings.location,
             flag = appData.Settings.showProbFlagOnHome &&
                 appData.ProblemOnahs.some(po => po.jdate.Abs === jdate.Abs),
@@ -99,7 +99,13 @@ export default class SingleDayDisplay extends Component {
                 UserOccasion.getOccasionsForDate(jdate, appData.UserOccasions) : [],
             entries = appData.Settings.showEntryFlagOnHome ?
                 appData.EntryList.list.filter(e => e.date.Abs === jdate.Abs) : [],
-            sdate = this.props.sdate || jdate.getDate(),
+            sdate = (isToday && systemDate) ? systemDate : jdate.getDate(),
+            isDayOff = isToday && systemDate && (systemDate.getDate() !== jdate.getDate().getDate()),
+            todayText = isToday && <Text style={styles.todayText}>
+                {`TODAY${isDayOff ? '*' : ''}`}</Text>,
+            jdateOffText = isDayOff &&
+                <Text style={{ fontSize: 11, fontStyle: 'italic', color: '#800' }}>
+                    * NOTE: the Jewish date is currently a day ahead of the Secular date</Text>,
             dailyInfos = jdate.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
             suntimes = jdate.getSunriseSunset(location),
@@ -113,13 +119,7 @@ export default class SingleDayDisplay extends Component {
                 entries.map((e, i) => (
                     <TouchableOpacity key={i} onPress={() => this.editEntry(e)}>
                         <Text style={styles.entriesText}>{e.toKnownDateString()}</Text>
-                    </TouchableOpacity>)),
-            isDayOff = this.props.sdate && (sdate.getDate() !== jdate.getDate().getDate()),
-            jdateOffText = isDayOff &&
-                <Text style={{ fontSize: 11, fontStyle: 'italic', color: '#822' }}>
-                    NOTE: Jewish date is a day ahead of Secular date</Text>,
-            todayText = isToday && <Text style={styles.todayText}>
-                `${isDayOff ? 'HALACHIC ' : ''}TODAY`</Text>;
+                    </TouchableOpacity>));
         let daysSinceLastEntry;
         if (appData.Settings.showEntryFlagOnHome && this.props.lastEntryDate) {
             const dayNum = this.props.lastEntryDate.diffDays(jdate) + 1;
@@ -149,7 +149,7 @@ export default class SingleDayDisplay extends Component {
                             {jdate.toString()}</Text>
                         <Text>{'\n'}</Text>
                         <Text style={styles.dateEng}>
-                            {Utils.toStringDate(sdate, true)}</Text>
+                            {Utils.toStringDate(sdate, !isDayOff)}</Text>
                     </Text>
                     {jdateOffText}
                     {dailyInfoText}

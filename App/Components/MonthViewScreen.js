@@ -9,8 +9,6 @@ import Month from '../Code/Month';
 import { NightDay } from '../Code/Chashavshavon/Onah';
 import { GeneralStyles } from './styles';
 
-const Today = new jDate();
-
 export default class MonthViewScreen extends React.Component {
     static navigationOptions = () => ({
         title: 'Full Month View'
@@ -20,10 +18,15 @@ export default class MonthViewScreen extends React.Component {
 
         this.navigate = props.navigation.navigate;
         const { jdate, appData } = props.navigation.state.params,
-            date = appData.Settings.navigateBySecularDate ? jdate.getDate() : jdate;
+            date = appData.Settings.navigateBySecularDate ? jdate.getDate() : jdate,
+            today = appData.Settings.navigateBySecularDate ?
+                new jDate() : jDate.nowAtLocation(appData.Settings.location);
         this.appData = appData;
         this.israel = this.appData.Settings.location.Israel;
-        this.state = { month: new Month(date, this.appData) };
+        this.state = {
+            month: new Month(date, this.appData),
+            today: today
+        };
 
         this.goPrevYear = this.goPrevYear.bind(this);
         this.goNextYear = this.goNextYear.bind(this);
@@ -53,7 +56,9 @@ export default class MonthViewScreen extends React.Component {
         goHomeToday(this.props.navigation, this.appData);
     }
     goThisMonth() {
-        this.setState({ month: new Month(Today, this.appData) });
+        this.setState({
+            month: new Month(this.state.today, this.appData)
+        });
     }
     getFlag(nightDay) {
         return <View style={{
@@ -68,16 +73,33 @@ export default class MonthViewScreen extends React.Component {
     }
     toggleMonthType() {
         if (this.state.month.isJdate) {
-            this.setState({ month: new Month(this.state.month.date.getDate(), this.appData) });
+            //Change to secular
+            let sdate = this.state.month.date.getDate();
+            //If most of the Jewish Month is the next Secular month, we display the next month.
+            if (sdate > 16) {
+                sdate = new Date(sdate.getFullYear(), sdate.getMonth() + 1, 1);
+            }
+            this.setState({
+                month: new Month(sdate, this.appData),
+                today: new jDate()
+            });
         }
         else {
-            this.setState({ month: new Month(new jDate(this.state.month.date), this.appData) });
+            //Change to Jewish date.
+            //If the current time is after sunset, and we are Jewish Calendar based,
+            //"today" will be the next day.
+            const today = this.appData.Settings.navigateBySecularDate ?
+                new jDate() : jDate.nowAtLocation(this.appData.Settings.location);
+            this.setState({
+                month: new Month(new jDate(this.state.month.date), this.appData),
+                today: today
+            });
         }
     }
     getDayColumn(singleDay, index) {
         const colWidth = Utils.toInt(getScreenWidth() / 7),
             jdate = singleDay && singleDay.jdate,
-            isToday = jdate && jdate.Abs === Today.Abs,
+            isToday = jdate && jdate.Abs === this.state.today.Abs,
             shabbos = jdate && jdate.DayOfWeek === 6 &&
                 jdate.getSedra(this.israel).map((s) =>
                     s.eng).join('\n'),

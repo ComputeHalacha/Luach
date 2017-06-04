@@ -161,6 +161,11 @@ export default class SettingsScreen extends Component {
                                     value={!!navigateBySecularDate} />
                                 <Text>Secular Date</Text>
                             </View>
+                            {navigateBySecularDate &&
+                                <Text style={{ fontSize: 11, color: '#b55', paddingLeft: 10, paddingBottom: 5 }}>
+                                    Please Note: If the current time is between sunset and midnight, the current Jewish date will be incorrect.
+                                </Text>
+                            }
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Show explicitly ignored Kavuahs in the Kavuah list?</Text>
