@@ -48,7 +48,7 @@ export default class SettingsScreen extends Component {
     render() {
         const nums = range(1, 24),
             sets = this.state.appData && this.state.appData.Settings,
-            location = sets && sets.location || Location.getJerusalem(),
+            location = sets && sets.location || Location.getLakewood(),
             showOhrZeruah = setDefault(sets && sets.showOhrZeruah, true),
             keepThirtyOne = setDefault(sets && sets.keepThirtyOne, true),
             onahBeinunis24Hours = sets && sets.onahBeinunis24Hours,

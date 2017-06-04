@@ -17,9 +17,8 @@ export default class EntryScreen extends Component {
 
         this.navigate = this.props.navigation.navigate;
 
-        const { appData, currLocation, onUpdate } = this.props.navigation.state.params;
+        const { appData, onUpdate } = this.props.navigation.state.params;
 
-        this.currLocation = currLocation;
         this.onUpdate = onUpdate;
         this.state = {
             appData: appData
@@ -41,7 +40,6 @@ export default class EntryScreen extends Component {
     newEntry() {
         this.navigate('NewEntry', {
             jdate: new JDate(),
-            location: this.currLocation,
             appData: this.state.appData,
             onUpdate: this.update
         });
@@ -176,7 +174,6 @@ export default class EntryScreen extends Component {
                                         style={{ flex: 1 }}
                                         onPress={() => this.navigate('NewEntry', {
                                             entry: entry,
-                                            location: this.currLocation,
                                             appData: this.state.appData,
                                             onUpdate: this.update
                                         })}>
