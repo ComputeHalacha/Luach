@@ -46,7 +46,10 @@ export default class HomeScreen extends React.Component {
         this.checkToday = setInterval(() => {
             const today = HomeScreen.getTodayJdate(this.state.appData);
             if ((!this.state.today) || this.state.today.Abs !== today.Abs) {
-                this.setState({ today: today, systemDate: new Date() });
+                this.setState({
+                    today: today,
+                    systemDate: new Date()
+                });
             }
         }, 60000);
     }
@@ -120,19 +123,38 @@ export default class HomeScreen extends React.Component {
         }
     }
     /**
-    * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
+    * Recalculates current data for the state AppData object.
     * This should be done after updating settings, occasions, entries or kavuahs.
     */
     updateAppData(appData) {
+        let { currDate, daysList, today } = this.state;
         //As the data has been changed, we need to recalculate the problem onahs.
         const newProbs = appData.EntryList.getProblemOnahs(appData.KavuahList),
-            lastEntry = appData.EntryList.lastRegularEntry();
+            lastEntry = appData.EntryList.lastRegularEntry(),
+            //Were we displaying "Today" before this refresh?
+            isToday = currDate.Abs === today.Abs;
 
         appData.ProblemOnahs = newProbs;
 
+        //In case the "Today" changed due to a Settings change etc.
+        if (isToday) {
+            //Get the proper Jewish today for the current location
+            today = HomeScreen.getTodayJdate(appData);
+            currDate = today;
+            //If the previous today is not the same date, we need to move "today"
+            //back up to the top of the list
+            if (daysList[0].Abs !== currDate.Abs) {
+                daysList = this.getDaysList(currDate);
+            }
+        }
+
         this.setState({
             appData: appData,
-            lastEntryDate: lastEntry && lastEntry.date
+            daysList: daysList,
+            lastEntryDate: lastEntry && lastEntry.date,
+            today: today,
+            currDate: currDate,
+            systemDate: new Date()
         });
     }
     _initialShowing() {

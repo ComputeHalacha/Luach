@@ -104,8 +104,12 @@ export default class SingleDayDisplay extends Component {
             todayText = isToday && <Text style={styles.todayText}>
                 {`TODAY${isDayOff ? '*' : ''}`}</Text>,
             jdateOffText = isDayOff &&
-                <Text style={{ fontSize: 11, fontStyle: 'italic', color: '#800' }}>
-                    * NOTE: the Jewish date is currently a day ahead of the Secular date</Text>,
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={styles.dayOffMessage}>
+                        {'* NOTE: As it is currently after Sunset,\n' +
+                            `  the correct Jewish Day is ${Utils.dowEng[jdate.DayOfWeek]}.`}
+                    </Text>
+                </View>,
             dailyInfos = jdate.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
             suntimes = jdate.getSunriseSunset(location),
@@ -151,7 +155,6 @@ export default class SingleDayDisplay extends Component {
                         <Text style={styles.dateEng}>
                             {Utils.toStringDate(sdate, !isDayOff)}</Text>
                     </Text>
-                    {jdateOffText}
                     {dailyInfoText}
                     <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -229,6 +232,7 @@ export default class SingleDayDisplay extends Component {
                             onPress={this.newOccasion} />
                     </View>
                 </View>
+                {jdateOffText}
             </View >
         );
     }
@@ -295,5 +299,12 @@ const styles = StyleSheet.create({
         color: '#080',
         fontWeight: 'bold',
         padding: 4
+    },
+    dayOffMessage: {
+        fontSize: 11,
+        color: '#955',
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingBottom: 5
     }
 });
