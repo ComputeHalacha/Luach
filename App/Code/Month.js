@@ -70,13 +70,13 @@ export default class Month {
         const jdate = (ambiDate instanceof jDate && ambiDate) || new jDate(ambiDate),
             sdate = (ambiDate instanceof Date && ambiDate) || ambiDate.getDate(),
             hasEntryNight = this.appData.EntryList.list.some(e =>
-                e.date.Abs === jdate.Abs && e.nightDay === NightDay.Night),
+                Utils.isSameJdate(e.date, jdate) && e.nightDay === NightDay.Night),
             hasProbNight = this.appData.ProblemOnahs.some(po =>
-                po.jdate.Abs === jdate.Abs && po.nightDay === NightDay.Night),
+                Utils.isSameJdate(po.jdate, jdate) && po.nightDay === NightDay.Night),
             hasEntryDay = this.appData.EntryList.list.some(e =>
-                e.date.Abs === jdate.Abs && e.nightDay === NightDay.Day),
+                Utils.isSameJdate(e.date, jdate) && e.nightDay === NightDay.Day),
             hasProbDay = this.appData.ProblemOnahs.some(po =>
-                po.jdate.Abs === jdate.Abs && po.nightDay === NightDay.Day);
+                Utils.isSameJdate(po.jdate, jdate) && po.nightDay === NightDay.Day);
         return {
             jdate,
             sdate,

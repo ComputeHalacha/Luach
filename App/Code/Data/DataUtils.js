@@ -61,7 +61,8 @@ export default class DataUtils {
             requirePIN=?,
             PIN=?`,
             [
-                (settings.location && settings.location.locationId) || 28, //Jerusalem is 28
+                //Lakewood is the default - locationId: 185
+                (settings.location && settings.location.locationId) || 185,
                 settings.showOhrZeruah,
                 settings.keepThirtyOne,
                 settings.onahBeinunis24Hours,

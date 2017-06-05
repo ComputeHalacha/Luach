@@ -4,8 +4,9 @@ import SingleDayDisplay from './SingleDayDisplay';
 import Login from './Login';
 import Flash from './Flash';
 import SideMenu from './SideMenu';
-import { isLargeScreen, log, goHomeToday } from '../Code/GeneralUtils';
+import { isLargeScreen, log, goHomeToday, getTodayJdate } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
+import Utils from '../Code/JCal/Utils';
 import AppData from '../Code/Data/AppData';
 
 
@@ -44,11 +45,21 @@ export default class HomeScreen extends React.Component {
 
         //Every minute, we check if the current day has changed
         this.checkToday = setInterval(() => {
-            const today = HomeScreen.getTodayJdate(this.state.appData);
-            if ((!this.state.today) || this.state.today.Abs !== today.Abs) {
+            let { appData, today, systemDate, daysList, currDate } = this.state;
+            //Get the proper Jewish today for the current location
+            const nowJ = getTodayJdate(appData),
+                nowS = new Date();
+            if ((!Utils.isSameJdate(today, nowJ)) ||
+                (!Utils.isSameSdate(systemDate, nowS))) {
+                if (Utils.isSameJdate(currDate, today) &&
+                    (!Utils.isSameJdate(currDate, nowJ))) {
+                    daysList = this.getDaysList(nowJ);
+                    currDate = nowJ;
+                }
                 this.setState({
-                    today: today,
-                    systemDate: new Date()
+                    today: nowJ,
+                    systemDate: nowS,
+                    daysList: daysList
                 });
             }
         }, 60000);
@@ -65,6 +76,7 @@ export default class HomeScreen extends React.Component {
     componentWillUpdate(nextProps, nextState) {
         const prevAppData = this.state.appData,
             newAppData = nextState.appData;
+
         if (!(prevAppData || newAppData)) {
             log('REFRESHED :( - either new appdata or old appdata was nuthin`');
             return true;
@@ -132,18 +144,18 @@ export default class HomeScreen extends React.Component {
         const newProbs = appData.EntryList.getProblemOnahs(appData.KavuahList),
             lastEntry = appData.EntryList.lastRegularEntry(),
             //Were we displaying "Today" before this refresh?
-            isToday = currDate.Abs === today.Abs;
+            isToday = Utils.isSameJdate(currDate, today);
 
         appData.ProblemOnahs = newProbs;
 
         //In case the "Today" changed due to a Settings change etc.
         if (isToday) {
             //Get the proper Jewish today for the current location
-            today = HomeScreen.getTodayJdate(appData);
+            today = getTodayJdate(appData);
             currDate = today;
-            //If the previous today is not the same date, we need to move "today"
-            //back up to the top of the list
-            if (daysList[0].Abs !== currDate.Abs) {
+            //If the previous "today" is not the same date as todays "today",
+            // we need to move "today" back up to the top of the list
+            if (!Utils.isSameJdate(daysList[0], currDate)) {
                 daysList = this.getDaysList(currDate);
             }
         }
@@ -182,8 +194,8 @@ export default class HomeScreen extends React.Component {
             const lastEntry = ad.EntryList.lastRegularEntry(),
                 //As we now have a location, the current
                 //Jewish date may be different than the system date
-                today = HomeScreen.getTodayJdate(ad),
-                daysList = today.Abs === this.state.daysList[0].Abs ?
+                today = getTodayJdate(ad),
+                daysList = Utils.isSameJdate(today, this.state.daysList[0]) ?
                     this.state.daysList : this.getDaysList(today);
             this.setState({
                 appData: ad,
@@ -201,7 +213,7 @@ export default class HomeScreen extends React.Component {
         //As this screen was navigated to from another screen, we will use the original appData.
         //We also allow another screen to naviate to any date by supplying a currDate property in the navigate props.
         const appData = params.appData,
-            today = HomeScreen.getTodayJdate(appData),
+            today = getTodayJdate(appData),
             currDate = params.currDate || today,
             lastEntry = appData.EntryList.lastRegularEntry();
         //We don't need to use setState here as this function is only called from the constructor.
@@ -233,23 +245,12 @@ export default class HomeScreen extends React.Component {
         //scrollToOffset may not scroll all the way to the top without the setTimeout.
         setTimeout(() => this.flatList.scrollToOffset({ x: 0, y: 0, animated: true }), 1);
     }
-    /**
-     * Gets the proper Jewish Date at the current time at the current loaction
-     * @param {AppData} appData
-     */
-    static getTodayJdate(appData) {
-        if (appData && appData.Settings && !appData.Settings.navigateBySecularDate) {
-            return jDate.nowAtLocation(appData.Settings.location);
-        }
-        else {
-            return new jDate();
-        }
-    }
     _goToDate(jdate) {
-        if (this.state.daysList > 6 && jdate.Abs === this.state.today.Abs) {
+        if (this.state.daysList > 6 &&
+            Utils.isSameJdate(jdate, this.state.today)) {
             goHomeToday(this.navigator, this.state.appData);
         }
-        else if (jdate.Abs !== this.state.currDate.Abs) {
+        else if (!Utils.isSameJdate(jdate, this.state.currDate)) {
             this.setState({
                 daysList: this.getDaysList(jdate),
                 currDate: jdate,
@@ -292,7 +293,7 @@ export default class HomeScreen extends React.Component {
      * @param {{item:jDate}} param0 item will be a single jDate
      */
     renderItem({ item }) {
-        const isToday = this.state.today.Abs === item.Abs;
+        const isToday = Utils.isSameJdate(this.state.today, item);
         return <SingleDayDisplay
             key={item.Abs}
             jdate={item}

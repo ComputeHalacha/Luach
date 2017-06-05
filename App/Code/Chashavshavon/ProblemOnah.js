@@ -1,4 +1,5 @@
 import { NightDay, Onah } from './Onah';
+import Utils from  '../JCal/Utils';
 
 export default class ProblemOnah extends Onah {
     constructor(jdate, nightDay, name) {
@@ -25,6 +26,6 @@ export default class ProblemOnah extends Onah {
      */
     static getProbsForDate(jdate, probOnahList) {
         return probOnahList && probOnahList.length > 0 && probOnahList.filter(po =>
-            po.jdate.Abs === jdate.Abs);
+            Utils.isSameJdate(po.jdate, jdate));
     }
 }

@@ -1,4 +1,5 @@
 import jDate from '../JCal/jDate';
+import Utils from '../JCal/Utils';
 
 const NightDay = Object.freeze({
     Night: -1,
@@ -27,7 +28,7 @@ class Onah {
      * @param {Onah} onah
      */
     isSameOnah(onah) {
-        return this.jdate.Abs === onah.jdate.Abs &&
+        return Utils.isSameJdate(this.jdate,onah.jdate) &&
             this.nightDay === onah.nightDay;
     }
     /**

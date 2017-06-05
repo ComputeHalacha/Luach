@@ -294,7 +294,22 @@ export default class Utils {
         //This will give us the current correct date and time in Israel
         return new Date(now.setHours(now.getHours() + israelTimeOffset));
     }
-
+    /**
+     * Compares two js dates to se if they both refer to the same day - time is ignored.
+     * @param {Date} sdate1
+     * @param {Date} sdate2
+     */
+    static isSameSdate(sdate1, sdate2) {
+        return sdate1.toDateString() === sdate2.toDateString();
+    }
+    /**
+     * Compares two jDates to se if they both refer to the same day - time is ignored.
+     * @param {jDate} jdate1
+     * @param {jDate} jdate2
+     */
+    static isSameJdate(jdate1, jdate2) {
+        return jdate1.Abs && jdate2.Abs && jdate1.Abs === jdate2.Abs;
+    }
     /**
      * Converts the given complex number to an integer by removing the decimal part.
      * Returns same results as Math.floor for positive numbers and Math.ceil for negative ones.

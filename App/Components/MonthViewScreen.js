@@ -99,7 +99,7 @@ export default class MonthViewScreen extends React.Component {
     getDayColumn(singleDay, index) {
         const colWidth = Utils.toInt(getScreenWidth() / 7),
             jdate = singleDay && singleDay.jdate,
-            isToday = jdate && jdate.Abs === this.state.today.Abs,
+            isToday = jdate && Utils.isSameJdate(jdate, this.state.today),
             shabbos = jdate && jdate.DayOfWeek === 6 &&
                 jdate.getSedra(this.israel).map((s) =>
                     s.eng).join('\n'),

@@ -94,11 +94,11 @@ export default class SingleDayDisplay extends Component {
         const { appData, jdate, isToday, systemDate } = this.props,
             location = appData.Settings.location,
             flag = appData.Settings.showProbFlagOnHome &&
-                appData.ProblemOnahs.some(po => po.jdate.Abs === jdate.Abs),
+                appData.ProblemOnahs.some(po => Utils.isSameJdate(po.jdate, jdate)),
             occasions = appData.UserOccasions.length > 0 ?
                 UserOccasion.getOccasionsForDate(jdate, appData.UserOccasions) : [],
             entries = appData.Settings.showEntryFlagOnHome ?
-                appData.EntryList.list.filter(e => e.date.Abs === jdate.Abs) : [],
+                appData.EntryList.list.filter(e => Utils.isSameJdate(e.date, jdate)) : [],
             sdate = (isToday && systemDate) ? systemDate : jdate.getDate(),
             isDayOff = isToday && systemDate && (systemDate.getDate() !== jdate.getDate().getDate()),
             todayText = isToday && <Text style={styles.todayText}>
