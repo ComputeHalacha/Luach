@@ -1,70 +1,34 @@
-/* eslint-disable no-unused-vars */
-import React, { Component } from 'react';
-import { View } from 'react-native';
-import { Navigation } from 'react-native-navigation';
-import { Provider } from 'react-redux';
-import { registerScreens } from './screens';
+import { AppRegistry } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+import HomeScreen from './Components/HomeScreen';
+import SettingsScreen from './Components/SettingsScreen';
+import NewOccasionScreen from './Components/NewOccasionScreen';
+import OccasionsScreen from './Components/OccasionsScreen';
+import KavuahScreen from './Components/KavuahScreen';
+import EntryScreen from './Components/EntryScreen';
+import FlaggedDatesScreen from './Components/FlaggedDatesScreen';
+import NewEntryScreen from './Components/NewEntryScreen';
+import NewKavuahScreen from './Components/NewKavuahScreen';
+import DateDetailsScreen from './Components/DateDetailsScreen';
+import FindKavuahScreen from './Components/FindKavuahScreen';
+import FindLocationScreen from './Components/FindLocationScreen';
+import MontheViewScreen from './Components/MonthViewScreen';
 
-import { iconsMap, iconsLoaded } from './utils/AppIcons';
-import configureStore from './store/configureStore';
+//If not in __DEV__  turn off the built-in logger
+const navOptions = __DEV__ ? undefined : { onNavigationStateChange: null };
 
-const store = configureStore();
-
-registerScreens(store, Provider);
-
-const navigatorStyle = {
-    navBarTranslucent: true,
-    drawUnderNavBar: true,
-    navBarTextColor: 'white',
-    navBarButtonColor: 'white',
-    statusBarTextColorScheme: 'light',
-    drawUnderTabBar: true
-};
-
-class App extends Component {
-    constructor(props) {
-        super(props);
-        iconsLoaded.then(() => {
-            this.startApp();
-        });
-    }
-
-    startApp() {
-        Navigation.startTabBasedApp({
-            tabs: [
-                {
-                    label: 'Movies',
-                    screen: 'movieapp.Movies',
-                    icon: iconsMap['ios-film-outline'],
-                    selectedIcon: iconsMap['ios-film'],
-                    title: 'Movies',
-                    navigatorStyle,
-                    navigatorButtons: {
-                        rightButtons: [
-                            {
-                                title: 'Search',
-                                id: 'search',
-                                icon: iconsMap['ios-search']
-                            }
-                        ]
-                    }
-                },
-                {
-                    label: 'TV Shows',
-                    screen: 'movieapp.Movies',
-                    icon: iconsMap['ios-desktop-outline'],
-                    selectedIcon: iconsMap['ios-desktop'],
-                    title: 'Movies',
-                    navigatorStyle
-                }
-            ],
-            tabsStyle: {
-                tabBarButtonColor: 'white',
-                tabBarSelectedButtonColor: 'white',
-                tabBarBackgroundColor: 'black'
-            }
-        });
-    }
-}
-
-export default App;
+AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
+    Home: { screen: HomeScreen },
+    Settings: { screen: SettingsScreen },
+    NewOccasion: { screen: NewOccasionScreen },
+    Occasions: { screen: OccasionsScreen },
+    Kavuahs: { screen: KavuahScreen },
+    Entries: { screen: EntryScreen },
+    NewEntry: { screen: NewEntryScreen },
+    NewKavuah: { screen: NewKavuahScreen },
+    FlaggedDates: { screen: FlaggedDatesScreen },
+    DateDetails: { screen: DateDetailsScreen },
+    FindKavuahs: { screen: FindKavuahScreen },
+    FindLocation: { screen: FindLocationScreen },
+    MonthView: { screen: MontheViewScreen }
+}, navOptions));
