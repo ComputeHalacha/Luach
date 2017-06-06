@@ -1,6 +1,7 @@
 import { PixelRatio, Dimensions, Platform, ToastAndroid, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import jDate from './JCal/jDate';
+import Utils from './JCal/Utils';
 
 /**Gets the current window width in points */
 export function getScreenWidth() {
@@ -136,7 +137,7 @@ export function goHomeToday(navigator, appData) {
  */
 export function getTodayJdate(appData) {
     if (appData && appData.Settings && !appData.Settings.navigateBySecularDate) {
-        return jDate.nowAtLocation(appData.Settings.location);
+        return Utils.nowAtLocation(appData.Settings.location);
     }
     else {
         return new jDate();

@@ -20,7 +20,7 @@ export default class MonthViewScreen extends React.Component {
         const { jdate, appData } = props.navigation.state.params,
             date = appData.Settings.navigateBySecularDate ? jdate.getDate() : jdate,
             today = appData.Settings.navigateBySecularDate ?
-                new jDate() : jDate.nowAtLocation(appData.Settings.location);
+                new jDate() : Utils.nowAtLocation(appData.Settings.location);
         this.appData = appData;
         this.israel = this.appData.Settings.location.Israel;
         this.state = {
@@ -89,7 +89,7 @@ export default class MonthViewScreen extends React.Component {
             //If the current time is after sunset, and we are Jewish Calendar based,
             //"today" will be the next day.
             const today = this.appData.Settings.navigateBySecularDate ?
-                new jDate() : jDate.nowAtLocation(this.appData.Settings.location);
+                new jDate() : Utils.nowAtLocation(this.appData.Settings.location);
             this.setState({
                 month: new Month(new jDate(this.state.month.date), this.appData),
                 today: today

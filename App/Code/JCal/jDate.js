@@ -517,18 +517,6 @@ export default class jDate {
 
         return { year, month, day };
     }
-    static nowAtLocation(location) {
-        const now = new Date(),
-            sunriseSunset = Zmanim.getSunTimes(now, location),
-            nowMinutes = (now.getHours() * 60) + now.getMinutes(),
-            shkiaMinutes = Utils.totalMinutes(sunriseSunset.sunset);
-        if (nowMinutes >= shkiaMinutes) {
-            return new jDate(jDate.absSd(now) + 1);
-        }
-        else {
-            return new jDate(now);
-        }
-    }
     /**
      * Gets the absolute date of the given javascript Date object.
      * @param {Date} date

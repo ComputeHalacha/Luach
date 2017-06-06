@@ -34,7 +34,7 @@ export default class NewEntry extends React.Component {
     constructor(props) {
         super(props);
         const navigation = this.props.navigation;
-        const { entry, isToday, appData, onUpdate } = navigation.state.params,
+        const { entry, appData, onUpdate } = navigation.state.params,
             location = appData.Settings.location;
 
         let jdate, isNight;
@@ -45,12 +45,7 @@ export default class NewEntry extends React.Component {
         }
         else {
             jdate = navigation.state.params.jdate;
-            const sunset = jdate.getSunriseSunset(location).sunset,
-                sunsetMs = Utils.totalMinutes(sunset) * 60000;
-            isNight = (sunsetMs <= new Date().getTime());
-            if (isToday && isNight) {
-                this.showWarning = true;
-            }
+            isNight = Utils.isAfterSunset(new Date(), location);
         }
 
         this.onUpdate = onUpdate;
@@ -229,14 +224,6 @@ export default class NewEntry extends React.Component {
                     navigator={this.props.navigation}
                     hideOccasions={true} />
                 <ScrollView style={{ flex: 1 }}>
-                    {this.showWarning &&
-                        <View style={{ flex: 1, backgroundColor: '#ff9' }}>
-                            <Text style={{ color: '#f00', fontWeight: 'bold' }}>
-                                {'PLEASE BE AWARE: as it is now after sunset,\n' +
-                                    'the jewish date is currently ' +
-                                    this.state.jdate.addDays(1).toString()}</Text>
-                        </View>
-                    }
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Day</Text>
                         <Picker style={GeneralStyles.picker}

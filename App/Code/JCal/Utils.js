@@ -1,3 +1,6 @@
+import Zmanim from './Zmanim';
+import jDate from './jDate';
+
 export default class Utils {
     static jMonthsEng = ['', 'Nissan', 'Iyar', 'Sivan', 'Tamuz', 'Av', 'Ellul', 'Tishrei', 'Cheshvan', 'Kislev', 'Teves', 'Shvat', 'Adar', 'Adar Sheini'];
     static jMonthsHeb = ['', 'ניסן', 'אייר', 'סיון', 'תמוז', 'אב', 'אלול', 'תשרי', 'חשון', 'כסלו', 'טבת', 'שבט', 'אדר', 'אדר שני'];
@@ -309,6 +312,26 @@ export default class Utils {
      */
     static isSameJdate(jdate1, jdate2) {
         return jdate1.Abs && jdate2.Abs && jdate1.Abs === jdate2.Abs;
+    }
+    /**
+     * Determines if the time of the given Date() is after sunset at the given Location
+     * @param {Date} sdate
+     * @param {Location} location
+     */
+    static isAfterSunset(sdate, location) {
+        const sunriseSunset = Zmanim.getSunTimes(sdate, location),
+            nowMinutes = (sdate.getHours() * 60) + sdate.getMinutes(),
+            shkiaMinutes = Utils.totalMinutes(sunriseSunset.sunset);
+        return nowMinutes >= shkiaMinutes;
+    }
+    /**
+     * Gets the current Jewish Date at the given Location
+     * @param {Location} location
+     */
+    static nowAtLocation(location) {
+        const now = new Date(),
+        isAfterSunset = Utils.isAfterSunset(now, location);
+        return new jDate(jDate.absSd(now) + (isAfterSunset ? 1 : 0));
     }
     /**
      * Converts the given complex number to an integer by removing the decimal part.
