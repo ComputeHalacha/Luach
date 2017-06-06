@@ -1,3 +1,6 @@
+import Zmanim from './Zmanim';
+import jDate from './jDate';
+
 export default class Utils {
     static jMonthsEng = ['', 'Nissan', 'Iyar', 'Sivan', 'Tamuz', 'Av', 'Ellul', 'Tishrei', 'Cheshvan', 'Kislev', 'Teves', 'Shvat', 'Adar', 'Adar Sheini'];
     static jMonthsHeb = ['', 'ניסן', 'אייר', 'סיון', 'תמוז', 'אב', 'אלול', 'תשרי', 'חשון', 'כסלו', 'טבת', 'שבט', 'אדר', 'אדר שני'];
@@ -72,7 +75,8 @@ export default class Utils {
      * @param {Boolean} dontCapitalize
      */
     static toStringDate(date, hideDayOfWeek, dontCapitalize) {
-        return (hideDayOfWeek ? (dontCapitalize ? 't' : 'T') : Utils.dowEng[date.getDay] + ', t') +
+        return (hideDayOfWeek ? (dontCapitalize ? 't' : 'T') :
+            Utils.dowEng[date.getDay()] + ', t') +
             'he ' +
             Utils.toSuffixed(date.getDate()) + ' of ' +
             Utils.sMonthsEng[date.getMonth()] + ' ' +
@@ -168,7 +172,7 @@ export default class Utils {
      * @param {{hour:Number, minute:Number}} time An object in the format {hour : 12, minute :42 }
      */
     static totalMinutes(time) {
-        return time.hour * 60 + time.minutes;
+        return (time.hour * 60) + time.minute;
     }
 
     /**
@@ -293,7 +297,42 @@ export default class Utils {
         //This will give us the current correct date and time in Israel
         return new Date(now.setHours(now.getHours() + israelTimeOffset));
     }
-
+    /**
+     * Compares two js dates to se if they both refer to the same day - time is ignored.
+     * @param {Date} sdate1
+     * @param {Date} sdate2
+     */
+    static isSameSdate(sdate1, sdate2) {
+        return sdate1.toDateString() === sdate2.toDateString();
+    }
+    /**
+     * Compares two jDates to se if they both refer to the same day - time is ignored.
+     * @param {jDate} jdate1
+     * @param {jDate} jdate2
+     */
+    static isSameJdate(jdate1, jdate2) {
+        return jdate1.Abs && jdate2.Abs && jdate1.Abs === jdate2.Abs;
+    }
+    /**
+     * Determines if the time of the given Date() is after sunset at the given Location
+     * @param {Date} sdate
+     * @param {Location} location
+     */
+    static isAfterSunset(sdate, location) {
+        const sunriseSunset = Zmanim.getSunTimes(sdate, location),
+            nowMinutes = (sdate.getHours() * 60) + sdate.getMinutes(),
+            shkiaMinutes = Utils.totalMinutes(sunriseSunset.sunset);
+        return nowMinutes >= shkiaMinutes;
+    }
+    /**
+     * Gets the current Jewish Date at the given Location
+     * @param {Location} location
+     */
+    static nowAtLocation(location) {
+        const now = new Date(),
+        isAfterSunset = Utils.isAfterSunset(now, location);
+        return new jDate(jDate.absSd(now) + (isAfterSunset ? 1 : 0));
+    }
     /**
      * Converts the given complex number to an integer by removing the decimal part.
      * Returns same results as Math.floor for positive numbers and Math.ceil for negative ones.

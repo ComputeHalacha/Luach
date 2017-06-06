@@ -1,121 +1,301 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-<head>
-    <title>Luach</title>
-    <meta charset="utf-8">
-</head>
-<body>
-    <h1>Luach</h1>
-    <p>
-        <strong>VERY IMPORTANT NOTE!</strong><br>The Luach Application is intented to be a helpful tool to keep track of a womens
-        Halachic dates.<br><strong><em>The Luach Application has no Halachic status whatsoever, and can not take the place of a Rabbinic authority in any matter</em></strong>.
-        If the app is relied upon for halachic matters in any shape or manner, there is a very high chance that severe trangressions
-        of the laws of Taharas Hamishpacha will occur; many of which carry the penalty of <em>Kareis</em>.
-    </p>
-    <p><strong>The following is a short explanation of the terms and features of Luach.</strong></p>
-    <h2><strong><a name="Entries">Entry</a></strong></h2>
-    <p>An Entry is a single seeing period. Luach uses the list of Entries to calculate the <a href="#FlaggedDates">Flagged Dates</a>        and possible <a href="#Kavuahs">Kavuahs</a>. </p>
-    <p>The list of Entries that have been added can be viewed from the <a href="#EntriesScreen">Entries List Screen</a>.</p>
-    <p>There are two places a new Entry can be added to the Entry list: </p>
-    <ol>
-        <li>
-            On the <a href="#MainScreen">Main Screeen</a> or the <a href="#MonthViewScreen">Month View Screen</a>, Navigate to
-            the Jewish date of the start of the entry and press on the New Entry button. In the new Entry screen, the date
-            from which the New Entry button was pressed will be automatically selected.
-        </li>
-        <li>From the main menu on the right, press on the Entries button to open the <a href="#EntriesScreen">Entries List Screen</a>            and then tap on the New Entry button.</li>
-    </ol>
-    <p>Each Entry has the following properties:</p>
-    <p><strong>Jewish Date</strong></p>
-    <p>The day, month and year of the Jewish Date for the beginning of the period.</p>
-    <p><strong>Onah</strong></p>
-    <p>Each Jewish day is divided into two "<em>Onahs</em>"; the Night <em>Onah</em> and the Day <em>Onah</em>.</p>
-    <p>
-        If the period began between sunset and sunrise, the Entry is conidered to have occurred during the Night <em>Onah</em>.<br>If
-        it began between sunrise and sunset, it is considered to have occured during the Day <em>Onah</em>.
-    </p>
-    <p>
-        Luach is able to give you the time of sunset and sunrise for any location around the globe for any date.<br>Make sure
-        that you have selected your current location on the Settings Screen, and that your device has the correct time and
-        time zone for your location.
-    </p>
-    <p>
-        If the time of the start of the period is very close (within about 13 minutes) of the sunset or sunrise time, it is strongly
-        advisable to contact your Rav to help determine the correct date and <em>Onah</em> for that Entry.
-    </p>
-    <p><strong>Haflaga</strong></p>
-    <p>
-        The number of days or partial days between the previous Entry and this one.<br>Upon the addition of an Entry, Luach automatically
-        works out the <em>Haflaga</em> from the previous Entry.
-    </p>
-    <h2><strong><a name="Kavuahs">Kavuah</a></strong></h2>
-    <p>A Kavuah is a halachic term describing when a women has multiple periods in a recurring pattern.</p>
-    <p>
-        When a women has a set Kavuah pattern, it is expected that periods will continue to occur in this pattern. This is until
-        the pattern has been proven to have "broken".
-    </p>
-    <p>Kavuah setting and breaking is a very complex Halachic issue and should aways be accompanied with Rabinic guidance.</p>
-    <p>There are many ways that recurring preiods can be considered to have occured in a pattern.</p>
-    <p>Here is a list of a few of the more common ones:</p>
-    <ul>
-        <li>
-            <strong>Yom HaChodesh /  Day of Month</strong> - Three periods that all occur on the same date and <em>Onah</em>            of the Jewish Month. For example if a period started on the Day of the 4th of Sivan, the Day of the 4th of Tammuz
-            and the Day of the 4th of Av, this is considered a Kavuah of the Yom HaChodesh. Note, it is usually considered
-            a Kavuah in this scenario, even if there were other periods in the days between these dates. As for everything
-            else, a Rav should be consulted.
-        </li>
-        <li>
-            <strong>Haflaga / Interval</strong> - Three periods in a row that started the same number of days after the period
-            that preceded them. For example, if a period started on the Day Onah on the 4th of Sivan, and the next period
-            started 29 days later during the Day Onah on the 2nd of Tammuz, and the following period started 29 days later
-            during the Day Onah on the 1st of Av, and the following period started 29 days later during the Day Onah on the
-            29th of Av, this is considered a Kavuah of Haflaga. You may notice that to set this type of Kavuah, we need to
-            calculate 4 periods as opossed to the <em>Yom HaChodesh</em> Kavuah where just 3 preiods can set the pattern.
-        </li>
-        <li>
-            <strong>Yom HaShavuah / Day of Week</strong> - Three periods that occur on the same day of the week with the same
-            number of weeks between them. For example, if a period started during the Day Onah on Monday the 4th of Sivan,
-            and another period started 4 weeks later on Monday the 2nd of Tammuz, and a third period started on Monday 4
-            weeks later on Moday the 1st of Ellul, this a Kavuah of Yom Hashavuah. Similar to the Yom Hachodesh Kavuah, it
-            usually does not matter if there were any other periods in the interim. Note, even if there were no other periods
-            between these three Monday ones, this is not a Haflaga Kavuah as there were only two periods with a Haflaga of
-            29.
-        </li>
-        <li>
-            <strong>Dilug - Yom Hachodesh</strong> - Three periods with the day of the month for each occuring on a recurring
-            interval from one to the next. For example if a period started on the Day of the 4th of Sivan, the Day of the
-            5th of Tammuz and the Day of the 6th of Av, this is considered a Dilug Yom Hachodesh Kavuah of plus one day.
-            In this scenario, it is expected that on the 7th of Ellul another period will occur. Dilug Kavuahs can have any
-            pattern of days including negative ones. For example if a period started on the Day of the 4th of Sivan, the
-            Day of the 3rd of Tammuz and the Day of the 2nd of Av, this is considered a Kavuah of the Dilug Yom HaChodesh
-            with an interval of minus one day. In this scenario, it is expected that on the 1st of Ellul another period will
-            occur.
-        </li>
-        <li>
-            <strong>Dilug - Haflaga</strong> - - Three periods in a row where the interval from one to the next occurred in a
-            recurring pattern. For example, For example, if a period started on the Day Onah on the 4th of Sivan, and the
-            next period started 28 days later during the Day Onah on the 1st of Tammuz, and the following period started
-            29 days later during the Day Onah on the 1st of Av, and the following period started 30 days later during the
-            Day Onah on the 30th of Av, this is considered a Kavuah of Dilug Haflaga with an interval of plus one day. In
-            this scenario it is expected that another period will occur 31 days later - on the 1st of Tishrei. Similar to
-            the regular Haflag Kavuah, the Dilug - Haflaga needs 4 periods to set it and it needs them to occur one after
-            another with no other periods occuring during the interim.
-        </li>
-        <li>
-            <strong>Sirug</strong> - Three periods in a row that are on the same Onah and the same day of the Jewish month and
-            the same number of months in the interval between the first and second periods and the second and third periods.
-            This is not a Yom Hachodesh Kavuah as the Yom Hachodesh needs a period on each subsequent month, while the Sirug
-            Kavuah has some months in middle that are skipped.
-        </li>
-    </ul>
-    <p>In the Luach app, while adding a new Kavuah, the following properties wiil need to be filled out:</p>
-    <p><strong>Kavuah Type</strong></p>
-    <p>The type of Kavuah that is being set. For a brief explanation of some of the Kavuah types see the list above.</p>
-    <p><strong>Setting Entry</strong></p>
-    <p><strong>Kavuah Defining Number</strong></p>
-    <p><strong>Cancels Onah Beinonis</strong></p>
-    <p><strong>Active</strong></p>
 
+<head>
+    <title>Markdown Viewer</title>
+    <meta charset="utf-8">
+    <link href="file://C:\repos_git\MarkdownViewer\MarkdownViewer\bin\x64\Release64\Resources\styles\bootstrap.min.css" rel="stylesheet"
+    />
+    <style type="text/css">
+        .screenShot {
+            float: right;
+            margin-left: 20px;
+        }
+
+        .num {
+            background-color: #5B69FF;
+            color: #fff;
+            font-style: italic;
+            text-align: center;
+            border-radius: 50%;
+            height: 25px;
+            width: 25px;
+            padding: 3px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="background-color:#f1f1ff;padding:10px;margin-bottom:2%;">
+        <div class="container">
+            <img src="Images/Feature.png" />
+        </div>
+    </div>
+    <div class="container">
+        <p>The Luach Application is intented to be a helpful tool to keep track of a womens Halachic dates.</p>
+        <div class="jumbotron" style="background-color: #e5e5f1;">
+            <p><strong style="color:#800;">A VERY IMPORTANT NOTE</strong></p>
+            <p> <strong><em>The Luach Application has no Halachic status whatsoever, and can not take the place of a Rabbinic authority in any matter</em></strong>.
+                <br /> If the app is relied upon for halachic matters in any shape or manner, there is a very high chance
+                that severe trangressions of the laws of Taharas Hamishpacha will occur; many of which carry the penalty
+                of <em>Kareis</em>.</p>
+        </div>
+        <p><strong>This page gives a short explanation for the terms and features of Luach.</strong></p>
+        <ul>
+            <li><a href="#TodayScreen">The Today Screen</a></li>
+            <li><a href="#MonthViewScreen">The Month View Screen</a></li>
+            <li><a href="#EntriesScreen">The Entries List Screen</a></li>
+            <li><a href="#KavuahsScreen">The Kavuahs List Screen</a></li>
+            <li><a href="#SettingsScreen">The Settings Screen</a></li>
+            <li><a href="#Entries">Entry</a></li>
+            <li><a href="#Kavuahs">Kavuah</a></li>
+            <li><a href="#FlaggedDates">Flagged Date</a></li>
+        </ul>
+        <h2><strong><a name="TodayScreen">The Today Screen</a></strong></h2>
+        <div class="row">
+            <div class="col-sm-10">
+                <p>This is the screen that you will first come to when the the Luach app first opens.
+                    <br /> It is called the Today Screen.
+                </p>
+                <p>
+                    On the right, there is a list of days. When Luach loads, the top day is always the current day.
+                    <br /> By scrolling down you will see the upcoming days. You can also scroll up to see the previous days.
+                    <br /> There is technichally no limit on how far into the future or past you can scroll.
+                    <br /> You can also scroll through the days by using the arrow buttons on the menu on the right.
+                    <br /> You can always return to Today, by pressing on the Today button from the menu on the right.
+                </p>
+                <p>
+                    <br /> Within the box of each day, you will find some basic information about that day such as:
+                    <ul>
+                        <li>The current Jewish Date at your Location</li>
+                        <li>The current Secular Date</li>
+                        <li>The Sedra of the current week</li>
+                        <li>Any special information about this day such as Chol Ha`Moed, a fast day etc.</li>
+                    </ul>
+                </p>
+                <blockquote>
+                    <h3>Halachic "Today"</h3>
+                    As Luach is a Halachic calendar, the correct Jewish Date always needs to be taken into account.
+                    <br /> For this reason, if the current system time is after sunset for your location, the Today screen
+                    will display the following day as "Today".
+                    <br/> For example; if the time is currently after sunset on Sunday the 3rd of Shvat / January 12th, the
+                    Today screen will show, Monday the 4th of Shvat as "Today".
+                    <br /> The secular date though, will continue to be displayed as January 12th as it does not change until
+                    midnight.
+                    <br />
+                    <br /> Due to the above behavior, you may notice that the list of days on the Today screen may looks
+                    strange; the following day in the list, will be Tuesday the 5th of Shvat with the secular day shown as
+                    the 14th of January - hereby seemingly skipping January the 13th.
+                    <br /> This is a consequence of the fact that the secular date for Today's box is displaying the secular
+                    date at the current time, while the other days box's are all showing the Secular Date at midnight of
+                    that date.
+                    <br />
+                    <br />
+                    This behavior can be changed from the <a href="#SettingsScreen">Settings Screen</a>, by
+                    changing the "Calendar displays current" setting.
+                </blockquote>
+                <p>Under the date, you will see your current location and the times for sunrise and sunset for this day at this
+                    location.
+                    <br /> The location can be changed to almost any place in the world. To change the location, click on
+                    the name of the location.
+                    <br /> You can also change the location from the <a href="#SettingsScreen">Settings Screen</a>.</p>
+
+                <p>On the right side of each day you will find
+                    <div class="num">a</div> a link to view the full Zmanim information for this day, and a link to view the entire month
+                    in the <a href="#MonthViewScreen">Month View Screen</a>.</p>
+                <p>If an <a href="#Entries">Entry</a> occured on this day</a>, the background color of the day will be light
+                    red and a small label of bold red text with a brief synopsis of the Entry information will be shown.
+                    (see screenshot).</p>
+                <p>If this day is a <a href="#FlaggedDates">Flagged Date</a>, the background color of the day will be yellow
+                    and a red flag will be shown. (see screenshot).</p>
+                <p>You will also find a small text section that informs you how many days it has been since the last Entry.
+                    Keep in mind that the number displayed is the Halachaic number of days; where even a small part of a
+                    day is also a day.
+                    <br /> So, if the Entry occured on Sunday and today is Tuesday, the text will read:
+                    <em>3rd day since last Entry</em>
+                    <br />
+                </p>
+                <p>On the bottom section of each day, you will see two buttons, New Entry and New Occasion.</p>
+
+                <h3>New Entry</h3>
+
+                <p>Press on this button to create a new Entry for this day.
+                    <br /> You will be taken to the New Entry screen, with this day, already selected for you.
+                    <br /> To undersand what an <em>Entry</em> is in the Luach app, see the <a href="#Entries">Entry section</a>                    below.</p>
+
+                <h3>New Entry</h3>
+
+                <p>Press on this button to create a new Entry for this day. To undersand what an <em>Entry</em> is in the Luach
+                    app, see the <a href="#Entries">Entry section</a> below.</p>
+            </div>
+            <div class="col-sm-2">
+                <img src="Images/Small/TodayScreen.png" style="width:100%;margin-bottom: 15px;" class="img-fluid" alt="The Today Screen"
+                    title="The Today Screen" />
+                <img src="Images/Small/ProblemTodayScreen.png" style="width:100%" class="img-fluid" alt="The Today Screen" title="The Today Screen"
+                />
+            </div>
+        </div>
+        <h2><strong><a name="MonthViewScreen">The Month View Screen</a></strong></h2>
+
+        <h2><strong><a name="EntriesScreen">The Entries List Screen</a></strong></h2>
+
+        <h2><strong><a name="KavuahsScreen">The Kavuahs List Screen</a></strong></h2>
+
+        <h2><strong><a name="SettingsScreen">The Settings Screen</a></strong></h2>
+
+        <h2><strong><a name="Entries">Entry</a></strong></h2>
+
+        <p>An <em>Entry</em> is a single period (וסת - veset).</p>
+        <p>Entries are the most basic piece of information that needs to be retained in order to keep a valid Halachic calendar.</p>
+        <p>The goal of keeping track of entries is threefold:
+            <ol>
+                <li>To keep track of when a Hefsek Tahara can be done.</li>
+                <li>To calculate which days of the following month need to be observed as <a href="#FlaggedDates">Flagged Days</a>.</li>
+                <li>To calculate <a href="#Kavuahs">Kavuahs</a>.</li>
+            </ol>
+        </p>
+        <p>
+            It is very important to note that not every seeing is considered a Halachic Veset Entry.
+            <br /> For example, staining and the like are usually not considered Halachik Entries even those that require
+            the Niddah restrictions.
+            <br /> Any seeing is not a regular monthly period, needs Rabbininc determination whether or not to record it
+            as a regular Entry.
+            <br /> In Luach, when an Entry is added, it is assumed to be a regular period. In the special cases where it
+            was determined that it should not be a regular Entry, there are two special options that can be set for each
+            Entry.
+            <br /> On the New Kavuah Screen, just above the "Add Entry" button, press on "Show Advanced Entry Options".
+            <img src="Images/Small/NewEntry_Advanced.png" style="float:right;margin:5px 0 5px 5px;" />
+            <br />You will then see two options that can be set for this Entry:
+            <ol>
+                <li>Not a halachic Veset period. Should not generate Flagged Dates</li>
+                <li>Ignore this Entry in Kavuah calculations</li>
+            </ol>
+            If you have reason to believe that the current Entry should not be registered as a regular period but you do not fully understand
+            these advanced options, leave them alone for now and consult your Rabbi.
+        </p>
+        <p>
+            Luach uses the list of Entries to automatically calculate the
+            <a href="#FlaggedDates">Flagged Dates</a> and possible <a href="#Kavuahs">Kavuahs</a>. </p>
+
+        <p>The list of Entries that have been added can be viewed from the <a href="#EntriesScreen">Entries List Screen</a>.</p>
+
+        <p>There are two places a new Entry can be added to the Entry list: </p>
+
+        <ol>
+            <li>On the <a href="#MainScreen">Main Screeen</a> or the <a href="#MonthViewScreen">Month View Screen</a>, Navigate
+                to the Jewish date of the start of the entry and press on the New Entry button. In the new Entry screen,
+                the date from which the New Entry button was pressed will be automatically selected.</li>
+            <li>From the the main menu on the right, press on the Entries button to open the <a href="#EntriesScreen">Entries List Screen</a>                and then tap on the New Entry button.</li>
+        </ol>
+
+        <p>Each Entry has the following properties:</p>
+
+        <p><strong>Jewish Date</strong></p>
+
+        <p>The day, month and year of the Jewish Date for the beginning of the period.</p>
+
+        <p><strong>Onah</strong></p>
+
+        <p>Each Jewish day is divided into two "<em>Onahs</em>"; the Night <em>Onah</em> and the Day <em>Onah</em>.</p>
+
+        <p>If the period began between sunset and sunrise, the Entry is conidered to have occurred during the Night <em>Onah</em>.
+            If it began between sunrise and sunset, it is considered to have occured during the Day <em>Onah</em>.</p>
+
+        <p>Luach is able to give you the time of sunset and sunrise for any location around the globe for any date. Make sure
+            that you have selected your current location on the Settings Screen, and that your device has the correct time
+            and time zone for your location.</p>
+
+        <p>If the time of the start of the period is very close (within about 13 minutes) of the sunset or sunrise time, it
+            is strongly advisable to contact your Rav to help determine the correct date and <em>Onah</em> for that Entry.</p>
+
+        <p><strong>Haflaga</strong></p>
+
+        <p>The number of days or partial days between the previous Entry and this one. Upon the addition of an Entry, Luach
+            automatically works out the <em>Haflaga</em> from the previous Entry.</p>
+
+        <h2><strong><a name="Kavuahs">Kavuah</a></strong></h2>
+
+        <p>A Kavuah is a halachic term describing when a women has multiple periods in a recurring pattern.</p>
+
+        <p>When a women has a set Kavuah pattern, it is expected that periods will continue to occur in this pattern. This is
+            until the pattern has been proven to have "broken".</p>
+
+        <p>Kavuah setting and breaking is a very complex Halachic issue and should aways be accompanied with Rabinic guidance.</p>
+
+        <p>There are many ways that recurring preiods can be considered to have occured in a pattern.</p>
+
+        <p>Here is a list of a few of the more common ones:
+            <ul>
+                <li><strong>Yom HaChodesh /  Day of Month</strong> - Three periods that all occur on the same date and <em>Onah</em>                    of the Jewish Month.
+                    <br /> For example if a period started on the Day of the 4th of Sivan, the Day of the 4th of Tammuz and
+                    the Day of the 4th of Av, this is considered a Kavuah of the Yom HaChodesh. Note, it is usually considered
+                    a Kavuah in this scenario, even if there were other periods in the days between these dates. As for everything
+                    else, a Rav should be consulted.
+                </li>
+                <li><strong>Haflaga / Interval</strong> - Three periods in a row that started the same number of days after the
+                    period that preceded them.
+                    <br /> For example, if a period started on the Day Onah on the 4th of Sivan, and the next period started
+                    29 days later during the Day Onah on the 2nd of Tammuz, and the following period started 29 days later
+                    during the Day Onah on the 1st of Av, and the following period started 29 days later during the Day Onah
+                    on the 29th of Av, this is considered a Kavuah of Haflaga. You may notice that to set this type of Kavuah,
+                    we need to calculate 4 periods as opossed to the <em>Yom HaChodesh</em> Kavuah where just 3 preiods can
+                    set the pattern.
+                </li>
+                <li><strong>Yom HaShavuah / Day of Week</strong> - Three periods that occur on the same day of the week with
+                    the same number of weeks between them.
+                    <br /> For example, if a period started during the Day Onah on Monday the 4th of Sivan, and another period
+                    started 4 weeks later on Monday the 2nd of Tammuz, and a third period started on Monday 4 weeks later
+                    on Moday the 1st of Ellul, this a Kavuah of Yom Hashavuah. Similar to the Yom Hachodesh Kavuah, it usually
+                    does not matter if there were any other periods in the interim. Note, even if there were no other periods
+                    between these three Monday ones, this is not a Haflaga Kavuah as there were only two periods with a Haflaga
+                    of 29.
+                </li>
+                <li><strong>Dilug - Yom Hachodesh</strong> - Three periods with the day of the month for each occuring on a recurring
+                    interval from one to the next.
+                    <br /> For example if a period started on the Day of the 4th of Sivan, the Day of the 5th of Tammuz and
+                    the Day of the 6th of Av, this is considered a Dilug Yom Hachodesh Kavuah of plus one day. In this scenario,
+                    it is expected that on the 7th of Ellul another period will occur.
+                    <br /> Dilug Kavuahs can have any pattern of days including negative ones.
+                    <br /> For example if a period started on the Day of the 4th of Sivan, the Day of the 3rd of Tammuz and
+                    the Day of the 2nd of Av, this is considered a Kavuah of the Dilug Yom HaChodesh with an interval of
+                    minus one day. In this scenario, it is expected that on the 1st of Ellul another period will occur.
+                </li>
+                <li><strong>Dilug - Haflaga</strong> - - Three periods in a row where the interval from one to the next occurred
+                    in a recurring pattern.
+                    <br /> For example, if a period started on the Day Onah on the 4th of Sivan, and the next period started
+                    28 days later during the Day Onah on the 1st of Tammuz, and the following period started 29 days later
+                    during the Day Onah on the 1st of Av, and the following period started 30 days later during the Day Onah
+                    on the 30th of Av, this is considered a Kavuah of Dilug Haflaga with an interval of plus one day. In
+                    this scenario it is expected that another period will occur 31 days later - on the 1st of Tishrei. Similar
+                    to the regular Haflag Kavuah, the Dilug - Haflaga needs 4 periods to set it and it needs them to occur
+                    one after another with no other periods occuring during the interim.
+                </li>
+                <li><strong>Sirug</strong> - Three periods in a row that are on the same Onah and the same day of the Jewish
+                    month and the same number of months in the interval between the first and second periods and the second
+                    and third periods. This is not a Yom Hachodesh Kavuah as the Yom Hachodesh needs a period on each subsequent
+                    month, while the Sirug Kavuah has some months in middle that are skipped.
+                </li>
+            </ul>
+        </p>
+        <p>In the Luach app, while adding a new Kavuah, the following properties wiil need to be filled out:</p>
+
+        <p><strong>Kavuah Type</strong></p>
+
+        <p>The type of Kavuah that is being set. For a brief explanation of some of the Kavuah types see the list above.</p>
+
+        <p><strong>Setting Entry</strong></p>
+
+        <p><strong>Kavuah Defining Number</strong></p>
+
+        <p><strong>Cancels Onah Beinonis</strong></p>
+
+        <p><strong>Active</strong></p>
+
+        <h3>Ignored Kavuahs</h3>
+
+        <h2><strong><a name="FlaggedDates">Flagged Date</a></strong></h2>
+    </div>
 </body>
 
 </html>

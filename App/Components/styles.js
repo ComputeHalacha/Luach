@@ -56,6 +56,9 @@ const GeneralStyles = StyleSheet.create({
         fontStyle: 'italic',
         textAlign: 'center'
     },
+    inItemLinkIcon: {
+        height: 20
+    },
     headerButtons: {
         backgroundColor: '#eef',
         borderBottomWidth: 1,
@@ -72,7 +75,8 @@ const GeneralStyles = StyleSheet.create({
         flex: 0,
         alignSelf: 'center',
         width: 200,
-        marginTop: 25
+        marginTop: 25,
+        marginBottom: 25
     },
     emptyListView: {
         alignItems: 'center',

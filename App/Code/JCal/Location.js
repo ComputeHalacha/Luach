@@ -69,4 +69,8 @@ export default class Location {
     static getJerusalem() {
         return new Location('Jerusalem', true, 31.78, -35.22, 2, 800, 40, 28);
     }
+    /**Gets the Location for Lakewood NJ*/
+    static getLakewood() {
+        return new Location('Lakewood NJ', false, 40.1, 74.23, -5, 0, 18, 185);
+    }
 }

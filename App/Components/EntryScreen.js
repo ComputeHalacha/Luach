@@ -17,9 +17,8 @@ export default class EntryScreen extends Component {
 
         this.navigate = this.props.navigation.navigate;
 
-        const { appData, currLocation, onUpdate } = this.props.navigation.state.params;
+        const { appData, onUpdate } = this.props.navigation.state.params;
 
-        this.currLocation = currLocation;
         this.onUpdate = onUpdate;
         this.state = {
             appData: appData
@@ -41,7 +40,6 @@ export default class EntryScreen extends Component {
     newEntry() {
         this.navigate('NewEntry', {
             jdate: new JDate(),
-            location: this.currLocation,
             appData: this.state.appData,
             onUpdate: this.update
         });
@@ -159,18 +157,6 @@ export default class EntryScreen extends Component {
                             secondSection={entry =>
                                 <View style={GeneralStyles.inItemButtonList}>
                                     <TouchableHighlight
-                                        onPress={() => this.newKavuah(entry)}
-                                        underlayColor='#aaf'
-                                        style={{ flex: 1 }}>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <Icon
-                                                name='device-hub'
-                                                color='#aaf'
-                                                size={20} />
-                                            <Text style={GeneralStyles.inItemLinkText}>New Kavuah</Text>
-                                        </View>
-                                    </TouchableHighlight>
-                                    <TouchableHighlight
                                         underlayColor='#696'
                                         style={{ flex: 1 }}
                                         onPress={() => this.navigate('Home', { currDate: entry.date, appData: this.state.appData })}>
@@ -178,8 +164,39 @@ export default class EntryScreen extends Component {
                                             <Icon
                                                 name='event-note'
                                                 color='#585'
-                                                size={15} />
+                                                size={15}
+                                                containerStyle={GeneralStyles.inItemLinkIcon} />
                                             <Text style={GeneralStyles.inItemLinkText}>Go to Date</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        underlayColor='#788778'
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.navigate('NewEntry', {
+                                            entry: entry,
+                                            appData: this.state.appData,
+                                            onUpdate: this.update
+                                        })}>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Icon
+                                                name='edit'
+                                                color='#99a999'
+                                                size={18}
+                                                containerStyle={GeneralStyles.inItemLinkIcon} />
+                                            <Text style={GeneralStyles.inItemLinkText}>Edit</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight
+                                        onPress={() => this.newKavuah(entry)}
+                                        underlayColor='#aaf'
+                                        style={{ flex: 1 }}>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Icon
+                                                name='device-hub'
+                                                color='#aaf'
+                                                size={20}
+                                                containerStyle={GeneralStyles.inItemLinkIcon} />
+                                            <Text style={GeneralStyles.inItemLinkText}>New Kavuah</Text>
                                         </View>
                                     </TouchableHighlight>
                                     <TouchableHighlight
@@ -190,7 +207,8 @@ export default class EntryScreen extends Component {
                                             <Icon
                                                 name='delete-forever'
                                                 color='#faa'
-                                                size={20} />
+                                                size={20}
+                                                containerStyle={GeneralStyles.inItemLinkIcon} />
                                             <Text style={GeneralStyles.inItemLinkText}>Remove</Text>
                                         </View>
                                     </TouchableHighlight>

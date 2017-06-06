@@ -9,8 +9,6 @@ import Month from '../Code/Month';
 import { NightDay } from '../Code/Chashavshavon/Onah';
 import { GeneralStyles } from './styles';
 
-const Today = new jDate();
-
 export default class MonthViewScreen extends React.Component {
     static navigationOptions = () => ({
         title: 'Full Month View'
@@ -20,30 +18,47 @@ export default class MonthViewScreen extends React.Component {
 
         this.navigate = props.navigation.navigate;
         const { jdate, appData } = props.navigation.state.params,
-            date = appData.Settings.navigateBySecularDate ? jdate.getDate() : jdate;
+            date = appData.Settings.navigateBySecularDate ? jdate.getDate() : jdate,
+            today = appData.Settings.navigateBySecularDate ?
+                new jDate() : Utils.nowAtLocation(appData.Settings.location);
         this.appData = appData;
         this.israel = this.appData.Settings.location.Israel;
-        this.state = { month: new Month(date, this.appData) };
+        this.state = {
+            month: new Month(date, this.appData),
+            today: today
+        };
 
-        this.goPrev = this.goPrev.bind(this);
-        this.goNext = this.goNext.bind(this);
+        this.goPrevYear = this.goPrevYear.bind(this);
+        this.goNextYear = this.goNextYear.bind(this);
+        this.goPrevMonth = this.goPrevMonth.bind(this);
+        this.goNextMonth = this.goNextMonth.bind(this);
         this.goToday = this.goToday.bind(this);
         this.goThisMonth = this.goThisMonth.bind(this);
         this.toggleMonthType = this.toggleMonthType.bind(this);
     }
-    goPrev() {
+    goPrevYear() {
         const currMonth = this.state.month;
-        this.setState({ month: currMonth.prev });
+        this.setState({ month: currMonth.prevYear });
     }
-    goNext() {
+    goNextYear() {
         const currMonth = this.state.month;
-        this.setState({ month: currMonth.next });
+        this.setState({ month: currMonth.nextYear });
+    }
+    goPrevMonth() {
+        const currMonth = this.state.month;
+        this.setState({ month: currMonth.prevMonth });
+    }
+    goNextMonth() {
+        const currMonth = this.state.month;
+        this.setState({ month: currMonth.nextMonth });
     }
     goToday() {
         goHomeToday(this.props.navigation, this.appData);
     }
     goThisMonth() {
-        this.setState({ month: new Month(Today, this.appData) });
+        this.setState({
+            month: new Month(this.state.today, this.appData)
+        });
     }
     getFlag(nightDay) {
         return <View style={{
@@ -58,16 +73,33 @@ export default class MonthViewScreen extends React.Component {
     }
     toggleMonthType() {
         if (this.state.month.isJdate) {
-            this.setState({ month: new Month(this.state.month.date.getDate(), this.appData) });
+            //Change to secular
+            let sdate = this.state.month.date.getDate();
+            //If most of the Jewish Month is the next Secular month, we display the next month.
+            if (sdate > 16) {
+                sdate = new Date(sdate.getFullYear(), sdate.getMonth() + 1, 1);
+            }
+            this.setState({
+                month: new Month(sdate, this.appData),
+                today: new jDate()
+            });
         }
         else {
-            this.setState({ month: new Month(new jDate(this.state.month.date), this.appData) });
+            //Change to Jewish date.
+            //If the current time is after sunset, and we are Jewish Calendar based,
+            //"today" will be the next day.
+            const today = this.appData.Settings.navigateBySecularDate ?
+                new jDate() : Utils.nowAtLocation(this.appData.Settings.location);
+            this.setState({
+                month: new Month(new jDate(this.state.month.date), this.appData),
+                today: today
+            });
         }
     }
     getDayColumn(singleDay, index) {
         const colWidth = Utils.toInt(getScreenWidth() / 7),
             jdate = singleDay && singleDay.jdate,
-            isToday = jdate && jdate.Abs === Today.Abs,
+            isToday = jdate && Utils.isSameJdate(jdate, this.state.today),
             shabbos = jdate && jdate.DayOfWeek === 6 &&
                 jdate.getSedra(this.israel).map((s) =>
                     s.eng).join('\n'),
@@ -148,10 +180,11 @@ export default class MonthViewScreen extends React.Component {
             </View>
             <GestureRecognizer
                 style={{ flex: 1, backgroundColor: '#ddd' }}
-                onSwipeUp={this.goNext}
-                onSwipeDown={this.goPrev}
-                onSwipeLeft={this.goNext}
-                onSwipeRight={this.goPrev}>
+                config={{ velocityThreshold: 0.2, directionalOffsetThreshold: 40 }}
+                onSwipeUp={this.goNextYear}
+                onSwipeDown={this.goPrevYear}
+                onSwipeLeft={this.goNextMonth}
+                onSwipeRight={this.goPrevMonth}>
                 <Grid>
                     <Row containerStyle={{ height: 50 }}>
                         <Col style={styles.dayHeadView}>
@@ -186,7 +219,7 @@ export default class MonthViewScreen extends React.Component {
                         <Text style={styles.footerBarText}>Today</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.goPrev} style={styles.footerButton}>
+                <TouchableOpacity onPress={this.goPrevMonth} style={styles.footerButton}>
                     <View style={[styles.footerView, { borderRightWidth: 1 }]}>
                         <Icon iconStyle={styles.footerIcon} name='arrow-back' />
                         <Text style={styles.footerBarText}>Previous</Text>
@@ -198,14 +231,14 @@ export default class MonthViewScreen extends React.Component {
                         <Text style={styles.footerBarText}>This Month</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.goNext} style={styles.footerButton}>
+                <TouchableOpacity onPress={this.goNextMonth} style={styles.footerButton}>
                     <View style={[styles.footerView, { borderLeftWidth: 1 }]}>
                         <Icon iconStyle={styles.footerIcon} name='arrow-forward' />
                         <Text style={styles.footerBarText}>Next</Text>
                     </View>
                 </TouchableOpacity>
             </View>
-        </View>;
+        </View >;
     }
 }
 

@@ -4,8 +4,9 @@ import SingleDayDisplay from './SingleDayDisplay';
 import Login from './Login';
 import Flash from './Flash';
 import SideMenu from './SideMenu';
-import { isLargeScreen, log } from '../Code/GeneralUtils';
+import { isLargeScreen, log, goHomeToday, getTodayJdate } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
+import Utils from '../Code/JCal/Utils';
 import AppData from '../Code/Data/AppData';
 
 
@@ -26,6 +27,7 @@ export default class HomeScreen extends React.Component {
         this.updateAppData = this.updateAppData.bind(this);
         this._navigatedShowing = this._navigatedShowing.bind(this);
         this.prevDay = this.prevDay.bind(this);
+        this.nextDay = this.nextDay.bind(this);
         this.goToday = this.goToday.bind(this);
         this.scrollToTop = this.scrollToTop.bind(this);
 
@@ -43,9 +45,22 @@ export default class HomeScreen extends React.Component {
 
         //Every minute, we check if the current day has changed
         this.checkToday = setInterval(() => {
-            const today = new jDate();
-            if ((!this.state.today) || this.state.today.Abs !== today.Abs) {
-                this.setState({ today: today });
+            let { appData, today, systemDate, daysList, currDate } = this.state;
+            //Get the proper Jewish today for the current location
+            const nowJ = getTodayJdate(appData),
+                nowS = new Date();
+            if ((!Utils.isSameJdate(today, nowJ)) ||
+                (!Utils.isSameSdate(systemDate, nowS))) {
+                if (Utils.isSameJdate(currDate, today) &&
+                    (!Utils.isSameJdate(currDate, nowJ))) {
+                    daysList = this.getDaysList(nowJ);
+                    currDate = nowJ;
+                }
+                this.setState({
+                    today: nowJ,
+                    systemDate: nowS,
+                    daysList: daysList
+                });
             }
         }, 60000);
     }
@@ -61,6 +76,7 @@ export default class HomeScreen extends React.Component {
     componentWillUpdate(nextProps, nextState) {
         const prevAppData = this.state.appData,
             newAppData = nextState.appData;
+
         if (!(prevAppData || newAppData)) {
             log('REFRESHED :( - either new appdata or old appdata was nuthin`');
             return true;
@@ -105,7 +121,7 @@ export default class HomeScreen extends React.Component {
             log('REFRESHED :( - Probs were not all the same');
             return true;
         }
-        log('SAVED REFRESH!!! YIPEEEEEE!!');
+        log('Home Screen Refresh prevented');
         return false;
     }
     _handleAppStateChange = (nextAppState) => {
@@ -119,14 +135,39 @@ export default class HomeScreen extends React.Component {
         }
     }
     /**
-    * Recalculates each days data (such as occasions and problem onahs) for the state AppData object.
+    * Recalculates current data for the state AppData object.
     * This should be done after updating settings, occasions, entries or kavuahs.
     */
     updateAppData(appData) {
+        let { currDate, daysList, today } = this.state;
         //As the data has been changed, we need to recalculate the problem onahs.
-        const newProbs = appData.EntryList.getProblemOnahs(appData.KavuahList);
+        const newProbs = appData.EntryList.getProblemOnahs(appData.KavuahList),
+            lastEntry = appData.EntryList.lastRegularEntry(),
+            //Were we displaying "Today" before this refresh?
+            isToday = Utils.isSameJdate(currDate, today);
+
         appData.ProblemOnahs = newProbs;
-        this.setState({ appData: appData });
+
+        //In case the "Today" changed due to a Settings change etc.
+        if (isToday) {
+            //Get the proper Jewish today for the current location
+            today = getTodayJdate(appData);
+            currDate = today;
+            //If the previous "today" is not the same date as todays "today",
+            // we need to move "today" back up to the top of the list
+            if (!Utils.isSameJdate(daysList[0], currDate)) {
+                daysList = this.getDaysList(currDate);
+            }
+        }
+
+        this.setState({
+            appData: appData,
+            daysList: daysList,
+            lastEntryDate: lastEntry && lastEntry.date,
+            today: today,
+            currDate: currDate,
+            systemDate: new Date()
+        });
     }
     _initialShowing() {
         const today = new jDate();
@@ -141,7 +182,8 @@ export default class HomeScreen extends React.Component {
             appData: appData,
             today: today,
             currDate: today,
-            showFlash: true
+            showFlash: true,
+            refreshing: false
         };
 
         //Get the data from the database
@@ -149,28 +191,43 @@ export default class HomeScreen extends React.Component {
             if (!ad.Settings.requirePIN) {
                 this.setFlash();
             }
+            const lastEntry = ad.EntryList.lastRegularEntry(),
+                //As we now have a location, the current
+                //Jewish date may be different than the system date
+                today = getTodayJdate(ad),
+                daysList = Utils.isSameJdate(today, this.state.daysList[0]) ?
+                    this.state.daysList : this.getDaysList(today);
             this.setState({
                 appData: ad,
+                daysList: daysList,
+                today: today,
+                systemDate: new Date(),
+                currDate: today,
                 loadingDone: true,
-                showLogin: ad.Settings.requirePIN
+                showLogin: ad.Settings.requirePIN,
+                lastEntryDate: lastEntry && lastEntry.date
             });
         });
     }
     _navigatedShowing(params) {
         //As this screen was navigated to from another screen, we will use the original appData.
         //We also allow another screen to naviate to any date by supplying a currDate property in the navigate props.
-        const today = new jDate(),
-            appData = params.appData,
-            currDate = params.currDate || today;
+        const appData = params.appData,
+            today = getTodayJdate(appData),
+            currDate = params.currDate || today,
+            lastEntry = appData.EntryList.lastRegularEntry();
         //We don't need to use setState here as this function is only called from the constructor.
         this.state = {
             appData: appData,
             daysList: this.getDaysList(currDate),
             currDate: currDate,
             today: today,
+            systemDate: new Date(),
             showFlash: false,
             showLogin: false,
-            loadingDone: true
+            loadingDone: true,
+            refreshing: false,
+            lastEntryDate: lastEntry && lastEntry.date
         };
     }
     setFlash() {
@@ -185,14 +242,19 @@ export default class HomeScreen extends React.Component {
         this.setFlash();
     }
     scrollToTop() {
-        //scrollToOffset may not scroll all the way to the top without the setImmediate.
-        setImmediate(() => this.flatList.scrollToOffset({ x: 0, y: 0, animated: true }));
+        //scrollToOffset may not scroll all the way to the top without the setTimeout.
+        setTimeout(() => this.flatList.scrollToOffset({ x: 0, y: 0, animated: true }), 1);
     }
     _goToDate(jdate) {
-        if (jdate.Abs !== this.state.currDate.Abs) {
+        if (this.state.daysList > 6 &&
+            Utils.isSameJdate(jdate, this.state.today)) {
+            goHomeToday(this.navigator, this.state.appData);
+        }
+        else if (!Utils.isSameJdate(jdate, this.state.currDate)) {
             this.setState({
                 daysList: this.getDaysList(jdate),
-                currDate: jdate
+                currDate: jdate,
+                refreshing: false
             }, this.scrollToTop);
         }
         else {
@@ -208,7 +270,11 @@ export default class HomeScreen extends React.Component {
         });
     }
     prevDay() {
+        this.setState({ refreshing: true });
         this._goToDate(this.state.currDate.addDays(-1));
+    }
+    nextDay() {
+        this._goToDate(this.state.currDate.addDays(1));
     }
     goToday() {
         this._goToDate(this.state.today);
@@ -227,13 +293,18 @@ export default class HomeScreen extends React.Component {
      * @param {{item:jDate}} param0 item will be a single jDate
      */
     renderItem({ item }) {
+        const isToday = Utils.isSameJdate(this.state.today, item);
         return <SingleDayDisplay
             key={item.Abs}
             jdate={item}
-            isToday={this.state.today.Abs === item.Abs}
+            systemDate={this.state.systemDate}
+            isToday={isToday}
             appData={this.state.appData}
             navigator={this.navigator}
-            onUpdate={this.updateAppData} />;
+            onUpdate={this.updateAppData}
+            lastEntryDate={(this.state.lastEntryDate &&
+                item.Abs > this.state.lastEntryDate.Abs) &&
+                this.state.lastEntryDate} />;
     }
     render() {
         return (
@@ -250,14 +321,17 @@ export default class HomeScreen extends React.Component {
                                 currDate={this.state.currDate}
                                 isDataLoading={!this.state.loadingDone}
                                 onGoToday={this.goToday}
-                                onGoPrevious={this.prevDay} />
+                                onGoPrevious={this.prevDay}
+                                onGoNext={this.nextDay} />
                             <FlatList
                                 ref={flatList => this.flatList = flatList}
                                 style={{ flex: 1 }}
                                 data={this.state.daysList}
                                 renderItem={this.renderItem}
                                 keyExtractor={item => this.state.daysList.indexOf(item)}
-                                onEndReached={this._addDaysToEnd} />
+                                onEndReached={this._addDaysToEnd}
+                                onRefresh={this.prevDay}
+                                refreshing={this.state.refreshing} />
                         </View>
                         {this.state.showFlash &&
                             <Flash />

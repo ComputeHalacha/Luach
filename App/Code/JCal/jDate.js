@@ -517,8 +517,10 @@ export default class jDate {
 
         return { year, month, day };
     }
-
-    /**Gets the absolute date of the given javascript Date object.*/
+    /**
+     * Gets the absolute date of the given javascript Date object.
+     * @param {Date} date
+     */
     static absSd(date) {
         const msPerDay = 86400000, //The number of milliseconds per each day
             dateMs = date.valueOf() - (date.getTimezoneOffset() * 60000), //The number of ms since 1/1/1970.

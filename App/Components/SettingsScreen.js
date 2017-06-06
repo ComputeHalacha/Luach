@@ -48,7 +48,7 @@ export default class SettingsScreen extends Component {
     render() {
         const nums = range(1, 24),
             sets = this.state.appData && this.state.appData.Settings,
-            location = sets && sets.location || Location.getJerusalem(),
+            location = sets && sets.location || Location.getLakewood(),
             showOhrZeruah = setDefault(sets && sets.showOhrZeruah, true),
             keepThirtyOne = setDefault(sets && sets.keepThirtyOne, true),
             onahBeinunis24Hours = sets && sets.onahBeinunis24Hours,
@@ -153,14 +153,19 @@ export default class SettingsScreen extends Component {
                                 value={!!showEntryFlagOnHome} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Main Screen date navigation</Text>
+                            <Text style={GeneralStyles.label}>Calendar displays current:</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 15 }}>
-                                <Text>By Jewish Date</Text>
+                                <Text>Jewish Date</Text>
                                 <Switch style={GeneralStyles.switch}
                                     onValueChange={value => this.update('navigateBySecularDate', value)}
                                     value={!!navigateBySecularDate} />
-                                <Text>By Secular/Gregorian Date</Text>
+                                <Text>Secular Date</Text>
                             </View>
+                            {navigateBySecularDate &&
+                                <Text style={{ fontSize: 11, color: '#b55', paddingLeft: 10, paddingBottom: 5 }}>
+                                    Please Note: If the current time is between sunset and midnight, the current Jewish date will be incorrect.
+                                </Text>
+                            }
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Show explicitly ignored Kavuahs in the Kavuah list?</Text>

@@ -4,7 +4,7 @@ import DataUtils from './Data/DataUtils';
 
 export default class Settings {
     constructor(args) {
-        this.location = args.location || Location.getJerusalem();
+        this.location = args.location || Location.getLakewood();
         this.showOhrZeruah = setDefault(args.showOhrZeruah, true);
         this.keepThirtyOne = setDefault(args.keepThirtyOne, true);
         this.onahBeinunis24Hours = !!args.onahBeinunis24Hours;

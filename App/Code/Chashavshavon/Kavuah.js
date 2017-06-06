@@ -134,13 +134,14 @@ class Kavuah {
      */
     static getKavuahSuggestionList(entryList) {
         let kavuahList = [];
-        const queue = [];
+        const queue = [],
+            nonIgnoredEntryList = entryList.filter(e => !e.ignoreForKavuah);
 
-        for (let entry of entryList) {
+        for (let entry of nonIgnoredEntryList.filter(e => !e.ignoreForKavuah)) {
             //First we work out those Kavuahs that are not dependent on their entries being 3 in a row
-            kavuahList = kavuahList.concat(Kavuah.getDayOfMonthKavuah(entry, entryList))
-                .concat(Kavuah.getDilugDayOfMonthKavuah(entry, entryList))
-                .concat(Kavuah.getDayOfWeekKavuahs(entry, entryList));
+            kavuahList = kavuahList.concat(Kavuah.getDayOfMonthKavuah(entry, nonIgnoredEntryList))
+                .concat(Kavuah.getDilugDayOfMonthKavuah(entry, nonIgnoredEntryList))
+                .concat(Kavuah.getDayOfWeekKavuahs(entry, nonIgnoredEntryList));
 
             //For cheshboning out all other Kavuahs, we use 3 or 4 entries in a row.
             //First, add the current entry of the loop.
@@ -178,11 +179,11 @@ class Kavuah {
         //We look for an entry that is exactly one Jewish month later
         //Note, it is irrelevant if there were other entries in the interim
         const secondFind = entryList.find(en =>
-            en.onah.nightDay === entry.onah.nightDay && en.date.Abs === nextMonth.Abs);
+            en.onah.nightDay === entry.onah.nightDay && Utils.isSameJdate(en.date, nextMonth));
         if (secondFind) {
             //Now we look for another entry that is exactly two Jewish months later
             const thirdFind = entryList.find(en =>
-                en.onah.nightDay === entry.onah.nightDay && en.date.Abs === thirdMonth.Abs);
+                en.onah.nightDay === entry.onah.nightDay && Utils.isSameJdate(en.date,thirdMonth));
             if (thirdFind) {
                 list.push({
                     kavuah: new Kavuah(KavuahTypes.DayOfMonth, thirdFind, thirdMonth.Day, true),
@@ -241,7 +242,7 @@ class Kavuah {
                 //and that has the same interval from the previously found entry
                 const secondFind = entryList.find(en =>
                     en.nightDay === entry.nightDay &&
-                    en.date.Abs === nextDate.Abs);
+                    Utils.isSameJdate(en.date, nextDate));
                 if (secondFind) {
                     list.push({
                         kavuah: new Kavuah(KavuahTypes.DayOfWeek, secondFind, interval, false),

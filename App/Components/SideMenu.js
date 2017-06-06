@@ -22,7 +22,7 @@ import jDate from '../Code/JCal/jDate';
  * hideSettings
  * hideOccasions
  */
-export default class SideMenu extends React.Component {
+export default class SideMenu extends React.PureComponent {
     constructor(props) {
         super(props);
 
@@ -92,7 +92,8 @@ export default class SideMenu extends React.Component {
                     style={styles.sideButton}
                     underlayColor='#eef'
                     onPress={() => {
-                        if (!this.props.isDataLoading) this.navigate('FlaggedDates', params);
+                        if (!this.props.isDataLoading)
+                            this.navigate('FlaggedDates', params);
                     }}>
                     <View style={styles.menuView}>
                         <Icon iconStyle={styles.menuIcon} name='flag' />
@@ -105,10 +106,8 @@ export default class SideMenu extends React.Component {
                     style={styles.sideButton}
                     underlayColor='#eef'
                     onPress={() => {
-                        if (!this.props.isDataLoading) this.navigate('Entries', {
-                            ...params,
-                            currLocation: (this.props.appData && this.props.appData.Settings && this.props.appData.Settings.location) || Location.getJerusalem()
-                        });
+                        if (!this.props.isDataLoading)
+                            this.navigate('Entries', params);
                     }}>
                     <View style={styles.menuView}>
                         <Icon iconStyle={styles.menuIcon} name='list' />
@@ -121,7 +120,8 @@ export default class SideMenu extends React.Component {
                     style={styles.sideButton}
                     underlayColor='#eef'
                     onPress={() => {
-                        if (!this.props.isDataLoading) this.navigate('Kavuahs', params);
+                        if (!this.props.isDataLoading)
+                            this.navigate('Kavuahs', params);
                     }}>
                     <View style={styles.menuView}>
                         <Icon iconStyle={styles.menuIcon} name='device-hub' />
@@ -147,7 +147,8 @@ export default class SideMenu extends React.Component {
                     style={styles.sideButton}
                     underlayColor='#eef'
                     onPress={() => {
-                        if (!this.props.isDataLoading) this.navigate('Settings', params);
+                        if (!this.props.isDataLoading)
+                            this.navigate('Settings', params);
                     }}>
                     <View style={styles.menuView}>
                         <Icon iconStyle={styles.menuIcon} name='settings' />

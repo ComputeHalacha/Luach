@@ -1,7 +1,6 @@
 # Luach
-**VERY IMPORTANT NOTE!**
-The Luach Application is intented to be a helpful tool to keep track of a womens Halachic dates.
-***The Luach Application has no Halachic status whatsoever, and can not take the place of a Rabbinic authority in any matter***. If the app is relied upon for halachic matters in any shape or manner, there is a very high chance that severe trangressions of the laws of Taharas Hamishpacha will occur; many of which carry the penalty of *Kareis*.
+*The Luach Application is a React-Native project to keep track of a Jewish womens Halachic calendar.*
+
 ## **Entry**
 
 An Entry is a single seeing period.

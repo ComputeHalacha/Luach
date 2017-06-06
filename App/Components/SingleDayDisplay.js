@@ -9,10 +9,12 @@ import { UserOccasion } from '../Code/JCal/UserOccasion';
  *
  * PROPS ------------------------------
  *   jdate
+ *   sdate - only supplied if there is a chance that the jdate is after sunset
  *   isToday
  *   appData
  *   navigator
  *   onUpdate
+ *   lastEntryDate
  */
 export default class SingleDayDisplay extends Component {
     constructor(props) {
@@ -64,7 +66,7 @@ export default class SingleDayDisplay extends Component {
             log('Refreshed Single Day:( - Probs were not all the same');
             return true;
         }
-        log('SAVED REFRESH FOR SINGLE DAY YIPEEEEEE!!');
+        log('Single Day Refresh Prevented');
         return false;
     }
     newEntry() {
@@ -85,16 +87,29 @@ export default class SingleDayDisplay extends Component {
     changeLocation() {
         this.navigator.navigate('FindLocation', this.props);
     }
+    editEntry(entry) {
+        this.navigator.navigate('NewEntry', { entry, ...this.props });
+    }
     render() {
-        const { appData, jdate, isToday } = this.props,
+        const { appData, jdate, isToday, systemDate } = this.props,
             location = appData.Settings.location,
             flag = appData.Settings.showProbFlagOnHome &&
-                appData.ProblemOnahs.some(po => po.jdate.Abs === jdate.Abs),
+                appData.ProblemOnahs.some(po => Utils.isSameJdate(po.jdate, jdate)),
             occasions = appData.UserOccasions.length > 0 ?
                 UserOccasion.getOccasionsForDate(jdate, appData.UserOccasions) : [],
             entries = appData.Settings.showEntryFlagOnHome ?
-                appData.EntryList.list.filter(e => e.date.Abs === jdate.Abs) : [],
-            sdate = jdate.getDate(),
+                appData.EntryList.list.filter(e => Utils.isSameJdate(e.date, jdate)) : [],
+            sdate = (isToday && systemDate) ? systemDate : jdate.getDate(),
+            isDayOff = isToday && systemDate && (systemDate.getDate() !== jdate.getDate().getDate()),
+            todayText = isToday && <Text style={styles.todayText}>
+                {`TODAY${isDayOff ? '*' : ''}`}</Text>,
+            jdateOffText = isDayOff &&
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={styles.dayOffMessage}>
+                        {'* NOTE: As it is currently after Sunset,\n' +
+                            `  the correct Jewish Day is ${Utils.dowEng[jdate.DayOfWeek]}.`}
+                    </Text>
+                </View>,
             dailyInfos = jdate.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
             suntimes = jdate.getSunriseSunset(location),
@@ -105,8 +120,21 @@ export default class SingleDayDisplay extends Component {
             occasionText = occasions && occasions.length > 0 ?
                 occasions.map((o, i) => <Text style={styles.occasionText} key={i}>{o.title}</Text>) : null,
             entriesText = entries && entries.length > 0 &&
-                entries.map((e, i) => (<Text style={styles.entriesText} key={i}>{e.toKnownDateString()}</Text>)),
-            todayText = isToday ? (<Text style={styles.todayText}>TODAY</Text>) : null;
+                entries.map((e, i) => (
+                    <TouchableOpacity key={i} onPress={() => this.editEntry(e)}>
+                        <Text style={styles.entriesText}>{e.toKnownDateString()}</Text>
+                    </TouchableOpacity>));
+        let daysSinceLastEntry;
+        if (appData.Settings.showEntryFlagOnHome && this.props.lastEntryDate) {
+            const dayNum = this.props.lastEntryDate.diffDays(jdate) + 1;
+            if (dayNum > 1) {
+                daysSinceLastEntry =
+                    <View style={styles.additionsViews}>
+                        <Text style={{ fontSize: 10 }}>{Utils.toSuffixed(dayNum) +
+                            ' day of last Entry'}</Text>
+                    </View>;
+            }
+        }
         return (
             <View
                 style={[styles.container, {
@@ -125,7 +153,7 @@ export default class SingleDayDisplay extends Component {
                             {jdate.toString()}</Text>
                         <Text>{'\n'}</Text>
                         <Text style={styles.dateEng}>
-                            {Utils.toStringDate(sdate, true)}</Text>
+                            {Utils.toStringDate(sdate, !isDayOff)}</Text>
                     </Text>
                     {dailyInfoText}
                     <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
@@ -179,6 +207,7 @@ export default class SingleDayDisplay extends Component {
                             </View>
                         </TouchableWithoutFeedback>
                     }
+                    {daysSinceLastEntry}
                     {occasions && occasions.length > 0 &&
                         <View style={styles.additionsViews}>
                             {occasionText}
@@ -203,6 +232,7 @@ export default class SingleDayDisplay extends Component {
                             onPress={this.newOccasion} />
                     </View>
                 </View>
+                {jdateOffText}
             </View >
         );
     }
@@ -269,5 +299,12 @@ const styles = StyleSheet.create({
         color: '#080',
         fontWeight: 'bold',
         padding: 4
+    },
+    dayOffMessage: {
+        fontSize: 11,
+        color: '#955',
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingBottom: 5
     }
 });

@@ -52,6 +52,5 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 .vscode
-/LatestAPK
 android/gradle.properties
-/*.apk
+*.apk

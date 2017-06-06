@@ -4,14 +4,18 @@ import EntryList from '../Chashavshavon/EntryList';
 import { error, warn } from '../GeneralUtils';
 
 /**
- * List of setting fields that have been added after the initial app launch.
+ * List of fields that have been added after the initial app launch.
  * Any that do not yet exist, will be added to the db schema during initial loading.
  */
-const addedSettingsFields = [
+const addedFields = [
     //Added 5/10/17
-    { name: 'keepThirtyOne', type: 'BOOLEAN', allowNull: false, defaultValue: '1' },
+    { table: 'settings', name: 'keepThirtyOne', type: 'BOOLEAN', allowNull: false, defaultValue: '1' },
     //Added 5/28/17
-    { name: 'showIgnoredKavuahs', type: 'BOOLEAN', allowNull: true },
+    { table: 'settings', name: 'showIgnoredKavuahs', type: 'BOOLEAN', allowNull: true },
+    //Added 6/1/17
+    { table: 'entries', name: 'ignoreForKavuah', type: 'BOOLEAN', allowNull: true },
+    { table: 'entries', name: 'ignoreForFlaggedDates', type: 'BOOLEAN', allowNull: true },
+    { table: 'entries', name: 'comments', type: 'VARCHAR (500)', allowNull: true },
 ];
 
 export default class AppData {
@@ -40,16 +44,31 @@ export default class AppData {
     static setAppData(ad) {
         global.GlobalAppData = ad;
     }
+    /**
+     * Update the schema of the local database file.
+     * Any new fields that do not yet exist, will be added to the db schema.
+     */
     static upgradeDatabase() {
-        //Add any new settings that were added after the last update.
-        DataUtils.GetTableFields('settings')
-            .then(fields => {
-                for (let asf of addedSettingsFields) {
-                    if (!fields.some(f => f.name === asf.name)) {
-                        DataUtils.AddSettingsField(asf);
+        //First get a list of tables that may need updating.
+        const tablesToChange = [];
+        for (let af of addedFields) {
+            if (!tablesToChange.includes(af.table)) {
+                tablesToChange.push(af.table);
+            }
+        }
+        for (let tbl of tablesToChange) {
+            //Get the new fields for this table.
+            const newFields = addedFields.filter(af => af.table === tbl);
+            //Add any new fields that were added after the last update.
+            DataUtils.GetTableFields(tbl)
+                .then(fields => {
+                    for (let nf of newFields) {
+                        if (!fields.some(f => f.name === nf.name)) {
+                            DataUtils.AddTableField(nf);
+                        }
                     }
-                }
-            });
+                });
+        }
     }
     static async fromDatabase() {
         let settings, occasions, entryList, kavuahList, problemOnahs;

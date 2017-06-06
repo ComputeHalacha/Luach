@@ -6,7 +6,6 @@ import { isValidDate } from '../GeneralUtils';
  * The astronomical and mathematical calculations were directly adapted from the excellent
  * Jewish calendar calculation in C# Copyright © by Ulrich and Ziporah Greve (2005) */
 export default class Zmanim {
-
     //Gets sunrise and sunset time for given date.
     //Accepts a javascript Date object, a string for creating a javascript date object or a jDate object.
     //Returns { sunrise: { hour: 6, minute: 18 }, sunset: { hour: 19, minute: 41 } }
