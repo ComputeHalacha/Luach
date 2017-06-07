@@ -142,7 +142,8 @@ export default class HomeScreen extends React.Component {
         let { currDate, daysList, today } = this.state;
         //As the data has been changed, we need to recalculate the problem onahs.
         const newProbs = appData.EntryList.getProblemOnahs(appData.KavuahList),
-            lastEntry = appData.EntryList.lastRegularEntry(),
+            lastRegularEntry = appData.EntryList.lastRegularEntry(),
+            lastEntry = appData.EntryList.lastEntry(),
             //Were we displaying "Today" before this refresh?
             isToday = Utils.isSameJdate(currDate, today);
 
@@ -163,7 +164,8 @@ export default class HomeScreen extends React.Component {
         this.setState({
             appData: appData,
             daysList: daysList,
-            lastEntryDate: lastEntry && lastEntry.date,
+            lastRegularEntry: lastRegularEntry,
+            lastEntry: lastEntry,
             today: today,
             currDate: currDate,
             systemDate: new Date()
@@ -191,7 +193,8 @@ export default class HomeScreen extends React.Component {
             if (!ad.Settings.requirePIN) {
                 this.setFlash();
             }
-            const lastEntry = ad.EntryList.lastRegularEntry(),
+            const lastRegularEntry = ad.EntryList.lastRegularEntry(),
+                lastEntry = ad.EntryList.lastEntry(),
                 //As we now have a location, the current
                 //Jewish date may be different than the system date
                 today = getTodayJdate(ad),
@@ -205,7 +208,8 @@ export default class HomeScreen extends React.Component {
                 currDate: today,
                 loadingDone: true,
                 showLogin: ad.Settings.requirePIN,
-                lastEntryDate: lastEntry && lastEntry.date
+                lastEntry: lastEntry,
+                lastRegularEntry: lastRegularEntry
             });
         });
     }
@@ -215,7 +219,8 @@ export default class HomeScreen extends React.Component {
         const appData = params.appData,
             today = getTodayJdate(appData),
             currDate = params.currDate || today,
-            lastEntry = appData.EntryList.lastRegularEntry();
+            lastRegularEntry = appData.EntryList.lastRegularEntry(),
+            lastEntry = appData.EntryList.lastEntry();
         //We don't need to use setState here as this function is only called from the constructor.
         this.state = {
             appData: appData,
@@ -227,7 +232,8 @@ export default class HomeScreen extends React.Component {
             showLogin: false,
             loadingDone: true,
             refreshing: false,
-            lastEntryDate: lastEntry && lastEntry.date
+            lastRegularEntry: lastRegularEntry,
+            lastEntry: lastEntry
         };
     }
     setFlash() {
@@ -293,7 +299,11 @@ export default class HomeScreen extends React.Component {
      * @param {{item:jDate}} param0 item will be a single jDate
      */
     renderItem({ item }) {
-        const isToday = Utils.isSameJdate(this.state.today, item);
+        const isToday = Utils.isSameJdate(this.state.today, item),
+            lastRegularEntry = this.state.lastRegularEntry,
+            lastEntry = this.state.lastEntry,
+            lastEntryDate = lastRegularEntry && (item.Abs > lastRegularEntry.date.Abs) && lastRegularEntry.date,
+            isHefeskDay = lastEntry && Utils.isSameJdate(item, lastEntry.hefsekDate);
         return <SingleDayDisplay
             key={item.Abs}
             jdate={item}
@@ -302,9 +312,8 @@ export default class HomeScreen extends React.Component {
             appData={this.state.appData}
             navigator={this.navigator}
             onUpdate={this.updateAppData}
-            lastEntryDate={(this.state.lastEntryDate &&
-                item.Abs > this.state.lastEntryDate.Abs) &&
-                this.state.lastEntryDate} />;
+            lastEntryDate={lastEntryDate}
+            isHefeskDay={isHefeskDay} />;
     }
     render() {
         return (

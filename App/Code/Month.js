@@ -60,7 +60,7 @@ export default class Month {
     /**
      * Gets a 2 dimentional array for all the days in the month grouped by week.
      * Format is [weeks][days] where days are each an object:
-     * { jdate, sdate, hasEntryNight, hasEntryDay, hasProbNight, hasProbDay }
+     * { jdate, sdate, hasEntryNight, hasEntryDay, hasProbNight, hasProbDay, isHefeskDay }
      */
     getAllDays() {
         return this.isJdate ?
@@ -76,14 +76,16 @@ export default class Month {
             hasEntryDay = this.appData.EntryList.list.some(e =>
                 Utils.isSameJdate(e.date, jdate) && e.nightDay === NightDay.Day),
             hasProbDay = this.appData.ProblemOnahs.some(po =>
-                Utils.isSameJdate(po.jdate, jdate) && po.nightDay === NightDay.Day);
+                Utils.isSameJdate(po.jdate, jdate) && po.nightDay === NightDay.Day),
+            isHefeskDay = Utils.isSameJdate(jdate, this.appData.EntryList.lastEntry().hefsekDate);
         return {
             jdate,
             sdate,
             hasEntryNight,
             hasEntryDay,
             hasProbNight,
-            hasProbDay
+            hasProbDay,
+            isHefeskDay
         };
     }
     getAllDaysJdate() {

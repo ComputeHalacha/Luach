@@ -90,6 +90,9 @@ export default class Entry {
     get dayOfWeek() {
         return this.date.DayOfWeek;
     }
+    get hefsekDate() {
+        return this.date.addDays(4);
+    }
     get hasId() {
         return !!this.entryId;
     }

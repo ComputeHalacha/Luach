@@ -83,13 +83,25 @@ export default class EntryList {
         return this.list.slice().reverse();
     }
     /**
+     * Returns the latest Entry
+     */
+    lastEntry() {
+        let latest;
+        for (let entry of this.list) {
+            if (((!latest) || entry.date.Abs > latest.date.Abs)) {
+                latest = entry;
+            }
+        }
+        return latest;
+    }
+    /**
      * Returns the latest Entry that isn't set to ignore for Flagged Dates
      */
     lastRegularEntry() {
         let latest;
         for (let entry of this.list) {
             if ((!entry.ignoreForFlaggedDates) &&
-                ((!latest) ||entry.date.Abs > latest.date.Abs)) {
+                ((!latest) || entry.date.Abs > latest.date.Abs)) {
                 latest = entry;
             }
         }

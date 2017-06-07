@@ -121,7 +121,8 @@ export default class MonthViewScreen extends React.Component {
                         }
                     }}>
                     <View style={[styles.singleDayView, {
-                        backgroundColor: ((holiday || shabbos) ? '#eef' : '#fff'),
+                        backgroundColor: singleDay.isHefeskDay ? '#f1fff1' :
+                            ((holiday || shabbos) ? '#eef' : '#fff'),
                         borderColor: isToday ? '#55f' : '#ddd',
                         borderWidth: isToday ? 2 : 1,
                         borderRadius: 5

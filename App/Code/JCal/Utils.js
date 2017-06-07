@@ -303,7 +303,7 @@ export default class Utils {
      * @param {Date} sdate2
      */
     static isSameSdate(sdate1, sdate2) {
-        return sdate1.toDateString() === sdate2.toDateString();
+        return sdate1 && sdate2 && sdate1.toDateString() === sdate2.toDateString();
     }
     /**
      * Compares two jDates to se if they both refer to the same day - time is ignored.
@@ -311,7 +311,7 @@ export default class Utils {
      * @param {jDate} jdate2
      */
     static isSameJdate(jdate1, jdate2) {
-        return jdate1.Abs && jdate2.Abs && jdate1.Abs === jdate2.Abs;
+        return jdate1 && jdate2 && jdate1.Abs && jdate2.Abs && jdate1.Abs === jdate2.Abs;
     }
     /**
      * Determines if the time of the given Date() is after sunset at the given Location
@@ -330,7 +330,7 @@ export default class Utils {
      */
     static nowAtLocation(location) {
         const now = new Date(),
-        isAfterSunset = Utils.isAfterSunset(now, location);
+            isAfterSunset = Utils.isAfterSunset(now, location);
         return new jDate(jDate.absSd(now) + (isAfterSunset ? 1 : 0));
     }
     /**

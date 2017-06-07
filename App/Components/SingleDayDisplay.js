@@ -15,6 +15,7 @@ import { UserOccasion } from '../Code/JCal/UserOccasion';
  *   navigator
  *   onUpdate
  *   lastEntryDate
+ *   isHefeskDay
  */
 export default class SingleDayDisplay extends Component {
     constructor(props) {
@@ -140,7 +141,9 @@ export default class SingleDayDisplay extends Component {
                 style={[styles.container, {
                     backgroundColor:
                     (entries && entries.length > 0 ? '#fee' :
-                        (flag ? '#fe9' : (isToday ? '#eef' : '#fff')))
+                        (flag ? '#fe9' :
+                            (this.props.isHefeskDay ? '#f1fff1' :
+                                (isToday ? '#eef' : '#fff'))))
                 }]}>
                 <View style={{ margin: 15, flex: 1 }}>
                     <View style={{ flexDirection: 'row' }}>
