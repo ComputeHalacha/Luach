@@ -154,8 +154,10 @@ export default class EntryScreen extends Component {
                             nightDay={entry => entry.nightDay}
                             title={entry => entry.toLongString()}
                             emptyListText='There are no Entries in the list'
-                            secondSection={entry =>
-                                <View style={GeneralStyles.inItemButtonList}>
+                            secondSection={entry => {
+                                const hasKavuahs = this.state.appData.KavuahList.some(k =>
+                                    k.settingEntry.isSameEntry(entry));
+                                return <View style={GeneralStyles.inItemButtonList}>
                                     <TouchableHighlight
                                         underlayColor='#696'
                                         style={{ flex: 1 }}
@@ -169,23 +171,25 @@ export default class EntryScreen extends Component {
                                             <Text style={GeneralStyles.inItemLinkText}>Go to Date</Text>
                                         </View>
                                     </TouchableHighlight>
-                                    <TouchableHighlight
-                                        underlayColor='#788778'
-                                        style={{ flex: 1 }}
-                                        onPress={() => this.navigate('NewEntry', {
-                                            entry: entry,
-                                            appData: this.state.appData,
-                                            onUpdate: this.update
-                                        })}>
-                                        <View style={{ alignItems: 'center' }}>
-                                            <Icon
-                                                name='edit'
-                                                color='#99a999'
-                                                size={18}
-                                                containerStyle={GeneralStyles.inItemLinkIcon} />
-                                            <Text style={GeneralStyles.inItemLinkText}>Edit</Text>
-                                        </View>
-                                    </TouchableHighlight>
+                                    {(!hasKavuahs) &&
+                                        <TouchableHighlight
+                                            underlayColor='#788778'
+                                            style={{ flex: 1 }}
+                                            onPress={() => this.navigate('NewEntry', {
+                                                entry: entry,
+                                                appData: this.state.appData,
+                                                onUpdate: this.update
+                                            })}>
+                                            <View style={{ alignItems: 'center' }}>
+                                                <Icon
+                                                    name='edit'
+                                                    color='#99a999'
+                                                    size={18}
+                                                    containerStyle={GeneralStyles.inItemLinkIcon} />
+                                                <Text style={GeneralStyles.inItemLinkText}>Edit</Text>
+                                            </View>
+                                        </TouchableHighlight>
+                                    }
                                     <TouchableHighlight
                                         onPress={() => this.newKavuah(entry)}
                                         underlayColor='#aaf'
@@ -212,7 +216,8 @@ export default class EntryScreen extends Component {
                                             <Text style={GeneralStyles.inItemLinkText}>Remove</Text>
                                         </View>
                                     </TouchableHighlight>
-                                </View>}
+                                </View>;
+                            }}
                         />
                     </ScrollView>
                 </View>

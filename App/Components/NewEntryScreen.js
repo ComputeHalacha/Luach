@@ -34,14 +34,27 @@ export default class NewEntry extends React.Component {
     constructor(props) {
         super(props);
         const navigation = this.props.navigation;
+
+        this.navigate = navigation.navigate;
+        this.dispatch = navigation.dispatch;
+
         const { entry, appData, onUpdate } = navigation.state.params,
             location = appData.Settings.location;
 
         let jdate, isNight;
         if (entry) {
-            this.entry = entry;
-            jdate = entry.date;
-            isNight = entry.nightDay === NightDay.Night;
+            const hasKavuah = appData.KavuahList.some(k =>
+                k.settingEntry.isSameEntry(entry));
+            if (hasKavuah) {
+                popUpMessage('This Entry has been set as "Setting Entry" for a Kavuah and can not be changed.',
+                    'Entry cannot be changed');
+                this.dispatch(NavigationActions.back());
+            }
+            else {
+                this.entry = entry;
+                jdate = entry.date;
+                isNight = entry.nightDay === NightDay.Night;
+            }
         }
         else {
             jdate = navigation.state.params.jdate;
@@ -61,8 +74,6 @@ export default class NewEntry extends React.Component {
         };
 
 
-        this.navigate = navigation.navigate;
-        this.dispatch = navigation.dispatch;
 
         this.addEntry = this.addEntry.bind(this);
         this.updateEntry = this.updateEntry.bind(this);
