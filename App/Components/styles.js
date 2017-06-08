@@ -36,7 +36,12 @@ const GeneralStyles = StyleSheet.create({
     textInput: {
         margin: 5,
         alignSelf: 'flex-start',
-        width: '95%'
+        width: '95%',
+        height: 40,
+        borderWidth: 1,
+        borderColor: '#cce',
+        borderRadius: 5,
+        padding:3
     },
     buttonList: {
         flex: 1,

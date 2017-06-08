@@ -9,7 +9,7 @@ import DataUtils from '../Code/Data/DataUtils';
 
 export default class FindLocation extends Component {
     static navigationOptions = {
-        title: 'Choose your location',
+        title: 'Find Location',
     };
     constructor(props) {
         super(props);
@@ -51,7 +51,7 @@ export default class FindLocation extends Component {
         let message, color;
         if (this.state.list === null) {
             //initial state of the screen
-            message = 'Enter any part of a location name to search for...';
+            message = 'Your current location is ' + this.appData.Settings.location.Name;
             color = '#77b';
         }
         else if (this.state.list.length === 0) {
@@ -74,10 +74,16 @@ export default class FindLocation extends Component {
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Search Location List</Text>
-                        <TextInput style={GeneralStyles.textInput}
-                            autoFocus={true}
-                            placeholder='Search for a location'
-                            onEndEditing={value => this.findLocation(value)} />
+                        <View style={{ flexDirection: 'row' }}>
+                            <TextInput style={[GeneralStyles.textInput, { width: '85%' }]}
+                                autoFocus={true}
+                                placeholder='Enter search text...'
+                                accessibilityLabel='Search for a location'
+                                autoCorrect={false}
+                                spellCheck={false}
+                                onEndEditing={value => this.findLocation(value)} />
+                            <Icon name='search' type="ionicons" color='#aac' />
+                        </View>
                     </View>
                     {(message &&
                         <View style={styles.messageView}>
@@ -122,7 +128,7 @@ const styles = StyleSheet.create({
     messageText: {
         fontSize: 16,
         marginBottom: '20%',
-        marginLeft:'5%',
+        marginLeft: '5%',
     },
     messageImage: {
         width: 150,

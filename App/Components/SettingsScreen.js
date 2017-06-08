@@ -80,9 +80,9 @@ export default class SettingsScreen extends Component {
                                     onUpdate: this.saveAndUpdate,
                                     appData: this.state.appData
                                 })}>
-                                <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Icon name='edit-location' color='#484' size={35} />
-                                    <Text style={GeneralStyles.textInput}>
+                                    <Text>
                                         {location.Name}
                                     </Text>
                                 </View>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { AppState, FlatList, View } from 'react-native';
+import { AppState, FlatList, View, Platform } from 'react-native';
+import { Icon } from 'react-native-elements';
 import SingleDayDisplay from './SingleDayDisplay';
 import Login from './Login';
 import Flash from './Flash';
@@ -11,9 +12,22 @@ import AppData from '../Code/Data/AppData';
 
 
 export default class HomeScreen extends React.Component {
-    static navigationOptions = () => ({
-        header: null
-    });
+    static navigationOptions = ({ navigation }) => (
+        //Only IOS gets the header on the today screen.
+        Platform.OS === 'android' ?
+            { header: null } :
+            {
+                title: 'Luach',
+                headerRight: <Icon name='calendar'
+                    type='octicon'
+                    color='#77c'
+                    onPress={() => AppData.getAppData().then(ad =>
+                        navigation.navigate('MonthView',
+                            {
+                                appData: ad,
+                                jdate: new jDate()
+                            }))} />
+            });
 
     constructor(props) {
         super(props);

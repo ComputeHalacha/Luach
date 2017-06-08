@@ -28,6 +28,11 @@ export default class NewOccasion extends React.Component {
         this.addOccasion = this.addOccasion.bind(this);
     }
     addOccasion() {
+        if (this.state.title.length < 1) {
+            popUpMessage(`Please enter the title of this Event or Occasion.`,
+                'Add occasion');
+            return;
+        }
         const ad = this.state.appData,
             occasion = new UserOccasion(
                 this.state.title,
@@ -66,7 +71,7 @@ export default class NewOccasion extends React.Component {
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Occasion Title</Text>
-                        <TextInput
+                        <TextInput style={GeneralStyles.textInput}
                             autoFocus
                             placeholder='Occasion Title'
                             value={this.state.title}
@@ -75,6 +80,8 @@ export default class NewOccasion extends React.Component {
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Occasion Type</Text>
                         <Picker style={GeneralStyles.picker}
+                            accessibilityLabel='Select event type'
+                            prompt='Select event type'
                             selectedValue={this.state.occasionType || 0}
                             onValueChange={value => this.setState({ occasionType: value })}>
                             <Picker.Item label={`One Time Occasion on ${muxedDate}`}
@@ -91,7 +98,7 @@ export default class NewOccasion extends React.Component {
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Comments</Text>
-                        <TextInput
+                        <TextInput style={[GeneralStyles.textInput, { height: 100 }]}
                             multiline
                             placeholder='Comments'
                             value={this.state.comment}

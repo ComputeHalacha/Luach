@@ -9,8 +9,7 @@ import { GeneralStyles } from './styles';
 
 export default class KavuahScreen extends Component {
     static navigationOptions = {
-        title: 'List of Kavuahs',
-        right: <Icon name='add-circle' onPress={this.newKavuah} />,
+        title: 'List of Kavuahs'
     };
     constructor(props) {
         super(props);
