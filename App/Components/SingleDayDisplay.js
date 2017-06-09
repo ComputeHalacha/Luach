@@ -91,6 +91,9 @@ export default class SingleDayDisplay extends Component {
     editEntry(entry) {
         this.navigator.navigate('NewEntry', { entry, ...this.props });
     }
+    editOccasion(occasion) {
+        this.navigator.navigate('NewOccasion', { occasion, ...this.props });
+    }
     render() {
         const { appData, jdate, isToday, systemDate } = this.props,
             location = appData.Settings.location,
@@ -118,8 +121,11 @@ export default class SingleDayDisplay extends Component {
                 Utils.getTimeString(suntimes.sunrise) : 'Sun does not rise',
             sunset = suntimes && suntimes.sunset ?
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
-            occasionText = occasions && occasions.length > 0 ?
-                occasions.map((o, i) => <Text style={styles.occasionText} key={i}>{o.title}</Text>) : null,
+            occasionText = occasions && occasions.length > 0 &&
+                occasions.map((o, i) =>
+                    <TouchableOpacity key={i} onPress={() => this.editOccasion(o)}>
+                        <Text style={styles.occasionText} key={i}>{o.title}</Text>
+                    </TouchableOpacity>),
             entriesText = entries && entries.length > 0 &&
                 entries.map((e, i) => (
                     <TouchableOpacity key={i} onPress={() => this.editEntry(e)}>
@@ -287,7 +293,6 @@ const styles = StyleSheet.create({
     },
     btn: { fontSize: 7, height: 25 },
     additionsViews: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 5,
@@ -299,7 +304,7 @@ const styles = StyleSheet.create({
         padding: 4
     },
     occasionText: {
-        color: '#080',
+        color: '#d87',
         fontWeight: 'bold',
         padding: 4
     },

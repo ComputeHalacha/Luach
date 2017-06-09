@@ -77,7 +77,8 @@ export default class Month {
                 Utils.isSameJdate(e.date, jdate) && e.nightDay === NightDay.Day),
             hasProbDay = this.appData.ProblemOnahs.some(po =>
                 Utils.isSameJdate(po.jdate, jdate) && po.nightDay === NightDay.Day),
-            isHefeskDay = Utils.isSameJdate(jdate, this.appData.EntryList.lastEntry().hefsekDate);
+            isHefeskDay = this.appData.EntryList.list.length > 0 &&
+                Utils.isSameJdate(jdate, this.appData.EntryList.lastEntry().hefsekDate);
         return {
             jdate,
             sdate,
