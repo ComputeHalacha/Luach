@@ -1,5 +1,6 @@
 import SQLite from 'react-native-sqlite-storage';
 import { isNumber, log, error, warn } from '../GeneralUtils';
+import AppData from './AppData';
 import jDate from '../JCal/jDate';
 import Settings from '../Settings';
 import Location from '../JCal/Location';
@@ -78,6 +79,7 @@ export default class DataUtils {
                 settings.requirePIN,
                 settings.PIN
             ])
+            .then(() => AppData.updateGlobalProbs())
             .catch(err => {
                 warn('Error trying to enter settings into the database.');
                 error(err);
@@ -249,6 +251,7 @@ export default class DataUtils {
                 [...params, kavuah.kavuahId])
                 .then(() => {
                     log(`Updated Kavuah Id ${kavuah.kavuahId.toString()}`);
+                    AppData.updateGlobalProbs();
                 })
                 .catch(err => {
                     warn(`Error trying to update Kavuah Id ${kavuah.kavuahId.toString()} to the database.`);
@@ -265,7 +268,10 @@ export default class DataUtils {
                         [ignore])
                     VALUES (?,?,?,?,?,?)`,
                 params)
-                .then(results => kavuah.kavuahId = results.id)
+                .then(results => {
+                    kavuah.kavuahId = results.id;
+                    AppData.updateGlobalProbs();
+                })
                 .catch(err => {
                     warn('Error trying to insert kavuah into the database.');
                     error(err);
@@ -277,6 +283,7 @@ export default class DataUtils {
             throw 'Kavuahs can only be deleted from the database if they have an id';
         }
         await DataUtils._executeSql('DELETE from kavuahs where kavuahId=?', [kavuah.kavuahId])
+            .then(() => AppData.updateGlobalProbs())
             .catch(err => {
                 warn(`Error trying to delete kavuah id ${kavuah.kavuahId} from the database`);
                 error(err);
@@ -294,6 +301,7 @@ export default class DataUtils {
                     entry.entryId
                 ]).then(() => {
                     log(`Updated Entry Id ${entry.entryId.toString()}`);
+                    AppData.updateGlobalProbs();
                 })
                 .catch(err => {
                     warn(`Error trying to update entry id ${entry.entryId.toString()} to the database.`);
@@ -308,8 +316,10 @@ export default class DataUtils {
                     entry.ignoreForFlaggedDates,
                     entry.ignoreForKavuah,
                     entry.comments
-                ]).then(results =>
-                    entry.entryId = results.id)
+                ]).then(results => {
+                    entry.entryId = results.id;
+                    AppData.updateGlobalProbs();
+                })
                 .catch(err => {
                     warn('Error trying to insert entry into the database.');
                     error(err);
@@ -321,6 +331,7 @@ export default class DataUtils {
             throw 'Entries can only be deleted from the database if they have an id';
         }
         await DataUtils._executeSql('DELETE from entries where entryId=?', [entry.entryId])
+            .then(() => AppData.updateGlobalProbs())
             .catch(err => {
                 warn(`Error trying to delete entry id ${entry.entryId} from the database`);
                 error(err);

@@ -154,14 +154,10 @@ export default class HomeScreen extends React.Component {
     */
     updateAppData(appData) {
         let { currDate, daysList, today } = this.state;
-        //As the data has been changed, we need to recalculate the problem onahs.
-        const newProbs = appData.EntryList.getProblemOnahs(appData.KavuahList),
-            lastRegularEntry = appData.EntryList.lastRegularEntry(),
+        const lastRegularEntry = appData.EntryList.lastRegularEntry(),
             lastEntry = appData.EntryList.lastEntry(),
             //Were we displaying "Today" before this refresh?
             isToday = Utils.isSameJdate(currDate, today);
-
-        appData.ProblemOnahs = newProbs;
 
         //In case the "Today" changed due to a Settings change etc.
         if (isToday) {

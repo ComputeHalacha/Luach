@@ -41,6 +41,8 @@ export default class NewEntry extends React.Component {
         const { entry, appData, onUpdate } = navigation.state.params,
             location = appData.Settings.location;
 
+        this.onUpdate = onUpdate;
+
         let jdate, isNight;
         if (entry) {
             const hasKavuah = appData.KavuahList.some(k =>
@@ -60,8 +62,6 @@ export default class NewEntry extends React.Component {
             jdate = navigation.state.params.jdate;
             isNight = Utils.isAfterSunset(new Date(), location);
         }
-
-        this.onUpdate = onUpdate;
 
         this.state = {
             appData: appData,

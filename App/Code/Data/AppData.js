@@ -33,6 +33,13 @@ export default class AppData {
         this.KavuahList = kavuahList || [];
         this.ProblemOnahs = problemOnahs || [];
     }
+    updateProbs() {
+        let probs = [];
+        if (this.EntryList.list.length > 0) {
+            probs = this.EntryList.getProblemOnahs(this.KavuahList);
+        }
+        this.ProblemOnahs = probs;
+    }
     static async getAppData() {
         if (!global.GlobalAppData) {
             await AppData.fromDatabase().then(ad => {
@@ -43,6 +50,11 @@ export default class AppData {
     }
     static setAppData(ad) {
         global.GlobalAppData = ad;
+    }
+    static updateGlobalProbs() {
+        AppData.getAppData().then(appData => {
+            appData.updateProbs(appData);
+        });
     }
     /**
      * Update the schema of the local database file.
@@ -95,6 +107,7 @@ export default class AppData {
         await DataUtils.GetAllKavuahs(entryList)
             .then(k => {
                 kavuahList = k;
+                //After getting all the data, the problem onahs are set.
                 problemOnahs = entryList.getProblemOnahs(kavuahList);
             })
             .catch(err => {
