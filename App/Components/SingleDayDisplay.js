@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
+import Zmanim from '../Code/JCal/Zmanim';
 import { log } from '../Code/GeneralUtils';
 import { UserOccasion } from '../Code/JCal/UserOccasion';
 /**
@@ -116,11 +117,16 @@ export default class SingleDayDisplay extends Component {
                 </View>,
             dailyInfos = jdate.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
-            suntimes = jdate.getSunriseSunset(location),
+            suntimes = Zmanim.getSunTimes(jdate, location, true),
             sunrise = suntimes && suntimes.sunrise ?
                 Utils.getTimeString(suntimes.sunrise) : 'Sun does not rise',
             sunset = suntimes && suntimes.sunset ?
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
+            candleLighting = jdate.hasCandleLighting() &&
+                <Text>{'Candle-lighting: ' +
+                    Utils.getTimeString(Zmanim.getCandleLightingFromSunTimes(suntimes, location))}</Text>,
+            eiruvTavshilin = jdate.hasEiruvTavshilin(location.Israel) &&
+                <Text style={{ fontWeight: 'bold' }}>Eiruv Tavshilin</Text>,
             occasionText = occasions && occasions.length > 0 &&
                 occasions.map((o, i) =>
                     <TouchableOpacity key={i} onPress={() => this.editOccasion(o)}>
@@ -165,6 +171,8 @@ export default class SingleDayDisplay extends Component {
                             {Utils.toStringDate(sdate, !isDayOff)}</Text>
                     </Text>
                     {dailyInfoText}
+                    {candleLighting}
+                    {eiruvTavshilin}
                     <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <View style={{ width: '65%', height: 75, flex: 0 }}>
