@@ -383,6 +383,8 @@ export default class jDate {
             suntimesMishor = this.getSunriseSunset(location, true),
             sunriseMishor = suntimesMishor.sunrise,
             sunsetMishor = suntimesMishor.sunset,
+            candles = this.hasCandleLighting() &&
+                Zmanim.getCandleLightingFromSunTimes({ sunrise, sunset }, location),
             mishorNeg90 = Utils.addMinutes(sunriseMishor, -90),
             chatzos = sunriseMishor && sunsetMishor &&
                 Zmanim.getChatzosFromSuntimes(suntimesMishor),
@@ -396,6 +398,12 @@ export default class jDate {
         addItem('Secular Date', Utils.toStringDate(sdate, true));
         for (let h of dailyInfos) {
             addItem(h, null, true);
+        }
+        if (candles) {
+            addItem('Candle Lighting', Utils.getTimeString(candles), true);
+        }
+        if (this.hasEiruvTavshilin()) {
+            addItem('Eiruv Tavshilin', null, true);
         }
         addItem('Parsha of the week',
             this.getSedra(location.Israel).map((s) => s.eng).join(' - '));
