@@ -50,7 +50,7 @@ class Kavuah {
                 txt += `on every ${Utils.toSuffixed(this.specialNumber)} day of the Jewish Month`;
                 break;
             case KavuahTypes.DayOfWeek:
-                txt += `on the ${Utils.dowEng[this.settingEntry.date.getDayOfWeek()]} of every ${Utils.toSuffixed(this.specialNumber)} week`;
+                txt += `on the ${Utils.dowEng[this.settingEntry.date.getDayOfWeek()]} of every ${Utils.toSuffixed(Utils.toInt(this.specialNumber / 7))} week`;
                 break;
             case KavuahTypes.Sirug:
                 txt += `on the ${Utils.toSuffixed(this.settingEntry.day)} day of every ${Utils.toSuffixed(this.specialNumber)} month`;
