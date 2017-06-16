@@ -62,10 +62,10 @@ class Kavuah {
                 txt += `on the ${Utils.toSuffixed(this.specialNumber)} day of the Jewish Month (through Ma'ayan Pasuach)`;
                 break;
             case KavuahTypes.DilugHaflaga:
-                txt += `of each day in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.Abs(this.specialNumber).toString()} days"`;
+                txt += `of each day in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.abs(this.specialNumber).toString()} days"`;
                 break;
             case KavuahTypes.DilugDayOfMonth:
-                txt += `for days of the month in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.Abs(this.specialNumber).toString()} days"`;
+                txt += `for days of the month in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.abs(this.specialNumber).toString()} days"`;
                 break;
         }
         return txt + '.';
@@ -109,8 +109,8 @@ class Kavuah {
     }
     /**
      * Get possible new Kavuahs from a list of entries.
-     * @param {*} entryList The list of entries to search
-     * @param {*} kavuahList The list of Kavuahs to used to determine if any found kavuah is a "new" one.
+     * @param {EntryList} entryList The list of entries to search
+     * @param {[Kavuah]} kavuahList The list of Kavuahs to used to determine if any found kavuah is a "new" one.
      */
     static getPossibleNewKavuahs(entryList, kavuahList) {
         //Get all Kavuahs in the list that are active - including ignored ones.
