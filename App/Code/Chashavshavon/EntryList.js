@@ -217,8 +217,9 @@ export default class EntryList {
             this.addOhrZarua(haflaga, onahs);
 
             if (this.settings.keepLongerHaflagah) {
-                //First we look for a proceeding entry where the haflagah is longer than this one
-                const longerHaflaga = nonProbIgnoredList.find(e => e.date.Abs > entry.date.Abs && e.haflaga > entry.haflaga),
+                //First we look for a later entry where the haflagah is longer than this one
+                const longerHaflaga = nonProbIgnoredList.find(e =>
+                    e.date.Abs > entry.date.Abs && e.haflaga > entry.haflaga),
                     longerHaflagaDate = longerHaflaga ?
                         longerHaflaga.date :
                         //If no such entry was found, we keep on going...
@@ -326,7 +327,7 @@ export default class EntryList {
         }
         //Kavuahs of "Day of week" - cheshboned from the theoretical Entries
         for (let kavuah of kavuahList.filter(k => k.active && k.kavuahType === KavuahTypes.DayOfWeek)) {
-            let dt = kavuah.settingEntryonah.jdate.addDays(kavuah.specialNumber);
+            let dt = kavuah.settingEntry.date.addDays(kavuah.specialNumber);
             while (dt.Abs <= this.stopWarningDate.Abs) {
                 const o = new ProblemOnah(
                     dt,
@@ -340,33 +341,38 @@ export default class EntryList {
         }
         if (this.settings.cheshbonKavuahByCheshbon) {
             //Kavuahs of Yom Hachodesh of Dilug - cheshboned from the theoretical Entries
-            for (let kavuah of kavuahList.filter(k => k.active && k.kavuahType === KavuahTypes.DilugDayOfMonth)) {
-                let dt = kavuah.settingEntry.date;
-                for (let i = 0; ; i++) {
-                    dt = dt.addMonths(1);
-                    const dtNext = dt.addDays(kavuah.specialNumberNumber * i);
+            for (let kavuah of kavuahList.filter(k => k.active &&
+                k.kavuahType === KavuahTypes.DilugDayOfMonth)) {
+                let nextMonth = kavuah.settingEntry.date.addMonths(1);
+                for (let i = 1; ; i++) {
+                    //Add the correct number of dilug days
+                    const addDilugDays = nextMonth.addDays(kavuah.specialNumberNumber * i);
                     //We stop when we get to the beginning or end of the month
-                    if (dtNext.Month !== dt.Month || dtNext.Abs > this.stopWarningDate.Abs) {
+                    if (addDilugDays.Month !== nextMonth.Month ||
+                        addDilugDays.Abs > this.stopWarningDate.Abs) {
                         break;
                     }
                     const o = new ProblemOnah(
-                        dtNext,
+                        addDilugDays,
                         kavuah.settingEntry.
                             nightDay,
                         'Kavuah for ' + kavuah.toString());
                     onahs.push(o);
                     this.addOhrZarua(o, onahs);
+
+                    nextMonth = nextMonth.addMonths(1);
                 }
             }
             //Kavuahs of Yom Haflaga of Dilug - cheshboned from the theoretical Entries
             for (let kavuah of kavuahList.filter(k => k.active && k.kavuahType === KavuahTypes.DilugHaflaga)) {
                 let dt = kavuah.settingEntry.date;
                 for (let i = 1; ; i++) {
+                    const nextHaflaga = kavuah.settingEntry.haflaga + (kavuah.specialNumber * i);
                     //For negative dilugim, we stop when we get to 0
-                    if (((kavuah.settingEntry.haflaga) + (kavuah.specialNumber * i)) < 1) {
+                    if (nextHaflaga < 1) {
                         break;
                     }
-                    dt = dt.addDays(((kavuah.settingEntry.haflaga + (kavuah.specialNumber * i))) + (-1));
+                    dt = dt.addDays(nextHaflaga - 1);
                     if (dt.Abs > this.stopWarningDate.Abs) {
                         break;
                     }
