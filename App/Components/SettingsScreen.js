@@ -71,7 +71,8 @@ export default class SettingsScreen extends Component {
                         appData={this.state.appData}
                         navigator={this.props.navigation}
                         hideSettings={true}
-                        hideMonthView={true} />
+                        hideMonthView={true}
+                        helpPageName='Settings.html' />
                     <ScrollView style={{ flex: 1 }}>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Choose your location</Text>

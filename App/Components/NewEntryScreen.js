@@ -266,7 +266,8 @@ export default class NewEntry extends React.Component {
                     onUpdate={this.onUpdate}
                     appData={this.state.appData}
                     navigator={this.props.navigation}
-                    hideOccasions={true} />
+                    hideOccasions={true}
+                    helpPageName='Entries.html' />
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Day</Text>

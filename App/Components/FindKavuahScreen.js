@@ -118,7 +118,8 @@ export default class FindKavuahScreen extends Component {
                     appData={this.state.appData}
                     navigator={this.props.navigation}
                     hideOccasions={true}
-                    hideSettings={true} />
+                    hideSettings={true}
+                    helpPageName='Kavuahs.html' />
                 <ScrollView style={{ flex: 1 }}>
                     {(pk &&
                         <View style={{ alignItems: 'center' }}>

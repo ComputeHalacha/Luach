@@ -78,7 +78,7 @@ export default class NewOccasion extends React.Component {
         }).catch(err => {
             warn('Error trying to add a User Occasion in the database.');
             error(err);
-            popUpMessage('We are sorry, Luach is unable to add this Occasion.\nPlease contact lucah@compute.co.il.');
+            popUpMessage('We are sorry, Luach is unable to add this Occasion.\nPlease contact luach@compute.co.il.');
         });
     }
     updateOccasion() {
@@ -104,7 +104,7 @@ export default class NewOccasion extends React.Component {
         }).catch(err => {
             warn('Error trying to add save the changes to User Occasion in the database.');
             error(err);
-            popUpMessage('We are sorry, Luach is unable to save the changes to this Occasion.\nPlease contact lucah@compute.co.il.');
+            popUpMessage('We are sorry, Luach is unable to save the changes to this Occasion.\nPlease contact luach@compute.co.il.');
         });
     }
     /**
@@ -141,7 +141,7 @@ export default class NewOccasion extends React.Component {
                         ).catch(err => {
                             warn('Error trying to delete an Event from the database.');
                             error(err);
-                            popUpMessage('We are sorry, Luach is unable to remove this Event.\nPlease contact lucah@compute.co.il.');
+                            popUpMessage('We are sorry, Luach is unable to remove this Event.\nPlease contact luach@compute.co.il.');
                         });
                     }
                 }]);
@@ -160,14 +160,15 @@ export default class NewOccasion extends React.Component {
                     appData={this.state.appData}
                     navigator={this.props.navigation}
                     hideEntries={true}
-                    hideKavuahs={true} />
+                    hideKavuahs={true}
+                    helpPageName='#Events' />
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.headerView}>
                         <Text style={GeneralStyles.headerText}>
                             {muxedDate}</Text>
                     </View>
                     <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Occasion Title</Text>
+                        <Text style={GeneralStyles.label}>Event/Occasion Title</Text>
                         <TextInput style={GeneralStyles.textInput}
                             autoFocus
                             placeholder='Occasion Title'
@@ -176,21 +177,21 @@ export default class NewOccasion extends React.Component {
                             defaultValue={this.state.title} />
                     </View>
                     <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Occasion Type</Text>
+                        <Text style={GeneralStyles.label}>Event/Occasion Type</Text>
                         <Picker style={GeneralStyles.picker}
                             accessibilityLabel='Select event type'
                             prompt='Select event type'
                             selectedValue={this.state.occasionType || 0}
                             onValueChange={value => this.setState({ occasionType: value })}>
-                            <Picker.Item label={`One Time Occasion on ${muxedDate}`}
+                            <Picker.Item label={'One Time Occasion'}
                                 value={UserOccasionTypes.OneTime} />
-                            <Picker.Item label={`Annual occasion on the ${jDay} day of ${jmonthName}`}
+                            <Picker.Item label={'Annual - ' + `${jmonthName} ${jDay}`}
                                 value={UserOccasionTypes.HebrewDateRecurringYearly} />
-                            <Picker.Item label={`Monthly occasion On the ${jDay} day of each Jewish Month`}
-                                value={UserOccasionTypes.HebrewDateRecurringMonthly} />
-                            <Picker.Item label={`Annual occasion on the the ${sDay} day of ${sMonthName} `}
+                            <Picker.Item label={'Annual - ' + `${sMonthName} ${sDay}`}
                                 value={UserOccasionTypes.SecularDateRecurringYearly} />
-                            <Picker.Item label={`Monthy occasion on the ${sDay} day of each Secular Month`}
+                            <Picker.Item label={'Monthly - ' + `${jDay} of Jewish Month`}
+                                value={UserOccasionTypes.HebrewDateRecurringMonthly} />
+                            <Picker.Item label={'Monthly - ' + `${sDay} of Secular Month`}
                                 value={UserOccasionTypes.SecularDateRecurringMonthly} />
                         </Picker>
                     </View>
