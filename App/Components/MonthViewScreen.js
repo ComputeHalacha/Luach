@@ -239,7 +239,8 @@ export default class MonthViewScreen extends React.Component {
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
-                    const url = 'https://' + (__DEV__ ? '10.0.2.2:84' : 'www.compute.co.il') + '/luach/app/#MonthView';
+                    const url = 'https://' + (__DEV__ ? '10.0.2.2:84' : 'www.compute.co.il') +
+                        '/luach/app/#MonthView';
                     Linking.openURL(url)
                         .catch(err => {
                             warn('Error trying to open ' + url);
@@ -364,8 +365,6 @@ const styles = StyleSheet.create({
         height: '100%',
         alignItems: 'center',
         justifyContent: 'center',
-        borderLeftWidth: 1,
-        borderColor: '#888',
         backgroundColor: '#666'
     },
     footerBarText: {
