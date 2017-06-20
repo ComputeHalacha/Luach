@@ -74,7 +74,7 @@ class Kavuah {
         let txt = this.toString();
         txt += '\nSetting Entry: ' + this.settingEntry.toLongString();
         if (this.cancelsOnahBeinunis) {
-            txt += '\nThis Kavuah cancels the "Onah Beinonis" dates.';
+            txt += '\nThis Kavuah cancels the "Onah Beinonis" Flagged Dates.';
         }
         return txt;
     }
