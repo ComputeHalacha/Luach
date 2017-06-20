@@ -341,7 +341,9 @@ export default class HomeScreen extends React.Component {
                                 isDataLoading={!this.state.loadingDone}
                                 onGoToday={this.goToday}
                                 onGoPrevious={this.prevDay}
-                                onGoNext={this.nextDay} />
+                                onGoNext={this.nextDay}
+                                helpUrl='index.html'
+                                helpTitle='Today Screen' />
                             <FlatList
                                 ref={flatList => this.flatList = flatList}
                                 style={{ flex: 1 }}

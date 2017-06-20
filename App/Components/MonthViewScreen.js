@@ -238,16 +238,10 @@ export default class MonthViewScreen extends React.Component {
                         <Text style={styles.footerBarText}>Next</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                    const url = 'https://' + (__DEV__ ? '10.0.2.2:84' : 'www.compute.co.il') +
-                        '/luach/app/#MonthView';
-                    Linking.openURL(url)
-                        .catch(err => {
-                            warn('Error trying to open ' + url);
-                            error(err);
-                            popUpMessage('We are sorry, Luach is unable to access the help documenation.\nPlease contact luach@compute.co.il.');
-                        });
-                }}>
+                <TouchableOpacity onPress={() => this.navigate('Browser', {
+                        url: 'MonthView.html',
+                        title: 'Month View'
+                    })}>
                     <View style={styles.helpView}>
                         <Icon size={16} color='#ddf' name='help' />
                     </View>

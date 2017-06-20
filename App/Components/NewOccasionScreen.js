@@ -161,7 +161,8 @@ export default class NewOccasion extends React.Component {
                     navigator={this.props.navigation}
                     hideEntries={true}
                     hideKavuahs={true}
-                    helpPageName='#Events' />
+                    helpUrl='Events.html'
+                    helpTitle='Events' />
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.headerView}>
                         <Text style={GeneralStyles.headerText}>

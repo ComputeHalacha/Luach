@@ -95,7 +95,8 @@ export default class NewKavuah extends React.Component {
                     appData={this.state.appData}
                     navigator={this.props.navigation}
                     hideOccasions={true}
-                    helpPageName='Kavuahs.html' />
+                    helpUrl='Kavuahs.html'
+                    helpTitle='Kavuahs' />
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Kavuah Type</Text>

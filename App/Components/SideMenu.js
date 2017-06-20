@@ -1,7 +1,7 @@
 import React from 'react';
-import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight, Linking } from 'react-native';
+import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { getScreenHeight, goHomeToday, warn, error, popUpMessage } from '../Code/GeneralUtils';
+import { getScreenHeight, goHomeToday } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 
 /**
@@ -21,7 +21,8 @@ import jDate from '../Code/JCal/jDate';
  * hideKavuahs
  * hideSettings
  * hideOccasions
- * helpPageName
+ * helpUrl
+ * helpTitle
  */
 export default class SideMenu extends React.PureComponent {
     constructor(props) {
@@ -157,23 +158,19 @@ export default class SideMenu extends React.PureComponent {
                     </View>
                 </TouchableHighlight>
             }
-            <TouchableHighlight
-                style={styles.sideButton}
-                underlayColor='#eef'
-                onPress={() => {
-                    const url = 'https://' + (__DEV__ ? '10.0.2.2:84' : 'www.compute.co.il') + '/luach/app/' +
-                        (this.props.helpPageName || '');
-                    Linking.openURL(url)
-                        .catch(err => {
-                            warn('Error trying to open ' + url);
-                            error(err);
-                            popUpMessage('We are sorry, Luach is unable to access the help documenation.\nPlease contact luach@compute.co.il.');
-                        });
-                }}>
-                <View style={styles.menuView}>
-                    <Icon iconStyle={[styles.menuIcon, {color:'#ddf'}]} name='help' />
-                </View>
-            </TouchableHighlight>
+            {this.props.helpUrl &&
+                <TouchableHighlight
+                    style={styles.sideButton}
+                    underlayColor='#eef'
+                    onPress={() => this.navigate('Browser', {
+                        url: this.props.helpUrl,
+                        title: this.props.helpTitle
+                    })}>
+                    <View style={styles.menuView}>
+                        <Icon iconStyle={[styles.menuIcon, { color: '#ddf' }]} name='help' />
+                    </View>
+                </TouchableHighlight>
+            }
         </View>;
     }
 }

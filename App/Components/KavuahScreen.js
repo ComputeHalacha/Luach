@@ -141,7 +141,8 @@ export default class KavuahScreen extends Component {
                         navigator={this.props.navigation}
                         hideKavuahs={true}
                         hideMonthView={true}
-                        helpPageName='Kavuahs.html' />
+                        helpUrl='Kavuahs.html'
+                        helpTitle='Kavuahs' />
                     <View style={{ flex: 1 }}>
                         <ScrollView style={{ flex: 1 }}>
                             <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>

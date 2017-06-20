@@ -72,7 +72,8 @@ export default class OccasionsScreen extends Component {
                         appData={this.state.appData}
                         navigator={this.props.navigation}
                         hideOccasions={true}
-                        helpPageName='#Events' />
+                        helpUrl='Events.html'
+                        helpTitle='Events' />
                     <ScrollView style={{ flex: 1 }}>
                         <CustomList
                             data={this.state.occasionList}
