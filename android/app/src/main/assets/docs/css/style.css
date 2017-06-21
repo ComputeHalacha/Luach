@@ -1,8 +1,9 @@
 ﻿body { font-size: 17.5px; margin: 0; padding: 0; }
 img { border: 0; }
 .divCaption { padding: 10px 0 0 10px; margin: 0 0 10px 0; background-color: #f1f1ff; }
-    .divCaption img { vertical-align: middle; margin: 0 10px 10px 0; }
-    .divCaption h2 { display: inline; font-weight: bold; color: #9099CE; }
+    .divCaption a.goHome{float:right;margin-top: 20px;display:block;width:40px;text-align:right;}
+        .divCaption a.goHome img { height:20px; }
+    .divCaption h2 { font-weight: bold; color: #9099CE; }
 .nav-tabs > li > a { color: #aac; font-size: 12px; }
 .nav > li > a:hover { background-color: #ddf; }
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover { color: #889; }
