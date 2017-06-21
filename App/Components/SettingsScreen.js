@@ -71,7 +71,9 @@ export default class SettingsScreen extends Component {
                         appData={this.state.appData}
                         navigator={this.props.navigation}
                         hideSettings={true}
-                        hideMonthView={true} />
+                        hideMonthView={true}
+                        helpUrl='Settings.html'
+                        helpTitle='Settings' />
                     <ScrollView style={{ flex: 1 }}>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Choose your location</Text>
@@ -123,13 +125,13 @@ export default class SettingsScreen extends Component {
                                 value={!!keepLongerHaflagah} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Calculate Haflaga Kavuahs from an actual entry?</Text>
+                            <Text style={GeneralStyles.label}>Continue original incrementation of Dilug Hafalaga Kavuahs from a late or early Entry?</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('cheshbonKavuahByActualEntry', value)}
                                 value={!!cheshbonKavuahByActualEntry} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Calculate Haflaga Kavuahs from the proceeding haflaga date even without an actual entry?</Text>
+                            <Text style={GeneralStyles.label}>Continue incrementing Dilug Kavuahs even from missed Entries?</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('cheshbonKavuahByCheshbon', value)}
                                 value={!!cheshbonKavuahByCheshbon} />

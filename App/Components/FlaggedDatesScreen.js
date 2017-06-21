@@ -45,7 +45,9 @@ export default class FlaggedDatesScreen extends Component {
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
                         navigator={this.props.navigation}
-                        hideOccasions={true} />
+                        hideOccasions={true}
+                        helpUrl='FlaggedDates.html'
+                        helpTitle='Flagged Dates' />
                     <ScrollView style={{ flex: 1 }}>
                         {(!this.isToday) &&
                             <View style={GeneralStyles.headerView}>

@@ -58,7 +58,7 @@ export default class OccasionsScreen extends Component {
                         ).catch(err => {
                             warn('Error trying to delete an occasion from the database.');
                             error(err);
-                            popUpMessage('We are sorry, Luach is unable to remove this Event.\nPlease contact lucah@compute.co.il.');
+                            popUpMessage('We are sorry, Luach is unable to remove this Event.\nPlease contact luach@compute.co.il.');
                         });
                     }
                 }]);
@@ -71,7 +71,9 @@ export default class OccasionsScreen extends Component {
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
                         navigator={this.props.navigation}
-                        hideOccasions={true} />
+                        hideOccasions={true}
+                        helpUrl='Events.html'
+                        helpTitle='Events' />
                     <ScrollView style={{ flex: 1 }}>
                         <CustomList
                             data={this.state.occasionList}

@@ -21,6 +21,8 @@ import jDate from '../Code/JCal/jDate';
  * hideKavuahs
  * hideSettings
  * hideOccasions
+ * helpUrl
+ * helpTitle
  */
 export default class SideMenu extends React.PureComponent {
     constructor(props) {
@@ -153,6 +155,21 @@ export default class SideMenu extends React.PureComponent {
                     <View style={styles.menuView}>
                         <Icon iconStyle={styles.menuIcon} name='settings' />
                         <Text style={styles.menuText}>Settings</Text>
+                    </View>
+                </TouchableHighlight>
+            }
+            {this.props.helpUrl &&
+                <TouchableHighlight
+                    style={styles.sideButton}
+                    underlayColor='#eef'
+                    onPress={() => this.navigate('Browser', {
+                        ...params,
+                        url: this.props.helpUrl,
+                        title: this.props.helpTitle
+                    })}>
+                    <View style={styles.menuView}>
+                        <Icon iconStyle={[styles.menuIcon, { color: '#ddf' }]} name='help' />
+                        <Text style={styles.menuText}>{this.props.helpTitle}</Text>
                     </View>
                 </TouchableHighlight>
             }

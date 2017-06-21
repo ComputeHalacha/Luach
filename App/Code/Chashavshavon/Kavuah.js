@@ -62,10 +62,10 @@ class Kavuah {
                 txt += `on the ${Utils.toSuffixed(this.specialNumber)} day of the Jewish Month (through Ma'ayan Pasuach)`;
                 break;
             case KavuahTypes.DilugHaflaga:
-                txt += `of each day in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.Abs(this.specialNumber).toString()} days"`;
+                txt += `of each day in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.abs(this.specialNumber).toString()} days"`;
                 break;
             case KavuahTypes.DilugDayOfMonth:
-                txt += `for days of the month in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.Abs(this.specialNumber).toString()} days"`;
+                txt += `for days of the month in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.abs(this.specialNumber).toString()} days"`;
                 break;
         }
         return txt + '.';
@@ -74,7 +74,7 @@ class Kavuah {
         let txt = this.toString();
         txt += '\nSetting Entry: ' + this.settingEntry.toLongString();
         if (this.cancelsOnahBeinunis) {
-            txt += '\nThis Kavuah cancels the "Onah Beinonis" dates.';
+            txt += '\nThis Kavuah cancels the "Onah Beinonis" Flagged Dates.';
         }
         return txt;
     }
@@ -109,8 +109,8 @@ class Kavuah {
     }
     /**
      * Get possible new Kavuahs from a list of entries.
-     * @param {*} entryList The list of entries to search
-     * @param {*} kavuahList The list of Kavuahs to used to determine if any found kavuah is a "new" one.
+     * @param {EntryList} entryList The list of entries to search
+     * @param {[Kavuah]} kavuahList The list of Kavuahs to used to determine if any found kavuah is a "new" one.
      */
     static getPossibleNewKavuahs(entryList, kavuahList) {
         //Get all Kavuahs in the list that are active - including ignored ones.
@@ -183,10 +183,12 @@ class Kavuah {
         if (secondFind) {
             //Now we look for another entry that is exactly two Jewish months later
             const thirdFind = entryList.find(en =>
-                en.onah.nightDay === entry.onah.nightDay && Utils.isSameJdate(en.date,thirdMonth));
+                en.onah.nightDay === entry.onah.nightDay && Utils.isSameJdate(en.date, thirdMonth));
             if (thirdFind) {
                 list.push({
-                    kavuah: new Kavuah(KavuahTypes.DayOfMonth, thirdFind, thirdMonth.Day, true),
+                    kavuah: new Kavuah(KavuahTypes.DayOfMonth,
+                        thirdFind,
+                        thirdMonth.Day),
                     entries: [entry, secondFind, thirdFind]
                 });
             }
@@ -215,7 +217,9 @@ class Kavuah {
                     thirdMonth.Year === en.year);
             if (finalFind) {
                 list.push({
-                    kavuah: new Kavuah(KavuahTypes.DilugDayOfMonth, finalFind, dilugDays, false),
+                    kavuah: new Kavuah(KavuahTypes.DilugDayOfMonth,
+                        finalFind,
+                        dilugDays),
                     entries: [entry, secondFind, finalFind]
                 });
             }
@@ -245,7 +249,9 @@ class Kavuah {
                     Utils.isSameJdate(en.date, nextDate));
                 if (secondFind) {
                     list.push({
-                        kavuah: new Kavuah(KavuahTypes.DayOfWeek, secondFind, interval, false),
+                        kavuah: new Kavuah(KavuahTypes.DayOfWeek,
+                            secondFind,
+                            interval),
                         entries: [entry, firstFind, secondFind]
                     });
                 }
@@ -259,7 +265,9 @@ class Kavuah {
         if ((fourEntries[1].haflaga === fourEntries[2].haflaga) &&
             (fourEntries[2].haflaga === fourEntries[3].haflaga)) {
             list.push({
-                kavuah: new Kavuah(KavuahTypes.Haflagah, fourEntries[3], fourEntries[3].haflaga, true),
+                kavuah: new Kavuah(KavuahTypes.Haflagah,
+                    fourEntries[3],
+                    fourEntries[3].haflaga),
                 entries: fourEntries
             });
         }
@@ -280,7 +288,9 @@ class Kavuah {
             threeEntries[1].date.diffMonths(threeEntries[2].date) === monthDiff) {
             //Add the kavuah
             list.push({
-                kavuah: new Kavuah(KavuahTypes.Sirug, threeEntries[2], monthDiff, true),
+                kavuah: new Kavuah(KavuahTypes.Sirug,
+                    threeEntries[2],
+                    monthDiff),
                 entries: threeEntries
             });
         }
@@ -296,11 +306,72 @@ class Kavuah {
         //If the "Dilug" is 0 it will be a regular Kavuah of Haflagah but not a Dilug one
         if (haflagaDiff1 > 0 && haflagaDiff1 === haflagaDiff2) {
             list.push({
-                kavuah: new Kavuah(KavuahTypes.DilugHaflaga, fourEntries[3], haflagaDiff1, false),
+                kavuah: new Kavuah(KavuahTypes.DilugHaflaga,
+                    fourEntries[3],
+                    haflagaDiff1),
                 entries: fourEntries
             });
         }
         return list;
+    }
+    /**
+     * Searches for a Kavuah in the given list that the given entry is out of pattern with.
+     * The only kavuahs considered are active ones that cancel onah beinonis
+     * and that were set before this Entry occurred.
+     * The entryList is used to get the previous Entry. It is assumed that the entrList was sorted chronologically.
+     * @param {Entry} entry
+     * @param {[Kavuah]} kavuahList
+     * @param {EntryList} entryList
+     */
+    static isOutOfPattern(entry, kavuahList, entryList) {
+        const eList = entryList.list,
+            index = eList.indexOf(entry),
+            previous = index > 0 && eList[index - 1];
+        for (let kavuah of kavuahList.filter(k =>
+            k.cancelsOnahBeinunis &&
+            k.active &&
+            !k.ignore &&
+            k.settingEntry.date.Abs < entry.date.Abs)) {
+            switch (kavuah.kavuahType) {
+                case KavuahTypes.Haflagah:
+                    if (entry.haflaga !== kavuah.specialNumber) {
+                        return kavuah;
+                    }
+                    break;
+                case KavuahTypes.DayOfMonth:
+                    if (entry.day !== kavuah.specialNumber) {
+                        return kavuah;
+                    }
+                    break;
+                case KavuahTypes.DayOfWeek:
+                    //TODO Not sure how to do this, as these types allow Entries in between...
+                    if (entry.haflaga !== kavuah.specialNumber ||
+                        entry.dayOfWeek !== kavuah.settingEntry.dayOfWeek) {
+                        return kavuah;
+                    }
+                    break;
+                case KavuahTypes.Sirug:
+                    if (entry.day !== kavuah.settingEntry.day ||
+                        previous.date.diffMonths(entry.date) !== kavuah.specialNumber) {
+                        return kavuah;
+                    }
+                    break;
+                case KavuahTypes.DilugHaflaga:
+                    if (previous &&
+                        entry.haflaga !== (previous.haflaga + kavuah.specialNumber)) {
+                        return kavuah;
+                    }
+                    break;
+                case KavuahTypes.DilugDayOfMonth:
+                    //TODO Don't know how to do this, these types allow Entries in between...
+                    if (previous &&
+                        (previous.day + kavuah.specialNumber < 31) &&
+                        (entry.day !== (previous.day + kavuah.specialNumber))) {
+                        return kavuah;
+                    }
+                    break;
+            }
+        }
     }
 }
 

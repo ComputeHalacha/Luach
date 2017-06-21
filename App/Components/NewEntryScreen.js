@@ -97,11 +97,12 @@ export default class NewEntry extends React.Component {
             entryList.add(entry);
             entryList.calulateHaflagas();
             appData.EntryList = entryList;
+            popUpMessage(`The entry for ${entry.toString()} has been successfully added.`,
+                'Add Entry');
+            this.checkIfOutOfPattern(entry);
             if (this.onUpdate) {
                 this.onUpdate(appData);
             }
-            popUpMessage(`The entry for ${entry.toString()} has been successfully added.`,
-                'Add Entry');
             if (appData.Settings.calcKavuahsOnNewEntry) {
                 const possList = Kavuah.getPossibleNewKavuahs(appData.EntryList.list, appData.KavuahList);
                 if (possList.length) {
@@ -147,6 +148,7 @@ export default class NewEntry extends React.Component {
             }
             popUpMessage(`The entry for ${entry.toString()} has been successfully saved.`,
                 'Change Entry');
+            this.checkIfOutOfPattern(entry);
             if (appData.Settings.calcKavuahsOnNewEntry) {
                 const possList = Kavuah.getPossibleNewKavuahs(appData.EntryList.list, appData.KavuahList);
                 if (possList.length) {
@@ -188,11 +190,7 @@ export default class NewEntry extends React.Component {
                         Are you sure that you want to remove this/these Kavuah/s together with this entry?`:
                 'Are you sure that you want to completely remove this Entry?',
             [   //Button 1
-                {
-                    text: 'Cancel',
-                    onPress: () => { return; },
-                    style: 'cancel'
-                },
+                { text: 'Cancel', onPress: () => { return; }, style: 'cancel' },
                 //Button 2
                 {
                     text: 'OK', onPress: () => {
@@ -219,8 +217,43 @@ export default class NewEntry extends React.Component {
                             }
                         });
                     }
-                },
-            ]);
+                }]);
+    }
+    /**
+     * If a newly added or edited Entry is out of pattern for a strong Kavuah,
+     * we will suggest to set the Kavuah to not Cancel Onah Beinonis.
+     * @param {Entry} entry
+     */
+    checkIfOutOfPattern(entry) {
+        const appData = this.state.appData,
+            kavuahList = appData.KavuahList,
+            entryList = appData.EntryList,
+            outOfPatternKavuah = Kavuah.isOutOfPattern(entry, kavuahList, entryList);
+
+        if (outOfPatternKavuah) {
+            Alert.alert('Kavuah Pattern Break',
+                `The entry of "${entry.toString()}" does not seem to match the Kavuah pattern of "${outOfPatternKavuah.toString()}".` +
+                '\nDo you wish to set this Kavuah to NOT Cancel Onah Beinonis?',
+                [
+                    //Button 1
+                    { text: 'No', onPress: () => { return; } },
+                    //Button 2
+                    {
+                        text: 'Yes', onPress: () => {
+                            outOfPatternKavuah.cancelsOnahBeinunis = false;
+                            DataUtils.KavuahToDatabase(outOfPatternKavuah)
+                                .then(() => {
+                                    if (this.onUpdate) {
+                                        this.onUpdate(appData);
+                                    }
+                                })
+                                .catch(err => {
+                                    warn('Error trying to add entry to the database.');
+                                    error(err);
+                                });
+                        }
+                    }]);
+        }
     }
     render() {
         const jdate = this.state.jdate,
@@ -233,7 +266,9 @@ export default class NewEntry extends React.Component {
                     onUpdate={this.onUpdate}
                     appData={this.state.appData}
                     navigator={this.props.navigation}
-                    hideOccasions={true} />
+                    hideOccasions={true}
+                    helpUrl='Entries.html'
+                    helpTitle='Entries' />
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Day</Text>

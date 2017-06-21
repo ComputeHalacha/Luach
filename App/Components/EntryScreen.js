@@ -115,7 +115,9 @@ export default class EntryScreen extends Component {
                         navigator={this.props.navigation}
                         hideOccasions={true}
                         hideEntries={true}
-                        hideSettings={true} />
+                        hideSettings={true}
+                        helpUrl='Entries.html'
+                        helpTitle='Entries' />
                     <ScrollView style={{ flex: 1 }}>
                         <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
                             <TouchableHighlight onPress={this.newEntry}>

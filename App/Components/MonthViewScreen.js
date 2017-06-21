@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, Linking } from 'react-native';
 import { Icon, Grid, Row, Col } from 'react-native-elements';
 import GestureRecognizer from 'react-native-swipe-gestures';
-import { getScreenWidth, goHomeToday } from '../Code/GeneralUtils';
+import { getScreenWidth, goHomeToday, warn, error, popUpMessage } from '../Code/GeneralUtils';
 import jDate from '../Code/JCal/jDate';
 import Utils from '../Code/JCal/Utils';
 import Month from '../Code/Month';
@@ -17,11 +17,12 @@ export default class MonthViewScreen extends React.Component {
         super(props);
 
         this.navigate = props.navigation.navigate;
-        const { jdate, appData } = props.navigation.state.params,
+        const { jdate, appData, onUpdate } = props.navigation.state.params,
             date = appData.Settings.navigateBySecularDate ? jdate.getDate() : jdate,
             today = appData.Settings.navigateBySecularDate ?
                 new jDate() : Utils.nowAtLocation(appData.Settings.location);
         this.appData = appData;
+        this.onUpdate = onUpdate;
         this.israel = this.appData.Settings.location.Israel;
         this.state = {
             month: new Month(date, this.appData),
@@ -221,7 +222,7 @@ export default class MonthViewScreen extends React.Component {
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.goPrevMonth} style={styles.footerButton}>
-                    <View style={[styles.footerView, { borderRightWidth: 1 }]}>
+                    <View style={styles.footerView}>
                         <Icon iconStyle={styles.footerIcon} name='arrow-back' />
                         <Text style={styles.footerBarText}>Previous</Text>
                     </View>
@@ -233,9 +234,19 @@ export default class MonthViewScreen extends React.Component {
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.goNextMonth} style={styles.footerButton}>
-                    <View style={[styles.footerView, { borderLeftWidth: 1 }]}>
+                    <View style={styles.footerView}>
                         <Icon iconStyle={styles.footerIcon} name='arrow-forward' />
                         <Text style={styles.footerBarText}>Next</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.navigate('Browser', {
+                        url: 'MonthView.html',
+                        title: 'Month View',
+                        appData: this.appData,
+                        onUpdate: this.onUpdate
+                    })}>
+                    <View style={styles.helpView}>
+                        <Icon size={16} color='#ddf' name='help' />
                     </View>
                 </TouchableOpacity>
             </View>
@@ -329,7 +340,8 @@ const styles = StyleSheet.create({
         borderColor: '#888',
         backgroundColor: '#666',
         paddingTop: 5,
-        paddingBottom: 5
+        paddingBottom: 5,
+        borderRightWidth: 1
     },
     todayView: {
         flex: 0,
@@ -343,6 +355,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#666',
         paddingTop: 5,
         paddingBottom: 5
+    },
+    helpView: {
+        flex: 0,
+        width: 30,
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#666'
     },
     footerBarText: {
         fontSize: 10,
