@@ -163,6 +163,7 @@ export default class SideMenu extends React.PureComponent {
                     style={styles.sideButton}
                     underlayColor='#eef'
                     onPress={() => this.navigate('Browser', {
+                        ...params,
                         url: this.props.helpUrl,
                         title: this.props.helpTitle
                     })}>
