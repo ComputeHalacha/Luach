@@ -5,7 +5,7 @@ import { GeneralStyles } from './styles';
 
 export default class BrowserScreen extends Component {
     static navigationOptions = ({ navigation }) => ({
-        title: 'Luach Help -  ' + navigation.state.params.title
+        title: 'Documentation -  ' + navigation.state.params.title
     });
     constructor(props) {
         super(props);
@@ -39,7 +39,9 @@ export default class BrowserScreen extends Component {
                     <SideMenu
                         onUpdate={this.onUpdate}
                         appData={this.appData}
-                        navigator={this.props.navigation} />
+                        navigator={this.props.navigation}
+                        helpUrl='index.html'
+                        helpTitle='Help Home' />
                     <WebView style={{ flex: 1 }}
                         ref={webView => this.webView = webView}
                         source={{ uri: 'file:///android_asset/docs/' + this.url }}

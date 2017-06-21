@@ -17,11 +17,12 @@ export default class MonthViewScreen extends React.Component {
         super(props);
 
         this.navigate = props.navigation.navigate;
-        const { jdate, appData } = props.navigation.state.params,
+        const { jdate, appData, onUpdate } = props.navigation.state.params,
             date = appData.Settings.navigateBySecularDate ? jdate.getDate() : jdate,
             today = appData.Settings.navigateBySecularDate ?
                 new jDate() : Utils.nowAtLocation(appData.Settings.location);
         this.appData = appData;
+        this.onUpdate = onUpdate;
         this.israel = this.appData.Settings.location.Israel;
         this.state = {
             month: new Month(date, this.appData),
@@ -240,7 +241,9 @@ export default class MonthViewScreen extends React.Component {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => this.navigate('Browser', {
                         url: 'MonthView.html',
-                        title: 'Month View'
+                        title: 'Month View',
+                        appData: this.appData,
+                        onUpdate: this.onUpdate
                     })}>
                     <View style={styles.helpView}>
                         <Icon size={16} color='#ddf' name='help' />

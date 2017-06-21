@@ -169,6 +169,7 @@ export default class SideMenu extends React.PureComponent {
                     })}>
                     <View style={styles.menuView}>
                         <Icon iconStyle={[styles.menuIcon, { color: '#ddf' }]} name='help' />
+                        <Text style={styles.menuText}>{this.props.helpTitle}</Text>
                     </View>
                 </TouchableHighlight>
             }
