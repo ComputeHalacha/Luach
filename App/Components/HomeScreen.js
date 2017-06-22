@@ -343,7 +343,7 @@ export default class HomeScreen extends React.Component {
                                 onGoPrevious={this.prevDay}
                                 onGoNext={this.nextDay}
                                 helpUrl='index.html'
-                                helpTitle='Luach Help' />
+                                helpTitle='Help' />
                             <FlatList
                                 ref={flatList => this.flatList = flatList}
                                 style={{ flex: 1 }}

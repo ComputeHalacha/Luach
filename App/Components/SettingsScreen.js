@@ -75,6 +75,9 @@ export default class SettingsScreen extends Component {
                         helpUrl='Settings.html'
                         helpTitle='Settings' />
                     <ScrollView style={{ flex: 1 }}>
+                        <View style={GeneralStyles.headerView}>
+                            <Text style={GeneralStyles.headerText}>Halachic Settings</Text>
+                        </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Choose your location</Text>
                             <TouchableHighlight underlayColor='#9f9' onPress={() =>
@@ -89,16 +92,6 @@ export default class SettingsScreen extends Component {
                                     </Text>
                                 </View>
                             </TouchableHighlight>
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Number of Months ahead to warn</Text>
-                            <Picker style={GeneralStyles.picker}
-                                selectedValue={numberMonthsAheadToWarn}
-                                onValueChange={value => this.update('numberMonthsAheadToWarn', value)}>
-                                {nums.map((n, i) => {
-                                    return (<Picker.Item label={n.toString()} value={n} key={i} />);
-                                })}
-                            </Picker>
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Flag previous onah? (The "Ohr Zaruah")</Text>
@@ -135,6 +128,19 @@ export default class SettingsScreen extends Component {
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('cheshbonKavuahByCheshbon', value)}
                                 value={!!cheshbonKavuahByCheshbon} />
+                        </View>
+                        <View style={GeneralStyles.headerView}>
+                            <Text style={GeneralStyles.headerText}>Application Settings</Text>
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Number of Months ahead to warn</Text>
+                            <Picker style={GeneralStyles.picker}
+                                selectedValue={numberMonthsAheadToWarn}
+                                onValueChange={value => this.update('numberMonthsAheadToWarn', value)}>
+                                {nums.map((n, i) => {
+                                    return (<Picker.Item label={n.toString()} value={n} key={i} />);
+                                })}
+                            </Picker>
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Automatically Calculate Kavuahs upon addition of an Entry?</Text>

@@ -247,6 +247,7 @@ export default class MonthViewScreen extends React.Component {
                     })}>
                     <View style={styles.helpView}>
                         <Icon size={16} color='#ddf' name='help' />
+                        <Text style={styles.footerBarText}>Help</Text>
                     </View>
                 </TouchableOpacity>
             </View>
