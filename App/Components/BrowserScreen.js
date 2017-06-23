@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, WebView, BackAndroid } from 'react-native';
+import { View, WebView, BackHandler, Platform } from 'react-native';
 import SideMenu from './SideMenu';
 import { GeneralStyles } from './styles';
 
@@ -17,17 +17,17 @@ export default class BrowserScreen extends Component {
         this.onNavigationStateChange = this.onNavigationStateChange.bind(this);
         this.backHandler = this.backHandler.bind(this);
     }
-    componentDidMount(){
-         BackAndroid.addEventListener('hardwareBackPress', this.backHandler);
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.backHandler);
     }
-    componentWillUnmount(){
-         BackAndroid.removeEventListener('hardwareBackPress', this.backHandler);
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.backHandler);
     }
     onNavigationStateChange(navState) {
-        this.setState({ backButtonEnabled: navState && navState.canGoBack  });
+        this.setState({ backButtonEnabled: navState && navState.canGoBack });
     }
-    backHandler(){
-        if(this.state.backButtonEnabled) {
+    backHandler() {
+        if (this.state.backButtonEnabled) {
             this.webView.goBack();
             return true;
         }
@@ -44,7 +44,10 @@ export default class BrowserScreen extends Component {
                         helpTitle='Help Home' />
                     <WebView style={{ flex: 1 }}
                         ref={webView => this.webView = webView}
-                        source={{ uri: 'file:///android_asset/docs/' + this.url }}
+                        source={{
+                            uri: (Platform.OS === 'android' ? 'file:///android_asset/' : '') +
+                            'docs/' + this.url
+                        }}
                         mixedContentMode='always'
                         iosdataDetectorTypes={['all']}
                         startInLoadingState={true}

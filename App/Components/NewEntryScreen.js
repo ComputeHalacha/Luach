@@ -45,18 +45,9 @@ export default class NewEntry extends React.Component {
 
         let jdate, isNight;
         if (entry) {
-            const hasKavuah = appData.KavuahList.some(k =>
-                k.settingEntry.isSameEntry(entry));
-            if (hasKavuah) {
-                popUpMessage('This Entry has been set as "Setting Entry" for a Kavuah and can not be changed.',
-                    'Entry cannot be changed');
-                this.dispatch(NavigationActions.back());
-            }
-            else {
-                this.entry = entry;
-                jdate = entry.date;
-                isNight = entry.nightDay === NightDay.Night;
-            }
+            this.entry = entry;
+            jdate = entry.date;
+            isNight = entry.nightDay === NightDay.Night;
         }
         else {
             jdate = navigation.state.params.jdate;

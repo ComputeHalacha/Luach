@@ -158,7 +158,7 @@ export default class EntryScreen extends Component {
                             emptyListText='There are no Entries in the list'
                             secondSection={entry => {
                                 const hasKavuahs = this.state.appData.KavuahList.some(k =>
-                                    k.settingEntry.isSameEntry(entry));
+                                    (!k.ignore) && k.settingEntry.isSameEntry(entry));
                                 return <View style={GeneralStyles.inItemButtonList}>
                                     <TouchableHighlight
                                         underlayColor='#696'
