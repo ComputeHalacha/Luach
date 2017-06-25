@@ -67,7 +67,7 @@ export default class AppData {
                         appData.EntryList.add(item);
                     }
                     else if (item instanceof Kavuah) {
-                        appData.KavuahList.push[item];
+                        appData.KavuahList.push(item);
                     }
                 }
                 else {

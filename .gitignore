@@ -55,3 +55,4 @@ fastlane/screenshots
 android/gradle.properties
 *.apk
 .vs/
+/android/app/gradle.properties

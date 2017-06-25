@@ -17,7 +17,15 @@ export default class Entry {
         this.ignoreForKavuah = !!ignoreForKavuah;
         this.comments = comments;
         //Initial value only...
-        this.haflaga = 0;
+        this._haflaga = 0;
+    }
+    /**
+     * Set the current entries haflaga
+     * @param {Entry} previousEntry
+     */
+    setHaflaga(previousEntry) {
+        this._haflaga = previousEntry ?
+            previousEntry.date.diffDays(this.date) + 1 : 0;
     }
     /**
      * Returns true if the supplied Entry has the same jdate and nightDay as this Entry.
@@ -95,5 +103,8 @@ export default class Entry {
     }
     get hasId() {
         return !!this.entryId;
+    }
+    get haflaga() {
+        return this._haflaga;
     }
 }

@@ -77,10 +77,9 @@ export default class EntryList {
      * Returns the list of entries sorted chronologically reversed - the most recent first.
      */
     get descending() {
-        //First assure the the list is sorted correctly.
-        EntryList.sortEntries(this.list);
-        //Clone the list, reverse it and return it. (cloning is because reverse is in-place)
-        return this.list.slice().reverse();
+        //Sort the list by date, clone it, reverse it and return it.
+        //Cloning is because reverse is in-place.
+        return [...EntryList.sortEntries(this.list)].reverse();
     }
     /**
      * Returns the latest Entry
@@ -111,16 +110,10 @@ export default class EntryList {
      * Calculates the haflagas for all the entries in the list.
      */
     calulateHaflagas() {
-        EntryList.sortEntries(this.list);
-        for (let i = 0; i < this.list.length; i++) {
-            const entry = this.list[i];
-            if (i === 0) {
-                entry.haflaga = 0;
-            }
-            else {
-                const prev = this.list[i - 1];
-                entry.haflaga = prev.date.diffDays(entry.date) + 1;
-            }
+        const list = EntryList.sortEntries(this.list);
+        for (let entry of list) {
+            const index = list.indexOf(entry);
+            entry.setHaflaga(index && list[index - 1]);
         }
     }
     getProblemOnahs(kavuahList) {

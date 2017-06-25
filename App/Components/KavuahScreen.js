@@ -39,10 +39,11 @@ export default class KavuahScreen extends Component {
     update(appData) {
         //To cause an update on setState for the FlatList (used in CustomList),
         //the data source needs to be changed at a "shallow" level.
+        const kavuahList = [...appData.KavuahList];
         this.setState({
             appData:appData,
             kavuahList: appData.Settings.showIgnoredKavuahs ?
-                [...appData.KavuahList] : appData.KavuahList.filter(k => !k.ignore)
+                kavuahList : kavuahList.filter(k => !k.ignore)
         });
         if (this.onUpdate) {
             this.onUpdate(appData);

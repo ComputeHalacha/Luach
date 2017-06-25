@@ -106,6 +106,7 @@ export default class EntryScreen extends Component {
         });
     }
     render() {
+        const entryList = this.state.appData.EntryList && this.state.appData.EntryList.descending;
         return (
             <View style={GeneralStyles.container}>
                 <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -152,7 +153,7 @@ export default class EntryScreen extends Component {
                             </TouchableHighlight>
                         </View>
                         <CustomList
-                            data={this.state.appData.EntryList && this.state.appData.EntryList.descending}
+                            data={entryList}
                             nightDay={entry => entry.nightDay}
                             title={entry => entry.toLongString()}
                             emptyListText='There are no Entries in the list'
