@@ -113,14 +113,9 @@ export default class MonthViewScreen extends React.Component {
             {(jdate &&
                 <TouchableOpacity
                     style={styles.singleDay}
-                    onPress={() => {
-                        if (singleDay.hasProbNight || singleDay.hasProbDay) {
-                            this.navigate('FlaggedDates', { jdate, appData: this.appData });
-                        }
-                        else {
-                            this.navigate('Home', { currDate: jdate, appData: this.appData });
-                        }
-                    }}>
+                    onPress={() =>
+                        this.navigate('Home', { currDate: jdate, appData: this.appData })
+                    }>
                     <View style={[styles.singleDayView, {
                         backgroundColor: singleDay.isHefeskDay ? '#f1fff1' :
                             ((holiday || shabbos) ? '#eef' : '#fff'),
@@ -240,11 +235,11 @@ export default class MonthViewScreen extends React.Component {
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => this.navigate('Browser', {
-                        url: 'MonthView.html',
-                        title: 'Month View',
-                        appData: this.appData,
-                        onUpdate: this.onUpdate
-                    })}>
+                    url: 'MonthView.html',
+                    title: 'Month View',
+                    appData: this.appData,
+                    onUpdate: this.onUpdate
+                })}>
                     <View style={styles.helpView}>
                         <Icon size={16} color='#ddf' name='help' />
                         <Text style={styles.footerBarText}>Help</Text>

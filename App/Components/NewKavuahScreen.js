@@ -4,7 +4,8 @@ import { NavigationActions } from 'react-navigation';
 import SideMenu from './SideMenu';
 import { KavuahTypes, Kavuah } from '../Code/Chashavshavon/Kavuah';
 import DataUtils from '../Code/Data/DataUtils';
-import { popUpMessage, range } from '../Code/GeneralUtils';
+import AppData from '../Code/Data/AppData';
+import { popUpMessage, range, warn, error } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class NewKavuah extends React.Component {
@@ -46,11 +47,10 @@ export default class NewKavuah extends React.Component {
                 'Incorrect information');
             return;
         }
-        const ad = this.state.appData,
-            kavuah = new Kavuah(this.state.kavuahType,
-                this.state.settingEntry,
-                this.state.specialNumber,
-                this.state.cancelsOnahBeinunis, this.state.active);
+        const kavuah = new Kavuah(this.state.kavuahType,
+            this.state.settingEntry,
+            this.state.specialNumber,
+            this.state.cancelsOnahBeinunis, this.state.active);
         if (!kavuah.specialNumberMatchesEntry) {
             popUpMessage('The "Kavuah Defining Number" does not match the Setting Entry information for the selected Kavuah Type.\n' +
                 'Please check that the chosen information is correct and try again.\n' +
@@ -58,15 +58,21 @@ export default class NewKavuah extends React.Component {
                 'Incorrect information');
             return;
         }
-        ad.KavuahList.push(kavuah);
-        this.setState({ appData: ad });
-        DataUtils.KavuahToDatabase(kavuah);
-        if (this.onUpdate) {
-            this.onUpdate(ad);
-        }
-        popUpMessage(`The Kavuah for ${kavuah.toString()} has been successfully added.`,
-            'Add Kavuah');
-        this.dispatch(NavigationActions.back());
+        DataUtils.KavuahToDatabase(kavuah)
+            .then(() => {
+                AppData.getAppData().then(appData => {
+                    popUpMessage(`The Kavuah for ${kavuah.toString()} has been successfully added.`,
+                        'Add Kavuah');
+                    if (this.onUpdate) {
+                        this.onUpdate(appData);
+                    }
+                    this.dispatch(NavigationActions.back());
+                });
+            })
+            .catch(err => {
+                warn('Error trying to insert kavuah into the database.');
+                error(err);
+            });
     }
     getSpecialNumberFromEntry(entry) {
         return this.getSpecialNumber(entry, this.state.kavuahType);
