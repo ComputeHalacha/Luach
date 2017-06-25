@@ -113,7 +113,8 @@ export default class EntryList {
         const list = EntryList.sortEntries(this.list);
         for (let entry of list) {
             const index = list.indexOf(entry);
-            entry.setHaflaga(index && list[index - 1]);
+            //First Entry in the list does not have a Haflaga
+            entry.setHaflaga((index > 0) && list[index - 1]);
         }
     }
     getProblemOnahs(kavuahList) {
