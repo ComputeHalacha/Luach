@@ -1,7 +1,7 @@
 import DataUtils from './DataUtils';
 import Settings from '../Settings';
 import Entry from '../Chashavshavon/Entry';
-import {Kavuah} from '../Chashavshavon/Kavuah';
+import { Kavuah } from '../Chashavshavon/Kavuah';
 import EntryList from '../Chashavshavon/EntryList';
 import { error, warn } from '../GeneralUtils';
 
@@ -18,6 +18,8 @@ const addedFields = [
     { table: 'entries', name: 'ignoreForKavuah', type: 'BOOLEAN', allowNull: true },
     { table: 'entries', name: 'ignoreForFlaggedDates', type: 'BOOLEAN', allowNull: true },
     { table: 'entries', name: 'comments', type: 'VARCHAR (500)', allowNull: true },
+    //Added 6/27/17
+    { table: 'settings', name: 'kavuahHaflagaOnahs', type: 'BOOLEAN', allowNull: true },
 ];
 
 export default class AppData {

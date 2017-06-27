@@ -10,7 +10,8 @@ const KavuahTypes = Object.freeze({
     DilugHaflaga: 16,
     DilugDayOfMonth: 32,
     HaflagaMaayanPasuach: 64,
-    DayOfMonthMaayanPasuach: 128
+    DayOfMonthMaayanPasuach: 128,
+    HafalagaOnahs: 256
 });
 
 class Kavuah {
@@ -25,7 +26,8 @@ class Kavuah {
             Sirug - the number of months beteween onahs
             DilugHaflaga - number of days to increment (can be negative) number
             DilugDayOfMonth - number of days to increment (can be negative) number
-            HaflagaMaayanPasuach and DayOfMonthMaayanPasuach the same as their regular couterparts. */
+            HaflagaMaayanPasuach and DayOfMonthMaayanPasuach the same as their regular couterparts.
+            HafalagaOnahs - the number of Onahs between the Entries */
         this.specialNumber = specialNumber;
         //Does this Kavuah cancel the onah beinonis?
         this.cancelsOnahBeinunis = !!cancelsOnahBeinunis;
@@ -67,6 +69,9 @@ class Kavuah {
             case KavuahTypes.DilugDayOfMonth:
                 txt += `for days of the month in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.abs(this.specialNumber).toString()} days"`;
                 break;
+            case KavuahTypes.HafalagaOnahs:
+                txt += `every ${this.specialNumber.toString()} Onahs`;
+                break;
         }
         return txt + '.';
     }
@@ -103,6 +108,8 @@ class Kavuah {
                 return this.specialNumber > 0 &&
                     this.specialNumber <= 30 &&
                     this.specialNumber === this.settingEntry.day;
+            case KavuahTypes.HafalagaOnahs:
+                return this.specialNumber > 0;
             default:
                 return true;
         }
@@ -112,11 +119,11 @@ class Kavuah {
      * @param {EntryList} entryList The list of entries to search
      * @param {[Kavuah]} kavuahList The list of Kavuahs to used to determine if any found kavuah is a "new" one.
      */
-    static getPossibleNewKavuahs(entryList, kavuahList) {
+    static getPossibleNewKavuahs(entryList, kavuahList, settings) {
         //Get all Kavuahs in the list that are active - including ignored ones.
         const klist = kavuahList.filter(k => k.active);
         //Find all possible Kavuahs.
-        return Kavuah.getKavuahSuggestionList(entryList)
+        return Kavuah.getKavuahSuggestionList(entryList, settings)
             //Filter out any Kavuahs that are already in the active list.
             //Ignored Kavuahs will also not be returned.
             .filter(pk =>
@@ -132,7 +139,7 @@ class Kavuah {
      * }
      * @param {*} entryList
      */
-    static getKavuahSuggestionList(entryList) {
+    static getKavuahSuggestionList(entryList, settings) {
         let kavuahList = [];
         const queue = [],
             nonIgnoredEntryList = entryList.filter(e => !e.ignoreForKavuah);
@@ -161,15 +168,26 @@ class Kavuah {
                 kavuahList = kavuahList
                     .concat(Kavuah.getSirugKavuah(queue.slice(-3)));
 
-                //We can't start cheshboning haflaga kavuahs until we have 4 entries - all with the same nightDay
-                if (queue.length === 4 &&
-                    queue[2].nightDay === queue[3].nightDay) {
-                    kavuahList = kavuahList
-                        .concat(Kavuah.getHaflagahKavuah(queue))
-                        .concat(Kavuah.getDilugHaflagahKavuah(queue));
+                //We can't start cheshboning haflaga kavuahs until we have 4 entries
+                if (queue.length === 4) {
+                    //Regular Haflaga Kavuahs need all the entries to have the same nightDay
+                    if (queue[2].nightDay === queue[3].nightDay) {
+                        kavuahList = kavuahList
+                            .concat(Kavuah.getHaflagahKavuah(queue))
+                            .concat(Kavuah.getDilugHaflagahKavuah(queue));
+                    }
                 }
             }
+
+            //The Kavuah of Haflaga of Onahs - the Shulchan Aruch Harav
+            //If the NightDays are all the same, there will already be a Haflaga Kavuah.
+            if (settings.kavuahHaflagaOnahs &&
+                queue.length === 4 &&
+                queue[0].nightDay !== queue[1].nightDay) {
+                kavuahList = kavuahList.concat(Kavuah.getHaflagaOnahsKavuah(queue));
+            }
         }
+
         return kavuahList;
     }
     static getDayOfMonthKavuah(entry, entryList) {
@@ -268,6 +286,23 @@ class Kavuah {
                 kavuah: new Kavuah(KavuahTypes.Haflagah,
                     fourEntries[3],
                     fourEntries[3].haflaga),
+                entries: fourEntries
+            });
+        }
+        return list;
+    }
+    static getHaflagaOnahsKavuah(fourEntries) {
+        const list = [],
+            onahs = fourEntries[0].getOnahDifferential(fourEntries[1]);
+
+        //We compare the intervals of onahs between the entries.
+        //If they are the same, we have a Kavuah
+        if ((fourEntries[1].getOnahDifferential(fourEntries[2]) === onahs) &&
+            (fourEntries[2].getOnahDifferential(fourEntries[3]) === onahs)) {
+            list.push({
+                kavuah: new Kavuah(KavuahTypes.HafalagaOnahs,
+                    fourEntries[3],
+                    onahs),
                 entries: fourEntries
             });
         }

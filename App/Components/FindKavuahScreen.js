@@ -35,7 +35,10 @@ export default class FindKavuahScreen extends Component {
     componentWillMount() {
         const appData = this.state.appData;
         if (appData && !this.listSupplied) {
-            const possList = Kavuah.getPossibleNewKavuahs(appData.EntryList.list, appData.KavuahList);
+            const possList = Kavuah.getPossibleNewKavuahs(
+                appData.EntryList.list,
+                appData.KavuahList,
+                appData.Settings);
             this.setState({
                 possibleKavuahList: possList
             });
@@ -132,7 +135,7 @@ export default class FindKavuahScreen extends Component {
                             <Text style={{ fontWeight: 'bold', color: '#669', marginBottom: 20, flexWrap: 'wrap', textAlign: 'center' }}>
                                 {pk.kavuah.toString()}</Text>
                             <View style={{ marginBottom: 10, padding: 10, backgroundColor: '#f5f5ff', borderRadius: 6 }}>
-                                <Text style={{ color: '#686', fontWeight: 'bold', fontSize: 10, alignSelf:'center' }}>
+                                <Text style={{ color: '#686', fontWeight: 'bold', fontSize: 10, alignSelf: 'center' }}>
                                     Entries used for this calculatation:</Text>
                                 {pk.entries.map((e, i) =>
                                     <Text key={i} style={{ fontSize: 11, color: '#655', paddingLeft: 10 }}>

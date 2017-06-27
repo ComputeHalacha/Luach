@@ -56,6 +56,7 @@ export default class SettingsScreen extends Component {
             keepLongerHaflagah = setDefault(sets && sets.keepLongerHaflagah, true),
             cheshbonKavuahByActualEntry = setDefault(sets && sets.cheshbonKavuahByActualEntry, true),
             cheshbonKavuahByCheshbon = setDefault(sets && sets.cheshbonKavuahByCheshbon, true),
+            kavuahHaflagaOnahs = sets && sets.kavuahHaflagaOnahs,
             calcKavuahsOnNewEntry = setDefault(sets && sets.calcKavuahsOnNewEntry, true),
             showProbFlagOnHome = setDefault(sets && sets.showProbFlagOnHome, true),
             showEntryFlagOnHome = setDefault(sets && sets.showEntryFlagOnHome, true),
@@ -128,6 +129,12 @@ export default class SettingsScreen extends Component {
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('cheshbonKavuahByCheshbon', value)}
                                 value={!!cheshbonKavuahByCheshbon} />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Calculate Kavuahs of Haflaga by counting Onahs?</Text>
+                            <Switch style={GeneralStyles.switch}
+                                onValueChange={value => this.update('kavuahHaflagaOnahs', value)}
+                                value={!!kavuahHaflagaOnahs} />
                         </View>
                         <View style={GeneralStyles.headerView}>
                             <Text style={GeneralStyles.headerText}>Application Settings</Text>

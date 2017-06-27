@@ -93,7 +93,10 @@ export default class NewEntry extends React.Component {
                 this.onUpdate(appData);
             }
             if (appData.Settings.calcKavuahsOnNewEntry) {
-                const possList = Kavuah.getPossibleNewKavuahs(appData.EntryList.list, appData.KavuahList);
+                const possList = Kavuah.getPossibleNewKavuahs(
+                    appData.EntryList.list,
+                    appData.KavuahList,
+                    appData.Settings);
                 if (possList.length) {
                     this.navigate('FindKavuahs', {
                         appData: appData,
@@ -137,7 +140,10 @@ export default class NewEntry extends React.Component {
                 'Change Entry');
             this.checkIfOutOfPattern(entry);
             if (appData.Settings.calcKavuahsOnNewEntry) {
-                const possList = Kavuah.getPossibleNewKavuahs(appData.EntryList.list, appData.KavuahList);
+                const possList = Kavuah.getPossibleNewKavuahs(
+                    appData.EntryList.list,
+                    appData.KavuahList,
+                    appData.Settings);
                 if (possList.length) {
                     this.navigate('FindKavuahs', {
                         appData: appData,
@@ -188,7 +194,7 @@ export default class NewEntry extends React.Component {
                         }
                         DataUtils.DeleteEntry(entry)
                             .then(() => {
-                                popUpMessage(`The entry for ${e.toString()} has been successfully removed.`,
+                                popUpMessage(`The entry for ${entry.toString()} has been successfully removed.`,
                                     'Remove entry');
                                 if (onUpdate) {
                                     onUpdate(appData);

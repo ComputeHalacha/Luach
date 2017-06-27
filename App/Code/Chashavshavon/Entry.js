@@ -1,4 +1,4 @@
-import { Onah, NightDay } from './Onah';
+import { NightDay } from './Onah';
 import Utils from '../JCal/Utils';
 
 export default class Entry {
@@ -34,6 +34,21 @@ export default class Entry {
      */
     isSameEntry(entry) {
         return this.onah.isSameOnah(entry.onah);
+    }
+    /**
+     * Get the onah differential between two entries.
+     * The second onah must be after this one.
+     * @param {Entry} entry
+     */
+    getOnahDifferential(entry) {
+        let count = this.date.diffDays(entry.date) * 2;
+        if (this.nightDay < entry.nightDay) {
+            count++;
+        }
+        else if (this.nightDay > entry.nightDay) {
+            count--;
+        }
+        return count;
     }
     toString() {
         let str = `${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'} of ${this.date.toShortString()}`;

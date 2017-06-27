@@ -127,6 +127,7 @@ export default class NewKavuah extends React.Component {
                             <Picker.Item label='Sirug' value={KavuahTypes.Sirug} />
                             <Picker.Item label={'Haflaga with Ma\'ayan Pasuach'} value={KavuahTypes.HaflagaMaayanPasuach} />
                             <Picker.Item label={'Day Of Month with Ma\'ayan Pasuach'} value={KavuahTypes.DayOfMonthMaayanPasuach} />
+                            <Picker.Item label='Haflaga of Onahs' value={KavuahTypes.HafalagaOnahs} />
                         </Picker>
                     </View>
                     <View style={GeneralStyles.formRow}>

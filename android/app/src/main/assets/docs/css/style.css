@@ -1,6 +1,6 @@
 ﻿body { font-size: 14px; margin: 0; padding: 0; }
 img { border: 0; }
-blockquote, p, div { font-size: 14px; }
+blockquote, p, div, blockquote p { font-size: 14px; }
 .divCaption { margin: 0 0 5px 0; background-color: #f1f1ff; }
     .divCaption a.goHome{float:right;padding-top:25px;display:block;width:30px;text-align:right;}
         .divCaption a.goHome img { height:15px; }
