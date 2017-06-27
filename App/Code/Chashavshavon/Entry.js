@@ -1,4 +1,4 @@
-import { NightDay } from './Onah';
+import { Onah, NightDay } from './Onah';
 import Utils from '../JCal/Utils';
 
 export default class Entry {
@@ -79,6 +79,19 @@ export default class Entry {
             str += ` [Haflaga of ${this.haflaga.toString()}]`;
         }
         return str;
+    }
+    /**
+     * Clone the current entry.
+     */
+    clone() {
+        const entry = new Entry(
+            this.onah,
+            this.entryId,
+            this.ignoreForFlaggedDates,
+            this.ignoreForKavuah,
+            this.comments);
+        entry._haflaga = this.haflaga;
+        return entry;
     }
     get nightDay() {
         return this.onah.nightDay;

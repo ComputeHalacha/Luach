@@ -18,16 +18,22 @@ export default class NewKavuah extends React.Component {
         let { appData, onUpdate, settingEntry } = navigation.state.params;
         this.onUpdate = onUpdate;
         this.dispatch = navigation.dispatch;
-        this.entryList = appData.EntryList;
-        if (this.entryList.list.length > 0 && !settingEntry) {
-            settingEntry = this.entryList.list[this.entryList.list.length - 1];
+        //We work with a (time descending) list of cloned entries
+        //to prevent the "real" entries from becoming immutable
+        this.listOfEntries = appData.EntryList.descending.map(e => e.clone());
+        if (settingEntry) {
+            settingEntry = this.listOfEntries.find(e => e.isSameEntry(settingEntry));
         }
+        else if (this.listOfEntries.length > 0) {
+            settingEntry = this.listOfEntries[0];
+        }
+
         this.state = {
             appData: appData,
             settingEntry: settingEntry,
             kavuahType: KavuahTypes.Haflagah,
             specialNumber: settingEntry && settingEntry.haflaga,
-            cancelsOnahBeinunis: true,
+            cancelsOnahBeinunis: false,
             active: true
         };
         this.getSpecialNumber = this.getSpecialNumber.bind(this);
@@ -50,7 +56,8 @@ export default class NewKavuah extends React.Component {
         const kavuah = new Kavuah(this.state.kavuahType,
             this.state.settingEntry,
             this.state.specialNumber,
-            this.state.cancelsOnahBeinunis, this.state.active);
+            this.state.cancelsOnahBeinunis,
+            this.state.active);
         if (!kavuah.specialNumberMatchesEntry) {
             popUpMessage('The "Kavuah Defining Number" does not match the Setting Entry information for the selected Kavuah Type.\n' +
                 'Please check that the chosen information is correct and try again.\n' +
@@ -130,7 +137,7 @@ export default class NewKavuah extends React.Component {
                                 settingEntry: value,
                                 specialNumber: this.getSpecialNumberFromEntry(value)
                             })}>
-                            {this.entryList.descending.map(entry =>
+                            {this.listOfEntries.map(entry =>
                                 <Picker.Item label={entry.toString()} value={entry} key={entry.entryId} />
                             )}
                         </Picker>
