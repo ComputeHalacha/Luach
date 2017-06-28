@@ -69,7 +69,7 @@ class Onah {
             return new Onah(this.jdate.addDays(1), NightDay.Night);
         }
         else {
-            return new Onah(this.jdate, NightDay.Night);
+            return new Onah(this.jdate, NightDay.Day);
         }
     }
 }

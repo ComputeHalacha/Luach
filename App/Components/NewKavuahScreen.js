@@ -95,6 +95,14 @@ export default class NewKavuah extends React.Component {
         else if ([KavuahTypes.DayOfMonth, KavuahTypes.DayOfMonthMaayanPasuach].includes(kavuahType)) {
             return settingEntry.day;
         }
+        else if (kavuahType === KavuahTypes.HafalagaOnahs) {
+            const index = this.listOfEntries.findIndex(e => e.isSameEntry(settingEntry)),
+                //The entries are sorted latest to earlier
+                previous = this.listOfEntries[index + 1];
+            if (previous) {
+                return previous.getOnahDifferential(settingEntry);
+            }
+        }
 
         return this.state.specialNumber;
     }
