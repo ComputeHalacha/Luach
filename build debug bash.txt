@@ -1,1 +1,1 @@
-cd android && gradlew.bat installDebug
+cd android && ./gradlew installDebug

@@ -160,7 +160,7 @@ export default class EntryList {
         const onahs = [];
         //Day Thirty ***************************************************************
         const dayThirty = entry.date.addDays(29);
-        if ((!EntryList.hasCloseEntry(dayThirty, entry.nightDay, nonProbIgnoredList)) &&
+        if (this.canAddFlaggedDate(dayThirty, entry.nightDay, nonProbIgnoredList) &&
             (!EntryList.isAfterKavuahStart(dayThirty, entry.nightDay, cancelKavuah))) {
             const thirty = new ProblemOnah(
                 dayThirty,
@@ -180,7 +180,7 @@ export default class EntryList {
             if (this.settings.keepThirtyOne) {
                 text += (text ? ' and ' : '') + 'Thirty First Day';
             }
-            if ((!EntryList.hasCloseEntry(dayThirtyOne, entry.nightDay, nonProbIgnoredList)) &&
+            if (this.canAddFlaggedDate(dayThirtyOne, entry.nightDay, nonProbIgnoredList) &&
                 (!EntryList.isAfterKavuahStart(dayThirtyOne, entry.nightDay, cancelKavuah))) {
                 const thirtyOne = new ProblemOnah(
                     dayThirtyOne,
@@ -195,7 +195,7 @@ export default class EntryList {
         //Haflagah **********************************************************************
         const haflagaDate = entry.date.addDays(entry.haflaga - 1);
         if ((entry.haflaga > 0) &&
-            (!EntryList.hasCloseEntry(haflagaDate, entry.nightDay, nonProbIgnoredList)) &&
+            this.canAddFlaggedDate(haflagaDate, entry.nightDay, nonProbIgnoredList) &&
             (!EntryList.isAfterKavuahStart(haflagaDate, entry.nightDay, cancelKavuah))) {
             const haflaga = new ProblemOnah(
                 haflagaDate,
@@ -215,7 +215,7 @@ export default class EntryList {
                     oe.date.Abs > e.date.Abs &&
                     oe.haflaga > e.haflaga)) {
                     const haflagaDate = entry.date.addDays(e.haflaga - 1);
-                    if ((!EntryList.hasCloseEntry(haflagaDate, entry.nightDay, nonProbIgnoredList)) &&
+                    if (this.canAddFlaggedDate(haflagaDate, entry.nightDay, nonProbIgnoredList) &&
                         (!EntryList.isAfterKavuahStart(haflagaDate, entry.nightDay, cancelKavuah))) {
                         let nonOverrided = new ProblemOnah(
                             haflagaDate,
@@ -237,7 +237,7 @@ export default class EntryList {
         for (let kavuah of kavuahList.filter(k =>
             (k.kavuahType === KavuahTypes.Haflagah || k.kavuahType === KavuahTypes.HaflagaMaayanPasuach))) {
             const haflagaDate = entry.date.addDays(kavuah.settingEntry.haflaga - 1);
-            if (!EntryList.hasCloseEntry(haflagaDate, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
+            if (this.canAddFlaggedDate(haflagaDate, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
                 const kavuahHaflaga = new ProblemOnah(
                     haflagaDate,
                     kavuah.settingEntry.nightDay,
@@ -260,7 +260,7 @@ export default class EntryList {
                     //If haflaga is 0, there is no point...
                     if (haflaga) {
                         const haflagaDate = entry.date.addDays(haflaga - 1);
-                        if (!EntryList.hasCloseEntry(haflagaDate, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
+                        if (this.canAddFlaggedDate(haflagaDate, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
                             const kavuahDilugHaflaga = new ProblemOnah(
                                 haflagaDate,
                                 kavuah.settingEntry.nightDay,
@@ -278,7 +278,7 @@ export default class EntryList {
             //The theoretical ones, are worked out in the function "GetIndependentKavuahOnahs"
             for (let kavuah of kavuahList.filter(k => k.kavuahType === KavuahTypes.DilugDayOfMonth && k.active)) {
                 const date = entry.date.addMonths(1).addDays(kavuah.specialNumber);
-                if (!EntryList.hasCloseEntry(date, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
+                if (this.canAddFlaggedDate(date, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
                     const kavuahDilugDayofMonth = new ProblemOnah(
                         date,
                         kavuah.settingEntry.nightDay,
@@ -293,7 +293,7 @@ export default class EntryList {
         for (let kavuah of kavuahList.filter(k =>
             (k.kavuahType === KavuahTypes.HafalagaOnahs))) {
             const haflagaOnah = entry.onah.addOnahs(kavuah.specialNumber);
-            if (!EntryList.hasCloseEntry(haflagaOnah.jdate, haflagaOnah.nightDay, nonProbIgnoredList)) {
+            if (this.canAddFlaggedDate(haflagaOnah.jdate, haflagaOnah.nightDay, nonProbIgnoredList)) {
                 const kavuahHafOnahs = new ProblemOnah(
                     haflagaOnah.jdate,
                     haflagaOnah.nightDay,
@@ -314,7 +314,7 @@ export default class EntryList {
             let dt = kavuah.settingEntry.date.addMonths(
                 kavuah.kavuahType === KavuahTypes.Sirug ? kavuah.specialNumber : 1);
             while (dt.Abs <= this.stopWarningDate.Abs) {
-                if (!EntryList.hasCloseEntry(dt, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
+                if (this.canAddFlaggedDate(dt, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
                     const o = new ProblemOnah(dt, kavuah.settingEntry.nightDay,
                         'Kavuah for ' + kavuah.toString());
                     onahs.push(o);
@@ -328,7 +328,7 @@ export default class EntryList {
         for (let kavuah of kavuahList.filter(k => k.kavuahType === KavuahTypes.DayOfWeek)) {
             let dt = kavuah.settingEntry.date.addDays(kavuah.specialNumber);
             while (dt.Abs <= this.stopWarningDate.Abs) {
-                if (!EntryList.hasCloseEntry(dt, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
+                if (this.canAddFlaggedDate(dt, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
                     const o = new ProblemOnah(
                         dt,
                         kavuah.settingEntry.nightDay,
@@ -352,7 +352,7 @@ export default class EntryList {
                         addDilugDays.Abs > this.stopWarningDate.Abs) {
                         break;
                     }
-                    if (!EntryList.hasCloseEntry(addDilugDays, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
+                    if (this.canAddFlaggedDate(addDilugDays, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
                         const o = new ProblemOnah(
                             addDilugDays,
                             kavuah.settingEntry.nightDay,
@@ -377,7 +377,7 @@ export default class EntryList {
                     if (dt.Abs > this.stopWarningDate.Abs) {
                         break;
                     }
-                    if (!EntryList.hasCloseEntry(dt, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
+                    if (this.canAddFlaggedDate(dt, kavuah.settingEntry.nightDay, nonProbIgnoredList)) {
                         const o = new ProblemOnah(
                             dt,
                             kavuah.settingEntry.nightDay,
@@ -413,6 +413,24 @@ export default class EntryList {
         return Kavuah.getKavuahSuggestionList(this.list);
     }
     /**
+     * Returns true if settings.noProbsAfterEntry is false or if there was no Entry in the 11 days before the given onah.
+     * This is to prevent flagging problems during the days where it is irrelavent.
+     * @param {jDate} date
+     * @param {NightDay} nightDay
+     * @param {[Entry]} nonProbIgnoredList
+     */
+    canAddFlaggedDate(date, nightDay, nonProbIgnoredList) {
+        if (!this.settings.noProbsAfterEntry) {
+            return true;
+        }
+        else {
+            return !nonProbIgnoredList.some(en =>
+                en.date.Abs >= (date.Abs - 11) &&
+                (en.date.Abs < date.Abs || (en.date.Abs === date.Abs && en.nightDay < nightDay))
+            );
+        }
+    }
+    /**
      * Sorts the given list of Entries chronologically.
      * This is nessesary in order to calculate the haflagas etc. correctly.
      * @param {[Entry]} list
@@ -429,20 +447,6 @@ export default class EntryList {
                 return a.nightDay - b.nightDay;
             }
         });
-    }
-
-    /**
-     * Returns true if there was an Entry in the 11 days before the given onah.
-     * This is to prevent flagging problems during the days where it is irrelavent.
-     * @param {jDate} date
-     * @param {NightDay} nightDay
-     * @param {[Entry]} entries
-     */
-    static hasCloseEntry(date, nightDay, entries) {
-        return entries.some(en =>
-            en.date.Abs >= (date.Abs - 11) &&
-            (en.date.Abs < date.Abs || (en.date.Abs === date.Abs && en.nightDay < nightDay))
-        );
     }
     /**
      * Returns true if the given date and NightDay are after the setting entry date
