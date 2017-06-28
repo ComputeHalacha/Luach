@@ -4,6 +4,7 @@ import { Icon } from 'react-native-elements';
 import SideMenu from './SideMenu';
 import CustomList from './CustomList';
 import DataUtils from '../Code/Data/DataUtils';
+import AppData from '../Code/Data/AppData';
 import JDate from '../Code/JCal/jDate';
 import { warn, error, popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
@@ -66,26 +67,25 @@ export default class EntryScreen extends Component {
                     //Button 2
                     {
                         text: 'OK', onPress: () => {
-                            DataUtils.DeleteEntry(entry).catch(err => {
-                                warn('Error trying to delete an entry from the database.');
-                                error(err);
-                            });
                             for (let k of kavuahs) {
-                                let index = kavuahList.indexOf(k);
                                 DataUtils.DeleteKavuah(k).catch(err => {
                                     warn('Error trying to delete a Kavuah from the database.');
                                     error(err);
                                 });
-                                kavuahList.splice(index, 1);
                             }
-                            entryList.remove(entry, e => {
-                                entryList.calulateHaflagas();
-                                appData.EntryList = entryList;
-                                appData.KavuahList = kavuahList;
-                                this.update(appData);
-                                popUpMessage(`The entry for ${e.toString()} has been successfully removed.`,
-                                    'Remove entry');
-                            });
+                            DataUtils.DeleteEntry(entry)
+                                .then(() => {
+                                    AppData.getAppData().then(appData => {
+                                        this.setState({ appData: appData });
+                                        this.update(appData);
+                                        popUpMessage(`The entry for ${entry.toString()} has been successfully removed.`,
+                                            'Remove entry');
+                                    });
+                                })
+                                .catch(err => {
+                                    warn('Error trying to delete an entry from the database.');
+                                    error(err);
+                                });
                         }
                     },
                 ]);
@@ -106,6 +106,7 @@ export default class EntryScreen extends Component {
         });
     }
     render() {
+        const entryList = this.state.appData.EntryList && this.state.appData.EntryList.descending;
         return (
             <View style={GeneralStyles.container}>
                 <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -152,13 +153,13 @@ export default class EntryScreen extends Component {
                             </TouchableHighlight>
                         </View>
                         <CustomList
-                            data={this.state.appData.EntryList && this.state.appData.EntryList.descending}
+                            data={entryList}
                             nightDay={entry => entry.nightDay}
                             title={entry => entry.toLongString()}
                             emptyListText='There are no Entries in the list'
                             secondSection={entry => {
                                 const hasKavuahs = this.state.appData.KavuahList.some(k =>
-                                    k.settingEntry.isSameEntry(entry));
+                                    (!k.ignore) && k.settingEntry.isSameEntry(entry));
                                 return <View style={GeneralStyles.inItemButtonList}>
                                     <TouchableHighlight
                                         underlayColor='#696'

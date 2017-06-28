@@ -17,7 +17,15 @@ export default class Entry {
         this.ignoreForKavuah = !!ignoreForKavuah;
         this.comments = comments;
         //Initial value only...
-        this.haflaga = 0;
+        this._haflaga = 0;
+    }
+    /**
+     * Set the current entries haflaga
+     * @param {Entry} previousEntry
+     */
+    setHaflaga(previousEntry) {
+        this._haflaga = previousEntry ?
+            previousEntry.date.diffDays(this.date) + 1 : 0;
     }
     /**
      * Returns true if the supplied Entry has the same jdate and nightDay as this Entry.
@@ -26,6 +34,21 @@ export default class Entry {
      */
     isSameEntry(entry) {
         return this.onah.isSameOnah(entry.onah);
+    }
+    /**
+     * Get the onah differential between two entries.
+     * The second onah must be after this one.
+     * @param {Entry} entry
+     */
+    getOnahDifferential(entry) {
+        let count = this.date.diffDays(entry.date) * 2;
+        if (this.nightDay < entry.nightDay) {
+            count++;
+        }
+        else if (this.nightDay > entry.nightDay) {
+            count--;
+        }
+        return count;
     }
     toString() {
         let str = `${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'} of ${this.date.toShortString()}`;
@@ -72,6 +95,19 @@ export default class Entry {
         }
         return str;
     }
+    /**
+     * Clone the current entry.
+     */
+    clone() {
+        const entry = new Entry(
+            this.onah,
+            this.entryId,
+            this.ignoreForFlaggedDates,
+            this.ignoreForKavuah,
+            this.comments);
+        entry._haflaga = this.haflaga;
+        return entry;
+    }
     get nightDay() {
         return this.onah.nightDay;
     }
@@ -95,5 +131,8 @@ export default class Entry {
     }
     get hasId() {
         return !!this.entryId;
+    }
+    get haflaga() {
+        return this._haflaga;
     }
 }

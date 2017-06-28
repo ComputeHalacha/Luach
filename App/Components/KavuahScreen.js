@@ -4,6 +4,7 @@ import SideMenu from './SideMenu';
 import CustomList from './CustomList';
 import { Icon } from 'react-native-elements';
 import DataUtils from '../Code/Data/DataUtils';
+import AppData from '../Code/Data/AppData';
 import { warn, error, popUpMessage } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
@@ -36,23 +37,26 @@ export default class KavuahScreen extends Component {
         this.saveAndUpdate = this.saveAndUpdate.bind(this);
     }
     update(appData) {
+        //To cause an update on setState for the FlatList (used in CustomList),
+        //the data source needs to be changed at a "shallow" level.
+        const kavuahList = [...appData.KavuahList];
         this.setState({
-            appData: appData,
-            kavuahList: appData.KavuahList
+            appData:appData,
+            kavuahList: appData.Settings.showIgnoredKavuahs ?
+                kavuahList : kavuahList.filter(k => !k.ignore)
         });
         if (this.onUpdate) {
             this.onUpdate(appData);
         }
     }
     saveAndUpdate(kavuah) {
-        DataUtils.KavuahToDatabase(kavuah);
-
-        const appData = this.state.appData,
-            kavuahList = appData.KavuahList;
-        //To cause an update on setState for the FlatList (used in CustomList),
-        //the data source needs to be changed at a "shallow" level.
-        appData.KavuahList = [...kavuahList];
-        this.update(appData);
+        DataUtils.KavuahToDatabase(kavuah).catch(err => {
+            warn('Error trying to update kavuah into the database.');
+            error(err);
+        });
+        AppData.getAppData().then(appData => {
+            this.update(appData);
+        });
     }
     newKavuah() {
         this.navigate('NewKavuah', {
@@ -79,39 +83,39 @@ export default class KavuahScreen extends Component {
         }
     }
     deleteKavuah(kavuah) {
-        const appData = this.state.appData;
-        let kavuahList = appData.KavuahList,
-            index = kavuahList.indexOf(kavuah);
-        if (index > -1 || kavuah.hasId) {
-            Alert.alert(
-                'Confirm Kavuah Removal',
-                'Are you sure that you want to remove this Kavuah?',
-                [   //Button 1
-                    {
-                        text: 'Cancel',
-                        onPress: () => { return; },
-                        style: 'cancel'
-                    },
-                    //Button 2
-                    {
-                        text: 'OK', onPress: () => {
-                            if (kavuah.hasId) {
-                                DataUtils.DeleteKavuah(kavuah).catch(err => {
-                                    warn('Error trying to delete a kavuah from the database.');
-                                    error(err);
+        Alert.alert(
+            'Confirm Kavuah Removal',
+            'Are you sure that you want to remove this Kavuah?',
+            [   //Button 1
+                {
+                    text: 'Cancel',
+                    onPress: () => { return; },
+                    style: 'cancel'
+                },
+                //Button 2
+                {
+                    text: 'OK', onPress: () => {
+                        DataUtils.DeleteKavuah(kavuah)
+                            .then(() => {
+                                AppData.getAppData().then(appData => {
+                                    this.update(appData);
+                                    popUpMessage(`The kavuah of ${kavuah.toString()} has been successfully removed.`,
+                                        'Remove Kavuah');
+                                    this.setState({
+                                        appData: appData,
+                                        kavuahList: appData.Settings.showIgnoredKavuahs ?
+                                            appData.KavuahList : appData.KavuahList.filter(k => !k.ignore)
+                                    });
+                                    this.update(appData);
                                 });
-                            }
-                            if (index > -1) {
-                                kavuahList.splice(index, 1);
-                                appData.KavuahList = kavuahList;
-                                this.update(appData);
-                            }
-                            popUpMessage(`The kavuah of ${kavuah.toString()} has been successfully removed.`,
-                                'Remove Kavuah');
-                        }
+                            })
+                            .catch(err => {
+                                warn('Error trying to delete a kavuah from the database.');
+                                error(err);
+                            });
                     }
-                ]);
-        }
+                }
+            ]);
     }
     findKavuahs() {
         this.navigate('FindKavuahs', {

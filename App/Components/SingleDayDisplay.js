@@ -3,7 +3,7 @@ import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpac
 import { Icon } from 'react-native-elements';
 import Utils from '../Code/JCal/Utils';
 import Zmanim from '../Code/JCal/Zmanim';
-import { log } from '../Code/GeneralUtils';
+import { log, popUpMessage } from '../Code/GeneralUtils';
 import { UserOccasion } from '../Code/JCal/UserOccasion';
 /**
  * Display a home screen box for a single jewish date.
@@ -90,7 +90,15 @@ export default class SingleDayDisplay extends Component {
         this.navigator.navigate('FindLocation', this.props);
     }
     editEntry(entry) {
-        this.navigator.navigate('NewEntry', { entry, ...this.props });
+        const hasKavuah = this.props.appData.KavuahList.some(k =>
+            (!k.ignore) && k.settingEntry.isSameEntry(entry));
+        if (hasKavuah) {
+            popUpMessage('This Entry has been set as "Setting Entry" for a Kavuah and can not be changed.',
+                'Entry cannot be changed');
+        }
+        else {
+            this.navigator.navigate('NewEntry', { entry, ...this.props });
+        }
     }
     editOccasion(occasion) {
         this.navigator.navigate('NewOccasion', { occasion, ...this.props });

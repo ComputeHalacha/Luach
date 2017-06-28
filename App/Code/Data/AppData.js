@@ -1,5 +1,7 @@
 import DataUtils from './DataUtils';
 import Settings from '../Settings';
+import Entry from '../Chashavshavon/Entry';
+import { Kavuah } from '../Chashavshavon/Kavuah';
 import EntryList from '../Chashavshavon/EntryList';
 import { error, warn } from '../GeneralUtils';
 
@@ -16,6 +18,10 @@ const addedFields = [
     { table: 'entries', name: 'ignoreForKavuah', type: 'BOOLEAN', allowNull: true },
     { table: 'entries', name: 'ignoreForFlaggedDates', type: 'BOOLEAN', allowNull: true },
     { table: 'entries', name: 'comments', type: 'VARCHAR (500)', allowNull: true },
+    //Added 6/27/17
+    { table: 'settings', name: 'kavuahHaflagaOnahs', type: 'BOOLEAN', allowNull: true },
+    //Added 6/28/17
+    { table: 'settings', name: 'noProbsAfterEntry', type: 'BOOLEAN', allowNull: true, defaultValue: '1' },
 ];
 
 export default class AppData {
@@ -34,6 +40,7 @@ export default class AppData {
         this.ProblemOnahs = problemOnahs || [];
     }
     updateProbs() {
+        this.EntryList.calulateHaflagas();
         let probs = [];
         if (this.EntryList.list.length > 0) {
             probs = this.EntryList.getProblemOnahs(this.KavuahList);
@@ -51,8 +58,34 @@ export default class AppData {
     static setAppData(ad) {
         global.GlobalAppData = ad;
     }
-    static updateGlobalProbs() {
+    /**
+     *
+     * @param {Entry | Kavuah} item
+     * @param {Boolean} remove
+     */
+    static updateGlobalProbs(item, remove) {
         AppData.getAppData().then(appData => {
+            if (item) {
+                if (!remove) {
+                    if (item instanceof Entry) {
+                        appData.EntryList.add(item);
+                    }
+                    else if (item instanceof Kavuah) {
+                        appData.KavuahList.push(item);
+                    }
+                }
+                else {
+                    if (item instanceof Entry) {
+                        appData.EntryList.remove(item);
+                    }
+                    else if (item instanceof Kavuah) {
+                        let index = appData.KavuahList.indexOf(item);
+                        if (index > -1) {
+                            appData.KavuahList.splice(index, 1);
+                        }
+                    }
+                }
+            }
             appData.updateProbs(appData);
         });
     }

@@ -45,18 +45,9 @@ export default class NewEntry extends React.Component {
 
         let jdate, isNight;
         if (entry) {
-            const hasKavuah = appData.KavuahList.some(k =>
-                k.settingEntry.isSameEntry(entry));
-            if (hasKavuah) {
-                popUpMessage('This Entry has been set as "Setting Entry" for a Kavuah and can not be changed.',
-                    'Entry cannot be changed');
-                this.dispatch(NavigationActions.back());
-            }
-            else {
-                this.entry = entry;
-                jdate = entry.date;
-                isNight = entry.nightDay === NightDay.Night;
-            }
+            this.entry = entry;
+            jdate = entry.date;
+            isNight = entry.nightDay === NightDay.Night;
         }
         else {
             jdate = navigation.state.params.jdate;
@@ -94,8 +85,6 @@ export default class NewEntry extends React.Component {
             return;
         }
         DataUtils.EntryToDatabase(entry).then(() => {
-            entryList.add(entry);
-            entryList.calulateHaflagas();
             appData.EntryList = entryList;
             popUpMessage(`The entry for ${entry.toString()} has been successfully added.`,
                 'Add Entry');
@@ -104,7 +93,10 @@ export default class NewEntry extends React.Component {
                 this.onUpdate(appData);
             }
             if (appData.Settings.calcKavuahsOnNewEntry) {
-                const possList = Kavuah.getPossibleNewKavuahs(appData.EntryList.list, appData.KavuahList);
+                const possList = Kavuah.getPossibleNewKavuahs(
+                    appData.EntryList.list,
+                    appData.KavuahList,
+                    appData.Settings);
                 if (possList.length) {
                     this.navigate('FindKavuahs', {
                         appData: appData,
@@ -141,8 +133,6 @@ export default class NewEntry extends React.Component {
             return;
         }
         DataUtils.EntryToDatabase(entry).then(() => {
-            entryList.calulateHaflagas();
-            appData.EntryList = entryList;
             if (this.onUpdate) {
                 this.onUpdate(appData);
             }
@@ -150,7 +140,10 @@ export default class NewEntry extends React.Component {
                 'Change Entry');
             this.checkIfOutOfPattern(entry);
             if (appData.Settings.calcKavuahsOnNewEntry) {
-                const possList = Kavuah.getPossibleNewKavuahs(appData.EntryList.list, appData.KavuahList);
+                const possList = Kavuah.getPossibleNewKavuahs(
+                    appData.EntryList.list,
+                    appData.KavuahList,
+                    appData.Settings);
                 if (possList.length) {
                     this.navigate('FindKavuahs', {
                         appData: appData,
@@ -178,8 +171,7 @@ export default class NewEntry extends React.Component {
      * @param {Function} onUpdate
      */
     static deleteEntry(entry, appData, onUpdate) {
-        let entryList = appData.EntryList,
-            kavuahList = appData.KavuahList;
+        let kavuahList = appData.KavuahList;
 
         const kavuahs = kavuahList.filter(k => k.settingEntry.isSameEntry(entry));
         Alert.alert(
@@ -194,28 +186,24 @@ export default class NewEntry extends React.Component {
                 //Button 2
                 {
                     text: 'OK', onPress: () => {
-                        DataUtils.DeleteEntry(entry).catch(err => {
-                            warn('Error trying to delete an entry from the database.');
-                            error(err);
-                        });
                         for (let k of kavuahs) {
-                            let index = kavuahList.indexOf(k);
                             DataUtils.DeleteKavuah(k).catch(err => {
                                 warn('Error trying to delete a Kavuah from the database.');
                                 error(err);
                             });
-                            kavuahList.splice(index, 1);
                         }
-                        entryList.remove(entry, e => {
-                            entryList.calulateHaflagas();
-                            appData.EntryList = entryList;
-                            appData.KavuahList = kavuahList;
-                            popUpMessage(`The entry for ${e.toString()} has been successfully removed.`,
-                                'Remove entry');
-                            if (onUpdate) {
-                                onUpdate(appData);
-                            }
-                        });
+                        DataUtils.DeleteEntry(entry)
+                            .then(() => {
+                                popUpMessage(`The entry for ${entry.toString()} has been successfully removed.`,
+                                    'Remove entry');
+                                if (onUpdate) {
+                                    onUpdate(appData);
+                                }
+                            })
+                            .catch(err => {
+                                warn('Error trying to delete an entry from the database.');
+                                error(err);
+                            });
                     }
                 }]);
     }

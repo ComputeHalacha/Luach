@@ -56,11 +56,13 @@ export default class SettingsScreen extends Component {
             keepLongerHaflagah = setDefault(sets && sets.keepLongerHaflagah, true),
             cheshbonKavuahByActualEntry = setDefault(sets && sets.cheshbonKavuahByActualEntry, true),
             cheshbonKavuahByCheshbon = setDefault(sets && sets.cheshbonKavuahByCheshbon, true),
+            kavuahHaflagaOnahs = sets && sets.kavuahHaflagaOnahs,
             calcKavuahsOnNewEntry = setDefault(sets && sets.calcKavuahsOnNewEntry, true),
             showProbFlagOnHome = setDefault(sets && sets.showProbFlagOnHome, true),
             showEntryFlagOnHome = setDefault(sets && sets.showEntryFlagOnHome, true),
             navigateBySecularDate = sets && sets.navigateBySecularDate,
             showIgnoredKavuahs = sets && sets.showIgnoredKavuahs,
+            noProbsAfterEntry = setDefault(sets && sets.noProbsAfterEntry, true),
             requirePIN = setDefault(sets && sets.requirePIN, true);
 
         return (
@@ -75,6 +77,9 @@ export default class SettingsScreen extends Component {
                         helpUrl='Settings.html'
                         helpTitle='Settings' />
                     <ScrollView style={{ flex: 1 }}>
+                        <View style={GeneralStyles.headerView}>
+                            <Text style={GeneralStyles.headerText}>Halachic Settings</Text>
+                        </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Choose your location</Text>
                             <TouchableHighlight underlayColor='#9f9' onPress={() =>
@@ -91,29 +96,19 @@ export default class SettingsScreen extends Component {
                             </TouchableHighlight>
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Number of Months ahead to warn</Text>
-                            <Picker style={GeneralStyles.picker}
-                                selectedValue={numberMonthsAheadToWarn}
-                                onValueChange={value => this.update('numberMonthsAheadToWarn', value)}>
-                                {nums.map((n, i) => {
-                                    return (<Picker.Item label={n.toString()} value={n} key={i} />);
-                                })}
-                            </Picker>
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Flag previous onah? (The "Ohr Zaruah")</Text>
+                            <Text style={GeneralStyles.label}>Flag previous onah (The "Ohr Zaruah")</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('showOhrZeruah', value)}
                                 value={!!showOhrZeruah} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours?</Text>
+                            <Text style={GeneralStyles.label}>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('onahBeinunis24Hours', value)}
                                 value={!!onahBeinunis24Hours} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Keep day Thirty One for Onah Beinonis?</Text>
+                            <Text style={GeneralStyles.label}>Keep day Thirty One for Onah Beinonis</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('keepThirtyOne', value)}
                                 value={!!keepThirtyOne} />
@@ -125,19 +120,38 @@ export default class SettingsScreen extends Component {
                                 value={!!keepLongerHaflagah} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Continue original incrementation of Dilug Hafalaga Kavuahs from a late or early Entry?</Text>
+                            <Text style={GeneralStyles.label}>Continue original incrementation of Dilug Hafalaga Kavuahs from a late or early Entry</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('cheshbonKavuahByActualEntry', value)}
                                 value={!!cheshbonKavuahByActualEntry} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Continue incrementing Dilug Kavuahs even from missed Entries?</Text>
+                            <Text style={GeneralStyles.label}>Continue incrementing Dilug Kavuahs even from missed Entries</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('cheshbonKavuahByCheshbon', value)}
                                 value={!!cheshbonKavuahByCheshbon} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Automatically Calculate Kavuahs upon addition of an Entry?</Text>
+                            <Text style={GeneralStyles.label}>Calculate Kavuahs of Haflaga by counting Onahs</Text>
+                            <Switch style={GeneralStyles.switch}
+                                onValueChange={value => this.update('kavuahHaflagaOnahs', value)}
+                                value={!!kavuahHaflagaOnahs} />
+                        </View>
+                        <View style={GeneralStyles.headerView}>
+                            <Text style={GeneralStyles.headerText}>Application Settings</Text>
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Number of Months ahead to warn</Text>
+                            <Picker style={GeneralStyles.picker}
+                                selectedValue={numberMonthsAheadToWarn}
+                                onValueChange={value => this.update('numberMonthsAheadToWarn', value)}>
+                                {nums.map((n, i) => {
+                                    return (<Picker.Item label={n.toString()} value={n} key={i} />);
+                                })}
+                            </Picker>
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Automatically Calculate Kavuahs upon addition of an Entry</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('calcKavuahsOnNewEntry', value)}
                                 value={!!calcKavuahsOnNewEntry} />
@@ -149,7 +163,7 @@ export default class SettingsScreen extends Component {
                                 value={!!showProbFlagOnHome} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Show flags for dates that have an Entry on Main Screen?</Text>
+                            <Text style={GeneralStyles.label}>Show flags for dates that have an Entry on Main Screen</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('showEntryFlagOnHome', value)}
                                 value={!!showEntryFlagOnHome} />
@@ -170,10 +184,16 @@ export default class SettingsScreen extends Component {
                             }
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Show explicitly ignored Kavuahs in the Kavuah list?</Text>
+                            <Text style={GeneralStyles.label}>Show explicitly ignored Kavuahs in the Kavuah list</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('showIgnoredKavuahs', value)}
                                 value={!!showIgnoredKavuahs} />
+                        </View>
+                         <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Don't show Flagged dates for 11 days after Entry</Text>
+                            <Switch style={GeneralStyles.switch}
+                                onValueChange={value => this.update('noProbsAfterEntry', value)}
+                                value={!!noProbsAfterEntry} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Require PIN to open application?</Text>

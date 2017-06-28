@@ -28,8 +28,27 @@ class Onah {
      * @param {Onah} onah
      */
     isSameOnah(onah) {
-        return Utils.isSameJdate(this.jdate,onah.jdate) &&
+        return Utils.isSameJdate(this.jdate, onah.jdate) &&
             this.nightDay === onah.nightDay;
+    }
+    /**
+     * Add the given number of Onahs to the current one
+     * @param {Number} number - if it is negative will get an earlier onah
+     */
+    addOnahs(number) {
+        if (!number) {
+            return this;
+        }
+
+        //First add the full days. Each day is 2 onahs.
+        const fullDays = Utils.toInt(number / 2);
+        let onah = new Onah(this.jdate.addDays(fullDays), this.nightDay);
+        number -= (fullDays * 2);
+        while (number > 0) {
+            onah = (number > 0 ? onah.next : onah.previous);
+            number--;
+        }
+        return onah;
     }
     /**
      * Returns the Onah directly before to this one.
@@ -50,7 +69,7 @@ class Onah {
             return new Onah(this.jdate.addDays(1), NightDay.Night);
         }
         else {
-            return new Onah(this.jdate, NightDay.Night);
+            return new Onah(this.jdate, NightDay.Day);
         }
     }
 }

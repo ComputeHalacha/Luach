@@ -32,11 +32,14 @@
             has been proven to have "broken".
         </p>
         <p>
-            Kavuah setting and breaking is a very complex Halachic issue and should aways be accompanied with Rabbinic guidance.
+            Kavuah setting and breaking is a very complex <em>Halachic</em> issue and should aways be accompanied with Rabbinic guidance.
         </p>
         <p>There are many ways that recurring periods can be considered to have occurred in a pattern.</p>
         <p>
-            Here is a list of a few of the more common ones:
+            Luach automatically
+        </p>
+        <p>
+            Here is a list of the Kavuah types that Luach knows how to calculate automatically:
             <ul>
                 <li>
                     <strong>Yom HaChodesh / Day of Month</strong> - Three periods that all occur on the same date
@@ -80,7 +83,7 @@
                     period will occur.
                 </li>
                 <li>
-                    <strong>Dilug - Haflaga</strong> - Three periods in a row where the interval from one to the
+                    <strong>Dilug - Haflaga</strong><a name="DilugHaflaga">&nbsp;</a>- Three periods in a row where the interval from one to the
                     next occurred in a recurring pattern.
                     <br /> For example, if a period started on the Day <a href="Entries.html#Onahs">Onah</a> on the
                     4th of Sivan, and the next period started 28 days later during the Day <a href="Entries.html#Onahs">Onah</a>                            on the 1st of Tammuz, and the following period started 29 days later during the Day <a href="Entries.html#Onahs">Onah</a>                            on the 1st of Av, and the following period started 30 days later during the Day <a href="Entries.html#Onahs">Onah</a>                            on the 30th of Av, this is considered a Kavuah of Dilug Haflaga with an interval of plus one
@@ -94,7 +97,31 @@
                     as the Yom Hachodesh needs a period on each subsequent month, while the Sirug Kavuah has some
                     months in middle that are skipped.
                 </li>
+                <li>
+                    <strong>Haflaga of Onahs</strong> - Three periods in a row that started the same number of
+                    <a href="Entries.html#Onahs">Onahs</a> after the period that preceded them.
+                    <br />
+                    Like the Haflaga Kavuah, this Kavuah needs four entries to set its pattern.
+                    <br />
+                    This Kavuah is known in Halachic circles as the Haflaga of the <em>Shulchan Aruch Harav</em>.
+                    <br />
+                    Many authorities do not consider this pattern to be a Kavuah
+                    unless the <a href="Entries.html#Onahs">Onahs</a> are the same for all the Entries;
+                    in which case it will be considered a Haflaga Kavuah.
+                    <br />
+                    This Kavuah type is not automatically calculated by Luach unless explicitly told to do so
+                    by turning on the <a href="Settings.html#kavuahHaflagaOnahs">Calculate Kavuahs of Haflaga by counting Onahs</a> setting from
+                    the <a href="Settings.html">Settings screen</a>.
+                </li>
             </ul>
+            There are other Kavuah types such as recurring Dilug patterns, <em>Maya'an Pasuch</em>,
+            <em>Vesset HaGuff</em> and others that are not dealt with in Luach.
+            <br />
+            Some of these (such as <em>Vesset HaGuff</em>) are pretty much impossible
+            to keep track of with electronic calculation as they are determined by physical manifestation.
+            <br />
+            For this reason and many, many others, it is very important to keep physical records
+            besides for the electronic records stored in Luach.
         </p>
         <h3>Kavuah Properties</h3>
         <p>Kavuahs have the following properties:</p>
@@ -151,6 +178,10 @@
                         For <strong>Sirug</strong> Kavuahs, the Kavuah Defining Number is the number of months that
                         separate each Entry in the pattern from the previous one.
                     </li>
+                    <li>
+                        For <strong>Haflaga of Onahs</strong> Kavuahs, the Kavuah Defining Number is the number of Onahs that
+                        separate each Entry in the pattern from the previous one.
+                    </li>
                 </ul>
             </blockquote>
             <strong>Cancels Onah Beinonis</strong><a name="CancelOnahBeinonis">&nbsp;</a>
@@ -160,16 +191,57 @@
                 <br /> If there was a Kavuah pattern with a strong Halachic status established, there are some <em>Poskim</em>                        that hold that the Kavuah may cancel all or some of the the standard
                 <a href="FlaggedDates.html">Flagged Dates</a> that are often observed for a women who does not have
                 any pattern at all.
-                <br /> These dates may include some or all of the following:
+                <br />
+                <br />
+                These dates may include some or all of the following:
                 <ul>
                     <li>The thirtieth day from the beginning of the period.</li>
                     <li>The same day of the Jewish month for the month following the period.</li>
-                    <li>There are some that also observe the thirty first day from the begining of the period.</li>
+                    <li>The thirty first day from the beginning of the period.</li>
+                    <li>
+                        The day that is the same number of days after the last period as that period was from the period preceding it.
+                        This is called the <a href="Entries.html#haflaga">Yom Haflaga</a>.
+                    </li>
                 </ul>
-                These standard <a href="FlaggedDates.html">Flagged Dates</a> are called <em>Onah Beinonis</em>.
-                <br /> As with everything pertaining to Vesset Kavuahs, Rabbinic assistance is usually required to
-                determine the correct course of action for setting the <em>Cancels Onah Beinonis</em> value for any
-                Kavuah.
+                <p>
+                    These standard <a href="FlaggedDates.html">Flagged Dates</a> are called <em>Onah Beinonis</em>.
+                </p>
+                <p>
+                    As with everything pertaining to Vesset Kavuahs, Rabbinic assistance is usually required to
+                    determine the correct course of action for setting the <em>Cancels Onah Beinonis</em> value for any Kavuah.
+                </p>
+                <p>
+                    In Luach, when a new Kavauh is first added, it is initially set to not cancel <em>Onah Beinonis</em>.
+                    <br />
+                    If the Kavauh is set to cancel <em>Onah Beinonis</em>, from the day this Kavuah was set and onward,
+                    Luach will only show the <a href="FlaggedDates.html">Flagged Dates</a> generated by this Kavuah.
+                    <br />
+                    The <em>Onah Beinonis</em> <a href="FlaggedDates.html">Flagged Dates</a> will not be shown.
+                    <br />
+                </p>
+                <h4>Un-Cancelling</h4>
+                <p>
+                    You can always remove the <em>Cancel Onah Beinonis</em> setting for any Kavuah from the Kavuahs Screen.
+                    <br />
+                    Just toggle the <em>Cancels Onah Beinonis</em> switch under that Kavuah.
+                </p>
+                <p>
+                    If there is a Kavuah in the list that is set to cancel <em>Onah Beinonis</em>, and a new <a href="Entries.html">Entry</a>
+                    is added that does not fit the Kavuah pattern, Luach will ask you if you want to stop the cancelling
+                    of <em>Onah Beinonis</em> for this Kavuah.
+                    <br />
+                    This is in accordance with the <em>Halacha</em>.
+                    <br />
+                    It is important to note that there are some that are of the opinion that not all
+                    of the <em>Onah Beinonis</em> Flagged Dates return when there is a canceling Kavuah and
+                    there was a single period that was "out-of-pattern".
+                    <br />
+                    Luach does not (yet) have any option to cancel only some of the <em>Onah Beinonis</em> dates.
+                </p>
+                <p>
+                    Whenever any Kavuahs <em>Cancels Onah Beinonis</em> setting is changed, Luach will
+                    automatically recalculate all the <a href="FlaggedDates.html">Flagged Dates</a>.
+                </p>
             </blockquote>
             <strong>Active</strong>
             <blockquote>
@@ -177,22 +249,26 @@
                 pattern.
                 <br /> A <em>broken</em> Kavuah can be set to <em>inactive</em> to prevent it from causing any
                 <a href="FlaggedDates.html">Flagged Dates</a>.
-                <br /> Many times, <em>broken</em> Kavuahs can be <em>reawakened</em> again with a single Entry that
+                <br /> For many Kavuah types, a <em>broken</em> Kavuahs can be <em>reawakened</em> again with a single Entry that
                 matches the original pattern.
                 <br /> For this reason, it is usually recommended to de-activate a Kavuah rather than delete it.
             </blockquote>
         </div>
         <div class="well">
-            <strong>IMPORTANT NOTE</strong><br /> Do to it's high level of Halachic intricacy, Lauch DOES NOT attempt
-            to automatically calculate when a Kavuah should be considered <em>broken</em> or <em>reawakened</em>.
-            <br /> This is just one of the many reasons for the huge warning at the top of these pages about how
-            Luach can not be used to fully replace traditional methods of keeping track of a womens Halachic calendar.
+            <strong>IMPORTANT NOTE</strong>
+            <p>
+                Do to its high level of Halachic intricacy, Lauch DOES NOT attempt
+                to automatically calculate when a Kavuah should be considered <em>broken</em> or <em>reawakened</em>.
+                <br /> This is just one of the many reasons for the huge warning at the top of these pages about how
+                Luach can not be used to fully replace traditional methods of keeping track of a womens Halachic calendar.
+            </p>
         </div>
         <h3>Possible Kavuahs</h3>
         <p>
             When <a href="Entries.html">Entries</a> are added or changed, Luach automatically looks through the entire
             Entry list to see if there may be a Kavuah pattern.
-            <br /> If a possible Kavuah is found, Luach will show <em>The Possible Kavuah Screen</em> [see screenshot].
+            <br />
+            If a possible Kavuah is found, Luach will show <em>The Possible Kavuah Screen</em>.
         </p>
         <p>
             <strong>Note:</strong>

@@ -29,11 +29,13 @@ export default class DataUtils {
                     keepLongerHaflagah: dbSet.keepLongerHaflagah,
                     cheshbonKavuahByActualEntry: dbSet.cheshbonKavuahByActualEntry,
                     cheshbonKavuahByCheshbon: dbSet.cheshbonKavuahByCheshbon,
+                    kavuahHaflagaOnahs: dbSet.kavuahHaflagaOnahs,
                     calcKavuahsOnNewEntry: dbSet.calcKavuahsOnNewEntry,
                     showProbFlagOnHome: dbSet.showProbFlagOnHome,
                     showEntryFlagOnHome: dbSet.showEntryFlagOnHome,
                     navigateBySecularDate: dbSet.navigateBySecularDate,
                     showIgnoredKavuahs: dbSet.showIgnoredKavuahs,
+                    noProbsAfterEntry: dbSet.noProbsAfterEntry,
                     requirePIN: dbSet.requirePIN,
                     PIN: dbSet.PIN
                 });
@@ -54,11 +56,13 @@ export default class DataUtils {
             keepLongerHaflagah=?,
             cheshbonKavuahByActualEntry=?,
             cheshbonKavuahByCheshbon=?,
+            kavuahHaflagaOnahs=?,
             calcKavuahsOnNewEntry=?,
             showProbFlagOnHome=?,
             showEntryFlagOnHome=?,
             navigateBySecularDate=?,
             showIgnoredKavuahs=?,
+            noProbsAfterEntry=?,
             requirePIN=?,
             PIN=?`,
             [
@@ -71,11 +75,13 @@ export default class DataUtils {
                 settings.keepLongerHaflagah,
                 settings.cheshbonKavuahByActualEntry,
                 settings.cheshbonKavuahByCheshbon,
+                settings.kavuahHaflagaOnahs,
                 settings.calcKavuahsOnNewEntry,
                 settings.showProbFlagOnHome,
                 settings.showEntryFlagOnHome,
                 settings.navigateBySecularDate,
                 settings.showIgnoredKavuahs,
+                settings.noProbsAfterEntry,
                 settings.requirePIN,
                 settings.PIN
             ])
@@ -270,7 +276,7 @@ export default class DataUtils {
                 params)
                 .then(results => {
                     kavuah.kavuahId = results.id;
-                    AppData.updateGlobalProbs();
+                    AppData.updateGlobalProbs(kavuah);
                 })
                 .catch(err => {
                     warn('Error trying to insert kavuah into the database.');
@@ -283,7 +289,7 @@ export default class DataUtils {
             throw 'Kavuahs can only be deleted from the database if they have an id';
         }
         await DataUtils._executeSql('DELETE from kavuahs where kavuahId=?', [kavuah.kavuahId])
-            .then(() => AppData.updateGlobalProbs())
+            .then(() => AppData.updateGlobalProbs(kavuah, true))
             .catch(err => {
                 warn(`Error trying to delete kavuah id ${kavuah.kavuahId} from the database`);
                 error(err);
@@ -299,7 +305,8 @@ export default class DataUtils {
                     entry.ignoreForKavuah,
                     entry.comments,
                     entry.entryId
-                ]).then(() => {
+                ])
+                .then(() => {
                     log(`Updated Entry Id ${entry.entryId.toString()}`);
                     AppData.updateGlobalProbs();
                 })
@@ -316,9 +323,10 @@ export default class DataUtils {
                     entry.ignoreForFlaggedDates,
                     entry.ignoreForKavuah,
                     entry.comments
-                ]).then(results => {
+                ])
+                .then(results => {
                     entry.entryId = results.id;
-                    AppData.updateGlobalProbs();
+                    AppData.updateGlobalProbs(entry);
                 })
                 .catch(err => {
                     warn('Error trying to insert entry into the database.');
@@ -331,7 +339,7 @@ export default class DataUtils {
             throw 'Entries can only be deleted from the database if they have an id';
         }
         await DataUtils._executeSql('DELETE from entries where entryId=?', [entry.entryId])
-            .then(() => AppData.updateGlobalProbs())
+            .then(() => AppData.updateGlobalProbs(entry, true))
             .catch(err => {
                 warn(`Error trying to delete entry id ${entry.entryId} from the database`);
                 error(err);
