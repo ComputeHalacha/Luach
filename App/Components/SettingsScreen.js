@@ -54,7 +54,6 @@ export default class SettingsScreen extends Component {
             onahBeinunis24Hours = sets && sets.onahBeinunis24Hours,
             numberMonthsAheadToWarn = (sets && sets.numberMonthsAheadToWarn) || 12,
             keepLongerHaflagah = setDefault(sets && sets.keepLongerHaflagah, true),
-            cheshbonKavuahByActualEntry = setDefault(sets && sets.cheshbonKavuahByActualEntry, true),
             cheshbonKavuahByCheshbon = setDefault(sets && sets.cheshbonKavuahByCheshbon, true),
             kavuahHaflagaOnahs = sets && sets.kavuahHaflagaOnahs,
             calcKavuahsOnNewEntry = setDefault(sets && sets.calcKavuahsOnNewEntry, true),
@@ -120,13 +119,7 @@ export default class SettingsScreen extends Component {
                                 value={!!keepLongerHaflagah} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Continue original incrementation of Dilug Hafalaga Kavuahs from a late or early Entry</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('cheshbonKavuahByActualEntry', value)}
-                                value={!!cheshbonKavuahByActualEntry} />
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Continue incrementing Dilug Kavuahs even from missed Entries</Text>
+                            <Text style={GeneralStyles.label}>Continue incrementing Dilug Yom Hachodesh Kavuahs into another month</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('cheshbonKavuahByCheshbon', value)}
                                 value={!!cheshbonKavuahByCheshbon} />

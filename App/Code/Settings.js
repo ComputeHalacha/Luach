@@ -10,7 +10,6 @@ export default class Settings {
         this.onahBeinunis24Hours = !!args.onahBeinunis24Hours;
         this.numberMonthsAheadToWarn = setDefault(args.numberMonthsAheadToWarn, 12);
         this.keepLongerHaflagah = !!args.keepLongerHaflagah;
-        this.cheshbonKavuahByActualEntry = setDefault(args.cheshbonKavuahByActualEntry, true);
         this.cheshbonKavuahByCheshbon = setDefault(args.cheshbonKavuahByCheshbon, true);
         this.kavuahHaflagaOnahs = !!args.kavuahHaflagaOnahs;
         this.calcKavuahsOnNewEntry = setDefault(args.calcKavuahsOnNewEntry, true);
@@ -35,7 +34,6 @@ export default class Settings {
             this.onahBeinunis24Hours === other.onahBeinunis24Hours &&
             this.numberMonthsAheadToWarn === other.numberMonthsAheadToWarn &&
             this.keepLongerHaflagah === other.keepLongerHaflagah &&
-            this.cheshbonKavuahByActualEntry === other.cheshbonKavuahByActualEntry &&
             this.cheshbonKavuahByCheshbon === other.cheshbonKavuahByCheshbon &&
             this.kavuahHaflagaOnahs === other.kavuahHaflagaOnahs &&
             this.calcKavuahsOnNewEntry === other.calcKavuahsOnNewEntry &&
