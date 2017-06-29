@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Kavuahs | Luach App | Instructions</title>
+    <title>Kavuahs | Luach Application | Instructions</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/style.css" />
@@ -36,7 +36,7 @@
         </p>
         <p>There are many ways that recurring periods can be considered to have occurred in a pattern.</p>
         <p>
-            Luach automatically
+            Luach automatically calculates and suggests possible Kavuhas whenever an <a href="Entries.html">Entry</a> is added or updated.
         </p>
         <p>
             Here is a list of the Kavuah types that Luach knows how to calculate automatically:
@@ -47,7 +47,13 @@
                     <br /> For example if a period started on the Day of the 4th of Sivan, the Day of the 4th of
                     Tammuz and the Day of the 4th of Av, this is considered a Kavuah of the Yom HaChodesh. Note,
                     it is usually considered a Kavuah in this scenario, even if there were other periods in the days
-                    between these dates. As for everything else, a Rav should be consulted.
+                    between these dates. As for everything else, a Rav should be consulted.                    
+                    <break />
+                    It is important to note that <em>Harav Moshe Feinstein zt"l</em> was of the opinion that
+                    the three periods do not all have to begin during the same <em><a href="Entries.html#Onahs">Onah</a></em>.
+                    <br />
+                    Whether or not Luach suggests Kavuah patterns according to this opinion can be set from the <a href="Settings.html">Settings</a> Screen, 
+                    by toggling the Setting "Flag Kavuahs even if not all the same Onah".
                 </li>
                 <li>
                     <strong>Haflaga / Interval</strong> - Three periods in a row that started the same number of
@@ -59,19 +65,25 @@
                     following period started 29 days later during the Day <a href="Entries.html#Onahs">Onah</a> on
                     the 29th of Av, this is considered a Kavuah of Haflaga. You may notice that to set this type
                     of Kavuah, we need to calculate 4 periods as opposed to the <em>Yom HaChodesh</em> Kavuah where
-                    just 3 periods can set the pattern.
+                    just 3 periods can set the pattern.                    
+                    <break />
+                    For this type of Kavuah as well, <em>Harav Moshe Feinstein zt"l</em> was of the opinion that
+                    the three periods do not all have to begin during the same <em><a href="Entries.html#Onahs">Onah</a></em>.
                 </li>
                 <li>
                     <strong>Yom HaShavuah / Day of Week</strong> - Three periods that occur on the same day of the
                     week with the same number of weeks between them.
                     <br /> For example, if a period started during the Day <a href="Entries.html#Onahs">Onah</a>                            on Monday the 4th of Sivan, and another period started 4 weeks later on Monday the 2nd of Tammuz,
-                    and a third period started on Monday 4 weeks later on Moday the 1st of Ellul, this a Kavuah of
+                    and a third period started on Monday 4 weeks later on Monday the 1st of Ellul, this a Kavuah of
                     Yom Hashavuah. Similar to the Yom Hachodesh Kavuah, it usually does not matter if there were
                     any other periods in the interim. Note, even if there were no other periods between these three
                     Monday ones, this is not a Haflaga Kavuah as there were only two periods with a Haflaga of 29.
+                    <break />
+                    For this type of Kavuah as well, <em>Harav Moshe Feinstein zt"l</em> was of the opinion that
+                    the three periods do not all have to begin during the same <em><a href="Entries.html#Onahs">Onah</a></em>.
                 </li>
                 <li>
-                    <strong>Dilug - Yom Hachodesh</strong> - Three periods with the day of the month for each occuring
+                    <strong>Dilug - Yom Hachodesh</strong> - Three periods with the day of the month for each occurring
                     on a recurring interval from one to the next.
                     <br /> For example if a period started on the Day of the 4th of Sivan, the Day of the 5th of
                     Tammuz and the Day of the 6th of Av, this is considered a Dilug Yom Hachodesh Kavuah of plus
@@ -81,6 +93,24 @@
                     Tammuz and the Day of the 2nd of Av, this is considered a Kavuah of the Dilug Yom HaChodesh with
                     an interval of minus one day. In this scenario, it is expected that on the 1st of Ellul another
                     period will occur.
+                    <break />
+                    It is very interesting to note that as this type of Kavuah adds or removes days for each subsequent month,
+                    it eventually will reach either the end or the beginning of the month - dependent upon whether the
+                    <em>Dilug</em> pattern was incrementing or decrementing days.
+                    <br />
+                    The question then arises, do we assume that the pattern will "spill over" 
+                    into the next or the previous month?
+                    <br />
+                    The <em>Chazon Ish zt"l"</em> was of the opinion that once a pattern of <em>Yom Hachodesh</em>
+                    reaches the end or beginning of the month, the pattern is no longer applicable and the Kavuah can be removed.
+                    <br />
+                    Others argue and maintain that the pattern spills over into the next or previous month.
+                    <br />
+                    In Luachs default settings, the opinion of the <em>Chazon Ish</em> is followed and once the Kavuah reaches the end
+                    or beginning of the month it will no longer generate any <a href="FlaggedDates.html">Flagged Dates</a>.
+                    <break />
+                    For this type of Kavuah as well, <em>Harav Moshe Feinstein zt"l</em> was of the opinion that
+                    the three periods do not all have to begin during the same <em><a href="Entries.html#Onahs">Onah</a></em>.
                 </li>
                 <li>
                     <strong>Dilug - Haflaga</strong><a name="DilugHaflaga">&nbsp;</a>- Three periods in a row where the interval from one to the
@@ -90,12 +120,18 @@
                     day. In this scenario it is expected that another period will occur 31 days later - on the 1st
                     of Tishrei. Similar to the regular Haflaga Kavuah, the Dilug - Haflaga needs 4 periods to set
                     it and it needs them to occur one after another with no other periods occurring during the interim.
+                    <break />
+                    For this type of Kavuah as well, <em>Harav Moshe Feinstein zt"l</em> was of the opinion that
+                    the three periods do not all have to begin during the same <em><a href="Entries.html#Onahs">Onah</a></em>.
                 </li>
                 <li>
                     <strong>Sirug</strong> - Three periods in a row that are on the same <a href="Entries.html#Onahs">Onah</a>                            and the same day of the Jewish month and the same number of months in the interval between the
                     first and second periods and the second and third periods. This is not a Yom Hachodesh Kavuah
                     as the Yom Hachodesh needs a period on each subsequent month, while the Sirug Kavuah has some
                     months in middle that are skipped.
+                    <break />
+                    For this type of Kavuah as well, <em>Harav Moshe Feinstein zt"l</em> was of the opinion that
+                    the three periods do not all have to begin during the same <em><a href="Entries.html#Onahs">Onah</a></em>.
                 </li>
                 <li>
                     <strong>Haflaga of Onahs</strong> - Three periods in a row that started the same number of
@@ -188,7 +224,8 @@
             <blockquote>
                 This pertains to which <a href="FlaggedDates.html">Flagged Dates</a> will show after this Kavuah
                 is added.
-                <br /> If there was a Kavuah pattern with a strong Halachic status established, there are some <em>Poskim</em>                        that hold that the Kavuah may cancel all or some of the the standard
+                <br /> If there was a Kavuah pattern with an especially strong Halachic status established, 
+                there are some Rabbinic opinions that the Kavuah may cancel all or some of the standard
                 <a href="FlaggedDates.html">Flagged Dates</a> that are often observed for a women who does not have
                 any pattern at all.
                 <br />
@@ -213,10 +250,10 @@
                 <p>
                     In Luach, when a new Kavauh is first added, it is initially set to not cancel <em>Onah Beinonis</em>.
                     <br />
-                    If the Kavauh is set to cancel <em>Onah Beinonis</em>, from the day this Kavuah was set and onward,
-                    Luach will only show the <a href="FlaggedDates.html">Flagged Dates</a> generated by this Kavuah.
+                    If any Kavauh is set to cancel <em>Onah Beinonis</em>, from the day the Kavuah was set and onward,
+                    Luach will only show the <a href="FlaggedDates.html">Flagged Dates</a> generated by that Kavuah.
                     <br />
-                    The <em>Onah Beinonis</em> <a href="FlaggedDates.html">Flagged Dates</a> will not be shown.
+                    All the <em>Onah Beinonis</em> <a href="FlaggedDates.html">Flagged Dates</a> will not be shown.
                     <br />
                 </p>
                 <h4>Un-Cancelling</h4>
