@@ -146,9 +146,9 @@ class Kavuah {
 
         for (let entry of nonIgnoredEntryList.filter(e => !e.ignoreForKavuah)) {
             //First we work out those Kavuahs that are not dependent on their entries being 3 in a row
-            kavuahList = kavuahList.concat(Kavuah.getDayOfMonthKavuah(entry, nonIgnoredEntryList))
-                .concat(Kavuah.getDilugDayOfMonthKavuah(entry, nonIgnoredEntryList))
-                .concat(Kavuah.getDayOfWeekKavuahs(entry, nonIgnoredEntryList));
+            kavuahList = kavuahList.concat(Kavuah.getDayOfMonthKavuah(entry, nonIgnoredEntryList, settings))
+                .concat(Kavuah.getDilugDayOfMonthKavuah(entry, nonIgnoredEntryList, settings))
+                .concat(Kavuah.getDayOfWeekKavuahs(entry, nonIgnoredEntryList, settings));
 
             //For cheshboning out all other Kavuahs, we use 3 or 4 entries in a row.
             //First, add the current entry of the loop.
@@ -159,10 +159,11 @@ class Kavuah {
                 queue.shift();
             }
 
-            //To cheshbon the sirug kavuah we need 3 entries with the same night/day.
+            //To cheshbon the sirug kavuah we need 3 entries
             if (queue.length >= 3 &&
-                queue[0].nightDay === queue[1].nightDay &&
-                queue[1].nightDay === queue[2].nightDay) {
+                (settings.kavuahDiffOnahs ||
+                    queue[0].nightDay === queue[1].nightDay &&
+                    queue[1].nightDay === queue[2].nightDay)) {
                 //We only need three entries for a sirug kavuah.
                 //We always send the last 3 entries as the last one is always the newly added one.
                 kavuahList = kavuahList
@@ -170,17 +171,16 @@ class Kavuah {
 
                 //We can't start cheshboning haflaga kavuahs until we have 4 entries
                 if (queue.length === 4) {
-                    //Regular Haflaga Kavuahs need all the entries to have the same nightDay
-                    if (queue[2].nightDay === queue[3].nightDay) {
+                    //Unless kavuahDiffOnahs is on, regular Haflaga Kavuahs need all the entries to have the same nightDay
+                    if (settings.kavuahDiffOnahs || queue[2].nightDay === queue[3].nightDay) {
                         kavuahList = kavuahList
                             .concat(Kavuah.getHaflagahKavuah(queue))
                             .concat(Kavuah.getDilugHaflagahKavuah(queue));
                     }
                 }
             }
-
             //The Kavuah of Haflaga of Onahs - the Shulchan Aruch Harav
-            //If the NightDays are all the same, there will already be a Haflaga Kavuah.
+            //If the NightDays are all the same, there will always already be a Haflaga Kavuah.
             if (settings.kavuahHaflagaOnahs &&
                 queue.length === 4 &&
                 queue[0].nightDay !== queue[1].nightDay) {
@@ -190,18 +190,20 @@ class Kavuah {
 
         return kavuahList;
     }
-    static getDayOfMonthKavuah(entry, entryList) {
+    static getDayOfMonthKavuah(entry, entryList, settings) {
         const list = [],
             nextMonth = entry.date.addMonths(1),
             thirdMonth = nextMonth.addMonths(1);
         //We look for an entry that is exactly one Jewish month later
         //Note, it is irrelevant if there were other entries in the interim
         const secondFind = entryList.find(en =>
-            en.onah.nightDay === entry.onah.nightDay && Utils.isSameJdate(en.date, nextMonth));
+            (settings.kavuahDiffOnahs || en.onah.nightDay === entry.onah.nightDay) &&
+            Utils.isSameJdate(en.date, nextMonth));
         if (secondFind) {
             //Now we look for another entry that is exactly two Jewish months later
             const thirdFind = entryList.find(en =>
-                en.onah.nightDay === entry.onah.nightDay && Utils.isSameJdate(en.date, thirdMonth));
+                (settings.kavuahDiffOnahs || en.onah.nightDay === entry.onah.nightDay) &&
+                Utils.isSameJdate(en.date, thirdMonth));
             if (thirdFind) {
                 list.push({
                     kavuah: new Kavuah(KavuahTypes.DayOfMonth,
@@ -213,14 +215,14 @@ class Kavuah {
         }
         return list;
     }
-    static getDilugDayOfMonthKavuah(entry, entryList) {
+    static getDilugDayOfMonthKavuah(entry, entryList, settings) {
         const list = [];
         //First, we look for any entry that is in the next Jewish month after the given entry -
         //but not on the same day as that would be a regular DayOfMonth Kavuah with no Dilug.
         //Note, it is irrelevant if there were other entries in the interim
         const nextMonth = entry.date.addMonths(1),
             secondFind = entryList.find(en =>
-                en.nightDay === entry.nightDay &&
+                (settings.kavuahDiffOnahs || en.nightDay === entry.nightDay) &&
                 nextMonth.Day !== en.day &&
                 nextMonth.Month === en.month &&
                 nextMonth.Year === en.year);
@@ -229,7 +231,7 @@ class Kavuah {
             const thirdMonth = entry.date.addMonths(2),
                 dilugDays = secondFind.day - entry.day,
                 finalFind = entryList.find(en =>
-                    en.nightDay === entry.nightDay &&
+                    (settings.kavuahDiffOnahs || en.nightDay === entry.nightDay) &&
                     (en.day - secondFind.day) === dilugDays &&
                     thirdMonth.Month === en.month &&
                     thirdMonth.Year === en.year);
@@ -244,13 +246,13 @@ class Kavuah {
         }
         return list;
     }
-    static getDayOfWeekKavuahs(entry, entryList) {
+    static getDayOfWeekKavuahs(entry, entryList, settings) {
         const list = [];
 
         //We go through the proceeding entries in the list looking for those that are on the same day of the week as the given entry
         //Note, similar to Yom Hachodesh based kavuahs, it is irrelevant if there were other entries in the interim (משמרת הטהרה)
         for (let firstFind of entryList.filter(e =>
-            e.nightDay === entry.nightDay &&
+            (settings.kavuahDiffOnahs || e.nightDay === entry.nightDay) &&
             e.date.Abs > entry.date.Abs &&
             e.dayOfWeek === entry.dayOfWeek)) {
 
@@ -263,7 +265,7 @@ class Kavuah {
                 //We now look for a second entry that is also on the same day of the week
                 //and that has the same interval from the previously found entry
                 const secondFind = entryList.find(en =>
-                    en.nightDay === entry.nightDay &&
+                    (settings.kavuahDiffOnahs || en.nightDay === entry.nightDay) &&
                     Utils.isSameJdate(en.date, nextDate));
                 if (secondFind) {
                     list.push({
@@ -365,8 +367,14 @@ class Kavuah {
         for (let kavuah of kavuahList.filter(k =>
             k.cancelsOnahBeinunis &&
             k.active &&
-            !k.ignore &&
+            (!k.ignore) &&
             k.settingEntry.date.Abs < entry.date.Abs)) {
+
+            //If the Night/Day is different, the entry is definitely out of pattern
+            if (entry.nightDay !== kavuah.settingEntry.nightDay) {
+                return kavuah;
+            }
+            //Otherwise, each Kavuah type has thier own pattern
             switch (kavuah.kavuahType) {
                 case KavuahTypes.Haflagah:
                     if (entry.haflaga !== kavuah.specialNumber) {

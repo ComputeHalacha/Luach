@@ -56,6 +56,7 @@ export default class SettingsScreen extends Component {
             keepLongerHaflagah = setDefault(sets && sets.keepLongerHaflagah, true),
             cheshbonKavuahByCheshbon = setDefault(sets && sets.cheshbonKavuahByCheshbon, true),
             kavuahHaflagaOnahs = sets && sets.kavuahHaflagaOnahs,
+            kavuahDiffOnahs = sets && sets.kavuahDiffOnahs,
             calcKavuahsOnNewEntry = setDefault(sets && sets.calcKavuahsOnNewEntry, true),
             showProbFlagOnHome = setDefault(sets && sets.showProbFlagOnHome, true),
             showEntryFlagOnHome = setDefault(sets && sets.showEntryFlagOnHome, true),
@@ -129,6 +130,12 @@ export default class SettingsScreen extends Component {
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('kavuahHaflagaOnahs', value)}
                                 value={!!kavuahHaflagaOnahs} />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Flag Kavuahs even if not all the same Onah</Text>
+                            <Switch style={GeneralStyles.switch}
+                                onValueChange={value => this.update('kavuahDiffOnahs', value)}
+                                value={!!kavuahDiffOnahs} />
                         </View>
                         <View style={GeneralStyles.headerView}>
                             <Text style={GeneralStyles.headerText}>Application Settings</Text>

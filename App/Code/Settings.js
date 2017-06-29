@@ -12,6 +12,7 @@ export default class Settings {
         this.keepLongerHaflagah = !!args.keepLongerHaflagah;
         this.cheshbonKavuahByCheshbon = setDefault(args.cheshbonKavuahByCheshbon, true);
         this.kavuahHaflagaOnahs = !!args.kavuahHaflagaOnahs;
+        this.kavuahDiffOnahs = !!args.kavuahDiffOnahs;
         this.calcKavuahsOnNewEntry = setDefault(args.calcKavuahsOnNewEntry, true);
         this.showProbFlagOnHome = setDefault(args.showProbFlagOnHome, true);
         this.showEntryFlagOnHome = setDefault(args.showEntryFlagOnHome, true);
@@ -36,6 +37,7 @@ export default class Settings {
             this.keepLongerHaflagah === other.keepLongerHaflagah &&
             this.cheshbonKavuahByCheshbon === other.cheshbonKavuahByCheshbon &&
             this.kavuahHaflagaOnahs === other.kavuahHaflagaOnahs &&
+            this.kavuahDiffOnahs === other.kavuahDiffOnahs &&
             this.calcKavuahsOnNewEntry === other.calcKavuahsOnNewEntry &&
             this.showProbFlagOnHome === other.showProbFlagOnHome &&
             this.showEntryFlagOnHome === other.showEntryFlagOnHome &&
