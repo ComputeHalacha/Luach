@@ -162,8 +162,8 @@ class Kavuah {
             //To cheshbon the sirug kavuah we need 3 entries
             if (queue.length >= 3 &&
                 (settings.kavuahDiffOnahs ||
-                    queue[0].nightDay === queue[1].nightDay &&
-                    queue[1].nightDay === queue[2].nightDay)) {
+                    (queue[0].nightDay === queue[1].nightDay &&
+                        queue[1].nightDay === queue[2].nightDay))) {
                 //We only need three entries for a sirug kavuah.
                 //We always send the last 3 entries as the last one is always the newly added one.
                 kavuahList = kavuahList

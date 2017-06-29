@@ -328,7 +328,7 @@ export default class EntryList {
                 //Add the correct number of dilug days
                 const addDilugDays = nextMonth.addDays(kavuah.specialNumberNumber * i);
                 //If set to stop when we get to the beginning or end of the month
-                if (this.settings.cheshbonKavuahByCheshbon && (addDilugDays.Month !== nextMonth.Month)
+                if ((this.settings.cheshbonKavuahByCheshbon && (addDilugDays.Month !== nextMonth.Month))
                     ||
                     addDilugDays.Abs > this.stopWarningDate.Abs) {
                     break;
