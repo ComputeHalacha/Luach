@@ -204,7 +204,7 @@ export default class EntryList {
             this.addOhrZarua(haflaga, onahs);
         }
 
-        //The Taz
+        //The Ta"z
         if (this.settings.keepLongerHaflagah) {
             //Go through all earlier entries in the list that have a longer haflaga than this one
             for (let e of nonProbIgnoredList.filter(en =>

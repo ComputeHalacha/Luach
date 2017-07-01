@@ -39,6 +39,7 @@ export default class NewKavuah extends React.Component {
         this.getSpecialNumber = this.getSpecialNumber.bind(this);
         this.getSpecialNumberFromEntry = this.getSpecialNumberFromEntry.bind(this);
         this.getSpecialNumberFromKavuahType = this.getSpecialNumberFromKavuahType.bind(this);
+        this.getNumberDefinition = this.getNumberDefinition.bind(this);
     }
     componentWillMount() {
         if (!this.state.settingEntry) {
@@ -106,6 +107,27 @@ export default class NewKavuah extends React.Component {
 
         return this.state.specialNumber;
     }
+    getNumberDefinition() {
+        switch (this.state.kavuahType) {
+            case KavuahTypes.DayOfMonth:
+            case KavuahTypes.DayOfMonthMaayanPasuach:
+                return 'Day of each Jewish Month';
+            case KavuahTypes.DayOfWeek:
+            case KavuahTypes.Haflagah:
+            case KavuahTypes.HaflagaMaayanPasuach:
+                return 'Number of days between entries (Haflaga)';
+            case KavuahTypes.DilugDayOfMonth:
+                return 'Number of days to add/subtract each month';
+            case KavuahTypes.DilugHaflaga:
+                return 'Number of days to add/subtract to Haflaga each Entry';
+            case KavuahTypes.HafalagaOnahs:
+                return 'Number of Onahs between entries (Haflaga of Shulchan Aruch Harav)';
+            case KavuahTypes.Sirug:
+                return 'Number of months separating the Entries';
+            default:
+                return 'Kavuah Defining Number';
+        }
+    }
     render() {
         const nums = range(-100, 100);
 
@@ -152,7 +174,7 @@ export default class NewKavuah extends React.Component {
                         </Picker>
                     </View>
                     <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Kavuah Defining Number</Text>
+                        <Text style={GeneralStyles.label}>{this.getNumberDefinition()}</Text>
                         <Picker style={GeneralStyles.picker}
                             selectedValue={this.state.specialNumber}
                             onValueChange={value => this.setState({ specialNumber: value })}>

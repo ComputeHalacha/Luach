@@ -123,6 +123,7 @@ export default class SingleDayDisplay extends Component {
                             `  the correct Jewish Day is ${Utils.dowEng[jdate.DayOfWeek]}.`}
                     </Text>
                 </View>,
+            isSpecialDay = jdate.DayOfWeek === 6 || jdate.getMajorHoliday(location.Israel),
             dailyInfos = jdate.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
             suntimes = Zmanim.getSunTimes(jdate, location, true),
@@ -163,7 +164,8 @@ export default class SingleDayDisplay extends Component {
                     (entries && entries.length > 0 ? '#fee' :
                         (flag ? '#fe9' :
                             (this.props.isHefeskDay ? '#f1fff1' :
-                                (isToday ? '#eef' : '#fff'))))
+                                (isToday ? '#d5d5f5' :
+                                    (isSpecialDay ? '#eef' : '#fff')))))
                 }]}>
                 <View style={{ margin: 15, flex: 1 }}>
                     <View style={{ flexDirection: 'row' }}>
@@ -199,13 +201,13 @@ export default class SingleDayDisplay extends Component {
                             <TouchableWithoutFeedback onPress={this.showDateDetails}>
                                 <View style={{ alignItems: 'center', marginBottom: 10 }}>
                                     <Icon color='#bbc' name='info' />
-                                    <Text style={{ fontSize: 12, color: '#bbc' }}>   Zmanim   </Text>
+                                    <Text style={{ fontSize: 12, color: '#aac' }}>   Zmanim   </Text>
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback onPress={this.monthView}>
                                 <View style={{ alignItems: 'center' }}>
                                     <Icon color='#bbc' name='calendar' type='octicon' />
-                                    <Text style={{ fontSize: 12, color: '#bbc', textAlign: 'center' }}>{'Month View'}</Text>
+                                    <Text style={{ fontSize: 12, color: '#aac', textAlign: 'center' }}>{'Month View'}</Text>
                                 </View>
                             </TouchableWithoutFeedback>
                         </View>
