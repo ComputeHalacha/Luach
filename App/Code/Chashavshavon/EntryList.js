@@ -140,20 +140,8 @@ export default class EntryList {
         //and other Kavuahs that are not dependent on the actual entry list
         probOnahs = [...probOnahs, ...this.getIndependentKavuahProblemOnahs(kavuahList, nonProbIgnoredList)];
 
-        //Sort problem onahs by chronological order
-        probOnahs.sort((a, b) => {
-            if (a.jdate.Abs < b.jdate.Abs) {
-                return -1;
-            }
-            else if (a.jdate.Abs > b.jdate.Abs) {
-                return 1;
-            }
-            else {
-                return a.nightDay - b.nightDay;
-            }
-        });
-
-        return probOnahs;
+        //Combine and sort problem list and return it
+        return EntryList.combineProbList(probOnahs);
     }
     getOnahBeinunisProblemOnahs(entry, nonProbIgnoredList, cancelKavuah) {
         const onahs = [];
@@ -421,5 +409,36 @@ export default class EntryList {
                 (date.Abs > settingEntry.date.Abs) ||
                 (date.Abs === settingEntry.date.Abs && nightDay > settingEntry.nightDay));
         }
+    }
+    /**
+     * Combine and sort problems
+     * @param {[ProblemOnah]} probList
+     */
+    static combineProbList(probList) {
+        const fixedList = [];
+
+        //Combine problems that are on the same Onah
+        for (let prob of probList) {
+            if (!fixedList.some(p => p.isSameOnah(prob))) {
+                let name = prob.name +
+                    probList
+                        .filter(p => p !== prob && p.isSameOnah(prob))
+                        .map(p => ' and ' + p.name);
+                fixedList.push(new ProblemOnah(prob.jdate, prob.nightDay, name));
+            }
+        }
+
+        //Sort problem onahs by chronological order, and return them
+        return fixedList.sort((a, b) => {
+            if (a.jdate.Abs < b.jdate.Abs) {
+                return -1;
+            }
+            else if (a.jdate.Abs > b.jdate.Abs) {
+                return 1;
+            }
+            else {
+                return a.nightDay - b.nightDay;
+            }
+        });
     }
 }
