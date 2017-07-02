@@ -10,6 +10,9 @@ export default class Settings {
         this.onahBeinunis24Hours = !!args.onahBeinunis24Hours;
         this.numberMonthsAheadToWarn = setDefault(args.numberMonthsAheadToWarn, 12);
         this.keepLongerHaflagah = !!args.keepLongerHaflagah;
+        /** This following one is misnamed.
+         * It means keep flagging Kavuags of Dilug Yom Hachodesh
+         * even after they reach the beginning or the end of the month */
         this.cheshbonKavuahByCheshbon = setDefault(args.cheshbonKavuahByCheshbon, true);
         this.kavuahHaflagaOnahs = !!args.kavuahHaflagaOnahs;
         this.kavuahDiffOnahs = !!args.kavuahDiffOnahs;

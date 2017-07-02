@@ -140,20 +140,8 @@ export default class EntryList {
         //and other Kavuahs that are not dependent on the actual entry list
         probOnahs = [...probOnahs, ...this.getIndependentKavuahProblemOnahs(kavuahList, nonProbIgnoredList)];
 
-        //Sort problem onahs by chronological order
-        probOnahs.sort((a, b) => {
-            if (a.jdate.Abs < b.jdate.Abs) {
-                return -1;
-            }
-            else if (a.jdate.Abs > b.jdate.Abs) {
-                return 1;
-            }
-            else {
-                return a.nightDay - b.nightDay;
-            }
-        });
-
-        return probOnahs;
+        //Combine and sort problem list and return it
+        return EntryList.combineProbList(probOnahs);
     }
     getOnahBeinunisProblemOnahs(entry, nonProbIgnoredList, cancelKavuah) {
         const onahs = [];
@@ -204,7 +192,7 @@ export default class EntryList {
             this.addOhrZarua(haflaga, onahs);
         }
 
-        //The Taz
+        //The Ta"z
         if (this.settings.keepLongerHaflagah) {
             //Go through all earlier entries in the list that have a longer haflaga than this one
             for (let e of nonProbIgnoredList.filter(en =>
@@ -370,7 +358,7 @@ export default class EntryList {
         return Kavuah.getKavuahSuggestionList(this.list);
     }
     /**
-     * Returns true if settings.noProbsAfterEntry is false or if there was no Entry in the 11 days before the given onah.
+     * Returns true if settings.noProbsAfterEntry is false or if there was no Entry in the 12 days before the given onah.
      * This is to prevent flagging problems during the days where it is irrelavent.
      * @param {jDate} date
      * @param {NightDay} nightDay
@@ -382,7 +370,7 @@ export default class EntryList {
         }
         else {
             return !nonProbIgnoredList.some(en =>
-                en.date.Abs >= (date.Abs - 11) &&
+                en.date.Abs >= (date.Abs - 12) &&
                 (en.date.Abs < date.Abs || (en.date.Abs === date.Abs && en.nightDay < nightDay))
             );
         }
@@ -421,5 +409,36 @@ export default class EntryList {
                 (date.Abs > settingEntry.date.Abs) ||
                 (date.Abs === settingEntry.date.Abs && nightDay > settingEntry.nightDay));
         }
+    }
+    /**
+     * Combine and sort problems
+     * @param {[ProblemOnah]} probList
+     */
+    static combineProbList(probList) {
+        const fixedList = [];
+
+        //Combine problems that are on the same Onah
+        for (let prob of probList) {
+            if (!fixedList.some(p => p.isSameOnah(prob))) {
+                let name = prob.name +
+                    probList
+                        .filter(p => p !== prob && p.isSameOnah(prob))
+                        .map(p => ' and ' + p.name);
+                fixedList.push(new ProblemOnah(prob.jdate, prob.nightDay, name));
+            }
+        }
+
+        //Sort problem onahs by chronological order, and return them
+        return fixedList.sort((a, b) => {
+            if (a.jdate.Abs < b.jdate.Abs) {
+                return -1;
+            }
+            else if (a.jdate.Abs > b.jdate.Abs) {
+                return 1;
+            }
+            else {
+                return a.nightDay - b.nightDay;
+            }
+        });
     }
 }

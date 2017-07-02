@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, Picker, Switch, Button } from 'react-native';
+import { ScrollView, View, Text, Picker, Switch, Button, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import SideMenu from './SideMenu';
 import { KavuahTypes, Kavuah } from '../Code/Chashavshavon/Kavuah';
@@ -48,7 +48,8 @@ export default class NewKavuah extends React.Component {
     }
     addKavuah() {
         if (!this.state.specialNumber) {
-            popUpMessage('The "Kavuah Defining Number" was not set.\n' +
+            popUpMessage('The number for the "' +
+                this.getNumberDefinition(this.state.kavuahType) + '" was not set.\n' +
                 'If you do not understand how to fill this information, please contact your Rabbi for assistance.',
                 'Incorrect information');
             return;
@@ -57,29 +58,48 @@ export default class NewKavuah extends React.Component {
             this.state.settingEntry,
             this.state.specialNumber,
             this.state.cancelsOnahBeinunis,
-            this.state.active);
-        if (!kavuah.specialNumberMatchesEntry) {
-            popUpMessage('The "Kavuah Defining Number" does not match the Setting Entry information for the selected Kavuah Type.\n' +
-                'Please check that the chosen information is correct and try again.\n' +
-                'If you do not understand how to fill this information, please contact your Rabbi for assistance.',
-                'Incorrect information');
-            return;
+            this.state.active),
+            doAdd = () =>
+                DataUtils.KavuahToDatabase(kavuah)
+                    .then(() => {
+                        AppData.getAppData().then(appData => {
+                            popUpMessage(`The Kavuah for ${kavuah.toString()} has been successfully added.`,
+                                'Add Kavuah');
+                            if (this.onUpdate) {
+                                this.onUpdate(appData);
+                            }
+                            this.dispatch(NavigationActions.back());
+                        });
+                    })
+                    .catch(err => {
+                        warn('Error trying to insert kavuah into the database.');
+                        error(err);
+                    });
+        if (kavuah.specialNumberMatchesEntry) {
+            doAdd();
         }
-        DataUtils.KavuahToDatabase(kavuah)
-            .then(() => {
-                AppData.getAppData().then(appData => {
-                    popUpMessage(`The Kavuah for ${kavuah.toString()} has been successfully added.`,
-                        'Add Kavuah');
-                    if (this.onUpdate) {
-                        this.onUpdate(appData);
-                    }
-                    this.dispatch(NavigationActions.back());
-                });
-            })
-            .catch(err => {
-                warn('Error trying to insert kavuah into the database.');
-                error(err);
-            });
+        else {
+            Alert.alert(
+                'Possibly Incorrect information',
+                'The number for the "' + this.getNumberDefinition(this.state.kavuahType) +
+                '" does not seem to match the Setting Entry information.\n' +
+                'Please check that the information is correct.\n' +
+                'If you do not fully understand how to fill in this information, ' +
+                'please contact your Rabbi for assistance.',
+                [   //Button 1
+                    {
+                        text: 'Cancel',
+                        onPress: () => { return; },
+                        style: 'cancel'
+                    },
+                    //Button 2
+                    {
+                        text: 'Add anyway', onPress: () => {
+                            doAdd();
+                        }
+                    },
+                ]);
+        }
     }
     getSpecialNumberFromEntry(entry) {
         return this.getSpecialNumber(entry, this.state.kavuahType);
@@ -105,6 +125,27 @@ export default class NewKavuah extends React.Component {
         }
 
         return this.state.specialNumber;
+    }
+    getNumberDefinition(kavuahType) {
+        switch (kavuahType) {
+            case KavuahTypes.DayOfMonth:
+            case KavuahTypes.DayOfMonthMaayanPasuach:
+                return 'Day of each Jewish Month';
+            case KavuahTypes.DayOfWeek:
+            case KavuahTypes.Haflagah:
+            case KavuahTypes.HaflagaMaayanPasuach:
+                return 'Number of days between entries (Haflaga)';
+            case KavuahTypes.DilugDayOfMonth:
+                return 'Number of days to add/subtract each month';
+            case KavuahTypes.DilugHaflaga:
+                return 'Number of days to add/subtract to Haflaga each Entry';
+            case KavuahTypes.HafalagaOnahs:
+                return 'Number of Onahs between entries (Haflaga of Shulchan Aruch Harav)';
+            case KavuahTypes.Sirug:
+                return 'Number of months separating the Entries';
+            default:
+                return 'Kavuah Defining Number';
+        }
     }
     render() {
         const nums = range(-100, 100);
@@ -152,7 +193,7 @@ export default class NewKavuah extends React.Component {
                         </Picker>
                     </View>
                     <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Kavuah Defining Number</Text>
+                        <Text style={GeneralStyles.label}>{this.getNumberDefinition(this.state.kavuahType)}</Text>
                         <Picker style={GeneralStyles.picker}
                             selectedValue={this.state.specialNumber}
                             onValueChange={value => this.setState({ specialNumber: value })}>
