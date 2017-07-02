@@ -190,7 +190,7 @@ export default class SettingsScreen extends Component {
                                 value={!!showIgnoredKavuahs} />
                         </View>
                          <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Don't show Flagged dates for 11 days after Entry</Text>
+                            <Text style={GeneralStyles.label}>Don't show Flagged dates for 12 days after Entry</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('noProbsAfterEntry', value)}
                                 value={!!noProbsAfterEntry} />
