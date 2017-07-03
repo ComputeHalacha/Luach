@@ -41,7 +41,7 @@ export default class KavuahScreen extends Component {
         //the data source needs to be changed at a "shallow" level.
         const kavuahList = [...appData.KavuahList];
         this.setState({
-            appData:appData,
+            appData: appData,
             kavuahList: appData.Settings.showIgnoredKavuahs ?
                 kavuahList : kavuahList.filter(k => !k.ignore)
         });
@@ -132,8 +132,50 @@ export default class KavuahScreen extends Component {
         this.saveAndUpdate(kavuah);
     }
     changeCancelsOb(kavuah, cancelsOnahBeinunis) {
-        kavuah.cancelsOnahBeinunis = cancelsOnahBeinunis;
-        this.saveAndUpdate(kavuah);
+        const doChange = () => {
+            kavuah.cancelsOnahBeinunis = cancelsOnahBeinunis;
+            this.saveAndUpdate(kavuah);
+        };
+        if (!cancelsOnahBeinunis) {
+            doChange();
+            return;
+        }
+        //Search for another Kavuah already set to Cancel Onah Beinunis.
+        //There can be only one.
+        const prevCancels = this.state.kavuahList.find(k =>
+            k.cancelsOnahBeinunis);
+
+        //If if there are no other canceling Kavuahs
+        if (!prevCancels) {
+            doChange();
+            return;
+        }
+        else {
+            Alert.alert(
+                'Cancel Onah Beinunis',
+                'A different Kavuah, "' + prevCancels.toString() + '" has been previously set to Cancel Onah Beinunis.\n' +
+                'Setting it for this Kavuah will remove it from the the other Kavuah.\n' +
+                'Do you wish to proceed?',
+                [   //Button 1
+                    {
+                        text: 'Cancel',
+                        onPress: () => { return; },
+                        style: 'cancel'
+                    },
+                    //Button 2
+                    {
+                        text: 'Proceed',
+                        onPress: () => {
+                            prevCancels.cancelsOnahBeinunis = false;
+                            DataUtils.KavuahToDatabase(prevCancels).catch(err => {
+                                warn('Error trying to update kavuah into the database.');
+                                error(err);
+                            });
+                            doChange();
+                        }
+                    }
+                ]);
+        }
     }
     render() {
         return (

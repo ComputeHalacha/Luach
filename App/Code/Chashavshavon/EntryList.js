@@ -358,7 +358,7 @@ export default class EntryList {
         return Kavuah.getKavuahSuggestionList(this.list);
     }
     /**
-     * Returns true if settings.noProbsAfterEntry is false or if there was no Entry in the 12 days before the given onah.
+     * Returns true if settings.noProbsAfterEntry is false or if there was no Entry in the 7 days before the given onah.
      * This is to prevent flagging problems during the days where it is irrelavent.
      * @param {jDate} date
      * @param {NightDay} nightDay
@@ -370,7 +370,7 @@ export default class EntryList {
         }
         else {
             return !nonProbIgnoredList.some(en =>
-                en.date.Abs >= (date.Abs - 12) &&
+                en.date.Abs >= (date.Abs - 7) &&
                 (en.date.Abs < date.Abs || (en.date.Abs === date.Abs && en.nightDay < nightDay))
             );
         }
