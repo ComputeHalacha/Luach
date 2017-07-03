@@ -158,7 +158,7 @@ export default class SideMenu extends React.PureComponent {
                     </View>
                 </TouchableHighlight>
             }
-            {this.props.helpUrl &&
+            {((!this.props.appData.Settings.hideHelp) && this.props.helpUrl) &&
                 <TouchableHighlight
                     style={styles.sideButton}
                     underlayColor='#eef'

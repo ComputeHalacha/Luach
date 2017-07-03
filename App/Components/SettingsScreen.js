@@ -7,8 +7,27 @@ import { setDefault, range } from '../Code/GeneralUtils';
 import { GeneralStyles } from './styles';
 
 export default class SettingsScreen extends Component {
-    static navigationOptions = {
-        title: 'Settings',
+    static navigationOptions = ({ navigation }) => {
+        const { appData, onUpdate } = navigation.state.params;
+        return {
+            title: 'Settings',
+            headerRight:
+            <TouchableHighlight
+                onPress={() =>
+                    navigation.navigate('Browser', {
+                        appData,
+                        onUpdate,
+                        url: 'index.html',
+                        title: 'Help'
+                    })}>
+                <View style={{marginRight:5}}>
+                    <Icon name='help'
+                        color='#aac'
+                        size={25} />
+                    <Text>Luach Help</Text>
+                </View>
+            </TouchableHighlight>
+        };
     };
     constructor(props) {
         super(props);
@@ -63,6 +82,7 @@ export default class SettingsScreen extends Component {
             navigateBySecularDate = sets && sets.navigateBySecularDate,
             showIgnoredKavuahs = sets && sets.showIgnoredKavuahs,
             noProbsAfterEntry = setDefault(sets && sets.noProbsAfterEntry, true),
+            hideHelp = sets && sets.hideHelp,
             requirePIN = setDefault(sets && sets.requirePIN, true);
 
         return (
@@ -189,11 +209,17 @@ export default class SettingsScreen extends Component {
                                 onValueChange={value => this.update('showIgnoredKavuahs', value)}
                                 value={!!showIgnoredKavuahs} />
                         </View>
-                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Don't show Flagged dates for 12 days after Entry</Text>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Don't show Flagged dates for a week after Entry</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('noProbsAfterEntry', value)}
                                 value={!!noProbsAfterEntry} />
+                        </View>
+                         <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Hide Help Button</Text>
+                            <Switch style={GeneralStyles.switch}
+                                onValueChange={value => this.update('hideHelp', value)}
+                                value={!!hideHelp} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Require PIN to open application?</Text>

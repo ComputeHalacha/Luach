@@ -22,6 +22,7 @@ export default class Settings {
         this.navigateBySecularDate = !!args.navigateBySecularDate;
         this.showIgnoredKavuahs = !!args.showIgnoredKavuahs;
         this.noProbsAfterEntry = setDefault(args.noProbsAfterEntry, true);
+        this.hideHelp = !!args.hideHelp;
         this.requirePIN = !!args.requirePIN;
         this.PIN = setDefault(args.PIN, '1234');
     }
@@ -47,6 +48,7 @@ export default class Settings {
             this.navigateBySecularDate === other.navigateBySecularDate &&
             this.showIgnoredKavuahs === other.showIgnoredKavuahs &&
             this.noProbsAfterEntry === other.noProbsAfterEntry &&
+            this.hideHelp === other.hideHelp &&
             this.requirePIN === other.requirePIN &&
             this.PIN === other.PIN);
     }

@@ -24,6 +24,8 @@ const addedFields = [
     { table: 'settings', name: 'noProbsAfterEntry', type: 'BOOLEAN', allowNull: true, defaultValue: '1' },
      //Added 6/29/17
     { table: 'settings', name: 'kavuahDiffOnahs', type: 'BOOLEAN', allowNull: true },
+    //Added 7/3/17
+    { table: 'settings', name: 'hideHelp', type: 'BOOLEAN', allowNull: true },
 ];
 
 export default class AppData {

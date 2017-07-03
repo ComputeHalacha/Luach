@@ -36,6 +36,7 @@ export default class DataUtils {
                     navigateBySecularDate: dbSet.navigateBySecularDate,
                     showIgnoredKavuahs: dbSet.showIgnoredKavuahs,
                     noProbsAfterEntry: dbSet.noProbsAfterEntry,
+                    hideHelp:dbSet.hideHelp,
                     requirePIN: dbSet.requirePIN,
                     PIN: dbSet.PIN
                 });
@@ -63,6 +64,7 @@ export default class DataUtils {
             navigateBySecularDate=?,
             showIgnoredKavuahs=?,
             noProbsAfterEntry=?,
+            hideHelp=?,
             requirePIN=?,
             PIN=?`,
             [
@@ -82,6 +84,7 @@ export default class DataUtils {
                 settings.navigateBySecularDate,
                 settings.showIgnoredKavuahs,
                 settings.noProbsAfterEntry,
+                settings.hideHelp,
                 settings.requirePIN,
                 settings.PIN
             ])
