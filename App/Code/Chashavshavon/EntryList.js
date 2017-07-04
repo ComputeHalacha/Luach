@@ -156,7 +156,11 @@ export default class EntryList {
                 (dayThirty.Day === entry.day ? ' and Yom HaChodesh' : ''));
             onahs.push(thirty);
             this.add24HourOnah(thirty, onahs);
-            this.addOhrZarua(thirty, onahs);
+            //We won't flag the Ohr Zarua if it's included in Onah Beinonis
+            //of 24 hours as Onah Beinonis is stricter.
+            if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Day) {
+                this.addOhrZarua(thirty, onahs);
+            }
         }
 
         //Day Thirty One ***************************************************************
@@ -175,7 +179,11 @@ export default class EntryList {
                     text);
                 onahs.push(thirtyOne);
                 this.add24HourOnah(thirtyOne, onahs);
-                this.addOhrZarua(thirtyOne, onahs);
+                //We won't flag the Ohr Zarua if it's included in Onah Beinonis
+                //of 24 hours as Onah Beinonis is stricter.
+                if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Day) {
+                    this.addOhrZarua(thirtyOne, onahs);
+                }
             }
         }
 
