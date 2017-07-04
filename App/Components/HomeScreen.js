@@ -40,6 +40,7 @@ export default class HomeScreen extends React.Component {
         this.getDaysList = this.getDaysList.bind(this);
         this.updateAppData = this.updateAppData.bind(this);
         this._navigatedShowing = this._navigatedShowing.bind(this);
+        this._handleAppStateChange = this._handleAppStateChange.bind(this);
         this.prevDay = this.prevDay.bind(this);
         this.nextDay = this.nextDay.bind(this);
         this.goToday = this.goToday.bind(this);
@@ -138,14 +139,18 @@ export default class HomeScreen extends React.Component {
         log('Home Screen Refresh prevented');
         return false;
     }
-    _handleAppStateChange = (nextAppState) => {
+    _handleAppStateChange(nextAppState) {
         const appData = this.state.appData;
         if (nextAppState === 'active' &&
+            (!this.state.showLogin) &&
             appData &&
             appData.Settings &&
             appData.Settings.requirePIN &&
             appData.Settings.PIN.length === 4) {
             this.setState({ showLogin: true });
+        }
+        else {
+            this.setState({ showLogin: false });
         }
     }
     /**
