@@ -9,6 +9,7 @@
     "eslint": "^3.18.0",
     "react": "16.0.0-alpha.6",
     "react-native": "^0.45.1",
+    "react-native-chooser": "^1.5.3",
     "react-native-elements": "^0.10.3",
     "react-native-sqlite-storage": "^3.2.2",
     "react-native-swipe-gestures": "^1.0.2",

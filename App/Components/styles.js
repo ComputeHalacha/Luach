@@ -29,6 +29,17 @@ const GeneralStyles = StyleSheet.create({
         padding: 10
     },
     picker: { margin: 0 },
+    select: {
+        margin: 0,
+        width: '100%',
+        borderWidth: 0
+    },
+    optionListBackdrop: { backgroundColor: '#d5d5e6' },
+    optionListStyle: {
+        backgroundColor: "#fff",
+        height: '80%',
+        width: '80%',
+        borderRadius: 6 },
     switch: {
         margin: 5,
         alignSelf: 'flex-start'
@@ -41,7 +52,7 @@ const GeneralStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#cce',
         borderRadius: 5,
-        padding:3
+        padding: 3
     },
     buttonList: {
         flex: 1,
