@@ -1,10 +1,9 @@
-Luach is a full featured Jewish Calendar application.
+Luach keeps track and automatically calculates a Jewish woman's dates, and times that need to be observed.
 
-It has special features for calculating a Jewish woman's dates, Kavuahs and times that need to be kept.
-It automatically calculates these dates and Kavuahs.
+It automatically calculates and keeps track of patterns (Kavuahs).
+All the Halachic specifications can be fully customized.
 
-Halachic specifications can be customized.
+Luach also functions as a Zmanim and Event Calendar, and it includes a full set of daily Zmanim for anywhere in the world.
+It includes event management functionality to keep track of birthdays, Yahrtzeits, special dates and appointments etc.
 
-Luach also includes a full set of Zmanim for anywhere in the world.
-
-You can view the Luach instructions at https://www.compute.co.il/luach/app/
+For a comprehensive explanation about how to use Luach, see the Luach documentation at <a href="https://www.compute.co.il/luach/app/">compute.co.il/luach/app/</a>.
