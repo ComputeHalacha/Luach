@@ -433,7 +433,7 @@ class Kavuah {
         else if (kavuahType === KavuahTypes.HafalagaOnahs) {
             const index = entryList.findIndex(e => e.isSameEntry(settingEntry)),
                 //The entries are sorted latest to earlier
-                previous = this.listOfEntries[index + 1];
+                previous = entryList[index + 1];
             if (previous) {
                 return previous.getOnahDifferential(settingEntry);
             }

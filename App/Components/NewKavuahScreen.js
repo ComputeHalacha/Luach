@@ -37,7 +37,6 @@ export default class NewKavuah extends React.Component {
             cancelsOnahBeinunis: false,
             active: true
         };
-        this.getSpecialNumber = this.getSpecialNumber.bind(this);
         this.getSpecialNumberFromEntry = this.getSpecialNumberFromEntry.bind(this);
         this.getSpecialNumberFromKavuahType = this.getSpecialNumberFromKavuahType.bind(this);
     }
@@ -103,15 +102,15 @@ export default class NewKavuah extends React.Component {
         }
     }
     getSpecialNumberFromEntry(entry) {
-        return Kavuah.getSpecialNumber(entry, this.state.kavuahType, this.listOfEntries) ||
+        return Kavuah.getDefaultSpecialNumber(entry, this.state.kavuahType, this.listOfEntries) ||
             this.state.specialNumber;
     }
     getSpecialNumberFromKavuahType(kavuahType) {
-        return Kavuah.getSpecialNumber(this.state.settingEntry, kavuahType, this.listOfEntries) ||
+        return Kavuah.getDefaultSpecialNumber(this.state.settingEntry, kavuahType, this.listOfEntries) ||
             this.state.specialNumber;
     }
     render() {
-       return <View style={GeneralStyles.container}>
+        return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
                     onUpdate={this.onUpdate}
@@ -122,7 +121,7 @@ export default class NewKavuah extends React.Component {
                     helpTitle='Kavuahs' />
                 <ScrollView style={{ flex: 1 }}>
                     <KavuahPickers
-                        setingEntry = {this.state.settingEntry}
+                        settingEntry={this.state.settingEntry}
                         kavuahType={this.state.kavuahType}
                         specialNumber={this.state.specialNumber}
                         listOfEntries={this.listOfEntries}
