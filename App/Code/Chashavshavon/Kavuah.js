@@ -416,6 +416,82 @@ class Kavuah {
             }
         }
     }
+    /**
+     * Gets the deafult special number for this given Kavuah description
+     * @param {Entry} settingEntry
+     * @param {KavuahTypes} kavuahType
+     * @param {[Entry]} entryList
+     */
+    static getDefaultSpecialNumber(settingEntry, kavuahType, entryList) {
+        if (settingEntry.haflaga &&
+            [KavuahTypes.Haflagah, KavuahTypes.HaflagaMaayanPasuach].includes(kavuahType)) {
+            return settingEntry.haflaga;
+        }
+        else if ([KavuahTypes.DayOfMonth, KavuahTypes.DayOfMonthMaayanPasuach].includes(kavuahType)) {
+            return settingEntry.day;
+        }
+        else if (kavuahType === KavuahTypes.HafalagaOnahs) {
+            const index = entryList.findIndex(e => e.isSameEntry(settingEntry)),
+                //The entries are sorted latest to earlier
+                previous = this.listOfEntries[index + 1];
+            if (previous) {
+                return previous.getOnahDifferential(settingEntry);
+            }
+        }
+    }
+    /**
+     * Returns the definition text of the what the special number represents
+     * for the given Kavuah Type.
+     * @param {KavuahTypes} kavuahType
+     */
+    static getNumberDefinition(kavuahType) {
+        switch (kavuahType) {
+            case KavuahTypes.DayOfMonth:
+            case KavuahTypes.DayOfMonthMaayanPasuach:
+                return 'Day of each Jewish Month';
+            case KavuahTypes.DayOfWeek:
+            case KavuahTypes.Haflagah:
+            case KavuahTypes.HaflagaMaayanPasuach:
+                return 'Number of days between entries (Haflaga)';
+            case KavuahTypes.DilugDayOfMonth:
+                return 'Number of days to add/subtract each month';
+            case KavuahTypes.DilugHaflaga:
+                return 'Number of days to add/subtract to Haflaga each Entry';
+            case KavuahTypes.HafalagaOnahs:
+                return 'Number of Onahs between entries (Haflaga of Shulchan Aruch Harav)';
+            case KavuahTypes.Sirug:
+                return 'Number of months separating the Entries';
+            default:
+                return 'Kavuah Defining Number';
+        }
+    }
+    /**
+     * Get the display text for the given Kavuah Type
+     * @param {KavuahTypes} kavuahType
+     */
+    static getKavuahTypeText(kavuahType) {
+        switch (kavuahType) {
+            case KavuahTypes.DayOfMonth:
+                return 'Day of Month';
+            case KavuahTypes.DayOfMonthMaayanPasuach:
+                return 'Day Of Month with Ma\'ayan Pasuach';
+            case KavuahTypes.DayOfWeek:
+                return 'Day of week';
+            case KavuahTypes.DilugDayOfMonth:
+                return '"Dilug" of Day Of Month';
+            case KavuahTypes.DilugHaflaga:
+                return '"Dilug" of Haflaga';
+            case KavuahTypes.HafalagaOnahs:
+                return 'Haflaga of Onahs';
+            case KavuahTypes.Haflagah:
+                return 'Haflaga';
+            case KavuahTypes.HaflagaMaayanPasuach:
+                return 'Haflaga with Ma\'ayan Pasuach';
+            case KavuahTypes.Sirug:
+                return 'Sirug';
+        }
+    }
+
 }
 
 export { KavuahTypes, Kavuah };

@@ -1,15 +1,15 @@
 import React from 'react';
-import { ScrollView, View, Text, Picker, Button, Switch, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { ScrollView, View, Text, Button, Switch, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 import SideMenu from './SideMenu';
 import Entry from '../Code/Chashavshavon/Entry';
 import { Kavuah } from '../Code/Chashavshavon/Kavuah';
 import Utils from '../Code/JCal/Utils';
-import jDate from '../Code/JCal/jDate';
 import { NightDay, Onah } from '../Code/Chashavshavon/Onah';
 import DataUtils from '../Code/Data/DataUtils';
-import { warn, error, popUpMessage, range } from '../Code/GeneralUtils';
+import { warn, error, popUpMessage } from '../Code/GeneralUtils';
+import OnahChooser from './OnahChooser';
 import { GeneralStyles } from './styles';
 
 export default class NewEntry extends React.Component {
@@ -63,8 +63,6 @@ export default class NewEntry extends React.Component {
             comments: (entry && entry.comments) || '',
             showAdvancedOptions: (entry && (entry.ignoreForFlaggedDates || entry.ignoreForKavuah))
         };
-
-
 
         this.addEntry = this.addEntry.bind(this);
         this.updateEntry = this.updateEntry.bind(this);
@@ -244,10 +242,6 @@ export default class NewEntry extends React.Component {
         }
     }
     render() {
-        const jdate = this.state.jdate,
-            lastYear = jdate.Year - 1,
-            twoYearsBack = lastYear - 1,
-            daysOfMonth = range(1, 30);
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
@@ -258,46 +252,11 @@ export default class NewEntry extends React.Component {
                     helpUrl='Entries.html'
                     helpTitle='Entries' />
                 <ScrollView style={{ flex: 1 }}>
-                    <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Day</Text>
-                        <Picker style={GeneralStyles.picker}
-                            selectedValue={jdate.Day}
-                            onValueChange={value => this.setState({ jdate: new jDate(jdate.Year, jdate.Month, value) })}>
-                            {daysOfMonth.map(d =>
-                                <Picker.Item label={d.toString()} value={d} key={d} />
-                            )}
-                        </Picker>
-                    </View>
-                    <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Month</Text>
-                        <Picker style={GeneralStyles.picker}
-                            selectedValue={jdate.Month}
-                            onValueChange={value => this.setState({ jdate: new jDate(jdate.Year, value, jdate.Day) })}>
-                            {Utils.jMonthsEng.map((m, i) =>
-                                <Picker.Item label={m || 'Choose a Month'} value={i} key={i} />
-                            )}
-                        </Picker>
-                    </View>
-                    <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Year</Text>
-                        <Picker style={GeneralStyles.picker}
-                            selectedValue={jdate.Year}
-                            onValueChange={value => this.setState({ jdate: new jDate(value, jdate.Month, jdate.Day) })}>
-                            <Picker.Item label={jdate.Year.toString()} value={jdate.Year} key={jdate.Year} />
-                            <Picker.Item label={lastYear.toString()} value={lastYear} key={lastYear} />
-                            <Picker.Item label={twoYearsBack.toString()} value={twoYearsBack} key={twoYearsBack} />
-                        </Picker>
-                    </View>
-
-                    <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Onah - Day or Night?</Text>
-                        <Picker style={GeneralStyles.picker}
-                            selectedValue={this.state.nightDay}
-                            onValueChange={value => this.setState({ nightDay: value })}>
-                            <Picker.Item label='Night' value={NightDay.Night} key={NightDay.Night} />
-                            <Picker.Item label='Day' value={NightDay.Day} key={NightDay.Day} />
-                        </Picker>
-                    </View>
+                    <OnahChooser
+                        jdate={this.state.jdate}
+                        nightDay={this.state.nightDay}
+                        setDate={jdate => this.setState({ jdate })}
+                        setNightDay={nightDay => this.setState({ nightDay })} />
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Comments</Text>
                         <TextInput style={GeneralStyles.textInput}
