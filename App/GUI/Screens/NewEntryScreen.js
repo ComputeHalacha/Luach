@@ -2,15 +2,15 @@ import React from 'react';
 import { ScrollView, View, Text, Button, Switch, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
-import SideMenu from './SideMenu';
-import Entry from '../Code/Chashavshavon/Entry';
-import { Kavuah } from '../Code/Chashavshavon/Kavuah';
-import Utils from '../Code/JCal/Utils';
-import { NightDay, Onah } from '../Code/Chashavshavon/Onah';
-import DataUtils from '../Code/Data/DataUtils';
-import { warn, error, popUpMessage } from '../Code/GeneralUtils';
-import OnahChooser from './OnahChooser';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import OnahChooser from '../Components/OnahChooser';
+import Entry from '../../Code/Chashavshavon/Entry';
+import { Kavuah } from '../../Code/Chashavshavon/Kavuah';
+import Utils from '../../Code/JCal/Utils';
+import { NightDay, Onah } from '../../Code/Chashavshavon/Onah';
+import DataUtils from '../../Code/Data/DataUtils';
+import { warn, error, popUpMessage } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class NewEntry extends React.Component {
 

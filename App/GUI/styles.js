@@ -36,7 +36,7 @@ const GeneralStyles = StyleSheet.create({
     },
     optionListBackdrop: { backgroundColor: '#d5d5e6' },
     optionListStyle: {
-        backgroundColor: "#fff",
+        backgroundColor: '#fff',
         height: '80%',
         width: '80%',
         borderRadius: 6 },

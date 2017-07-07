@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Text, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
-import SideMenu from './SideMenu';
-import CustomList from './CustomList';
-import JDate from '../Code/JCal/jDate';
-import Utils from '../Code/JCal/Utils';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import CustomList from '../Components/CustomList';
+import JDate from '../../Code/JCal/jDate';
+import Utils from '../../Code/JCal/Utils';
+import { GeneralStyles } from '../styles';
 
 export default class FlaggedDatesScreen extends Component {
     static navigationOptions = {

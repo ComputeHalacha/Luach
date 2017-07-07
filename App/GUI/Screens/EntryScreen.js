@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { ScrollView, Text, View, Alert, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
-import SideMenu from './SideMenu';
-import CustomList from './CustomList';
-import DataUtils from '../Code/Data/DataUtils';
-import AppData from '../Code/Data/AppData';
-import JDate from '../Code/JCal/jDate';
-import { warn, error, popUpMessage } from '../Code/GeneralUtils';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import CustomList from '../Components/CustomList';
+import DataUtils from '../../Code/Data/DataUtils';
+import AppData from '../../Code/Data/AppData';
+import JDate from '../../Code/JCal/jDate';
+import { warn, error, popUpMessage } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class EntryScreen extends Component {
     static navigationOptions = {

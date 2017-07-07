@@ -2,12 +2,12 @@ import React from 'react';
 import { ScrollView, View, Text, TextInput, Button, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
-import SideMenu from './SideMenu';
-import { UserOccasionTypes, UserOccasion } from '../Code/JCal/UserOccasion';
-import DataUtils from '../Code/Data/DataUtils';
-import { popUpMessage, warn, error } from '../Code/GeneralUtils';
-import OccasionTypeChooser from './OccasionTypeChooser';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import OccasionTypeChooser from '../Components/OccasionTypeChooser';
+import { UserOccasionTypes, UserOccasion } from '../../Code/JCal/UserOccasion';
+import DataUtils from '../../Code/Data/DataUtils';
+import { popUpMessage, warn, error } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class NewOccasion extends React.Component {
     static navigationOptions = ({ navigation }) => {

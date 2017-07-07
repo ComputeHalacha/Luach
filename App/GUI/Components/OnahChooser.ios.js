@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Select, Option } from 'react-native-chooser';
-import Utils from '../Code/JCal/Utils';
-import jDate from '../Code/JCal/jDate';
-import { NightDay } from '../Code/Chashavshavon/Onah';
-import { range } from '../Code/GeneralUtils';
-import { GeneralStyles } from './styles';
+import Utils from '../../Code/JCal/Utils';
+import jDate from '../../Code/JCal/jDate';
+import { NightDay } from '../../Code/Chashavshavon/Onah';
+import { range } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class OnahChooser extends React.Component {
 

@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { ScrollView, View, Text, TouchableHighlight } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
-import SideMenu from './SideMenu';
-import DataUtils from '../Code/Data/DataUtils';
-import { Kavuah } from '../Code/Chashavshavon/Kavuah';
-import { popUpMessage } from '../Code/GeneralUtils';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import DataUtils from '../../Code/Data/DataUtils';
+import { Kavuah } from '../../Code/Chashavshavon/Kavuah';
+import { popUpMessage } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class FindKavuahScreen extends Component {
     static navigationOptions = {

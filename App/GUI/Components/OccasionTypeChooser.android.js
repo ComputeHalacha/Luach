@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, Picker} from 'react-native';
-import { UserOccasionTypes } from '../Code/JCal/UserOccasion';
-import Utils from '../Code/JCal/Utils';
-import { GeneralStyles } from './styles';
+import { UserOccasionTypes } from '../../Code/JCal/UserOccasion';
+import Utils from '../../Code/JCal/Utils';
+import { GeneralStyles } from '../styles';
 
 export default class OccasionTypeChooser extends React.Component {
     constructor(props) {

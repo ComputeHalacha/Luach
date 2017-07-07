@@ -1,13 +1,13 @@
 import React from 'react';
 import { ScrollView, View, Text, Switch, Button, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import SideMenu from './SideMenu';
-import { KavuahTypes, Kavuah } from '../Code/Chashavshavon/Kavuah';
-import DataUtils from '../Code/Data/DataUtils';
-import AppData from '../Code/Data/AppData';
-import { popUpMessage, warn, error } from '../Code/GeneralUtils';
-import KavuahPickers from './KavuahPickers';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import KavuahPickers from '../Components/KavuahPickers';
+import { KavuahTypes, Kavuah } from '../../Code/Chashavshavon/Kavuah';
+import DataUtils from '../../Code/Data/DataUtils';
+import AppData from '../../Code/Data/AppData';
+import { popUpMessage, warn, error } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class NewKavuah extends React.Component {
     static navigationOptions = {

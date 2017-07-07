@@ -1,15 +1,14 @@
 import React from 'react';
 import { AppState, FlatList, View, Platform } from 'react-native';
 import { Icon } from 'react-native-elements';
-import SingleDayDisplay from './SingleDayDisplay';
-import Login from './Login';
-import Flash from './Flash';
-import SideMenu from './SideMenu';
-import { isLargeScreen, log, goHomeToday, getTodayJdate } from '../Code/GeneralUtils';
-import jDate from '../Code/JCal/jDate';
-import Utils from '../Code/JCal/Utils';
-import AppData from '../Code/Data/AppData';
-
+import SingleDayDisplay from '../Components/SingleDayDisplay';
+import Login from '../Components/Login';
+import Flash from '../Components/Flash';
+import SideMenu from '../Components/SideMenu';
+import { isLargeScreen, log, goHomeToday, getTodayJdate } from '../../Code/GeneralUtils';
+import jDate from '../../Code/JCal/jDate';
+import Utils from '../../Code/JCal/Utils';
+import AppData from '../../Code/Data/AppData';
 
 export default class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => (

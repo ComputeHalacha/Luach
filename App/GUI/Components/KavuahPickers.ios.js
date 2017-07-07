@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Select, Option } from 'react-native-chooser';
-import { Kavuah, KavuahTypes } from '../Code/Chashavshavon/Kavuah';
-import { range } from '../Code/GeneralUtils';
-import { GeneralStyles } from './styles';
+import { Kavuah, KavuahTypes } from '../../Code/Chashavshavon/Kavuah';
+import { range } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class KavuahPickers extends React.Component {
     constructor(props) {

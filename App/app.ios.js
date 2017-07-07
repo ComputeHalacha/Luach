@@ -1,19 +1,19 @@
 import { AppRegistry } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import HomeScreen from './Components/HomeScreen';
-import SettingsScreen from './Components/SettingsScreen';
-import NewOccasionScreen from './Components/NewOccasionScreen';
-import OccasionsScreen from './Components/OccasionsScreen';
-import KavuahScreen from './Components/KavuahScreen';
-import EntryScreen from './Components/EntryScreen';
-import FlaggedDatesScreen from './Components/FlaggedDatesScreen';
-import NewEntryScreen from './Components/NewEntryScreen';
-import NewKavuahScreen from './Components/NewKavuahScreen';
-import DateDetailsScreen from './Components/DateDetailsScreen';
-import FindKavuahScreen from './Components/FindKavuahScreen';
-import FindLocationScreen from './Components/FindLocationScreen';
-import MontheViewScreen from './Components/MonthViewScreen';
-import BrowserScreen from './Components/BrowserScreen';
+import HomeScreen from './GUI/Screens/HomeScreen';
+import SettingsScreen from './GUI/Screens/SettingsScreen';
+import NewOccasionScreen from './GUI/Screens/NewOccasionScreen';
+import OccasionsScreen from './GUI/Screens/OccasionsScreen';
+import KavuahScreen from './GUI/Screens/KavuahScreen';
+import EntryScreen from './GUI/Screens/EntryScreen';
+import FlaggedDatesScreen from './GUI/Screens/FlaggedDatesScreen';
+import NewEntryScreen from './GUI/Screens/NewEntryScreen';
+import NewKavuahScreen from './GUI/Screens/NewKavuahScreen';
+import DateDetailsScreen from './GUI/Screens/DateDetailsScreen';
+import FindKavuahScreen from './GUI/Screens/FindKavuahScreen';
+import FindLocationScreen from './GUI/Screens/FindLocationScreen';
+import MontheViewScreen from './GUI/Screens/MonthViewScreen';
+import BrowserScreen from './GUI/Screens/BrowserScreen';
 
 //If not in __DEV__  turn off the built-in logger
 const navOptions = __DEV__ ? undefined : { onNavigationStateChange: null };

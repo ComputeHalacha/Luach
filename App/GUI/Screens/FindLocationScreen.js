@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { ScrollView, View, Text, Image, TextInput, TouchableHighlight, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
-import SideMenu from './SideMenu';
-import { popUpMessage } from '../Code/GeneralUtils';
-import { GeneralStyles } from './styles';
-import DataUtils from '../Code/Data/DataUtils';
+import SideMenu from '../Components/SideMenu';
+import { popUpMessage } from '../../Code/GeneralUtils';
+import DataUtils from '../../Code/Data/DataUtils';
+import { GeneralStyles } from '../styles';
 
 export default class FindLocation extends Component {
     static navigationOptions = {
