@@ -1,13 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, Linking } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { Icon, Grid, Row, Col } from 'react-native-elements';
 import GestureRecognizer from 'react-native-swipe-gestures';
-import { getScreenWidth, goHomeToday, warn, error, popUpMessage } from '../Code/GeneralUtils';
-import jDate from '../Code/JCal/jDate';
-import Utils from '../Code/JCal/Utils';
-import Month from '../Code/Month';
-import { NightDay } from '../Code/Chashavshavon/Onah';
-import { GeneralStyles } from './styles';
+import { getScreenWidth, goHomeToday } from '../../Code/GeneralUtils';
+import jDate from '../../Code/JCal/jDate';
+import Utils from '../../Code/JCal/Utils';
+import Month from '../../Code/Month';
+import { NightDay } from '../../Code/Chashavshavon/Onah';
+import { GeneralStyles } from '../styles';
 
 export default class MonthViewScreen extends React.Component {
     static navigationOptions = () => ({

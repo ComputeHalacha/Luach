@@ -1,13 +1,13 @@
 import React from 'react';
-import { ScrollView, View, Text, Picker, TextInput, Button, Alert } from 'react-native';
+import { ScrollView, View, Text, TextInput, Button, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
-import SideMenu from './SideMenu';
-import { UserOccasionTypes, UserOccasion } from '../Code/JCal/UserOccasion';
-import DataUtils from '../Code/Data/DataUtils';
-import Utils from '../Code/JCal/Utils';
-import { popUpMessage, warn, error } from '../Code/GeneralUtils';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import OccasionTypeChooser from '../Components/OccasionTypeChooser';
+import { UserOccasionTypes, UserOccasion } from '../../Code/JCal/UserOccasion';
+import DataUtils from '../../Code/Data/DataUtils';
+import { popUpMessage, warn, error } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class NewOccasion extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -147,11 +147,7 @@ export default class NewOccasion extends React.Component {
                 }]);
     }
     render() {
-        const jmonthName = Utils.jMonthsEng[this.state.jdate.Month],
-            jDay = Utils.toSuffixed(this.state.jdate.Day),
-            sdate = this.state.jdate.getDate(),
-            sMonthName = Utils.sMonthsEng[sdate.getMonth()],
-            sDay = Utils.toSuffixed(sdate.getDate()),
+        const sdate = this.state.jdate.getDate(),
             muxedDate = `${this.state.jdate.toShortString(false)} (${sdate.toLocaleDateString()})`;
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -177,25 +173,10 @@ export default class NewOccasion extends React.Component {
                                 this.setState({ title: event.nativeEvent.text })}
                             defaultValue={this.state.title} />
                     </View>
-                    <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Event/Occasion Type</Text>
-                        <Picker style={GeneralStyles.picker}
-                            accessibilityLabel='Select event type'
-                            prompt='Select event type'
-                            selectedValue={this.state.occasionType || 0}
-                            onValueChange={value => this.setState({ occasionType: value })}>
-                            <Picker.Item label={'One Time Occasion'}
-                                value={UserOccasionTypes.OneTime} />
-                            <Picker.Item label={'Annual - ' + `${jmonthName} ${jDay}`}
-                                value={UserOccasionTypes.HebrewDateRecurringYearly} />
-                            <Picker.Item label={'Annual - ' + `${sMonthName} ${sDay}`}
-                                value={UserOccasionTypes.SecularDateRecurringYearly} />
-                            <Picker.Item label={'Monthly - ' + `${jDay} of Jewish Month`}
-                                value={UserOccasionTypes.HebrewDateRecurringMonthly} />
-                            <Picker.Item label={'Monthly - ' + `${sDay} of Secular Month`}
-                                value={UserOccasionTypes.SecularDateRecurringMonthly} />
-                        </Picker>
-                    </View>
+                    <OccasionTypeChooser
+                        jdate={this.state.jdate}
+                        occasionType={this.state.occasionType || 0}
+                        setOccasionType={value => this.setState({ occasionType: value })} />
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Comments</Text>
                         <TextInput style={[GeneralStyles.textInput, { height: 100 }]}

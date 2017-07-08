@@ -1,15 +1,14 @@
 import React from 'react';
 import { AppState, FlatList, View, Platform } from 'react-native';
 import { Icon } from 'react-native-elements';
-import SingleDayDisplay from './SingleDayDisplay';
-import Login from './Login';
-import Flash from './Flash';
-import SideMenu from './SideMenu';
-import { isLargeScreen, log, goHomeToday, getTodayJdate } from '../Code/GeneralUtils';
-import jDate from '../Code/JCal/jDate';
-import Utils from '../Code/JCal/Utils';
-import AppData from '../Code/Data/AppData';
-
+import SingleDayDisplay from '../Components/SingleDayDisplay';
+import Login from '../Components/Login';
+import Flash from '../Components/Flash';
+import SideMenu from '../Components/SideMenu';
+import { isLargeScreen, log, goHomeToday, getTodayJdate } from '../../Code/GeneralUtils';
+import jDate from '../../Code/JCal/jDate';
+import Utils from '../../Code/JCal/Utils';
+import AppData from '../../Code/Data/AppData';
 
 export default class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => (
@@ -140,17 +139,17 @@ export default class HomeScreen extends React.Component {
         return false;
     }
     _handleAppStateChange(nextAppState) {
+        log(`AppState Change: currentState: "${AppState.currentState}", nextState: "${nextAppState}"`);
+
         const appData = this.state.appData;
-        if (nextAppState === 'active' &&
-            (!this.state.showLogin) &&
+        //If we are going into background mode
+        if (nextAppState === 'background' &&
             appData &&
             appData.Settings &&
             appData.Settings.requirePIN &&
             appData.Settings.PIN.length === 4) {
+            //Next time the app is activated, it will ask for the PIN
             this.setState({ showLogin: true });
-        }
-        else {
-            this.setState({ showLogin: false });
         }
     }
     /**
@@ -222,7 +221,9 @@ export default class HomeScreen extends React.Component {
                 systemDate: new Date(),
                 currDate: today,
                 loadingDone: true,
-                showLogin: ad.Settings.requirePIN,
+                showLogin: (ad.Settings.requirePIN &&
+                    appData.Settings.PIN &&
+                    appData.Settings.PIN.length === 4),
                 lastEntry: lastEntry,
                 lastRegularEntry: lastRegularEntry
             });
@@ -244,7 +245,6 @@ export default class HomeScreen extends React.Component {
             today: today,
             systemDate: new Date(),
             showFlash: false,
-            showLogin: false,
             loadingDone: true,
             refreshing: false,
             lastRegularEntry: lastRegularEntry,

@@ -1,8 +1,8 @@
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import CustomList from './CustomList';
-import SideMenu from './SideMenu';
-import { GeneralStyles } from './styles';
+import CustomList from '../Components/CustomList';
+import SideMenu from '../Components/SideMenu';
+import { GeneralStyles } from '../styles';
 
 export default class DateDetailsScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({

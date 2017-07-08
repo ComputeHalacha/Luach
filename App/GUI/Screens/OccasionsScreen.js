@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { ScrollView, Text, View, TouchableHighlight, Alert } from 'react-native';
 import { Icon } from 'react-native-elements';
-import SideMenu from './SideMenu';
-import CustomList from './CustomList';
-import DataUtils from '../Code/Data/DataUtils';
-import { warn, error, popUpMessage } from '../Code/GeneralUtils';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import CustomList from '../Components/CustomList';
+import DataUtils from '../../Code/Data/DataUtils';
+import { warn, error, popUpMessage } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class OccasionsScreen extends Component {
     static navigationOptions = {

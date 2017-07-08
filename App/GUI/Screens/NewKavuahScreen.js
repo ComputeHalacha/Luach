@@ -1,12 +1,13 @@
 import React from 'react';
-import { ScrollView, View, Text, Picker, Switch, Button, Alert } from 'react-native';
+import { ScrollView, View, Text, Switch, Button, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import SideMenu from './SideMenu';
-import { KavuahTypes, Kavuah } from '../Code/Chashavshavon/Kavuah';
-import DataUtils from '../Code/Data/DataUtils';
-import AppData from '../Code/Data/AppData';
-import { popUpMessage, range, warn, error } from '../Code/GeneralUtils';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import KavuahPickers from '../Components/KavuahPickers';
+import { KavuahTypes, Kavuah } from '../../Code/Chashavshavon/Kavuah';
+import DataUtils from '../../Code/Data/DataUtils';
+import AppData from '../../Code/Data/AppData';
+import { popUpMessage, warn, error } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class NewKavuah extends React.Component {
     static navigationOptions = {
@@ -36,7 +37,6 @@ export default class NewKavuah extends React.Component {
             cancelsOnahBeinunis: false,
             active: true
         };
-        this.getSpecialNumber = this.getSpecialNumber.bind(this);
         this.getSpecialNumberFromEntry = this.getSpecialNumberFromEntry.bind(this);
         this.getSpecialNumberFromKavuahType = this.getSpecialNumberFromKavuahType.bind(this);
     }
@@ -102,54 +102,14 @@ export default class NewKavuah extends React.Component {
         }
     }
     getSpecialNumberFromEntry(entry) {
-        return this.getSpecialNumber(entry, this.state.kavuahType);
+        return Kavuah.getDefaultSpecialNumber(entry, this.state.kavuahType, this.listOfEntries) ||
+            this.state.specialNumber;
     }
     getSpecialNumberFromKavuahType(kavuahType) {
-        return this.getSpecialNumber(this.state.settingEntry, kavuahType);
-    }
-    getSpecialNumber(settingEntry, kavuahType) {
-        if (settingEntry.haflaga &&
-            [KavuahTypes.Haflagah, KavuahTypes.HaflagaMaayanPasuach].includes(kavuahType)) {
-            return settingEntry.haflaga;
-        }
-        else if ([KavuahTypes.DayOfMonth, KavuahTypes.DayOfMonthMaayanPasuach].includes(kavuahType)) {
-            return settingEntry.day;
-        }
-        else if (kavuahType === KavuahTypes.HafalagaOnahs) {
-            const index = this.listOfEntries.findIndex(e => e.isSameEntry(settingEntry)),
-                //The entries are sorted latest to earlier
-                previous = this.listOfEntries[index + 1];
-            if (previous) {
-                return previous.getOnahDifferential(settingEntry);
-            }
-        }
-
-        return this.state.specialNumber;
-    }
-    getNumberDefinition(kavuahType) {
-        switch (kavuahType) {
-            case KavuahTypes.DayOfMonth:
-            case KavuahTypes.DayOfMonthMaayanPasuach:
-                return 'Day of each Jewish Month';
-            case KavuahTypes.DayOfWeek:
-            case KavuahTypes.Haflagah:
-            case KavuahTypes.HaflagaMaayanPasuach:
-                return 'Number of days between entries (Haflaga)';
-            case KavuahTypes.DilugDayOfMonth:
-                return 'Number of days to add/subtract each month';
-            case KavuahTypes.DilugHaflaga:
-                return 'Number of days to add/subtract to Haflaga each Entry';
-            case KavuahTypes.HafalagaOnahs:
-                return 'Number of Onahs between entries (Haflaga of Shulchan Aruch Harav)';
-            case KavuahTypes.Sirug:
-                return 'Number of months separating the Entries';
-            default:
-                return 'Kavuah Defining Number';
-        }
+        return Kavuah.getDefaultSpecialNumber(this.state.settingEntry, kavuahType, this.listOfEntries) ||
+            this.state.specialNumber;
     }
     render() {
-        const nums = range(-100, 100);
-
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
@@ -160,47 +120,22 @@ export default class NewKavuah extends React.Component {
                     helpUrl='Kavuahs.html'
                     helpTitle='Kavuahs' />
                 <ScrollView style={{ flex: 1 }}>
-                    <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Kavuah Type</Text>
-                        <Picker style={GeneralStyles.picker}
-                            selectedValue={this.state.kavuahType}
-                            onValueChange={value => this.setState({
+                    <KavuahPickers
+                        settingEntry={this.state.settingEntry}
+                        kavuahType={this.state.kavuahType}
+                        specialNumber={this.state.specialNumber}
+                        listOfEntries={this.listOfEntries}
+                        setKavuahType={value =>
+                            this.setState({
                                 kavuahType: value,
                                 specialNumber: this.getSpecialNumberFromKavuahType(value)
-                            })}>
-                            <Picker.Item label='Haflaga' value={KavuahTypes.Haflagah} />
-                            <Picker.Item label='Day Of Month' value={KavuahTypes.DayOfMonth} />
-                            <Picker.Item label='Day Of Week' value={KavuahTypes.DayOfWeek} />
-                            <Picker.Item label='"Dilug" of Haflaga' value={KavuahTypes.DilugHaflaga} />
-                            <Picker.Item label='"Dilug" of Day Of Month' value={KavuahTypes.DilugDayOfMonth} />
-                            <Picker.Item label='Sirug' value={KavuahTypes.Sirug} />
-                            <Picker.Item label={'Haflaga with Ma\'ayan Pasuach'} value={KavuahTypes.HaflagaMaayanPasuach} />
-                            <Picker.Item label={'Day Of Month with Ma\'ayan Pasuach'} value={KavuahTypes.DayOfMonthMaayanPasuach} />
-                            <Picker.Item label='Haflaga of Onahs' value={KavuahTypes.HafalagaOnahs} />
-                        </Picker>
-                    </View>
-                    <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Setting Entry</Text>
-                        <Picker style={GeneralStyles.picker}
-                            selectedValue={this.state.settingEntry}
-                            onValueChange={value => this.setState({
+                            })}
+                        setSettingEntry={value =>
+                            this.setState({
                                 settingEntry: value,
                                 specialNumber: this.getSpecialNumberFromEntry(value)
-                            })}>
-                            {this.listOfEntries.map(entry =>
-                                <Picker.Item label={entry.toString()} value={entry} key={entry.entryId} />
-                            )}
-                        </Picker>
-                    </View>
-                    <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>{this.getNumberDefinition(this.state.kavuahType)}</Text>
-                        <Picker style={GeneralStyles.picker}
-                            selectedValue={this.state.specialNumber}
-                            onValueChange={value => this.setState({ specialNumber: value })}>
-                            {nums.map(num =>
-                                (<Picker.Item key={num} label={num.toString()} value={num} />))}
-                        </Picker>
-                    </View>
+                            })}
+                        setSpecialNumber={value => this.setState({ specialNumber: value })} />
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Cancels Onah Beinonis</Text>
                         <Switch style={GeneralStyles.switch}

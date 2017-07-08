@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, Image } from 'react-native';
-import { isSmallScreen } from '../Code/GeneralUtils';
+import { isSmallScreen } from '../../Code/GeneralUtils';
 
 export default function Flash() {
     return <View style={{

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Alert, Switch, Text, TouchableHighlight } from 'react-native';
-import SideMenu from './SideMenu';
-import CustomList from './CustomList';
 import { Icon } from 'react-native-elements';
-import DataUtils from '../Code/Data/DataUtils';
-import AppData from '../Code/Data/AppData';
-import { warn, error, popUpMessage } from '../Code/GeneralUtils';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import CustomList from '../Components/CustomList';
+import DataUtils from '../../Code/Data/DataUtils';
+import AppData from '../../Code/Data/AppData';
+import { warn, error, popUpMessage } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class KavuahScreen extends Component {
     static navigationOptions = {

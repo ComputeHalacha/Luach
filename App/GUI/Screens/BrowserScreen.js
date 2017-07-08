@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, WebView, BackHandler, Platform } from 'react-native';
-import SideMenu from './SideMenu';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import { GeneralStyles } from '../styles';
 
 export default class BrowserScreen extends Component {
     static navigationOptions = ({ navigation }) => ({

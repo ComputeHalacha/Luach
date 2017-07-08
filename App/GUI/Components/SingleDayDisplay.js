@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
-import Utils from '../Code/JCal/Utils';
-import Zmanim from '../Code/JCal/Zmanim';
-import { log, popUpMessage } from '../Code/GeneralUtils';
-import { UserOccasion } from '../Code/JCal/UserOccasion';
+import Utils from '../../Code/JCal/Utils';
+import Zmanim from '../../Code/JCal/Zmanim';
+import { log, popUpMessage } from '../../Code/GeneralUtils';
+import { UserOccasion } from '../../Code/JCal/UserOccasion';
 /**
  * Display a home screen box for a single jewish date.
  *

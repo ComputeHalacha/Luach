@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { ScrollView, TouchableHighlight, View, KeyboardAvoidingView, Text, TextInput, Picker, Switch } from 'react-native';
-import SideMenu from './SideMenu';
-import Location from '../Code/JCal/Location';
 import { Icon } from 'react-native-elements';
-import { setDefault, range } from '../Code/GeneralUtils';
-import { GeneralStyles } from './styles';
+import SideMenu from '../Components/SideMenu';
+import Location from '../../Code/JCal/Location';
+import { setDefault, range } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default class SettingsScreen extends Component {
     static navigationOptions = ({ navigation }) => {

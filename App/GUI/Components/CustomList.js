@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { FlatList, StyleSheet, Text, View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { NightDay } from '../Code/Chashavshavon/Onah';
-import { GeneralStyles } from './styles';
-import { isString } from '../Code/GeneralUtils';
+import { NightDay } from '../../Code/Chashavshavon/Onah';
+import { isString } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 /*******************************************************************************************************************
  * PROPS ------------------------------------------
  *    style = style of outer container
- *    data= = Array of data items
+ *    data = Array of data items
  *    rowHasChanged = function(row1, row2) to test if the row needs to be re-rendered. The default is row1===row2.
  *    emptyListText = The text to display if list is empty.
  *
@@ -16,8 +16,8 @@ import { isString } from '../Code/GeneralUtils';
  *   ----------------------------------------------------------------------------------
  *    mainViewStyle = style of main containing view
  *    titleStyle = style of main text
- *    title= function to extract main text from each item in the list
- *    nightDay = if set, will display an icon and backgroud color for the correct value. Function needs to return a NightDay value.
+ *    title = function to extract main text from each item in the list
+ *    nightDay = if set, will display an icon and background color for the set value. Function needs to return a NightDay value.
  *    iconName = Name for left-side icon. If is not supplied, no Icon will be shown.
  *    iconStyle = style of main icon
  *    iconType = type of main icon

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { getScreenHeight, goHomeToday } from '../Code/GeneralUtils';
-import jDate from '../Code/JCal/jDate';
+import { getScreenHeight, goHomeToday } from '../../Code/GeneralUtils';
+import jDate from '../../Code/JCal/jDate';
 
 /**
  * PROPS ******
