@@ -168,23 +168,25 @@ class Kavuah {
                 //We always send the last 3 entries as the last one is always the newly added one.
                 kavuahList = kavuahList
                     .concat(Kavuah.getSirugKavuah(queue.slice(-3)));
-
-                //We can't start cheshboning haflaga kavuahs until we have 4 entries
-                if (queue.length === 4) {
-                    //Unless kavuahDiffOnahs is on, regular Haflaga Kavuahs need all the entries to have the same nightDay
-                    if (settings.kavuahDiffOnahs || queue[2].nightDay === queue[3].nightDay) {
-                        kavuahList = kavuahList
-                            .concat(Kavuah.getHaflagahKavuah(queue))
-                            .concat(Kavuah.getDilugHaflagahKavuah(queue));
-                    }
-                }
             }
-            //The Kavuah of Haflaga of Onahs - the Shulchan Aruch Harav
-            //If the NightDays are all the same, there will always already be a Haflaga Kavuah.
-            if (settings.haflagaOfOnahs &&
-                queue.length === 4 &&
-                queue[0].nightDay !== queue[1].nightDay) {
-                kavuahList = kavuahList.concat(Kavuah.getHaflagaOnahsKavuah(queue));
+            //We can't start cheshboning haflaga kavuahs until we have 4 entries
+            if (queue.length === 4) {
+                //Regular Haflaga Kavuahs need the latter 3 entries to have the same nightDay
+                //unless kavuahDiffOnahs is on.
+                if ((queue[1].nightDay === queue[2].nightDay &&
+                    queue[2].nightDay === queue[3].nightDay) ||
+                    settings.kavuahDiffOnahs) {
+                    kavuahList = kavuahList
+                        .concat(Kavuah.getHaflagahKavuah(queue))
+                        .concat(Kavuah.getDilugHaflagahKavuah(queue));
+                }
+
+                //The Kavuah of Haflaga of Onahs - the Shulchan Aruch Harav
+                //If the NightDays of the latter 3 are the same, there will always already be a Haflaga Kavuah.
+                if (settings.haflagaOfOnahs &&
+                    queue[1].nightDay !== queue[2].nightDay) {
+                    kavuahList = kavuahList.concat(Kavuah.getHaflagaOnahsKavuah(queue));
+                }
             }
         }
 

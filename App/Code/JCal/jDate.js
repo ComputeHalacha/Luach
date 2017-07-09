@@ -119,7 +119,13 @@ export default class jDate {
     addDays(days) {
         return new jDate(this.Abs + days);
     }
-    /**Returns a new Jewish date represented by adding the given number of Jewish Months to the current Jewish date.*/
+    /**
+     * Returns a new Jewish date represented by adding the given number of
+     * Jewish Months to the current Jewish date.
+     * If the current Day is 30 and the new month only has 29 days,
+     * the 29th day of the month is returned.
+     * @param {Number} months
+     */
     addMonths(months) {
         let year = this.Year,
             month = this.Month,
@@ -148,10 +154,19 @@ export default class jDate {
                 }
             }
         }
+        if (day === 30 && jDate.daysJMonth(year, month) === 29) {
+            day = 29;
+        }
+
         return new jDate(year, month, day);
     }
-
-    /**Returns a new Jewish date represented by adding the given number of Jewish Years to the current Jewish date.*/
+    /**
+     * Returns a new Jewish date represented by adding the
+     * given number of Jewish Years to the current Jewish date.
+     * If the current Day is 30 and the new dates month only has 29 days,
+     * the 29th day of the month is returned.
+     * @param {Number} years
+     */
     addYears(years) {
         let year = this.Year + years,
             month = this.Month,
@@ -168,6 +183,11 @@ export default class jDate {
             month = 10;
             day = 1;
         }
+
+        if (day === 30 && jDate.daysJMonth(year, month) === 29) {
+            day = 29;
+        }
+
         return new jDate(year, month, day);
     }
     addSecularMonths(months) {

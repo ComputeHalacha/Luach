@@ -145,13 +145,15 @@ export default class EntryList {
     getOnahBeinunisProblemOnahs(entry, cancelKavuah) {
         const onahs = [];
         //Yom Hachodesh
-        const nextMonth = entry.date.addMonths(1);
+        const nextMonth = entry.date.addMonths(1),
+            hasFullMonthIssue = (entry.date.Day === 30 && nextMonth.Day === 29);
+
         if (this.canAddFlaggedDate(nextMonth, entry.nightDay) &&
             (!EntryList.isAfterKavuahStart(nextMonth, entry.nightDay, cancelKavuah))) {
             const yomHachodesh = new ProblemOnah(
                 nextMonth,
                 entry.nightDay,
-                'Yom Hachodesh');
+                'Yom Hachodesh' + hasFullMonthIssue ? ' (changed from 30 to 29)' :'');
             onahs.push(yomHachodesh);
             this.add24HourOnah(yomHachodesh, onahs);
             //We won't flag the Ohr Zarua if it's included in Onah Beinonis
@@ -202,7 +204,9 @@ export default class EntryList {
             const haflaga = new ProblemOnah(
                 haflagaDate,
                 entry.nightDay,
-                `Yom Haflagah (${entry.haflaga.toString()} days)`);
+                `Yom Haflagah (of ${entry.haflaga.toString()} days)`);
+            //Note the Haflaga is always just the Onah it occurred on - not 24 hours  -
+            //even according to those that require it for 30, 31 and Yom Hachodesh.
             onahs.push(haflaga);
             this.addOhrZarua(haflaga, onahs);
         }
@@ -218,7 +222,7 @@ export default class EntryList {
                     const haflagaOnahs = new ProblemOnah(
                         nextOnah.jdate,
                         nextOnah.nightDay,
-                        `Haflagah of Onahs (${diffOnahs.toString()} onahs)`);
+                        `Haflagah of Onahs (of ${diffOnahs.toString()} onahs)`);
                     onahs.push(haflagaOnahs);
                     this.addOhrZarua(haflagaOnahs, onahs);
                 }
@@ -377,7 +381,7 @@ export default class EntryList {
             probList.push(new ProblemOnah(
                 probOnah.jdate,
                 probOnah.nightDay === NightDay.Day ? NightDay.Night : NightDay.Day,
-                probOnah.name));
+                probOnah.name + ' for 24 hours'));
         }
     }
     addOhrZarua(probOnah, probList) {
