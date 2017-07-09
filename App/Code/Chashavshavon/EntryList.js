@@ -153,7 +153,7 @@ export default class EntryList {
             const yomHachodesh = new ProblemOnah(
                 nextMonth,
                 entry.nightDay,
-                'Yom Hachodesh' + hasFullMonthIssue ? ' (changed from 30 to 29)' :'');
+                'Yom Hachodesh' + (hasFullMonthIssue ? ' (changed from 30 to 29)' :''));
             onahs.push(yomHachodesh);
             this.add24HourOnah(yomHachodesh, onahs);
             //We won't flag the Ohr Zarua if it's included in Onah Beinonis
