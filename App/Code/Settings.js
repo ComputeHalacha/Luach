@@ -7,14 +7,18 @@ export default class Settings {
         this.location = args.location || Location.getLakewood();
         this.showOhrZeruah = setDefault(args.showOhrZeruah, true);
         this.keepThirtyOne = setDefault(args.keepThirtyOne, true);
-        this.onahBeinunis24Hours = !!args.onahBeinunis24Hours;
+        this.onahBeinunis24Hours = setDefault(args.onahBeinunis24Hours, true);
         this.numberMonthsAheadToWarn = setDefault(args.numberMonthsAheadToWarn, 12);
+        /** This setting is for the Ta"z.
+         *  Causes flagging of Onah Beinonis's days 30, 31 and Haflaga
+         *  even if there was another Entry in middle
+         *  Also causes to keep flagging any haflaga that was not surpassed afterwards. */
         this.keepLongerHaflagah = !!args.keepLongerHaflagah;
         /** This following one is misnamed.
          * It means keep flagging Kavuags of Dilug Yom Hachodesh
          * even after they reach the beginning or the end of the month */
         this.cheshbonKavuahByCheshbon = setDefault(args.cheshbonKavuahByCheshbon, true);
-        this.kavuahHaflagaOnahs = !!args.kavuahHaflagaOnahs;
+        this.haflagaOfOnahs = !!args.haflagaOfOnahs;
         this.kavuahDiffOnahs = !!args.kavuahDiffOnahs;
         this.calcKavuahsOnNewEntry = setDefault(args.calcKavuahsOnNewEntry, true);
         this.showProbFlagOnHome = setDefault(args.showProbFlagOnHome, true);
@@ -40,7 +44,7 @@ export default class Settings {
             this.numberMonthsAheadToWarn === other.numberMonthsAheadToWarn &&
             this.keepLongerHaflagah === other.keepLongerHaflagah &&
             this.cheshbonKavuahByCheshbon === other.cheshbonKavuahByCheshbon &&
-            this.kavuahHaflagaOnahs === other.kavuahHaflagaOnahs &&
+            this.haflagaOfOnahs === other.haflagaOfOnahs &&
             this.kavuahDiffOnahs === other.kavuahDiffOnahs &&
             this.calcKavuahsOnNewEntry === other.calcKavuahsOnNewEntry &&
             this.showProbFlagOnHome === other.showProbFlagOnHome &&

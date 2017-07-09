@@ -36,7 +36,7 @@ export default class FindKavuahScreen extends Component {
         const appData = this.state.appData;
         if (appData && !this.listSupplied) {
             const possList = Kavuah.getPossibleNewKavuahs(
-                appData.EntryList.list,
+                appData.EntryList.realEntrysList,
                 appData.KavuahList,
                 appData.Settings);
             this.setState({

@@ -92,7 +92,7 @@ export default class NewEntry extends React.Component {
             }
             if (appData.Settings.calcKavuahsOnNewEntry) {
                 const possList = Kavuah.getPossibleNewKavuahs(
-                    appData.EntryList.list,
+                    appData.EntryList.realEntrysList,
                     appData.KavuahList,
                     appData.Settings);
                 if (possList.length) {
@@ -139,7 +139,7 @@ export default class NewEntry extends React.Component {
             this.checkIfOutOfPattern(entry);
             if (appData.Settings.calcKavuahsOnNewEntry) {
                 const possList = Kavuah.getPossibleNewKavuahs(
-                    appData.EntryList.list,
+                    appData.EntryList.realEntrysList,
                     appData.KavuahList,
                     appData.Settings);
                 if (possList.length) {
