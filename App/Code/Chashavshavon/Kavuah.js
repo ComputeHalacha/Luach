@@ -116,14 +116,14 @@ class Kavuah {
     }
     /**
      * Get possible new Kavuahs from a list of entries.
-     * @param {EntryList} entryList The list of entries to search
+     * @param {[Entry]} realEntrysList List of entries to search. All should be not ignoreForFlaggedDates.
      * @param {[Kavuah]} kavuahList The list of Kavuahs to used to determine if any found kavuah is a "new" one.
      */
-    static getPossibleNewKavuahs(entryList, kavuahList, settings) {
+    static getPossibleNewKavuahs(realEntrysList, kavuahList, settings) {
         //Get all Kavuahs in the list that are active - including ignored ones.
         const klist = kavuahList.filter(k => k.active);
         //Find all possible Kavuahs.
-        return Kavuah.getKavuahSuggestionList(entryList, settings)
+        return Kavuah.getKavuahSuggestionList(realEntrysList, kavuahList, settings)
             //Filter out any Kavuahs that are already in the active list.
             //Ignored Kavuahs will also not be returned.
             .filter(pk =>
@@ -137,21 +137,31 @@ class Kavuah {
      *      kavuah: the found Kavuah object
      *      entries: an array of the 3 or 4 Entry objects that were found to have a possible Kavuah relationship.
      * }
-     * @param {*} entryList
+     * @param {[Entry]} realEntrysList
+     * @param {[Kavuah]} previousKavuahs
+     * @param {Settings} settings
      */
-    static getKavuahSuggestionList(entryList, settings) {
+    static getKavuahSuggestionList(realEntrysList, previousKavuahs, settings) {
         let kavuahList = [];
-        const queue = [],
-            nonIgnoredEntryList = entryList.filter(e => !e.ignoreForKavuah);
+        const queue = [];
 
-        for (let entry of nonIgnoredEntryList.filter(e => !e.ignoreForKavuah)) {
+        for (let entry of realEntrysList.filter(e => !e.ignoreForKavuah)) {
             //First we work out those Kavuahs that are not dependent on their entries being 3 in a row
-            kavuahList = kavuahList.concat(Kavuah.getDayOfMonthKavuah(entry, nonIgnoredEntryList, settings))
-                .concat(Kavuah.getDilugDayOfMonthKavuah(entry, nonIgnoredEntryList, settings))
-                .concat(Kavuah.getDayOfWeekKavuahs(entry, nonIgnoredEntryList, settings));
+            kavuahList = kavuahList.concat(Kavuah.getDayOfMonthKavuah(entry, realEntrysList, settings))
+                .concat(Kavuah.getDayOfWeekKavuahs(entry, realEntrysList, settings));
 
-            //For cheshboning out all other Kavuahs, we use 3 or 4 entries in a row.
-            //First, add the current entry of the loop.
+            //If there are no previous active Kavuahs of type DayOfMonth for the date of this entry,
+            //we can look for a Dilug Day of Month Kavuah of just three entries. [Sha"ch yr"d 189, 7]
+            if ((!previousKavuahs) || (!previousKavuahs.some(k => k.active &&
+                k.kavuahType === KavuahTypes.DayOfMonth &&
+                k.specialNumber === entry.date.Day))) {
+                kavuahList = kavuahList
+                    .concat(Kavuah.getDilugDayOfMonthKavuah(entry, realEntrysList, settings));
+            }
+
+            /*For calculating all other Kavuahs, we use a queue of 3 or 4 entries in a row.*/
+
+            //Add the entry of the current iteration to the end of the queue.
             queue.push(entry);
             //if the queue is too "full"
             if (queue.length > 4) {
@@ -159,7 +169,7 @@ class Kavuah {
                 queue.shift();
             }
 
-            //To cheshbon the sirug kavuah we need 3 entries
+            //To calculate a Sirug Kavuah, we need just 3 entries
             if (queue.length >= 3 &&
                 (settings.kavuahDiffOnahs ||
                     (queue[0].nightDay === queue[1].nightDay &&
@@ -169,10 +179,12 @@ class Kavuah {
                 kavuahList = kavuahList
                     .concat(Kavuah.getSirugKavuah(queue.slice(-3)));
             }
-            //We can't start cheshboning haflaga kavuahs until we have 4 entries
+            //We can't start calculating haflaga kavuahs until we have 4 entries
             if (queue.length === 4) {
-                //Regular Haflaga Kavuahs need the latter 3 entries to have the same nightDay
+                //Haflaga Kavuahs need the latter 3 entries to have the same nightDay () -
                 //unless kavuahDiffOnahs is on.
+                //The first entry of the 4, does not have to be
+                //the same NightDay as the other three. [Nodah Biyehuda (2, 83), See Chazon Ish (85, 59-)]
                 if ((queue[1].nightDay === queue[2].nightDay &&
                     queue[2].nightDay === queue[3].nightDay) ||
                     settings.kavuahDiffOnahs) {
@@ -313,7 +325,7 @@ class Kavuah {
         return list;
     }
     static getSirugKavuah(threeEntries) {
-        // Cheshbon out Kavuah of Sirug
+        // Caculate Kavuah of Sirug
         // We go here according to those that Sirug Kavuahs need 3 in a row with no intervening entries
         const list = [],
             //We get the difference in months between the first 2 entries
@@ -336,7 +348,7 @@ class Kavuah {
         return list;
     }
     static getDilugHaflagahKavuah(fourEntries) {
-        // Cheshbon out Dilug Haflaga Kavuahs
+        // Caculate Dilug Haflaga Kavuahs
         const list = [],
             //We check the three entries if their interval "Dilug"s are the same.
             haflagaDiff1 = fourEntries[3].haflaga - fourEntries[2].haflaga,

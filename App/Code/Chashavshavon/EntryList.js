@@ -394,9 +394,6 @@ export default class EntryList {
                 'Ohr Zarua of the ' + probOnah.name));
         }
     }
-    getKavuahSuggestions() {
-        return Kavuah.getKavuahSuggestionList(this.list);
-    }
     /**
      * Returns false if the noProbsAfterEntry setting is on and there was an Entry
      * in the 7 days before the given onah.
