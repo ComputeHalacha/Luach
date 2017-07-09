@@ -162,7 +162,6 @@ export default class EntryList {
                 this.addOhrZarua(thirty, onahs);
             }
         }
-
         //Day Thirty One ***************************************************************
         const dayThirtyOne = dayThirty.addDays(1);
         //Even if Settings.keepThirtyOne is false, the 31st day may be the Yom HaChodesh.
@@ -186,7 +185,6 @@ export default class EntryList {
                 }
             }
         }
-
         //Haflagah **********************************************************************
         const haflagaDate = entry.date.addDays(entry.haflaga - 1);
         if ((entry.haflaga > 0) &&
@@ -199,7 +197,24 @@ export default class EntryList {
             onahs.push(haflaga);
             this.addOhrZarua(haflaga, onahs);
         }
-
+        //Haflagah of Onahs *************************************************************
+        if (this.settings.haflagaOfOnahs) {
+            const index = nonProbIgnoredList.indexOf(entry),
+                prevEntry = nonProbIgnoredList[index - 1];
+            if (prevEntry) {
+                const diffOnahs = prevEntry.getOnahDifferential(entry),
+                    nextOnah = entry.onah.addOnahs(diffOnahs);
+                if (this.canAddFlaggedDate(nextOnah.jDate, nextOnah.nightDay, nonProbIgnoredList) &&
+                    (!EntryList.isAfterKavuahStart(nextOnah.jDate, nextOnah.nightDay, cancelKavuah))) {
+                    const haflagaOnahs = new ProblemOnah(
+                        nextOnah.jDate,
+                        nextOnah.nightDay,
+                        `Haflagah of Onahs (${diffOnahs.toString()})`);
+                    onahs.push(haflagaOnahs);
+                    this.addOhrZarua(haflagaOnahs, onahs);
+                }
+            }
+        }
         //The Ta"z
         if (this.settings.keepLongerHaflagah) {
             //Go through all earlier entries in the list that have a longer haflaga than this one

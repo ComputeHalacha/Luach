@@ -14,7 +14,7 @@ export default class Settings {
          * It means keep flagging Kavuags of Dilug Yom Hachodesh
          * even after they reach the beginning or the end of the month */
         this.cheshbonKavuahByCheshbon = setDefault(args.cheshbonKavuahByCheshbon, true);
-        this.kavuahHaflagaOnahs = !!args.kavuahHaflagaOnahs;
+        this.haflagaOfOnahs = !!args.haflagaOfOnahs;
         this.kavuahDiffOnahs = !!args.kavuahDiffOnahs;
         this.calcKavuahsOnNewEntry = setDefault(args.calcKavuahsOnNewEntry, true);
         this.showProbFlagOnHome = setDefault(args.showProbFlagOnHome, true);
@@ -40,7 +40,7 @@ export default class Settings {
             this.numberMonthsAheadToWarn === other.numberMonthsAheadToWarn &&
             this.keepLongerHaflagah === other.keepLongerHaflagah &&
             this.cheshbonKavuahByCheshbon === other.cheshbonKavuahByCheshbon &&
-            this.kavuahHaflagaOnahs === other.kavuahHaflagaOnahs &&
+            this.haflagaOfOnahs === other.haflagaOfOnahs &&
             this.kavuahDiffOnahs === other.kavuahDiffOnahs &&
             this.calcKavuahsOnNewEntry === other.calcKavuahsOnNewEntry &&
             this.showProbFlagOnHome === other.showProbFlagOnHome &&

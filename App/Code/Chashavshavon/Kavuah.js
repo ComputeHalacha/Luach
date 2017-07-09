@@ -181,7 +181,7 @@ class Kavuah {
             }
             //The Kavuah of Haflaga of Onahs - the Shulchan Aruch Harav
             //If the NightDays are all the same, there will always already be a Haflaga Kavuah.
-            if (settings.kavuahHaflagaOnahs &&
+            if (settings.haflagaOfOnahs &&
                 queue.length === 4 &&
                 queue[0].nightDay !== queue[1].nightDay) {
                 kavuahList = kavuahList.concat(Kavuah.getHaflagaOnahsKavuah(queue));

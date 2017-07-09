@@ -74,7 +74,7 @@ export default class SettingsScreen extends Component {
             numberMonthsAheadToWarn = (sets && sets.numberMonthsAheadToWarn) || 12,
             keepLongerHaflagah = setDefault(sets && sets.keepLongerHaflagah, true),
             cheshbonKavuahByCheshbon = setDefault(sets && sets.cheshbonKavuahByCheshbon, true),
-            kavuahHaflagaOnahs = sets && sets.kavuahHaflagaOnahs,
+            haflagaOfOnahs = sets && sets.haflagaOfOnahs,
             kavuahDiffOnahs = sets && sets.kavuahDiffOnahs,
             calcKavuahsOnNewEntry = setDefault(sets && sets.calcKavuahsOnNewEntry, true),
             showProbFlagOnHome = setDefault(sets && sets.showProbFlagOnHome, true),
@@ -146,10 +146,10 @@ export default class SettingsScreen extends Component {
                                 value={!!cheshbonKavuahByCheshbon} />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Calculate Kavuahs of Haflaga by counting Onahs</Text>
+                            <Text style={GeneralStyles.label}>Calculate Haflagas by counting Onahs</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('kavuahHaflagaOnahs', value)}
-                                value={!!kavuahHaflagaOnahs} />
+                                onValueChange={value => this.update('haflagaOfOnahs', value)}
+                                value={!!haflagaOfOnahs} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Flag Kavuahs even if not all the same Onah</Text>

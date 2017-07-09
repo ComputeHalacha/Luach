@@ -19,7 +19,7 @@ const addedFields = [
     { table: 'entries', name: 'ignoreForFlaggedDates', type: 'BOOLEAN', allowNull: true },
     { table: 'entries', name: 'comments', type: 'VARCHAR (500)', allowNull: true },
     //Added 6/27/17
-    { table: 'settings', name: 'kavuahHaflagaOnahs', type: 'BOOLEAN', allowNull: true },
+    { table: 'settings', name: 'haflagaOfOnahs', type: 'BOOLEAN', allowNull: true },
     //Added 6/28/17
     { table: 'settings', name: 'noProbsAfterEntry', type: 'BOOLEAN', allowNull: true, defaultValue: '1' },
      //Added 6/29/17
