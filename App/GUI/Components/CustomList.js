@@ -60,30 +60,28 @@ export default class CustomList extends Component {
             styles.mainViewStyle,
             (nightDay && ({ backgroundColor: nightDay === NightDay.Night ? '#d5d5e6' : '#fff' })),
             mainViewStyle]}>
-            {(nightDay && (nightDay === NightDay.Night ?
-                <Icon
-                    name='ios-moon'
-                    color='orange'
-                    type='ionicon'
-                    style={iconStyle}
-                    containerStyle={styles.iconContainerStyle} />
-                :
-                <Icon
-                    name='ios-sunny'
-                    color='#fff100'
-                    type='ionicon'
-                    style={iconStyle}
-                    containerStyle={styles.iconContainerStyle} />))
-                ||
-                (iconName &&
-                    <Icon
-                        name={iconName}
-                        type={iconType}
-                        size={iconSize}
-                        color={iconColor}
-                        style={iconStyle}
-                        containerStyle={styles.iconContainerStyle} />)
-            }
+            <View style={[
+                { backgroundColor: nightDay === NightDay.Night ? '#ccd' : '#eef' },
+                styles.iconContainerStyle]}>
+                {(nightDay && (nightDay === NightDay.Night ?
+                    <Icon name='ios-moon'
+                        color='orange'
+                        type='ionicon'
+                        style={iconStyle} />
+                    :
+                    <Icon name='ios-sunny'
+                        color='#fff100'
+                        type='ionicon'
+                        style={iconStyle} />))
+                    ||
+                    (iconName &&
+                        <Icon name={iconName}
+                            type={iconType}
+                            size={iconSize}
+                            color={iconColor}
+                            style={iconStyle} />)
+                }
+            </View>
             <View style={[styles.textSectionViewStyle, textSectionViewStyle]}>
                 {(isString(title) &&
                     <Text style={[styles.titleStyle, titleStyle]}>
@@ -103,7 +101,7 @@ export default class CustomList extends Component {
                     <FlatList
                         data={this.props.data}
                         renderItem={this.renderItem}
-                        keyExtractor={item => this.props.data.indexOf(item)} />
+                        keyExtractor={(item, index) => index.toString()} />
                 </View>)
                 ||
                 <View style={GeneralStyles.emptyListView}>
@@ -127,11 +125,13 @@ const styles = StyleSheet.create({
     mainViewStyle: {
         borderBottomWidth: 2,
         borderBottomColor: '#e0e0d0',
-        flexDirection: 'row',
-        paddingLeft: 15
+        flexDirection: 'row'
     },
     iconContainerStyle: {
-        paddingRight: 10
+        marginRight: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 30
     },
     titleStyle: {
         flexWrap: 'wrap',

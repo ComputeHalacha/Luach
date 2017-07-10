@@ -1,19 +1,12 @@
 import { isNumber } from '../GeneralUtils';
-import jDate from '../JCal/jDate';
 import Entry from './Entry';
 import Settings from '../Settings';
 import FlaggedDatesGenerator from './FlaggedDatesGenerator';
-
-const today = new jDate();
 
 export default class EntryList {
     constructor(settings, entryList) {
         this.list = entryList || [];
         this.settings = settings || new Settings();
-        this.stopWarningDate = today.addMonths(this.settings.numberMonthsAheadToWarn);
-        //List of entries that can generate flagged dates. This is set in calculateHaflagas.
-        this.realEntrysList = [];
-        this.probOnahs = [];
     }
     /**
      * Add an Entry to the list.
@@ -26,7 +19,7 @@ export default class EntryList {
             throw 'Only objects of type Entry can be added to the EntryList';
         }
         else {
-            if (!this.list.some(entry => entry.isSameEntry(entry))) {
+            if (!this.list.some(e => e.isSameEntry(entry))) {
                 this.list.push(entry);
                 const index = this.list.indexOf(entry);
                 if (afterwards instanceof Function) {

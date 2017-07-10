@@ -1,6 +1,7 @@
 import { NightDay } from './Onah';
 import { KavuahTypes } from './Kavuah';
-import {ProblemFlag, ProblemOnah} from './ProblemOnah';
+import { ProblemFlag, ProblemOnah } from './ProblemOnah';
+import jDate from '../JCal/jDate';
 import { has } from '../GeneralUtils';
 
 /**
@@ -22,6 +23,7 @@ export default class FlaggedDatesGenerator {
         this.cancelKavuah = kavuahs.find(k =>
             k.active && k.cancelsOnahBeinunis);
         this.probOnahs = [];
+        this.stopWarningDateAbs = jDate.toJDate().addMonths(this.settings.numberMonthsAheadToWarn).Abs;
     }
     /**
      * Gets the list of Onahs that need to be observed.
@@ -230,7 +232,7 @@ export default class FlaggedDatesGenerator {
             has(k.kavuahType, KavuahTypes.DayOfMonth, KavuahTypes.DayOfMonthMaayanPasuach, KavuahTypes.Sirug))) {
             let dt = kavuah.settingEntry.date.addMonths(
                 kavuah.kavuahType === KavuahTypes.Sirug ? kavuah.specialNumber : 1);
-            while (dt.Abs <= this.stopWarningDate.Abs) {
+            while (dt.Abs <= this.stopWarningDateAbs) {
                 const o = new ProblemFlag(dt, kavuah.settingEntry.nightDay,
                     'Kavuah for ' + kavuah.toString());
                 this._addProblem(o);
@@ -242,7 +244,7 @@ export default class FlaggedDatesGenerator {
         //Kavuahs of "Day of week" - cheshboned from the theoretical Entries
         for (let kavuah of this.kavuahs.filter(k => k.kavuahType === KavuahTypes.DayOfWeek)) {
             let dt = kavuah.settingEntry.date.addDays(kavuah.specialNumber);
-            while (dt.Abs <= this.stopWarningDate.Abs) {
+            while (dt.Abs <= this.stopWarningDateAbs) {
                 const o = new ProblemFlag(
                     dt,
                     kavuah.settingEntry.nightDay,
@@ -258,11 +260,11 @@ export default class FlaggedDatesGenerator {
             let nextMonth = kavuah.settingEntry.date.addMonths(1);
             for (let i = 1; ; i++) {
                 //Add the correct number of dilug days
-                const addDilugDays = nextMonth.addDays(kavuah.specialNumberNumber * i);
+                const addDilugDays = nextMonth.addDays(kavuah.specialNumber * i);
                 //If set to stop when we get to the beginning or end of the month
                 if ((this.settings.cheshbonKavuahByCheshbon && (addDilugDays.Month !== nextMonth.Month))
                     ||
-                    addDilugDays.Abs > this.stopWarningDate.Abs) {
+                    addDilugDays.Abs > this.stopWarningDateAbs) {
                     break;
                 }
                 const o = new ProblemFlag(
@@ -300,7 +302,7 @@ export default class FlaggedDatesGenerator {
      * @param {ProblemFlag} probFlag
      * @param {Entry} [settingEntry] optional entry to pass on to the _canAddFlaggedDate function.
      */
-    __addProblem(probFlag, settingEntry) {
+    _addProblem(probFlag, settingEntry) {
         if (this._canAddFlaggedDate(probFlag, settingEntry)) {
             let probOnah = this.probOnahs.find(po => po.isSameOnah(probFlag.onah));
             if (!probOnah) {
