@@ -15,29 +15,41 @@ export default class FlaggedDatesScreen extends Component {
         super(props);
 
         const { params } = this.props.navigation.state,
-            appData = params.appData;
-
-        this.jdate = params.jdate || new JDate();
+            appData = params.appData,
+            jdate = params.jdate || new JDate();
+        //If jdate was supplied in the params, we display only that days FlaggedDates.
+        //Otherwise, we will display all Flagged Dates from today onwards.
         this.isToday = (!params.jdate);
         this.onUpdate = params.onUpdate;
         this.navigate = this.props.navigation.navigate;
         this.state = {
             appData: appData,
-            problemOnahs: appData.ProblemOnahs.filter(o => {
-                if (this.isToday) {
-                    return o.jdate.Abs >= this.jdate.Abs;
-                }
-                else {
-                    return Utils.isSameJdate(o.jdate, this.jdate);
-                }
-            })
+            currDate: jdate
         };
         this.goToDate = this.goToDate.bind(this);
+        this.goPrev = this.goPrev.bind(this);
+        this.goNext = this.goNext.bind(this);
     }
     goToDate(jdate) {
         this.navigate('Home', { currDate: jdate, appData: this.state.appData });
     }
+    goPrev() {
+        const jdate = this.state.currDate;
+        this.setState({ currDate: jdate.addDays(-1) });
+    }
+    goNext() {
+        const jdate = this.state.currDate;
+        this.setState({ currDate: jdate.addDays(1) });
+    }
     render() {
+        const problemOnahs = this.state.appData.ProblemOnahs.filter(o => {
+            if (this.isToday) {
+                return o.jdate.Abs >= this.state.currDate.Abs;
+            }
+            else {
+                return Utils.isSameJdate(o.jdate, this.state.currDate);
+            }
+        });
         return (
             <View style={GeneralStyles.container}>
                 <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -46,19 +58,23 @@ export default class FlaggedDatesScreen extends Component {
                         appData={this.state.appData}
                         navigator={this.props.navigation}
                         hideOccasions={true}
+                        onGoPrevious={!this.isToday && this.goPrev}
+                        onGoNext={!this.isToday && this.goNext}
                         helpUrl='FlaggedDates.html'
                         helpTitle='Flagged Dates' />
                     <ScrollView style={{ flex: 1 }}>
                         {(!this.isToday) &&
                             <View style={GeneralStyles.headerView}>
                                 <Text style={GeneralStyles.headerText}>
-                                    {this.jdate.toString()}</Text>
+                                    {this.state.currDate.toString()}</Text>
                             </View>
                         }
                         <CustomList
-                            data={this.state.problemOnahs}
+                            data={problemOnahs}
                             nightDay={po => po.nightDay}
-                            emptyListText='There are no upcoming flagged dates'
+                            emptyListText={this.isToday ?
+                                'There are no upcoming flagged dates' :
+                                'There is nothing Flagged for ' + this.state.currDate.toString()}
                             secondSection={po => <View style={GeneralStyles.inItemButtonList}>
                                 <TouchableHighlight
                                     underlayColor='#faa'
