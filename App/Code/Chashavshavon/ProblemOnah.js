@@ -93,6 +93,9 @@ export class ProblemFlag {
         this.nightDay = nightDay;
         this.description = description;
     }
+    get onah() {
+        return new Onah(this.jdate, this.nightDay);
+    }
     /**
      * Tests to see if the given ProblemFlag mathes this one.
      * @param {ProblemFlag} prob

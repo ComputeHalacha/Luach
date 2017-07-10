@@ -369,7 +369,8 @@ class Kavuah {
      * Searches for a Kavuah in the given list that the given entry is out of pattern with.
      * The only kavuahs considered are active ones that cancel onah beinonis
      * and that were set before this Entry occurred.
-     * The entryList is used to get the previous Entry. It is assumed that the entrList was sorted chronologically.
+     * The entryList is used to get the previous Entry.
+     * It is assumed that the entryList was sorted chronologically.
      * @param {Entry} entry
      * @param {[Kavuah]} kavuahList
      * @param {EntryList} entryList
@@ -431,7 +432,7 @@ class Kavuah {
         }
     }
     /**
-     * Gets the deafult special number for this given Kavuah description
+     * Gets the default special number for the given Kavuah description
      * @param {Entry} settingEntry
      * @param {KavuahTypes} kavuahType
      * @param {[Entry]} entryList

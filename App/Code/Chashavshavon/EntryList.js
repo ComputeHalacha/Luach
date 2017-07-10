@@ -18,19 +18,19 @@ export default class EntryList {
     /**
      * Add an Entry to the list.
      * In most cases, calulateHaflagas should be called after changing the list.
-     * @param {*} e
-     * @param {*} afterwards
+     * @param {Entry} entry
+     * @param {Function} [afterwards]
      */
-    add(e, afterwards) {
-        if (!(e instanceof Entry)) {
+    add(entry, afterwards) {
+        if (!(entry instanceof Entry)) {
             throw 'Only objects of type Entry can be added to the EntryList';
         }
         else {
-            if (!this.list.some(entry => entry.isSameEntry(e))) {
-                this.list.push(e);
-                const index = this.list.indexOf(e);
+            if (!this.list.some(entry => entry.isSameEntry(entry))) {
+                this.list.push(entry);
+                const index = this.list.indexOf(entry);
                 if (afterwards instanceof Function) {
-                    afterwards(e, index);
+                    afterwards(entry, index);
                 }
                 return index;
             }
@@ -39,10 +39,10 @@ export default class EntryList {
     /**
      * Remove the given entry from the list
      * In most cases, calulateHaflagas should be called after changing the list.
-     * @param {*} arg - either the index of the Entry to remove or the actual Entry to remove.
+     * @param {Number|Entry} arg Either the index of the Entry to remove or the actual Entry to remove.
      * Note: The suppled Entry does not have to refer to the same instance as the Entry in the list,
      * an entry where Entry.isSameEntry() returns true is removed.
-     * @param {*} afterwards - the callback. Suppies the removed entry as an argument.
+     * @param {Function} [afterwards] The callback. Suppies the removed entry as an argument.
      */
     remove(arg, afterwards) {
         let wasRemoved = false,
@@ -83,6 +83,13 @@ export default class EntryList {
         return [...EntryList.sortEntries(this.list)].reverse();
     }
     /**
+     * Gets an array of the Entries in the list that are real periods...
+     * I.E. not ignored for flagged dates
+     */
+    get realEntrysList() {
+        return this.list.filter(e => !e.ignoreForFlaggedDates);
+    }
+    /**
      * Returns the latest Entry
      */
     lastEntry() {
@@ -98,34 +105,41 @@ export default class EntryList {
      * Returns the latest Entry that isn't set to ignore for Flagged Dates
      */
     lastRegularEntry() {
-        return this.realEntrysList[this.realEntrysList.length - 1];
+        const realEntrysList = this.realEntrysList;
+        return realEntrysList[realEntrysList.length - 1];
     }
     /**
      * Calculates the haflagas for all the entries in the list.
      */
     calulateHaflagas() {
         //Sort all the entries by date
-        const list = EntryList.sortEntries(this.list);
+        EntryList.sortEntries(this.list);
 
-        //List of entries that can generate flagged dates.
-        this.realEntrysList = list.filter(e => !e.ignoreForFlaggedDates);
+        //Get only those entries that can generate flagged dates.
+        //Non-real entries do not have a haflaga
+        const realEntrysList = this.realEntrysList;
 
-        for (let entry of this.realEntrysList) {
-            const index = this.realEntrysList.indexOf(entry);
-            //First Entry in the list does not have a Haflaga
-            entry.setHaflaga((index > 0) && list[index - 1]);
+        //First Entry in the real entry list does not have a Haflaga
+        for (let i = 1; i < realEntrysList.length; i++) {
+            realEntrysList[i].setHaflaga(realEntrysList[i - 1]);
         }
     }
+    /**
+     * Get all the problem onahs (flagged dates) that need to be observed.
+     * It is generated from this EntryList and the given list of Kavuahs.
+     * The list is generated according the the halachic settings in this settings.
+     * Returns an array of ProblemOnah.
+     * @param {[Kavuah]} kavuahList
+     */
     getProblemOnahs(kavuahList) {
-        const generator  = new FlaggedDatesGenerator(
+        const generator = new FlaggedDatesGenerator(
             this.realEntrysList,
-            this.settings,
-            kavuahList);
+            kavuahList,
+            this.settings);
         return generator.getProblemOnahs();
     }
     /**
      * Sorts the given list of Entries chronologically.
-     * This is nessesary in order to calculate the haflagas etc. correctly.
      * @param {[Entry]} list
      */
     static sortEntries(list) {
