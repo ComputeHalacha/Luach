@@ -8,8 +8,11 @@ import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
 export default class FlaggedDatesScreen extends Component {
-    static navigationOptions = {
-        title: 'Flagged Dates',
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: navigation.state.params.jdate ?
+                'Flagged Dates' : 'All Upcoming Flagged Dates'
+        };
     };
     constructor(props) {
         super(props);
