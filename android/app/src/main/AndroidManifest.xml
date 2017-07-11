@@ -2,9 +2,9 @@
     package="com.luachandroid"
     android:versionCode="1"
     android:versionName="1.0">
-
+  
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-sdk
+    <uses-permission android:name="android.permission.VIBRATE"/>    <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="22" />
 

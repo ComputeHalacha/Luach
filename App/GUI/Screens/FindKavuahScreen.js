@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Text, TouchableHighlight } from 'react-native';
+import { ScrollView, View, Text, TouchableHighlight, Vibration } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
@@ -48,20 +48,24 @@ export default class FindKavuahScreen extends Component {
             }
         }
     }
+    componentDidMount() {
+        if (this.state.possibleKavuahList.length) {
+            Vibration.vibrate();
+        }
+    }
     addKavuah(pk) {
         const appData = this.state.appData,
             kList = appData.KavuahList,
-            foundInList = kList.find(k => k.isMatchingKavuah(pk.kavuah)),
-            kavuah = foundInList || pk.kavuah;
+            //If the found Kavuah is already in the list, we will update it rather than insert it.
+            kavuah = kList.find(k => k.isMatchingKavuah(pk.kavuah)) || pk.kavuah;
 
         //In case it was already in the list, but was inactive or ignored.
         kavuah.active = true;
         kavuah.ignore = false;
 
+        //The KavuahToDatabase function updates or inserts the new kavuah to the database.
+        //If it is a mew Kavuah it wwill add it to global.AppData.KavuahList
         DataUtils.KavuahToDatabase(kavuah).then(() => {
-            if (!foundInList) {
-                kList.push(pk.kavuah);
-            }
             appData.KavuahList = kList;
             popUpMessage(`The Kavuah ${kavuah.toString()} has been added to the list`);
             //Now that it's been added to the database, it is no longer a "possible"" Kavuah.

@@ -96,6 +96,7 @@ export default class NewEntry extends React.Component {
                     appData.KavuahList,
                     appData.Settings);
                 if (possList.length) {
+
                     this.navigate('FindKavuahs', {
                         appData: appData,
                         onUpdate: this.onUpdate,

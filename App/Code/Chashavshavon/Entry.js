@@ -3,11 +3,11 @@ import Utils from '../JCal/Utils';
 
 export default class Entry {
     /**
-     * A single sighting/period.
-     * @param {Onah} onah - the onah of this entry
-     * @param {Number} entryId - the entryId
-     * @param {Boolean} ignoreForFlaggedDates
-     * @param {Boolean} ignoreForKavuah
+     * A single "ראייה" - period.
+     * @param {Onah} onah Jewish date and Night/Day that the period began
+     * @param {Number} entryId The entryId in the database
+     * @param {Boolean} ignoreForFlaggedDates This is not a real period
+     * @param {Boolean} ignoreForKavuah Ignore this Entry while calculating possible Kavuahs
      * @param {String} comment
      */
     constructor(onah, entryId, ignoreForFlaggedDates, ignoreForKavuah, comments) {
@@ -29,7 +29,7 @@ export default class Entry {
     }
     /**
      * Returns true if the supplied Entry has the same jdate and nightDay as this Entry.
-     * The application assumes that there can not be more than a single Entry per Onah.
+     * There can not be more than a single Entry per Onah.
      * @param {Entry} entry
      */
     isSameEntry(entry) {
@@ -37,7 +37,7 @@ export default class Entry {
     }
     /**
      * Get the onah differential between two entries.
-     * The second onah must be after this one.
+     * The second onah must be chronologically after this Entrys onah.
      * @param {Entry} entry
      */
     getOnahDifferential(entry) {

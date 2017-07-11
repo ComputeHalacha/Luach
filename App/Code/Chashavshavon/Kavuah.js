@@ -64,10 +64,10 @@ class Kavuah {
                 txt += `on the ${Utils.toSuffixed(this.specialNumber)} day of the Jewish Month (through Ma'ayan Pasuach)`;
                 break;
             case KavuahTypes.DilugHaflaga:
-                txt += `of each day in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.abs(this.specialNumber).toString()} days"`;
+                txt += `of "Dilug Haflaga" in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.abs(this.specialNumber).toString()} days"`;
                 break;
             case KavuahTypes.DilugDayOfMonth:
-                txt += `for days of the month in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.abs(this.specialNumber).toString()} days"`;
+                txt += `of "Dilug Yom Hachodesh" in the interval pattern of "${this.specialNumber < 0 ? 'subtract' : 'add'} ${Math.abs(this.specialNumber).toString()} days"`;
                 break;
             case KavuahTypes.HafalagaOnahs:
                 txt += `every ${this.specialNumber.toString()} Onahs`;
@@ -369,7 +369,8 @@ class Kavuah {
      * Searches for a Kavuah in the given list that the given entry is out of pattern with.
      * The only kavuahs considered are active ones that cancel onah beinonis
      * and that were set before this Entry occurred.
-     * The entryList is used to get the previous Entry. It is assumed that the entrList was sorted chronologically.
+     * The entryList is used to get the previous Entry.
+     * It is assumed that the entryList was sorted chronologically.
      * @param {Entry} entry
      * @param {[Kavuah]} kavuahList
      * @param {EntryList} entryList
@@ -431,7 +432,7 @@ class Kavuah {
         }
     }
     /**
-     * Gets the deafult special number for this given Kavuah description
+     * Gets the default special number for the given Kavuah description
      * @param {Entry} settingEntry
      * @param {KavuahTypes} kavuahType
      * @param {[Entry]} entryList
