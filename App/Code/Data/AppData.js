@@ -39,7 +39,7 @@ export default class AppData {
     constructor(settings, occasions, entryList, kavuahList, problemOnahs) {
         this.Settings = settings || new Settings({});
         this.UserOccasions = occasions || [];
-        this.EntryList = entryList || new EntryList(this.Settings);
+        this.EntryList = entryList || new EntryList();
         this.KavuahList = kavuahList || [];
         this.ProblemOnahs = problemOnahs || [];
     }
@@ -135,7 +135,7 @@ export default class AppData {
                 warn('Error running GetAllUserOccasions.');
                 error(err);
             });
-        await DataUtils.EntryListFromDatabase(settings)
+        await DataUtils.EntryListFromDatabase()
             .then(e => entryList = e)
             .catch(err => {
                 warn('Error running EntryListFromDatabase.');

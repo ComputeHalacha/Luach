@@ -164,7 +164,7 @@ export default class SingleDayDisplay extends Component {
                     (entries && entries.length > 0 ? '#fee' :
                         (flag ? '#fe9' :
                             (this.props.isHefeskDay ? '#f1fff1' :
-                                (isToday ? '#d5d5f5' :
+                                (isToday ? '#e2e2f0' :
                                     (isSpecialDay ? '#eef' : '#fff')))))
                 }]}>
                 <View style={{ margin: 15, flex: 1 }}>

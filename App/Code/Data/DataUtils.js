@@ -94,8 +94,8 @@ export default class DataUtils {
                 error(err);
             });
     }
-    static async EntryListFromDatabase(settings) {
-        const entryList = new EntryList(settings);
+    static async EntryListFromDatabase() {
+        const entryList = new EntryList();
         await DataUtils._executeSql('SELECT * from entries ORDER BY dateAbs, day')
             .then(results => {
                 if (results.list.length > 0) {

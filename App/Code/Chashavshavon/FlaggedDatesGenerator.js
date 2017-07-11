@@ -67,7 +67,7 @@ export default class FlaggedDatesGenerator {
             this._add24HourOnah(yomHachodesh);
             //We won't flag the Ohr Zarua if it's included in Onah Beinonis
             //of 24 hours as Onah Beinonis is stricter.
-            if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Day) {
+            if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Night) {
                 this._addOhrZarua(yomHachodesh);
             }
         }
@@ -83,7 +83,7 @@ export default class FlaggedDatesGenerator {
                 this._add24HourOnah(yomHachodesh_2);
                 //We won't flag the Ohr Zarua if it's included in Onah Beinonis
                 //of 24 hours as Onah Beinonis is stricter.
-                if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Day) {
+                if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Night) {
                     this._addOhrZarua(yomHachodesh_2);
                 }
             }
@@ -99,7 +99,7 @@ export default class FlaggedDatesGenerator {
             this._add24HourOnah(thirty, entry);
             //We won't flag the Ohr Zarua if it's included in Onah Beinonis
             //of 24 hours as Onah Beinonis is stricter.
-            if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Day) {
+            if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Night) {
                 this._addOhrZarua(thirty, entry);
             }
         }
@@ -115,7 +115,7 @@ export default class FlaggedDatesGenerator {
                 this._add24HourOnah(thirtyOne, entry);
                 //We won't flag the Ohr Zarua if it's included in Onah Beinonis
                 //of 24 hours as Onah Beinonis is stricter.
-                if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Day) {
+                if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Night) {
                     this._addOhrZarua(thirtyOne, entry);
                 }
             }
