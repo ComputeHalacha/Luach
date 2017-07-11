@@ -1,12 +1,10 @@
 import { isNumber } from '../GeneralUtils';
 import Entry from './Entry';
-import Settings from '../Settings';
 import FlaggedDatesGenerator from './FlaggedDatesGenerator';
 
 export default class EntryList {
-    constructor(settings, entryList) {
+    constructor(entryList) {
         this.list = entryList || [];
-        this.settings = settings || new Settings();
     }
     /**
      * Add an Entry to the list.
@@ -120,15 +118,16 @@ export default class EntryList {
     /**
      * Get all the problem onahs (flagged dates) that need to be observed.
      * It is generated from this EntryList and the given list of Kavuahs.
-     * The list is generated according the the halachic settings in this settings.
+     * The list is generated according the the halachic settings in the supplied settings.
      * Returns an array of ProblemOnah.
      * @param {[Kavuah]} kavuahList
+     * @param {Settings} settings
      */
-    getProblemOnahs(kavuahList) {
+    getProblemOnahs(kavuahList, settings) {
         const generator = new FlaggedDatesGenerator(
             this.realEntrysList,
             kavuahList,
-            this.settings);
+            settings);
         return generator.getProblemOnahs();
     }
     /**

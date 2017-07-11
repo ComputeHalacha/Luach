@@ -9,8 +9,9 @@ export class ProblemOnah extends Onah {
     /**
      * @param {jDate} jdate
      * @param {NightDay} nightDay
+     * * @param {[String]} flagsList
      */
-    constructor(jdate, nightDay) {
+    constructor(jdate, nightDay, flagsList) {
         if (!jdate) {
             throw 'jdate must be supplied.';
         }
@@ -18,7 +19,7 @@ export class ProblemOnah extends Onah {
             throw 'nightDay must be supplied.';
         }
         super(jdate, nightDay);
-        this.flagsList = [];
+        this.flagsList = flagsList || [];
     }
     /**
      * Returns a detailed text description for the entire Onah.

@@ -23,7 +23,8 @@ export default class FlaggedDatesGenerator {
         this.cancelKavuah = kavuahs.find(k =>
             k.active && k.cancelsOnahBeinunis);
         this.probOnahs = [];
-        this.stopWarningDateAbs = jDate.toJDate().addMonths(this.settings.numberMonthsAheadToWarn).Abs;
+        this.stopWarningDateAbs = jDate.toJDate().addMonths(
+            this.settings.numberMonthsAheadToWarn).Abs;
     }
     /**
      * Gets the list of Onahs that need to be observed.

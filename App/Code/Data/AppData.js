@@ -22,7 +22,7 @@ const addedFields = [
     { table: 'settings', name: 'haflagaOfOnahs', type: 'BOOLEAN', allowNull: true },
     //Added 6/28/17
     { table: 'settings', name: 'noProbsAfterEntry', type: 'BOOLEAN', allowNull: true, defaultValue: '1' },
-     //Added 6/29/17
+    //Added 6/29/17
     { table: 'settings', name: 'kavuahDiffOnahs', type: 'BOOLEAN', allowNull: true },
     //Added 7/3/17
     { table: 'settings', name: 'hideHelp', type: 'BOOLEAN', allowNull: true },
@@ -47,7 +47,7 @@ export default class AppData {
         this.EntryList.calulateHaflagas();
         let probs = [];
         if (this.EntryList.list.length > 0) {
-            probs = this.EntryList.getProblemOnahs(this.KavuahList);
+            probs = this.EntryList.getProblemOnahs(this.KavuahList, this.Settings);
         }
         this.ProblemOnahs = probs;
     }
@@ -145,7 +145,7 @@ export default class AppData {
             .then(k => {
                 kavuahList = k;
                 //After getting all the data, the problem onahs are set.
-                problemOnahs = entryList.getProblemOnahs(kavuahList);
+                problemOnahs = entryList.getProblemOnahs(kavuahList, settings);
             })
             .catch(err => {
                 warn('Error running GetAllKavuahs.');
