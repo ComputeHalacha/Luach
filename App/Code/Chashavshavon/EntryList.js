@@ -78,7 +78,8 @@ export default class EntryList {
      * I.E. not ignored for flagged dates
      */
     get realEntrysList() {
-        return this.list.filter(e => !e.ignoreForFlaggedDates);
+        return EntryList.sortEntries(
+            this.list.filter(e => !e.ignoreForFlaggedDates));
     }
     /**
      * Returns the latest Entry
@@ -103,9 +104,6 @@ export default class EntryList {
      * Calculates the haflagas for all the entries in the list.
      */
     calulateHaflagas() {
-        //Sort all the entries by date
-        EntryList.sortEntries(this.list);
-
         //Get only those entries that can generate flagged dates.
         //Non-real entries do not have a haflaga
         const realEntrysList = this.realEntrysList;

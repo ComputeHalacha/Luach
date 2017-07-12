@@ -68,7 +68,7 @@ export function setDefault(paramValue, defValue) {
 
 export function popUpMessage(message, optionalTitle) {
     if (Platform.OS === 'android') {
-        ToastAndroid.showWithGravity(message, ToastAndroid.LONG, ToastAndroid.CENTER);
+        ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
     }
     else {
         Alert.alert(optionalTitle, message);
