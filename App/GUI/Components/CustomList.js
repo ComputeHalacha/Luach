@@ -60,28 +60,30 @@ export default class CustomList extends Component {
             styles.mainViewStyle,
             (nightDay && ({ backgroundColor: nightDay === NightDay.Night ? '#d5d5e6' : '#fff' })),
             mainViewStyle]}>
-            <View style={[
-                { backgroundColor: nightDay === NightDay.Night ? '#ccd' : '#eef' },
-                styles.iconContainerStyle]}>
-                {(nightDay && (nightDay === NightDay.Night ?
-                    <Icon name='ios-moon'
-                        color='orange'
-                        type='ionicon'
-                        style={iconStyle} />
-                    :
-                    <Icon name='ios-sunny'
-                        color='#fff100'
-                        type='ionicon'
-                        style={iconStyle} />))
-                    ||
-                    (iconName &&
-                        <Icon name={iconName}
-                            type={iconType}
-                            size={iconSize}
-                            color={iconColor}
-                            style={iconStyle} />)
-                }
-            </View>
+            {(nightDay || iconName) &&
+                <View style={[
+                    { backgroundColor: nightDay === NightDay.Night ? '#ccd' : '#eef' },
+                    styles.iconContainerStyle]}>
+                    {(nightDay && (nightDay === NightDay.Night ?
+                        <Icon name='ios-moon'
+                            color='orange'
+                            type='ionicon'
+                            style={iconStyle} />
+                        :
+                        <Icon name='ios-sunny'
+                            color='#fff100'
+                            type='ionicon'
+                            style={iconStyle} />))
+                        ||
+                        (iconName &&
+                            <Icon name={iconName}
+                                type={iconType}
+                                size={iconSize}
+                                color={iconColor}
+                                style={iconStyle} />)
+                    }
+                </View>
+            }
             <View style={[styles.textSectionViewStyle, textSectionViewStyle]}>
                 {(isString(title) &&
                     <Text style={[styles.titleStyle, titleStyle]}>
@@ -127,8 +129,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e0e0d0',
         flexDirection: 'row'
     },
-    iconContainerStyle: {
-        marginRight: 10,
+    iconContainerStyle: {        
         alignItems: 'center',
         justifyContent: 'center',
         width: 30
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     },
     textSectionViewStyle: {
         flexWrap: 'wrap',
-        paddingLeft: 0,
+        paddingLeft: 7,
         paddingRight: 10,
         paddingTop: 10,
         paddingBottom: 5,

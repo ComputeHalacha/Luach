@@ -302,7 +302,7 @@ class Kavuah {
                 kavuah: new Kavuah(KavuahTypes.Haflagah,
                     fourEntries[3],
                     fourEntries[3].haflaga),
-                entries: fourEntries
+                entries: [...fourEntries]
             });
         }
         return list;
@@ -319,7 +319,7 @@ class Kavuah {
                 kavuah: new Kavuah(KavuahTypes.HafalagaOnahs,
                     fourEntries[3],
                     onahs),
-                entries: fourEntries
+                entries: [...fourEntries]
             });
         }
         return list;
@@ -342,7 +342,7 @@ class Kavuah {
                 kavuah: new Kavuah(KavuahTypes.Sirug,
                     threeEntries[2],
                     monthDiff),
-                entries: threeEntries
+                entries: [...threeEntries]
             });
         }
         return list;
@@ -354,13 +354,13 @@ class Kavuah {
             haflagaDiff1 = fourEntries[3].haflaga - fourEntries[2].haflaga,
             haflagaDiff2 = fourEntries[2].haflaga - fourEntries[1].haflaga;
 
-        //If the "Dilug" is 0 it will be a regular Kavuah of Haflagah but not a Dilug one
+        //If the "Dilug" is 0 it may be a regular Kavuah of Haflagah but not a Dilug one
         if (haflagaDiff1 > 0 && haflagaDiff1 === haflagaDiff2) {
             list.push({
                 kavuah: new Kavuah(KavuahTypes.DilugHaflaga,
                     fourEntries[3],
                     haflagaDiff1),
-                entries: fourEntries
+                entries: [...fourEntries]
             });
         }
         return list;

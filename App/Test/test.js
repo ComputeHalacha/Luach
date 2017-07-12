@@ -8,7 +8,7 @@ import jDate from '../Code/JCal/jDate';
 import Location from '../Code/JCal/Location';
 import Settings from '../Code/Settings';
 
-export function test() {
+export function testFlaggedDates() {
     const settings = new Settings({
         location: Location.getLakewood(),
         showOhrZeruah: true,
