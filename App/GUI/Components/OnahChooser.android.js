@@ -10,76 +10,48 @@ export default class OnahChooser extends React.Component {
     constructor(props) {
         super(props);
         const jdate = this.props.jdate;
-        this.state = {
-            day: jdate.Day,
-            month: jdate.Month,
-            year: jdate.Year,
-            months: range(0, jDate.monthsJYear(jdate.Year)),
-            daysOfMonth: range(1, jDate.daysJMonth(jdate.Year, jdate.Month))
-        };
-        this.years = range(jdate.Year - 30, jdate.Year).reverse();
+        this.state = { jdate };
         this.setDate = this.props.setDate;
+        this.changeDate = this.changeDate.bind(this);
     }
-    onDayChanged(day) {
-        const jdate = new jDate(this.state.year, this.state.month, day);
-        this.setState({ day });
+    changeDate(jdate) {
         this.setDate(jdate);
-    }
-    onMonthChanged(month) {
-        const daysInMonth = jDate.daysJMonth(this.state.year, month),
-            jdate = new jDate(
-                this.state.year,
-                month,
-                Math.min(this.state.day, daysInMonth));
-        this.setState({ month, day: jdate.Day, daysOfMonth: range(1, daysInMonth) });
-        this.setDate(jdate);
-    }
-    onYearChanged(year) {
-        const daysInMonth = jDate.daysJMonth(year, this.state.month),
-            monthsInYear = jDate.monthsJYear(year),
-            jdate = new jDate(
-                year,
-                Math.min(this.state.month, monthsInYear),
-                Math.min(this.state.day, daysInMonth));
-        this.setState({
-            year,
-            day: jdate.Day,
-            months: range(0, monthsInYear),
-            daysOfMonth: range(1, daysInMonth)
-        });
-        this.setDate(jdate);
+        this.setState({ jdate });
     }
     render() {
+        const jdate = this.state.jdate,
+            daysInMonth = jDate.daysJMonth(jdate.Year, jdate.Month),
+            monthsInYear = jDate.monthsJYear(jdate.Year),
+            days = range(1, daysInMonth),
+            months = range(1, monthsInYear),
+            years = range(jdate.Year - 30, jdate.Year).reverse();
         return <View>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Day</Text>
-                <Picker ref={pickDay => this.pickDay = pickDay}
-                    style={GeneralStyles.picker}
-                    selectedValue={this.state.day}
-                    onValueChange={this.onDayChanged.bind(this)}>
-                    {this.state.daysOfMonth.map(d =>
+                <Picker style={GeneralStyles.picker}
+                    selectedValue={Math.min(jdate.Day, daysInMonth)}
+                    onValueChange={value => this.changeDate(new jDate(jdate.Year, jdate.Month, value))}>
+                    {days.map(d =>
                         <Picker.Item label={d.toString()} value={d} key={d} />
                     )}
                 </Picker>
             </View>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Month</Text>
-                <Picker ref={pickMonth => this.pickMonth = pickMonth}
-                    style={GeneralStyles.picker}
-                    selectedValue={this.state.month}
-                    onValueChange={this.onMonthChanged.bind(this)}>
-                    {this.state.months.map(i =>
-                        <Picker.Item label={Utils.jMonthsEng[i] || 'Choose a Month'} value={i} key={i} />
+                <Picker style={GeneralStyles.picker}
+                    selectedValue={Math.min(jdate.Month, monthsInYear)}
+                    onValueChange={value => this.changeDate(new jDate(jdate.Year, value, jdate.Day))}>
+                    {months.map(i =>
+                        <Picker.Item label={Utils.jMonthsEng[i]} value={i} key={i} />
                     )}
                 </Picker>
             </View>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Year</Text>
-                <Picker ref={pickYear => this.pickYear = pickYear}
-                    style={GeneralStyles.picker}
-                    selectedValue={this.state.year}
-                    onValueChange={this.onYearChanged.bind(this)}>
-                    {this.years.map(d =>
+                <Picker style={GeneralStyles.picker}
+                    selectedValue={jdate.Year}
+                    onValueChange={value => this.changeDate(new jDate(value, jdate.Month, jdate.Day))}>
+                    {years.map(d =>
                         <Picker.Item label={d.toString()} value={d} key={d} />
                     )}
                 </Picker>
