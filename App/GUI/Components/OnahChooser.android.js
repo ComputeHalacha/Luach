@@ -9,18 +9,38 @@ import { GeneralStyles } from '../styles';
 export default class OnahChooser extends React.Component {
     constructor(props) {
         super(props);
+        const jdate = this.props.jdate;
+        this.state = { jdate };
+        this.setDate = this.props.setDate;
+        this.days = range(1, 30);
+        this.months = range(1, 13);
+        this.years = range(jdate.Year - 30, jdate.Year).reverse();
+
+        this.changeDate = this.changeDate.bind(this);
+    }
+    changeDate(year, month, day) {
+        //To prevent user from choosing a non-exiting month or day
+        const daysInMonth = jDate.daysJMonth(year, month),
+            monthsInYear = jDate.monthsJYear(year),
+            jdate = new jDate(
+                year,
+                //Choosing Adar Sheini in a non-leap-year will set the month to Adar
+                Math.min(month, monthsInYear),
+                //Choosing day 30 in a non-full-month will set the day to 29
+                Math.min(day, daysInMonth));
+
+        this.setDate(jdate);
+        this.setState({ jdate });
     }
     render() {
-        const jdate = this.props.jdate,
-            years = range(jdate.Year - 30, jdate.Year).reverse(),
-            daysOfMonth = range(1, 30);
+        const jdate = this.state.jdate;
         return <View>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Day</Text>
                 <Picker style={GeneralStyles.picker}
                     selectedValue={jdate.Day}
-                    onValueChange={value => this.props.setDate(new jDate(jdate.Year, jdate.Month, value))}>
-                    {daysOfMonth.map(d =>
+                    onValueChange={value => this.changeDate(jdate.Year, jdate.Month, value)}>
+                    {this.days.map(d =>
                         <Picker.Item label={d.toString()} value={d} key={d} />
                     )}
                 </Picker>
@@ -29,9 +49,9 @@ export default class OnahChooser extends React.Component {
                 <Text style={GeneralStyles.label}>Month</Text>
                 <Picker style={GeneralStyles.picker}
                     selectedValue={jdate.Month}
-                    onValueChange={value => this.props.setDate(new jDate(jdate.Year, value, jdate.Day))}>
-                    {Utils.jMonthsEng.map((m, i) =>
-                        <Picker.Item label={m || 'Choose a Month'} value={i} key={i} />
+                    onValueChange={value => this.changeDate(jdate.Year, value, jdate.Day)}>
+                    {this.months.map(i =>
+                        <Picker.Item label={Utils.jMonthsEng[i]} value={i} key={i} />
                     )}
                 </Picker>
             </View>
@@ -39,8 +59,8 @@ export default class OnahChooser extends React.Component {
                 <Text style={GeneralStyles.label}>Year</Text>
                 <Picker style={GeneralStyles.picker}
                     selectedValue={jdate.Year}
-                    onValueChange={value => this.props.setDate(new jDate(value, jdate.Month, jdate.Day))}>
-                    {years.map(d =>
+                    onValueChange={value => this.changeDate(value, jdate.Month, jdate.Day)}>
+                    {this.years.map(d =>
                         <Picker.Item label={d.toString()} value={d} key={d} />
                     )}
                 </Picker>

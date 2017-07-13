@@ -1,9 +1,19 @@
-Luach keeps track and automatically calculates a Jewish woman's dates, and times that need to be observed.
+Luach is a full featured <em>Vesset</em> calendar application.
 
-It automatically calculates and keeps track of patterns (Kavuahs).
-All the Halachic specifications can be fully customized.
+It keeps track and automatically calculates a Jewish woman's dates, patterns and times that need to be observed for the laws of Niddah.
 
-Luach also functions as a Zmanim and Event Calendar, and it includes a full set of daily Zmanim for anywhere in the world.
-It includes event management functionality to keep track of birthdays, Yahrtzeits, special dates and appointments etc.
+All the <em>Halachic</em> specifications that Luach uses for these calculations can be fully customized.
 
-For a comprehensive explanation about how to use Luach, see the Luach documentation at <a href="https://www.compute.co.il/luach/app/">compute.co.il/luach/app/</a>.
+Luach also functions as a <em>Zmanim</em> and Event Calendar, and includes the full set of daily <em>Zmanim</em> for anywhere in the world.
+It also includes event management functionality to keep track of birthdays, <em>Yahrtzeits</em>, special dates and appointments etc.
+
+Luach stores all this information locally on your device and it does not transmit this information to anyone.
+As a matter of fact, Luach does not have any Internet permissions on your device, and is therefore physically unable to connect to a remote server.
+
+You can protect the private information entered into Luach by protecting Luach with a PIN number. The PIN can be set from the Settings Screen.
+
+For a comprehensive explanation about how to use Luach, see the Luach documentation at <a href="https://www.compute.co.il/luach/app/">www.compute.co.il/luach/app/</a>.
+
+As the app is relatively new, we would greatly appreciate feedback about any issue and about how we can improve Luach.
+
+Luachs' source code is open source and can be accessed at <a href="https://github.com/cbsom/LuachAndroid">https://github.com/cbsom/LuachAndroid</a>.
