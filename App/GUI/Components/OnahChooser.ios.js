@@ -11,24 +11,40 @@ export default class OnahChooser extends React.Component {
 
     constructor(props) {
         super(props);
+        const jdate = this.props.jdate;
+        this.state = { jdate };
+        this.years = range(jdate.Year - 30, jdate.Year).reverse();
+        this.daysOfMonth = range(1, 30);
+        this.setDate = this.props.setDate;
+    }
+    changeDate(year, month, day) {
+        //To prevent user from choosing a non-exiting month or day
+        const daysInMonth = jDate.daysJMonth(year, month),
+            monthsInYear = jDate.monthsJYear(year),
+            jdate = new jDate(
+                year,
+                //Choosing Adar Sheini in a non-leap-year will set the month to Adar
+                Math.min(month, monthsInYear),
+                //Choosing day 30 in a non-full-month will set the day to 29
+                Math.min(day, daysInMonth));
+
+        this.setDate(jdate);
+        this.setState({ jdate });
     }
     render() {
-        const jdate = this.props.jdate,
-            years = range(jdate.Year - 30, jdate.Year).reverse(),
-            daysOfMonth = range(1, 30);
+        const jdate = this.state.jdate;
         return <View>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Day</Text>
                 <Select
-                    onSelect={value =>
-                         this.props.setDate(new jDate(jdate.Year, jdate.Month, value))}
+                    onSelect={value => this.changeDate(jdate.Year, jdate.Month, value)}
                     defaultText={jdate.Day.toString()}
                     style={GeneralStyles.select}
                     indicator='down'
                     transparent={true}
                     backdropStyle={GeneralStyles.optionListBackdrop}
                     optionListStyle={GeneralStyles.optionListStyle}>
-                    {daysOfMonth.map(d =>
+                    {this.daysOfMonth.map(d =>
                         <Option value={d} key={d}>{d.toString()}</Option>
                     )}
                 </Select>
@@ -36,8 +52,7 @@ export default class OnahChooser extends React.Component {
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Month</Text>
                 <Select
-                    onSelect={value =>
-                        this.props.setDate(new jDate(jdate.Year, value, jdate.Day))}
+                    onSelect={value => this.changeDate(jdate.Year, value, jdate.Day)}
                     defaultText={Utils.jMonthsEng[jdate.Month]}
                     style={GeneralStyles.select}
                     indicator='down'
@@ -52,15 +67,14 @@ export default class OnahChooser extends React.Component {
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Year</Text>
                 <Select
-                    onSelect={value =>
-                        this.props.setDate(new jDate(value, jdate.Month, jdate.Day))}
+                    onSelect={value => this.changeDate(value, jdate.Month, jdate.Day)}
                     defaultText={jdate.Year.toString()}
                     style={GeneralStyles.select}
                     indicator='down'
                     transparent={true}
                     backdropStyle={GeneralStyles.optionListBackdrop}
                     optionListStyle={GeneralStyles.optionListStyle}>
-                    {years.map(d =>
+                    {this.years.map(d =>
                         <Option value={d} key={d}>{d.toString()}</Option>
                     )}
                 </Select>
