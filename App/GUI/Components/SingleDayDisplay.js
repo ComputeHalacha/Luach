@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity, TouchableHighlight, BackHandler, Modal } from 'react-native';
+import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity, TouchableHighlight, Modal } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../../Code/JCal/Utils';
 import Zmanim from '../../Code/JCal/Zmanim';
@@ -112,7 +112,8 @@ export default class SingleDayDisplay extends Component {
         this.navigator.navigate('NewOccasion', { occasion, ...this.props });
     }
     _openMenu() {
-        this.setState({ showMenu: true });
+        const showing = this.state.showMenu;
+        this.setState({ showMenu: !showing });
     }
     _closeMenu() {
         this.setState({ showMenu: false });
@@ -184,105 +185,102 @@ export default class SingleDayDisplay extends Component {
                 {this.state.showMenu &&
                     <Modal animationType='slide' visible={this.state.showMenu} onRequestClose={this._closeMenu} transparent={true}>
                         <View style={styles.menuView}>
-                            <Text>This is on the modal!!!!!!!!!</Text>
-                            <Button
-                                color='#abf'
-                                style={styles.btn}
-                                accessibilityLabel='Add a new Entry'
-                                title='New Entry'
-                                onPress={this.newEntry} />
-                            <Button
-                                color='#fba'
-                                style={styles.btn}
-                                accessibilityLabel='Add a new Event for this date'
-                                title='New Event'
-                                onPress={this.newOccasion} />
+                            <TouchableWithoutFeedback onPress={this.newEntry}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Icon color='#e5c565' name='list' />
+                                    <Text style={{ fontSize: 12, color: '#ca4' }}>New Entry</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={this.newOccasion}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Icon color='#e5c565' name='event' />
+                                    <Text style={{ fontSize: 12, color: '#ca4' }}>New Event</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={this.showDateDetails}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Icon color='#e5c565' name='info' />
+                                    <Text style={{ fontSize: 12, color: '#ca4' }}>View Zmanim</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={this.monthView}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Icon color='#e5c565' name='calendar' type='octicon' />
+                                    <Text style={{ fontSize: 12, color: '#ca4' }}>Month View</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
                             <Button title='Close' onPress={this._closeMenu}>Close</Button>
                         </View>
                     </Modal>
                 }
-                <View style={{ margin: 15, flex: 1 }}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
-                        {todayText}
-                        <Text style={styles.dateNumHeb}>{Utils.toJNum(jdate.Day)}</Text>
-                    </View>
-                    <Text style={styles.date}>
-                        <Text style={styles.dateHeb}>
-                            {jdate.toString()}</Text>
-                        <Text>{'\n'}</Text>
-                        <Text style={styles.dateEng}>
-                            {Utils.toStringDate(sdate, !isDayOff)}</Text>
-                    </Text>
-                    {dailyInfoText}
-                    {candleLighting}
-                    {eiruvTavshilin}
-                    <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
-                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <View style={{ width: '65%', height: 75, flex: 0 }}>
-                            <TouchableOpacity onPress={this.changeLocation}>
-                                <Text style={styles.location}>{'In ' + location.Name}</Text>
-                            </TouchableOpacity>
-                            <Text>{'Sun Rises at ' + sunrise}</Text>
-                            <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
-                        </View>
-                        <View style={{
-                            flex: 0,
-                            width: '35%',
-                            justifyContent: 'center',
-                            alignItems: 'flex-end'
-                        }}>
-                            <TouchableWithoutFeedback onPress={this.showDateDetails}>
-                                <View style={{ alignItems: 'center', marginBottom: 10 }}>
-                                    <Icon color='#e5c565' name='info' />
-                                    <Text style={{ fontSize: 12, color: '#ca4' }}>   Zmanim   </Text>
+                <TouchableWithoutFeedback onPress={this._openMenu}>
+                    <View>
+                        <View style={{ margin: 15, flex: 1 }}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
+                                {todayText}
+                                <Text style={styles.dateNumHeb}>{Utils.toJNum(jdate.Day)}</Text>
+                            </View>
+                            <Text style={styles.date}>
+                                <Text style={styles.dateHeb}>
+                                    {jdate.toString()}</Text>
+                                <Text>{'\n'}</Text>
+                                <Text style={styles.dateEng}>
+                                    {Utils.toStringDate(sdate, !isDayOff)}</Text>
+                            </Text>
+                            {dailyInfoText}
+                            {candleLighting}
+                            {eiruvTavshilin}
+                            <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
+                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <View style={{ width: '65%', height: 75, flex: 0 }}>
+                                    <TouchableOpacity onPress={this.changeLocation}>
+                                        <Text style={styles.location}>{'In ' + location.Name}</Text>
+                                    </TouchableOpacity>
+                                    <Text>{'Sunrise: ' + sunrise}</Text>
+                                    <Text>{'Sunset: ' + sunset}</Text>
                                 </View>
-                            </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={this.monthView}>
-                                <View style={{ alignItems: 'center' }}>
-                                    <Icon color='#99b' name='calendar' type='octicon' />
-                                    <Text style={{ fontSize: 12, color: '#99b', textAlign: 'center' }}>Month View</Text>
-                                </View>
-                            </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={this._openMenu}>
-                                <View style={{ alignItems: 'center', margin: 5 }}>
-                                    <Icon color='#f0f0f5' size={20} name='add' borderColor='#dde' borderWidth={1} reverse />
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </View>
-                    </View>
-                    {entries && entries.length > 0 &&
-                        <View style={styles.additionsViews}>
-                            {entriesText}
-                        </View>
-                    }
-                    {flag &&
-                        <TouchableWithoutFeedback style={styles.additionsViews} onPress={this.showProblems}>
-                            <View style={styles.additionsViews}>
                                 <View style={{
-                                    backgroundColor: '#f00',
-                                    alignItems: 'center',
-                                    borderRadius: 40,
-                                    padding: 6
+                                    flex: 0,
+                                    width: '35%',
+                                    justifyContent: 'center',
+                                    alignItems: 'flex-end'
                                 }}>
-                                    <Icon
-                                        size={15}
-                                        name='flag'
-                                        color={'#fff'} />
+                                    {flag &&
+                                        <TouchableWithoutFeedback style={styles.additionsViews} onPress={this.showProblems}>
+                                            <View style={styles.additionsViews}>
+                                                <View style={{
+                                                    backgroundColor: '#f00',
+                                                    alignItems: 'center',
+                                                    borderRadius: 40,
+                                                    padding: 6
+                                                }}>
+                                                    <Icon
+                                                        size={15}
+                                                        name='flag'
+                                                        color={'#fff'} />
+                                                </View>
+                                            </View>
+                                        </TouchableWithoutFeedback>
+                                    }
+                                    {daysSinceLastEntry}
                                 </View>
                             </View>
-                        </TouchableWithoutFeedback>
-                    }
-                    {daysSinceLastEntry}
-                    {occasions && occasions.length > 0 &&
-                        <View style={styles.additionsViews}>
-                            {occasionText}
+                            {entries && entries.length > 0 &&
+                                <View style={styles.additionsViews}>
+                                    {entriesText}
+                                </View>
+                            }
+                            {occasions && occasions.length > 0 &&
+                                <View style={styles.additionsViews}>
+                                    {occasionText}
+                                </View>
+                            }
                         </View>
-                    }
-                </View>
-
-                {jdateOffText}
-            </View >
+                        {jdateOffText}
+                    </View>
+                </TouchableWithoutFeedback>
+            </View>
         );
     }
 }
@@ -295,7 +293,9 @@ const styles = StyleSheet.create({
         borderColor: '#777',
         borderRadius: 6,
         padding: 0,
-        margin: 10,
+        marginTop: 5,
+        marginLeft: 10,
+        marginRight: 10,
         backgroundColor: '#fff'
     },
     date: {

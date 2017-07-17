@@ -186,7 +186,6 @@ export default class KavuahScreen extends Component {
                         appData={this.state.appData}
                         navigator={this.props.navigation}
                         hideKavuahs={true}
-                        hideMonthView={true}
                         helpUrl='Kavuahs.html'
                         helpTitle='Kavuahs' />
                     <View style={{ flex: 1 }}>
