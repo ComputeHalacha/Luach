@@ -14,8 +14,8 @@ The date of the Entry is the Jewish date during the beginning of the period.
 
 Each Jewish day is divided into two "*Onahs*"; the Night *Onah* and the Day *Onah*.
 
-If the period began between sunset and sunrise, the Entry is conidered to have occurred during the Night *Onah*.
-If it began between sunrise and sunset, it is considered to have occured during the Day *Onah*.
+If the period began between sunset and sunrise, the Entry is considered to have occurred during the Night *Onah*.
+If it began between sunrise and sunset, it is considered to have occurred during the Day *Onah*.
 
 Luach is able to give you the time of sunset and sunrise for any location around the globe for any date.
 Make sure that you have selected your current location on the Settings Screen, and that your device has the correct time and time zone for your location.
@@ -29,13 +29,13 @@ Upon the addition of an Entry, Luach automatically works out the *Haflaga* from 
 
 ## **Kavuah**
 
-A Kavuah is a halachic term describing when a women has multiple periods in a recurring pattern.
+A Kavuah is a Halachic term describing when a women has multiple periods in a recurring pattern.
 
 When a women has a set Kavuah pattern, it is expected that periods will continue to occur in this pattern. This is until the pattern has been proven to have "broken".
 
-Kavuah setting and breaking is a very complex Halachic issue and should aways be accompanied with Rabinic guidance.
+Kavuah setting and breaking is a very complex Halachic issue and should aways be accompanied with Rabbinic guidance.
 
-There are many ways that recurring preiods can be considered to have occured in a pattern.
+There are many ways that recurring periods can be considered to have occurred in a pattern.
 
 Here is a list of a few of the more common ones:
 * **Yom HaChodesh /  Day of Month** - Three periods that all occur on the same date and *Onah* of the Jewish Month. For example if a period started on the Day of the 4th of Sivan, the Day of the 4th of Tammuz and the Day of the 4th of Av, this is considered a Kavuah of the Yom HaChodesh. Note, it is usually considered a Kavuah in this scenario, even if there were other periods in the days between these dates. As for everything else, a Rav should be consulted.
@@ -45,11 +45,11 @@ Here is a list of a few of the more common ones:
 * **Dilug - Haflaga** - - Three periods in a row where the interval from one to the next occurred in a recurring pattern. For example, For example, if a period started on the Day Onah on the 4th of Sivan, and the next period started 28 days later during the Day Onah on the 1st of Tammuz, and the following period started 29 days later during the Day Onah on the 1st of Av, and the following period started 30 days later during the Day Onah on the 30th of Av, this is considered a Kavuah of Dilug Haflaga with an interval of plus one day. In this scenario it is expected that another period will occur 31 days later - on the 1st of Tishrei. Similar to the regular Haflag Kavuah, the Dilug - Haflaga needs 4 periods to set it and it needs them to occur one after another with no other periods occuring during the interim.
 * **Sirug** - Three periods in a row that are on the same Onah and the same day of the Jewish month and the same number of months in the interval between the first and second periods and the second and third periods. This is not a Yom Hachodesh Kavuah as the Yom Hachodesh needs a period on each subsequent month, while the Sirug Kavuah has some months in middle that are skipped.
 
-In the Luach app, while adding a new Kavuah, the following properties wiil need to be filled out:
+In the Luach app, while adding a new Kavuah, the following properties will need to be filled out:
 
 **Kavuah Type**
 
-The type of Kavuah that is being set. For a breif explanation of some of the Kavuah types see the list above.
+The type of Kavuah that is being set. For a brief explanation of some of the Kavuah types see the list above.
 
 **Setting Entry**
 
