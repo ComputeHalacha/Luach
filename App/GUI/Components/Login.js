@@ -29,14 +29,14 @@ export default class Login extends React.PureComponent {
         }
     }
     render() {
-        return <Modal animationType='fade' onRequestClose={() => false}>
+        return <Modal onRequestClose={() => false}>
             <View style={{ flex: 1, backgroundColor: '#444', alignItems: 'center' }}>
                 <View style={{ backgroundColor: '#eef', flex: 0, width: '75%', borderWidth: 1, borderRadius: 6, padding: 15, alignItems: 'center', marginTop: '10%' }}>
                     <Image style={{ width: 50, height: 50 }} resizeMode='stretch' source={require('../Images/logo.png')} />
                     <Text style={{ color: '#556', fontSize: 35, fontWeight: 'bold', paddingBottom: 20 }}>Luach</Text>
                     <Text>Please enter your 4 digit PIN</Text>
                     <TextInput
-                        style={{ width: 150, fontSize: 20, textAlign: 'center' }}
+                        style={{ width: 150, height: 75, fontSize: 25, textAlign: 'center' }}
                         keyboardType='numeric'
                         returnKeyType='next'
                         maxLength={4}

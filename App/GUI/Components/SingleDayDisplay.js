@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity, TouchableHighlight, BackHandler, Modal } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../../Code/JCal/Utils';
 import Zmanim from '../../Code/JCal/Zmanim';
@@ -22,13 +22,15 @@ export default class SingleDayDisplay extends Component {
     constructor(props) {
         super(props);
         this.navigator = props.navigator;
-
+        this.state = { showMenu: false };
         this.newEntry = this.newEntry.bind(this);
         this.newOccasion = this.newOccasion.bind(this);
         this.showDateDetails = this.showDateDetails.bind(this);
         this.showProblems = this.showProblems.bind(this);
         this.monthView = this.monthView.bind(this);
         this.changeLocation = this.changeLocation.bind(this);
+        this._openMenu = this._openMenu.bind(this);
+        this._closeMenu = this._closeMenu.bind(this);
     }
     componentWillUpdate(nextProps) {
         const prevAppData = this.props.appData,
@@ -72,21 +74,27 @@ export default class SingleDayDisplay extends Component {
         return false;
     }
     newEntry() {
+        this._closeMenu();
         this.navigator.navigate('NewEntry', this.props);
     }
     newOccasion() {
+        this._closeMenu();
         this.navigator.navigate('NewOccasion', this.props);
     }
     monthView() {
+        this._closeMenu();
         this.navigator.navigate('MonthView', this.props);
     }
     showDateDetails() {
+        this._closeMenu();
         this.navigator.navigate('DateDetails', this.props);
     }
     showProblems() {
+        this._closeMenu();
         this.navigator.navigate('FlaggedDates', this.props);
     }
     changeLocation() {
+        this._closeMenu();
         this.navigator.navigate('FindLocation', this.props);
     }
     editEntry(entry) {
@@ -102,6 +110,12 @@ export default class SingleDayDisplay extends Component {
     }
     editOccasion(occasion) {
         this.navigator.navigate('NewOccasion', { occasion, ...this.props });
+    }
+    _openMenu() {
+        this.setState({ showMenu: true });
+    }
+    _closeMenu() {
+        this.setState({ showMenu: false });
     }
     render() {
         const { appData, jdate, isToday, systemDate } = this.props,
@@ -167,6 +181,26 @@ export default class SingleDayDisplay extends Component {
                                 (isToday ? '#e2e2f0' :
                                     (isSpecialDay ? '#eef' : '#fff')))))
                 }]}>
+                {this.state.showMenu &&
+                    <Modal animationType='slide' visible={this.state.showMenu} onRequestClose={this._closeMenu} transparent={true}>
+                        <View style={styles.menuView}>
+                            <Text>This is on the modal!!!!!!!!!</Text>
+                            <Button
+                                color='#abf'
+                                style={styles.btn}
+                                accessibilityLabel='Add a new Entry'
+                                title='New Entry'
+                                onPress={this.newEntry} />
+                            <Button
+                                color='#fba'
+                                style={styles.btn}
+                                accessibilityLabel='Add a new Event for this date'
+                                title='New Event'
+                                onPress={this.newOccasion} />
+                            <Button title='Close' onPress={this._closeMenu}>Close</Button>
+                        </View>
+                    </Modal>
+                }
                 <View style={{ margin: 15, flex: 1 }}>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
@@ -200,14 +234,19 @@ export default class SingleDayDisplay extends Component {
                         }}>
                             <TouchableWithoutFeedback onPress={this.showDateDetails}>
                                 <View style={{ alignItems: 'center', marginBottom: 10 }}>
-                                    <Icon color='#bbc' name='info' />
-                                    <Text style={{ fontSize: 12, color: '#aac' }}>   Zmanim   </Text>
+                                    <Icon color='#e5c565' name='info' />
+                                    <Text style={{ fontSize: 12, color: '#ca4' }}>   Zmanim   </Text>
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback onPress={this.monthView}>
                                 <View style={{ alignItems: 'center' }}>
-                                    <Icon color='#bbc' name='calendar' type='octicon' />
-                                    <Text style={{ fontSize: 12, color: '#aac', textAlign: 'center' }}>{'Month View'}</Text>
+                                    <Icon color='#99b' name='calendar' type='octicon' />
+                                    <Text style={{ fontSize: 12, color: '#99b', textAlign: 'center' }}>Month View</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={this._openMenu}>
+                                <View style={{ alignItems: 'center', margin: 5 }}>
+                                    <Icon color='#f0f0f5' size={20} name='add' borderColor='#dde' borderWidth={1} reverse />
                                 </View>
                             </TouchableWithoutFeedback>
                         </View>
@@ -240,25 +279,8 @@ export default class SingleDayDisplay extends Component {
                             {occasionText}
                         </View>
                     }
-                    <View style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-around',
-                        marginTop: 10
-                    }}>
-                        <Button
-                            color='#abf'
-                            style={styles.btn}
-                            accessibilityLabel='Add a new Entry'
-                            title='New Entry'
-                            onPress={this.newEntry} />
-                        <Button
-                            color='#fba'
-                            style={styles.btn}
-                            accessibilityLabel='Add a new Event for this date'
-                            title='New Event'
-                            onPress={this.newOccasion} />
-                    </View>
                 </View>
+
                 {jdateOffText}
             </View >
         );
@@ -332,5 +354,17 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         paddingBottom: 5
+    },
+    menuView: {
+        position: 'absolute',
+        zIndex: 1,
+        flex: 0,
+        alignSelf: 'center',
+        top: '40%',
+        padding: 20,
+        backgroundColor: '#f1f0f4',
+        borderRadius: 3,
+        borderColor: '#557',
+        borderWidth: 1
     }
 });
