@@ -19,11 +19,14 @@
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
-		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		267B28B61F1D315C00FC30AB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 267B28B51F1D315C00FC30AB /* LaunchScreen.xib */; };
+		267B28B81F1D39D700FC30AB /* scroll.png in Resources */ = {isa = PBXBuildFile; fileRef = 267B28B71F1D39D700FC30AB /* scroll.png */; };
+		267B28BA1F1D3BE700FC30AB /* Menu.png in Resources */ = {isa = PBXBuildFile; fileRef = 267B28B91F1D3BE700FC30AB /* Menu.png */; };
+		267B28BC1F1D40D200FC30AB /* SingleDay.png in Resources */ = {isa = PBXBuildFile; fileRef = 267B28BB1F1D40D200FC30AB /* SingleDay.png */; };
 		26B7F08D1EE93C2E0074B5B5 /* data in Resources */ = {isa = PBXBuildFile; fileRef = 26B7F08C1EE93C2E0074B5B5 /* data */; };
 		26BD307D1F0CDFDA008D4CA3 /* docs in Resources */ = {isa = PBXBuildFile; fileRef = 26BD307C1F0CDFDA008D4CA3 /* docs */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -275,11 +278,14 @@
 		13B07F961A680F5B00A75B9A /* LuachAndroid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LuachAndroid.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = LuachAndroid/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = LuachAndroid/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = LuachAndroid/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = LuachAndroid/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = LuachAndroid/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		267B28B51F1D315C00FC30AB /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = LaunchScreen.xib; path = LuachAndroid/LaunchScreen.xib; sourceTree = "<group>"; };
+		267B28B71F1D39D700FC30AB /* scroll.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = scroll.png; sourceTree = "<group>"; };
+		267B28B91F1D3BE700FC30AB /* Menu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Menu.png; sourceTree = "<group>"; };
+		267B28BB1F1D40D200FC30AB /* SingleDay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SingleDay.png; sourceTree = "<group>"; };
 		26B7F08C1EE93C2E0074B5B5 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../android/app/src/main/assets/data; sourceTree = "<group>"; };
 		26BD307C1F0CDFDA008D4CA3 /* docs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = docs; path = ../android/app/src/main/assets/docs; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* LuachAndroid-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LuachAndroid-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -438,6 +444,10 @@
 		13B07FAE1A68108700A75B9A /* LuachAndroid */ = {
 			isa = PBXGroup;
 			children = (
+				267B28BB1F1D40D200FC30AB /* SingleDay.png */,
+				267B28B91F1D3BE700FC30AB /* Menu.png */,
+				267B28B71F1D39D700FC30AB /* scroll.png */,
+				267B28B51F1D315C00FC30AB /* LaunchScreen.xib */,
 				26BD307C1F0CDFDA008D4CA3 /* docs */,
 				26B7F08C1EE93C2E0074B5B5 /* data */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -445,7 +455,6 @@
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
 			name = LuachAndroid;
@@ -963,8 +972,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				267B28BA1F1D3BE700FC30AB /* Menu.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				267B28B81F1D39D700FC30AB /* scroll.png in Resources */,
 				DA65E9A56A7C460CB08F6EBD /* Entypo.ttf in Resources */,
 				26BD307D1F0CDFDA008D4CA3 /* docs in Resources */,
 				26B7F08D1EE93C2E0074B5B5 /* data in Resources */,
@@ -973,7 +983,9 @@
 				03BB5F03C6D5490A90C8C185 /* Foundation.ttf in Resources */,
 				4B24118241FA4463BBC94A43 /* Ionicons.ttf in Resources */,
 				10DC460B2C8842CDA8966501 /* MaterialCommunityIcons.ttf in Resources */,
+				267B28BC1F1D40D200FC30AB /* SingleDay.png in Resources */,
 				79A068D3E7134005B3477702 /* MaterialIcons.ttf in Resources */,
+				267B28B61F1D315C00FC30AB /* LaunchScreen.xib in Resources */,
 				DC194B40E7B84590B17E71CB /* Octicons.ttf in Resources */,
 				7B858E5E0AEB4958B07CB520 /* SimpleLineIcons.ttf in Resources */,
 				E34BE92044C54BA297966CB4 /* Zocial.ttf in Resources */,
@@ -1078,18 +1090,6 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		13B07FB11A68108700A75B9A /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				13B07FB21A68108700A75B9A /* Base */,
-			);
-			name = LaunchScreen.xib;
-			path = LuachAndroid;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1154,6 +1154,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
@@ -1181,6 +1182,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3GGA526WG7;
