@@ -49,7 +49,7 @@ export default class NewKavuah extends React.Component {
     addKavuah() {
         if (!this.state.specialNumber) {
             popUpMessage('The number for the "' +
-                this.getNumberDefinition(this.state.kavuahType) + '" was not set.\n' +
+                Kavuah.getNumberDefinition(this.state.kavuahType) + '" was not set.\n' +
                 'If you do not understand how to fill this information, please contact your Rabbi for assistance.',
                 'Incorrect information');
             return;
@@ -81,7 +81,7 @@ export default class NewKavuah extends React.Component {
         else {
             Alert.alert(
                 'Possibly Incorrect information',
-                'The number for the "' + this.getNumberDefinition(this.state.kavuahType) +
+                'The number for the "' + Kavuah.getNumberDefinition(this.state.kavuahType) +
                 '" does not seem to match the Setting Entry information.\n' +
                 'Please check that the information is correct.\n' +
                 'If you do not fully understand how to fill in this information, ' +
