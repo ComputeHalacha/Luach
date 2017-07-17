@@ -167,8 +167,7 @@ export default class SingleDayDisplay extends Component {
             if (dayNum > 1) {
                 daysSinceLastEntry =
                     <View style={styles.additionsViews}>
-                        <Text style={{ fontSize: 10 }}>{Utils.toSuffixed(dayNum) +
-                            ' day of last Entry'}</Text>
+                        <Text style={{ fontSize: 10, color: '#e55' }}>{Utils.toSuffixed(dayNum) + ' day'}</Text>
                     </View>;
             }
         }
@@ -233,7 +232,7 @@ export default class SingleDayDisplay extends Component {
                             {eiruvTavshilin}
                             <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <View style={{ width: '65%', height: 75, flex: 0 }}>
+                                <View style={{ height: 75, flex: 0 }}>
                                     <TouchableOpacity onPress={this.changeLocation}>
                                         <Text style={styles.location}>{'In ' + location.Name}</Text>
                                     </TouchableOpacity>
@@ -331,7 +330,6 @@ const styles = StyleSheet.create({
         color: '#800',
         fontWeight: 'bold'
     },
-    btn: { fontSize: 7, height: 25 },
     additionsViews: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -341,7 +339,7 @@ const styles = StyleSheet.create({
     entriesText: {
         color: '#e55',
         fontWeight: 'bold',
-        padding: 4
+        fontSize: 10
     },
     occasionText: {
         color: '#d87',
@@ -350,10 +348,7 @@ const styles = StyleSheet.create({
     },
     dayOffMessage: {
         fontSize: 11,
-        color: '#955',
-        paddingLeft: 10,
-        paddingRight: 10,
-        paddingBottom: 5
+        color: '#955'
     },
     menuView: {
         position: 'absolute',
