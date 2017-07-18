@@ -37,10 +37,7 @@ export default class DateDetailsScreen extends React.Component {
                     appData={this.appData}
                     navigator={this.props.navigation}
                     onGoPrevious={this.goPrev}
-                    onGoNext={this.goNext}
-                    hideFlaggedDates={true}
-                    hideEntries={true}
-                    hideKavuahs={true} />
+                    onGoNext={this.goNext} />
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.headerView}>
                         <Text style={GeneralStyles.headerText}>{this.state.jdate.toShortString(true)}</Text>

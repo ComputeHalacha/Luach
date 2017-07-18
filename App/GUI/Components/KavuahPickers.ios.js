@@ -37,7 +37,7 @@ export default class KavuahPickers extends React.Component {
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Setting Entry</Text>
                 <Select
-                    onSelect={value => this.setSettingEntry(value)}
+                    onSelect={value => this.props.setSettingEntry(value)}
                     defaultText={this.props.settingEntry.toString()}
                     style={GeneralStyles.select}
                     indicator='down'
@@ -52,7 +52,7 @@ export default class KavuahPickers extends React.Component {
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>{Kavuah.getNumberDefinition(this.props.kavuahType)}</Text>
                 <Select
-                    onSelect={value => this.setSpecialNumber(value)}
+                    onSelect={value => this.props.setSpecialNumber(value)}
                     defaultText={this.props.specialNumber.toString()}
                     style={GeneralStyles.select}
                     indicator='down'

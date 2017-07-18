@@ -155,8 +155,6 @@ export default class NewOccasion extends React.Component {
                     onUpdate={this.onUpdate}
                     appData={this.state.appData}
                     navigator={this.props.navigation}
-                    hideEntries={true}
-                    hideKavuahs={true}
                     helpUrl='Events.html'
                     helpTitle='Events' />
                 <ScrollView style={{ flex: 1 }}>

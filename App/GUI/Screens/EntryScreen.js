@@ -114,9 +114,7 @@ export default class EntryScreen extends Component {
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
                         navigator={this.props.navigation}
-                        hideOccasions={true}
                         hideEntries={true}
-                        hideSettings={true}
                         helpUrl='Entries.html'
                         helpTitle='Entries' />
                     <ScrollView style={{ flex: 1 }}>

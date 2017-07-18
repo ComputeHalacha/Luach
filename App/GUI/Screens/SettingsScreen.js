@@ -93,7 +93,6 @@ export default class SettingsScreen extends Component {
                         appData={this.state.appData}
                         navigator={this.props.navigation}
                         hideSettings={true}
-                        hideMonthView={true}
                         helpUrl='Settings.html'
                         helpTitle='Settings' />
                     <ScrollView style={{ flex: 1 }}>

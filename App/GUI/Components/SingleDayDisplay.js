@@ -22,12 +22,10 @@ export default class SingleDayDisplay extends Component {
     constructor(props) {
         super(props);
         this.navigator = props.navigator;
-
         this.newEntry = this.newEntry.bind(this);
         this.newOccasion = this.newOccasion.bind(this);
         this.showDateDetails = this.showDateDetails.bind(this);
         this.showProblems = this.showProblems.bind(this);
-        this.monthView = this.monthView.bind(this);
         this.changeLocation = this.changeLocation.bind(this);
     }
     componentWillUpdate(nextProps) {
@@ -76,9 +74,6 @@ export default class SingleDayDisplay extends Component {
     }
     newOccasion() {
         this.navigator.navigate('NewOccasion', this.props);
-    }
-    monthView() {
-        this.navigator.navigate('MonthView', this.props);
     }
     showDateDetails() {
         this.navigator.navigate('DateDetails', this.props);
@@ -151,10 +146,11 @@ export default class SingleDayDisplay extends Component {
             const dayNum = this.props.lastEntryDate.diffDays(jdate) + 1;
             if (dayNum > 1) {
                 daysSinceLastEntry =
-                    <View style={styles.additionsViews}>
-                        <Text style={{ fontSize: 10 }}>{Utils.toSuffixed(dayNum) +
-                            ' day of last Entry'}</Text>
-                    </View>;
+                    <TouchableOpacity onPress={() => this.navigator.navigate('Entries', { ...this.props })}>
+                        <View style={styles.additionsViews}>
+                            <Text style={{ fontSize: 10, color: '#e55' }}>{Utils.toSuffixed(dayNum) + ' day'}</Text>
+                        </View>
+                    </TouchableOpacity>;
             }
         }
         return (
@@ -167,100 +163,95 @@ export default class SingleDayDisplay extends Component {
                                 (isToday ? '#e2e2f0' :
                                     (isSpecialDay ? '#eef' : '#fff')))))
                 }]}>
-                <View style={{ margin: 15, flex: 1 }}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
-                        {todayText}
-                        <Text style={styles.dateNumHeb}>{Utils.toJNum(jdate.Day)}</Text>
-                    </View>
-                    <Text style={styles.date}>
-                        <Text style={styles.dateHeb}>
-                            {jdate.toString()}</Text>
-                        <Text>{'\n'}</Text>
-                        <Text style={styles.dateEng}>
-                            {Utils.toStringDate(sdate, !isDayOff)}</Text>
-                    </Text>
-                    {dailyInfoText}
-                    {candleLighting}
-                    {eiruvTavshilin}
-                    <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
-                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <View style={{ width: '65%', height: 75, flex: 0 }}>
-                            <TouchableOpacity onPress={this.changeLocation}>
-                                <Text style={styles.location}>{'In ' + location.Name}</Text>
-                            </TouchableOpacity>
-                            <Text>{'Sun Rises at ' + sunrise}</Text>
-                            <Text>{'Sun sets at ' + sunset + '\n\n'}</Text>
+                <View>
+                    <View style={{ marginTop: 5, marginLeft: 15, marginRight: 15, flex: 1 }}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
+                            {todayText}
+                            <Text style={styles.dateNumHeb}>{Utils.toJNum(jdate.Day)}</Text>
                         </View>
-                        <View style={{
-                            flex: 0,
-                            width: '35%',
-                            justifyContent: 'center',
-                            alignItems: 'flex-end'
-                        }}>
-                            <TouchableWithoutFeedback onPress={this.showDateDetails}>
-                                <View style={{ alignItems: 'center', marginBottom: 10 }}>
-                                    <Icon color='#bbc' name='info' />
-                                    <Text style={{ fontSize: 12, color: '#aac' }}>   Zmanim   </Text>
-                                </View>
-                            </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={this.monthView}>
-                                <View style={{ alignItems: 'center' }}>
-                                    <Icon color='#bbc' name='calendar' type='octicon' />
-                                    <Text style={{ fontSize: 12, color: '#aac', textAlign: 'center' }}>{'Month View'}</Text>
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </View>
-                    </View>
-                    {entries && entries.length > 0 &&
-                        <View style={styles.additionsViews}>
-                            {entriesText}
-                        </View>
-                    }
-                    {flag &&
-                        <TouchableWithoutFeedback style={styles.additionsViews} onPress={this.showProblems}>
-                            <View style={styles.additionsViews}>
-                                <View style={{
-                                    backgroundColor: '#f00',
-                                    alignItems: 'center',
-                                    borderRadius: 40,
-                                    padding: 6
-                                }}>
-                                    <Icon
-                                        size={15}
-                                        name='flag'
-                                        color={'#fff'} />
-                                </View>
+                        <Text style={styles.date}>
+                            <Text style={styles.dateHeb}>
+                                {jdate.toString()}</Text>
+                            <Text>{'\n'}</Text>
+                            <Text style={styles.dateEng}>
+                                {Utils.toStringDate(sdate, !isDayOff)}</Text>
+                        </Text>
+                        {dailyInfoText}
+                        {candleLighting}
+                        {eiruvTavshilin}
+                        <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
+                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <View style={{ height: 75, flex: 0 }}>
+                                <TouchableOpacity onPress={this.changeLocation}>
+                                    <Text style={styles.location}>{'In ' + location.Name}</Text>
+                                </TouchableOpacity>
+                                <Text>{'Sunrise: ' + sunrise}</Text>
+                                <Text>{'Sunset: ' + sunset}</Text>
                             </View>
-                        </TouchableWithoutFeedback>
-                    }
-                    {daysSinceLastEntry}
-                    {occasions && occasions.length > 0 &&
-                        <View style={styles.additionsViews}>
-                            {occasionText}
+                            <View style={{
+                                flex: 0,
+                                maxWidth: '40%'
+                            }}>
+                                {flag &&
+                                    <TouchableWithoutFeedback style={styles.additionsViews} onPress={this.showProblems}>
+                                        <View style={styles.additionsViews}>
+                                            <View style={{
+                                                backgroundColor: '#f00',
+                                                alignItems: 'center',
+                                                borderRadius: 40,
+                                                padding: 6
+                                            }}>
+                                                <Icon
+                                                    size={15}
+                                                    name='flag'
+                                                    color={'#fff'} />
+                                            </View>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+                                }
+                                {this.props.isHefeskDay &&
+                                    <View style={styles.additionsViews}>
+                                        <Text style={{ fontSize: 11, color: '#050', fontStyle:'italic' }}>Hefsek Tahara</Text>
+                                    </View>
+                                }
+                                {daysSinceLastEntry}
+                                {entries && entries.length > 0 &&
+                                    <View style={styles.additionsViews}>
+                                        {entriesText}
+                                    </View>
+                                }
+                                {occasions && occasions.length > 0 &&
+                                    <View style={styles.additionsViews}>
+                                        {occasionText}
+                                    </View>
+                                }
+                            </View>
                         </View>
-                    }
-                    <View style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-around',
-                        marginTop: 10
-                    }}>
-                        <Button
-                            color='#abf'
-                            style={styles.btn}
-                            accessibilityLabel='Add a new Entry'
-                            title='New Entry'
-                            onPress={this.newEntry} />
-                        <Button
-                            color='#fba'
-                            style={styles.btn}
-                            accessibilityLabel='Add a new Event for this date'
-                            title='New Event'
-                            onPress={this.newOccasion} />
                     </View>
+                    {jdateOffText}
                 </View>
-                {jdateOffText}
-            </View >
+                <View style={styles.menuView}>
+                    <TouchableWithoutFeedback onPress={this.showDateDetails} style={{ flex: 1 }}>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon color='#aac' name='info' size={15} />
+                            <Text style={styles.menuItemText}>Zmanim</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={this.newOccasion} style={{ flex: 1 }}>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon color='#aac' name='event' size={15} />
+                            <Text style={styles.menuItemText}>New Event</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon color='#aac' name='list' size={15} />
+                            <Text style={styles.menuItemText}>New Entry</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </View>
+            </View>
         );
     }
 }
@@ -273,7 +264,9 @@ const styles = StyleSheet.create({
         borderColor: '#777',
         borderRadius: 6,
         padding: 0,
-        margin: 10,
+        marginTop: 5,
+        marginLeft: 10,
+        marginRight: 10,
         backgroundColor: '#fff'
     },
     date: {
@@ -305,21 +298,20 @@ const styles = StyleSheet.create({
     dateEng: { color: '#080' },
     dateHeb: { color: '#008' },
     location: {
-        marginTop: 10,
+        marginTop: 5,
         color: '#800',
         fontWeight: 'bold'
     },
-    btn: { fontSize: 7, height: 25 },
     additionsViews: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 5,
-        marginBottom: 5
+        margin: 3
     },
     entriesText: {
         color: '#e55',
         fontWeight: 'bold',
-        padding: 4
+        fontSize: 10,
+        textAlign: 'center'
     },
     occasionText: {
         color: '#d87',
@@ -328,9 +320,23 @@ const styles = StyleSheet.create({
     },
     dayOffMessage: {
         fontSize: 11,
-        color: '#955',
-        paddingLeft: 10,
-        paddingRight: 10,
-        paddingBottom: 5
+        color: '#955'
+    },
+    menuView: {
+        paddingLeft: '10%',
+        paddingRight: '10%',
+        paddingTop: 3,
+        paddingBottom: 2,
+        marginTop: 2,
+        backgroundColor: '#00000010',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'flex-start'
+    },
+    menuItemText:
+    {
+        fontSize: 10,
+        color: '#889'
     }
 });
