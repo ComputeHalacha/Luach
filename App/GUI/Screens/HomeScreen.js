@@ -304,8 +304,9 @@ export default class HomeScreen extends React.Component {
         const daysList = [jdate];
         daysList.push(jdate.addDays(1));
         daysList.push(jdate.addDays(2));
+        daysList.push(jdate.addDays(3));
         if (isLargeScreen()) {
-            daysList.push(jdate.addDays(3));
+            daysList.push(jdate.addDays(4));
         }
         return daysList;
     }

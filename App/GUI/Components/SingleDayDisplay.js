@@ -26,7 +26,6 @@ export default class SingleDayDisplay extends Component {
         this.newOccasion = this.newOccasion.bind(this);
         this.showDateDetails = this.showDateDetails.bind(this);
         this.showProblems = this.showProblems.bind(this);
-        this.monthView = this.monthView.bind(this);
         this.changeLocation = this.changeLocation.bind(this);
     }
     componentWillUpdate(nextProps) {
@@ -75,9 +74,6 @@ export default class SingleDayDisplay extends Component {
     }
     newOccasion() {
         this.navigator.navigate('NewOccasion', this.props);
-    }
-    monthView() {
-        this.navigator.navigate('MonthView', this.props);
     }
     showDateDetails() {
         this.navigator.navigate('DateDetails', this.props);
@@ -150,9 +146,11 @@ export default class SingleDayDisplay extends Component {
             const dayNum = this.props.lastEntryDate.diffDays(jdate) + 1;
             if (dayNum > 1) {
                 daysSinceLastEntry =
-                    <View style={styles.additionsViews}>
-                        <Text style={{ fontSize: 10, color: '#e55' }}>{Utils.toSuffixed(dayNum) + ' day'}</Text>
-                    </View>;
+                    <TouchableOpacity onPress={() => this.navigator.navigate('Entries', { ...this.props })}>
+                        <View style={styles.additionsViews}>
+                            <Text style={{ fontSize: 10, color: '#e55' }}>{Utils.toSuffixed(dayNum) + ' day'}</Text>
+                        </View>
+                    </TouchableOpacity>;
             }
         }
         return (
@@ -165,34 +163,8 @@ export default class SingleDayDisplay extends Component {
                                 (isToday ? '#e2e2f0' :
                                     (isSpecialDay ? '#eef' : '#fff')))))
                 }]}>
-                <View style={styles.menuView}>
-                    <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
-                            <Icon color='#99c' name='list' size={16} />
-                            <Text style={{ fontSize: 10, color: '#99c' }}>New Entry</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={this.newOccasion} style={{ flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
-                            <Icon color='#99c' name='event' size={16} />
-                            <Text style={{ fontSize: 10, color: '#99c' }}>New Event</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={this.showDateDetails} style={{ flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
-                            <Icon color='#99c' name='info' size={16} />
-                            <Text style={{ fontSize: 10, color: '#99c' }}>Zmanim</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={this.monthView} style={{ flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
-                            <Icon color='#99c' name='calendar' type='octicon' size={16} />
-                            <Text style={{ fontSize: 10, color: '#99c' }}>Month View</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
-                </View>
                 <View>
-                    <View style={{ marginBottom: 5, marginLeft: 15, marginRight: 15, flex: 1 }}>
+                    <View style={{ marginTop: 5, marginLeft: 15, marginRight: 15, flex: 1 }}>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
                             {todayText}
@@ -219,9 +191,7 @@ export default class SingleDayDisplay extends Component {
                             </View>
                             <View style={{
                                 flex: 0,
-                                width: '35%',
-                                justifyContent: 'center',
-                                alignItems: 'flex-end'
+                                maxWidth: '40%'
                             }}>
                                 {flag &&
                                     <TouchableWithoutFeedback style={styles.additionsViews} onPress={this.showProblems}>
@@ -240,21 +210,46 @@ export default class SingleDayDisplay extends Component {
                                         </View>
                                     </TouchableWithoutFeedback>
                                 }
+                                {this.props.isHefeskDay &&
+                                    <View style={styles.additionsViews}>
+                                        <Text style={{ fontSize: 11, color: '#050', fontStyle:'italic' }}>Hefsek Tahara</Text>
+                                    </View>
+                                }
                                 {daysSinceLastEntry}
+                                {entries && entries.length > 0 &&
+                                    <View style={styles.additionsViews}>
+                                        {entriesText}
+                                    </View>
+                                }
+                                {occasions && occasions.length > 0 &&
+                                    <View style={styles.additionsViews}>
+                                        {occasionText}
+                                    </View>
+                                }
                             </View>
                         </View>
-                        {entries && entries.length > 0 &&
-                            <View style={styles.additionsViews}>
-                                {entriesText}
-                            </View>
-                        }
-                        {occasions && occasions.length > 0 &&
-                            <View style={styles.additionsViews}>
-                                {occasionText}
-                            </View>
-                        }
                     </View>
                     {jdateOffText}
+                </View>
+                <View style={styles.menuView}>
+                    <TouchableWithoutFeedback onPress={this.showDateDetails} style={{ flex: 1 }}>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon color='#aac' name='info' size={15} />
+                            <Text style={styles.menuItemText}>Zmanim</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={this.newOccasion} style={{ flex: 1 }}>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon color='#aac' name='event' size={15} />
+                            <Text style={styles.menuItemText}>New Event</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon color='#aac' name='list' size={15} />
+                            <Text style={styles.menuItemText}>New Entry</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
         );
@@ -303,20 +298,20 @@ const styles = StyleSheet.create({
     dateEng: { color: '#080' },
     dateHeb: { color: '#008' },
     location: {
-        marginTop: 10,
+        marginTop: 5,
         color: '#800',
         fontWeight: 'bold'
     },
     additionsViews: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 5,
-        marginBottom: 5
+        margin: 3
     },
     entriesText: {
         color: '#e55',
         fontWeight: 'bold',
-        fontSize: 10
+        fontSize: 10,
+        textAlign: 'center'
     },
     occasionText: {
         color: '#d87',
@@ -332,11 +327,16 @@ const styles = StyleSheet.create({
         paddingRight: '10%',
         paddingTop: 3,
         paddingBottom: 2,
-        marginBottom: 2,
-        backgroundColor:'#00000010',
+        marginTop: 2,
+        backgroundColor: '#00000010',
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         alignItems: 'flex-start'
+    },
+    menuItemText:
+    {
+        fontSize: 10,
+        color: '#889'
     }
 });
