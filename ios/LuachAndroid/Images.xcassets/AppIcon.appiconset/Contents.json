@@ -39,7 +39,7 @@
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "LuachLogoIOS-60@2x.png",
+      "filename" : "LuachLogo120X120.png",
       "scale" : "2x"
     },
     {
@@ -87,43 +87,19 @@
     {
       "size" : "76x76",
       "idiom" : "ipad",
-      "filename" : "LuachLogoIOS-76.png",
-      "scale" : "1x"
-    },
-    {
-      "size" : "76x76",
-      "idiom" : "ipad",
-      "filename" : "LuachLogoIOS-76@2x.png",
-      "scale" : "2x"
-    },
-    {
-      "size" : "83.5x83.5",
-      "idiom" : "ipad",
-      "filename" : "LuachLogoIOS-83.5@2x.png",
-      "scale" : "2x"
-    },
-    {
-      "size" : "60x60",
-      "idiom" : "iphone",
-      "filename" : "LuachLogo120X120.png",
-      "scale" : "2x"
-    },
-    {
-      "size" : "76x76",
-      "idiom" : "ipad",
       "filename" : "LuachLogo76X76.png",
       "scale" : "1x"
-    },
-    {
-      "size" : "83.5x83.5",
-      "idiom" : "ipad",
-      "filename" : "LuachLogo167X167.png",
-      "scale" : "2x"
     },
     {
       "size" : "76x76",
       "idiom" : "ipad",
       "filename" : "LuachLogo152X152.png",
+      "scale" : "2x"
+    },
+    {
+      "size" : "83.5x83.5",
+      "idiom" : "ipad",
+      "filename" : "LuachLogo167X167.png",
       "scale" : "2x"
     }
   ],
