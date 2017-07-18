@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Picker } from 'react-native';
+import { View, Text, Picker, Switch } from 'react-native';
 import Utils from '../../Code/JCal/Utils';
 import jDate from '../../Code/JCal/jDate';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
@@ -67,12 +67,14 @@ export default class OnahChooser extends React.Component {
             </View>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Onah - Day or Night?</Text>
-                <Picker style={GeneralStyles.picker}
-                    selectedValue={this.props.nightDay}
-                    onValueChange={value => this.props.setNightDay(value)}>
-                    <Picker.Item label='Night' value={NightDay.Night} key={NightDay.Night} />
-                    <Picker.Item label='Day' value={NightDay.Day} key={NightDay.Day} />
-                </Picker>
+                <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 15 }}>
+                    <Text>Night</Text>
+                    <Switch style={GeneralStyles.switch}
+                        onValueChange={value =>
+                            this.props.setNightDay(value ? NightDay.Day : NightDay.Night)}
+                        value={(this.props.nightDay === NightDay.Day)} />
+                    <Text>Day</Text>
+                </View>
             </View>
         </View>;
     }

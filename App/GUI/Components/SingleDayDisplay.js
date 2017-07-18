@@ -164,7 +164,7 @@ export default class SingleDayDisplay extends Component {
                                     (isSpecialDay ? '#eef' : '#fff')))))
                 }]}>
                 <View>
-                    <View style={{ marginTop: 5, marginLeft: 15, marginRight: 15, flex: 1 }}>
+                    <View style={styles.mainSectionView}>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
                             {todayText}
@@ -181,8 +181,8 @@ export default class SingleDayDisplay extends Component {
                         {candleLighting}
                         {eiruvTavshilin}
                         <Text>{'Sedra of the week: ' + jdate.getSedra(true).map((s) => s.eng).join(' - ')}</Text>
-                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <View style={{ height: 75, flex: 0 }}>
+                        <View style={styles.bottomSection}>
+                            <View style={{ flex: 0 }}>
                                 <TouchableOpacity onPress={this.changeLocation}>
                                     <Text style={styles.location}>{'In ' + location.Name}</Text>
                                 </TouchableOpacity>
@@ -196,23 +196,15 @@ export default class SingleDayDisplay extends Component {
                                 {flag &&
                                     <TouchableWithoutFeedback style={styles.additionsViews} onPress={this.showProblems}>
                                         <View style={styles.additionsViews}>
-                                            <View style={{
-                                                backgroundColor: '#f00',
-                                                alignItems: 'center',
-                                                borderRadius: 40,
-                                                padding: 6
-                                            }}>
-                                                <Icon
-                                                    size={15}
-                                                    name='flag'
-                                                    color={'#fff'} />
+                                            <View style={styles.flagView}>
+                                                <Icon size={15} name='flag' color={'#fff'} />
                                             </View>
                                         </View>
                                     </TouchableWithoutFeedback>
                                 }
                                 {this.props.isHefeskDay &&
                                     <View style={styles.additionsViews}>
-                                        <Text style={{ fontSize: 11, color: '#050', fontStyle:'italic' }}>Hefsek Tahara</Text>
+                                        <Text style={styles.hefsekText}>Hefsek Tahara</Text>
                                     </View>
                                 }
                                 {daysSinceLastEntry}
@@ -238,16 +230,16 @@ export default class SingleDayDisplay extends Component {
                             <Text style={styles.menuItemText}>Zmanim</Text>
                         </View>
                     </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={this.newOccasion} style={{ flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
-                            <Icon color='#aac' name='event' size={15} />
-                            <Text style={styles.menuItemText}>New Event</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
                             <Icon color='#aac' name='list' size={15} />
                             <Text style={styles.menuItemText}>New Entry</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={this.newOccasion} style={{ flex: 1 }}>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon color='#aac' name='event' size={15} />
+                            <Text style={styles.menuItemText}>New Event</Text>
                         </View>
                     </TouchableWithoutFeedback>
                 </View>
@@ -268,6 +260,12 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
         backgroundColor: '#fff'
+    },
+    mainSectionView: {
+        marginTop: 5,
+        marginLeft: 15,
+        marginRight: 15,
+        flex: 1
     },
     date: {
         fontSize: 15,
@@ -302,6 +300,12 @@ const styles = StyleSheet.create({
         color: '#800',
         fontWeight: 'bold'
     },
+    flagView: {
+        backgroundColor: '#f00',
+        alignItems: 'center',
+        borderRadius: 40,
+        padding: 6
+    },
     additionsViews: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -317,6 +321,11 @@ const styles = StyleSheet.create({
         color: '#d87',
         fontWeight: 'bold',
         padding: 4
+    },
+    hefsekText: {
+        fontSize: 11,
+        color: '#050',
+        fontStyle: 'italic'
     },
     dayOffMessage: {
         fontSize: 11,
@@ -334,9 +343,16 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'flex-start'
     },
-    menuItemText:
-    {
+    menuItemText: {
         fontSize: 10,
         color: '#889'
+    },
+    bottomSection: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 3,
+        marginBottom: 7
     }
 });
