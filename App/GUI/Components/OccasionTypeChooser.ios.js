@@ -16,7 +16,7 @@ export default class OccasionTypeChooser extends React.Component {
         }
         const jdate = this.props.jdate,
             sdate = jdate.getDate();
-        switch (this.props.occasionType) {
+        switch (occasionType) {
             case UserOccasionTypes.OneTime:
                 return 'One Time Occasion';
             case UserOccasionTypes.HebrewDateRecurringYearly:
