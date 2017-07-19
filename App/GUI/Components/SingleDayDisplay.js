@@ -88,8 +88,19 @@ export default class SingleDayDisplay extends Component {
         DataUtils.TaharaEventToDatabase(taharaEvent).then(() => {
             taharaEventsList.push(taharaEvent);
             this.props.onUpdate(appData);
-            popUpMessage(`${taharaEvent.toKnownDateString()} has been saved for this day.`);
         });
+    }
+    removeTaharaEvent(taharaEvent) {
+        const appData = this.props.appData,
+            taharaEventsList = appData.TaharaEvents,
+            index = taharaEventsList.indexOf(taharaEvent);
+        if (index > -1) {
+            DataUtils.DeleteTaharaEvent(taharaEvent).then(() => {
+                taharaEventsList.splice(index, 1);
+                appData.TaharaEvents = taharaEventsList;
+                this.props.onUpdate(appData);
+            });
+        }
     }
     showDateDetails() {
         this.navigator.navigate('DateDetails', this.props);
@@ -137,6 +148,9 @@ export default class SingleDayDisplay extends Component {
                     </Text>
                 </View>,
             isSpecialDay = jdate.DayOfWeek === 6 || jdate.getMajorHoliday(location.Israel),
+            //We only show the hefsek if there wasn't an actual hefsek on that day
+            isPossibleHefsekDay = this.props.isHefeskDay && !taharaEvents.some(te =>
+                te.taharaEventType === TaharaEventType.Hefsek),
             dailyInfos = jdate.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
             suntimes = Zmanim.getSunTimes(jdate, location, true),
@@ -160,13 +174,19 @@ export default class SingleDayDisplay extends Component {
                         <Text style={styles.entriesText}>{e.toKnownDateString()}</Text>
                     </TouchableOpacity>)),
             taharaEventsText = taharaEvents.length > 0 &&
-                taharaEvents.map((e, i) =>
-                    <View style={styles.taharaEventsView}>
-                        <Text key={i} style={styles.taharaEventsText}>{'► ' + e.toKnownDateString()}</Text>
-                    </View>),
+                taharaEvents.map((te, i) => {
+                    const bgColor = te.taharaEventType === TaharaEventType.Shailah ? '#f1d484' :
+                        (te.taharaEventType === TaharaEventType.Mikvah ? '#d4d4ff' :
+                            (te.taharaEventType === TaharaEventType.Hefsek ? '#d4ffd4' : '#ffd4f1'));
+                    return (<TouchableOpacity key={i} onPress={() => this.removeTaharaEvent(te)}>
+                        <View style={[styles.taharaEventsView, { backgroundColor: bgColor }]}>
+                            <Text key={i} style={styles.taharaEventsText}>{te.toKnownDateString()}</Text>
+                        </View>
+                    </TouchableOpacity>);
+                }),
             backgroundColor = entries && entries.length > 0 ? '#fee' :
                 (flag ? '#fe9' :
-                    (this.props.isHefeskDay ? '#f1fff1' :
+                    (isPossibleHefsekDay ? '#f1fff1' :
                         (isToday ? '#e2e2f0' :
                             (isSpecialDay ? '#eef' : '#fff')))),
             menuIconSize = (isLargeScreen ? 20 : 15);
@@ -223,10 +243,12 @@ export default class SingleDayDisplay extends Component {
                                         </View>
                                     </TouchableWithoutFeedback>
                                 }
-                                {this.props.isHefeskDay &&
-                                    <View style={styles.additionsViews}>
-                                        <Text style={styles.hefsekText}>Hefsek Tahara</Text>
-                                    </View>
+                                {isPossibleHefsekDay &&
+                                    <TouchableOpacity onPress={() => this.newTaharaEvent(TaharaEventType.Hefsek)}>
+                                        <View style={styles.additionsViews}>
+                                            <Text style={styles.hefsekText}>Hefsek Tahara Possible</Text>
+                                        </View>
+                                    </TouchableOpacity>
                                 }
                                 {daysSinceLastEntry}
                                 {entries && entries.length > 0 &&
@@ -361,20 +383,19 @@ const styles = StyleSheet.create({
         fontSize: 10,
         textAlign: 'center'
     },
-    taharaEventsOuterView:{
+    taharaEventsOuterView: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        margin:0,
-        padding:0
+        margin: 0,
+        padding: 0
     },
     taharaEventsView: {
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 4,
+        padding: 5,
         margin: 2,
-        backgroundColor: '#F1D484',
         borderRadius: 5
     },
     taharaEventsText: {
@@ -388,7 +409,7 @@ const styles = StyleSheet.create({
         padding: 4
     },
     hefsekText: {
-        fontSize: 11,
+        fontSize: 10,
         color: '#050',
         fontStyle: 'italic'
     },
