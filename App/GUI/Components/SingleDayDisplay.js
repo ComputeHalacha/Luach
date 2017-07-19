@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../../Code/JCal/Utils';
 import Zmanim from '../../Code/JCal/Zmanim';
-import { log, popUpMessage } from '../../Code/GeneralUtils';
+import { log, popUpMessage, isLargeScreen } from '../../Code/GeneralUtils';
 import { UserOccasion } from '../../Code/JCal/UserOccasion';
 /**
  * Display a home screen box for a single jewish date.
@@ -145,7 +145,8 @@ export default class SingleDayDisplay extends Component {
                 (flag ? '#fe9' :
                     (this.props.isHefeskDay ? '#f1fff1' :
                         (isToday ? '#e2e2f0' :
-                            (isSpecialDay ? '#eef' : '#fff'))));
+                            (isSpecialDay ? '#eef' : '#fff')))),
+            menuIconSize = (isLargeScreen ? 20 : 15);
         let daysSinceLastEntry;
         if (appData.Settings.showEntryFlagOnHome && this.props.lastEntryDate) {
             const dayNum = this.props.lastEntryDate.diffDays(jdate) + 1;
@@ -223,19 +224,19 @@ export default class SingleDayDisplay extends Component {
                 <View style={styles.menuView}>
                     <TouchableWithoutFeedback onPress={this.showDateDetails} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
-                            <Icon color='#aac' name='info' size={15} />
+                            <Icon color='#aac' name='info' size={menuIconSize} />
                             <Text style={styles.menuItemText}>Zmanim</Text>
                         </View>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
-                            <Icon color='#aac' name='list' size={15} />
+                            <Icon color='#aac' name='list' size={menuIconSize} />
                             <Text style={styles.menuItemText}>New Entry</Text>
                         </View>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newOccasion} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
-                            <Icon color='#aac' name='event' size={15} />
+                            <Icon color='#aac' name='event' size={menuIconSize} />
                             <Text style={styles.menuItemText}>New Event</Text>
                         </View>
                     </TouchableWithoutFeedback>
@@ -341,7 +342,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start'
     },
     menuItemText: {
-        fontSize: 10,
+        fontSize: (isLargeScreen ? 13 : 10),
         color: '#889'
     },
     bottomSection: {
