@@ -140,7 +140,12 @@ export default class SingleDayDisplay extends Component {
                 entries.map((e, i) => (
                     <TouchableOpacity key={i} onPress={() => this.editEntry(e)}>
                         <Text style={styles.entriesText}>{e.toKnownDateString()}</Text>
-                    </TouchableOpacity>));
+                    </TouchableOpacity>)),
+            backgroundColor = entries && entries.length > 0 ? '#fee' :
+                (flag ? '#fe9' :
+                    (this.props.isHefeskDay ? '#f1fff1' :
+                        (isToday ? '#e2e2f0' :
+                            (isSpecialDay ? '#eef' : '#fff'))));
         let daysSinceLastEntry;
         if (appData.Settings.showEntryFlagOnHome && this.props.lastEntryDate) {
             const dayNum = this.props.lastEntryDate.diffDays(jdate) + 1;
@@ -154,15 +159,7 @@ export default class SingleDayDisplay extends Component {
             }
         }
         return (
-            <View
-                style={[styles.container, {
-                    backgroundColor:
-                    (entries && entries.length > 0 ? '#fee' :
-                        (flag ? '#fe9' :
-                            (this.props.isHefeskDay ? '#f1fff1' :
-                                (isToday ? '#e2e2f0' :
-                                    (isSpecialDay ? '#eef' : '#fff')))))
-                }]}>
+            <View style={[styles.container, { backgroundColor: backgroundColor }]}>
                 <View>
                     <View style={styles.mainSectionView}>
                         <View style={{ flexDirection: 'row' }}>
