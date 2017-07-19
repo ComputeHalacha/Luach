@@ -31,7 +31,7 @@ export class ProblemOnah extends Onah {
         return `The ${this.nightDay === NightDay.Night ? 'night' : 'day'} of ` +
             this.jdate.toString() +
             ` (${goyDate.toLocaleDateString()}) is the:` +
-            this.flagsList.map(f => '\n ►' + f).join('');
+            this.flagsList.map(f => '\n  ►  ' + f).join('');
     }
     /**
      * Determines if the given ProblemOnah is on the same Onah
