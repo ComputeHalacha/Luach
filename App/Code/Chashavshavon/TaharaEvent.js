@@ -11,6 +11,18 @@ class TaharaEvent {
         this.taharaEventType = taharaEventType;
         this.taharaEventId = taharaEventId;
     }
+    toKnownDateString() {
+        switch (this.taharaEventType) {
+            case TaharaEventType.Hefsek:
+                return 'Hefsek';
+            case TaharaEventType.Bedika:
+                return 'Bedika';
+            case TaharaEventType.Shailah:
+                return 'Shailah';
+            case TaharaEventType.Mikvah:
+                return 'Mikvah';
+        }
+    }
     get hasId() {
         return !!this.taharaEventId;
     }

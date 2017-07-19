@@ -135,6 +135,10 @@ export default class HomeScreen extends React.Component {
             log('REFRESHED :( - Probs were not all the same');
             return true;
         }
+        if (prevAppData.TaharaEvents.length !== newAppData.TaharaEvents.length) {
+            log('REFRESHED :( - Tahara Events list were not the same length');
+            return true;
+        }
         log('Home Screen Refresh prevented');
         return false;
     }

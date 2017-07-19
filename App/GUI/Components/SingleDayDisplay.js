@@ -5,6 +5,8 @@ import Utils from '../../Code/JCal/Utils';
 import Zmanim from '../../Code/JCal/Zmanim';
 import { log, popUpMessage, isLargeScreen } from '../../Code/GeneralUtils';
 import { UserOccasion } from '../../Code/JCal/UserOccasion';
+import { TaharaEvent, TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
+import DataUtils from '../../Code/Data/DataUtils';
 /**
  * Display a home screen box for a single jewish date.
  *
@@ -66,6 +68,10 @@ export default class SingleDayDisplay extends Component {
             log('Refreshed Single Day:( - Probs were not all the same');
             return true;
         }
+        if (prevAppData.TaharaEvents.length !== newAppData.TaharaEvents.length) {
+            log('Refreshed Single Day:( - Tahara Events list were not the same length');
+            return true;
+        }
         log('Single Day Refresh Prevented');
         return false;
     }
@@ -74,6 +80,16 @@ export default class SingleDayDisplay extends Component {
     }
     newOccasion() {
         this.navigator.navigate('NewOccasion', this.props);
+    }
+    newTaharaEvent(taharaEventType) {
+        const appData = this.props.appData,
+            taharaEventsList = appData.TaharaEvents,
+            taharaEvent = new TaharaEvent(this.props.jdate, taharaEventType);
+        DataUtils.TaharaEventToDatabase(taharaEvent).then(() => {
+            taharaEventsList.push(taharaEvent);
+            this.props.onUpdate(appData);
+            popUpMessage(`${taharaEvent.toKnownDateString()} has been saved for this day.`);
+        });
     }
     showDateDetails() {
         this.navigator.navigate('DateDetails', this.props);
@@ -107,6 +123,8 @@ export default class SingleDayDisplay extends Component {
                 UserOccasion.getOccasionsForDate(jdate, appData.UserOccasions) : [],
             entries = appData.Settings.showEntryFlagOnHome ?
                 appData.EntryList.list.filter(e => Utils.isSameJdate(e.date, jdate)) : [],
+            taharaEvents = appData.Settings.showEntryFlagOnHome ?
+                appData.TaharaEvents.filter(te => Utils.isSameJdate(te.jdate, jdate)) : [],
             sdate = (isToday && systemDate) ? systemDate : jdate.getDate(),
             isDayOff = isToday && systemDate && (systemDate.getDate() !== jdate.getDate().getDate()),
             todayText = isToday && <Text style={styles.todayText}>
@@ -141,6 +159,11 @@ export default class SingleDayDisplay extends Component {
                     <TouchableOpacity key={i} onPress={() => this.editEntry(e)}>
                         <Text style={styles.entriesText}>{e.toKnownDateString()}</Text>
                     </TouchableOpacity>)),
+            taharaEventsText = taharaEvents.length > 0 &&
+                taharaEvents.map((e, i) =>
+                    <View style={styles.taharaEventsView}>
+                        <Text key={i} style={styles.taharaEventsText}>{'► ' + e.toKnownDateString()}</Text>
+                    </View>),
             backgroundColor = entries && entries.length > 0 ? '#fee' :
                 (flag ? '#fe9' :
                     (this.props.isHefeskDay ? '#f1fff1' :
@@ -189,7 +212,7 @@ export default class SingleDayDisplay extends Component {
                             </View>
                             <View style={{
                                 flex: 0,
-                                maxWidth: '40%'
+                                maxWidth: '50%'
                             }}>
                                 {flag &&
                                     <TouchableWithoutFeedback style={styles.additionsViews} onPress={this.showProblems}>
@@ -209,6 +232,11 @@ export default class SingleDayDisplay extends Component {
                                 {entries && entries.length > 0 &&
                                     <View style={styles.additionsViews}>
                                         {entriesText}
+                                    </View>
+                                }
+                                {taharaEvents && taharaEvents.length > 0 &&
+                                    <View style={styles.taharaEventsOuterView}>
+                                        {taharaEventsText}
                                     </View>
                                 }
                                 {occasions && occasions.length > 0 &&
@@ -231,13 +259,31 @@ export default class SingleDayDisplay extends Component {
                     <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
                             <Icon color='#aac' name='list' size={menuIconSize} />
-                            <Text style={styles.menuItemText}>New Entry</Text>
+                            <Text style={styles.menuItemText}>Entry</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => this.newTaharaEvent(TaharaEventType.Hefsek)} style={{ flex: 1 }}>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon color='#aac' name='event' size={menuIconSize} />
+                            <Text style={styles.menuItemText}>Hefsek</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => this.newTaharaEvent(TaharaEventType.Shailah)} style={{ flex: 1 }}>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon color='#aac' name='event' size={menuIconSize} />
+                            <Text style={styles.menuItemText}>Shailah</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => this.newTaharaEvent(TaharaEventType.Mikvah)} style={{ flex: 1 }}>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon color='#aac' name='event' size={menuIconSize} />
+                            <Text style={styles.menuItemText}>Mikvah</Text>
                         </View>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newOccasion} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
                             <Icon color='#aac' name='event' size={menuIconSize} />
-                            <Text style={styles.menuItemText}>New Event</Text>
+                            <Text style={styles.menuItemText}>Event</Text>
                         </View>
                     </TouchableWithoutFeedback>
                 </View>
@@ -307,13 +353,34 @@ const styles = StyleSheet.create({
     additionsViews: {
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 3
+        margin: 5
     },
     entriesText: {
         color: '#e55',
         fontWeight: 'bold',
         fontSize: 10,
         textAlign: 'center'
+    },
+    taharaEventsOuterView:{
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        margin:0,
+        padding:0
+    },
+    taharaEventsView: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 4,
+        margin: 2,
+        backgroundColor: '#F1D484',
+        borderRadius: 5
+    },
+    taharaEventsText: {
+        color: '#555',
+        fontSize: 10,
+        textAlign: 'left'
     },
     occasionText: {
         color: '#d87',
@@ -330,15 +397,15 @@ const styles = StyleSheet.create({
         color: '#955'
     },
     menuView: {
-        paddingLeft: '10%',
-        paddingRight: '10%',
+        paddingLeft: 5,
+        paddingRight: 5,
         paddingTop: 3,
         paddingBottom: 2,
         marginTop: 2,
         backgroundColor: '#00000010',
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         alignItems: 'flex-start'
     },
     menuItemText: {
