@@ -248,7 +248,7 @@ export default class DataUtils {
                                     NOT NULL,
                     dateAbs  INTEGER NOT NULL,
                     taharaEventType  INTEGER NOT NULL);`)
-            .then(async () => await DataUtils._executeSql('SELECT * from taharaEvents').then(
+            .then(async () => await DataUtils._executeSql('SELECT * from taharaEvents ORDER BY dateAbs').then(
                 results => {
                     list = results.list.map(te => new TaharaEvent(
                         new jDate(te.dateAbs),

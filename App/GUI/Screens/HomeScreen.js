@@ -9,6 +9,7 @@ import { isLargeScreen, log, goHomeToday, getTodayJdate } from '../../Code/Gener
 import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import AppData from '../../Code/Data/AppData';
+import { TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
 
 export default class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => (
@@ -37,6 +38,7 @@ export default class HomeScreen extends React.Component {
         this.renderItem = this.renderItem.bind(this);
         this._addDaysToEnd = this._addDaysToEnd.bind(this);
         this.getDaysList = this.getDaysList.bind(this);
+        this.getDayOfSeven = this.getDayOfSeven.bind(this);
         this.updateAppData = this.updateAppData.bind(this);
         this._navigatedShowing = this._navigatedShowing.bind(this);
         this._handleAppStateChange = this._handleAppStateChange.bind(this);
@@ -314,6 +316,16 @@ export default class HomeScreen extends React.Component {
         }
         return daysList;
     }
+    getDayOfSeven(jdate) {
+        const lastHefsek = this.state.appData.TaharaEvents.find(te =>
+            te.taharaEventType === TaharaEventType.Hefsek &&
+            te.jdate.Abs < jdate.Abs &&
+            te.jdate.diffDays(jdate) <= 8 //The 8th day will be flagged as a possible Mikvah day
+        );
+        if (lastHefsek) {
+            return lastHefsek.jdate.diffDays(jdate);
+        }
+    }
     /**
      * Render a single day
      * @param {{item:jDate}} param0 item will be a single jDate
@@ -333,6 +345,7 @@ export default class HomeScreen extends React.Component {
             navigator={this.navigator}
             onUpdate={this.updateAppData}
             lastEntryDate={lastEntryDate}
+            dayOfSeven={this.getDayOfSeven(item)}
             isHefeskDay={isHefeskDay} />;
     }
     render() {
