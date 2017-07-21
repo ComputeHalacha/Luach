@@ -77,7 +77,7 @@ export default class OccasionsScreen extends Component {
                     <ScrollView style={{ flex: 1 }}>
                         <CustomList
                             data={this.state.occasionList}
-                            iconName='list'
+                            iconname='remove-red-eye'
                             emptyListText='There are no Events in the list'
                             secondSection={occasion => <View style={GeneralStyles.inItemButtonList}>
                                 <TouchableHighlight

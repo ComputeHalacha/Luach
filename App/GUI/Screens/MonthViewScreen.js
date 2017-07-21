@@ -267,11 +267,11 @@ function TaharaEventIcon(props) {
             break;
         case TaharaEventType.Shailah:
             color = '#fa5';
-            name = 'notifications-active';
+            name = 'report-problem';
             break;
         case TaharaEventType.Mikvah:
             color = '#99f';
-            name = 'sentiment-satisfied';
+            name = 'beenhere';
             break;
         case TaharaEventType.Bedika:
             color = '#f5f';
