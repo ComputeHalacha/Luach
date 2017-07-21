@@ -7,6 +7,7 @@ import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import Month from '../../Code/Month';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
+import { TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
 import { GeneralStyles } from '../styles';
 
 export default class MonthViewScreen extends React.Component {
@@ -158,6 +159,13 @@ export default class MonthViewScreen extends React.Component {
                                     <Text style={{ fontSize: 9, textAlign: 'center' }}>
                                         {holiday ? holiday : shabbos}</Text>
                                 </View>}
+                            {singleDay.taharaEvents.length > 0 &&
+                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'space-around', justifyContent: 'center' }}>
+                                    {singleDay.taharaEvents.map((te, i) =>
+                                        <TaharaEventIcon key={i} taharaEvent={te} />
+                                    )}
+                                </View>
+                            }
                         </View>
                     </View>
                 </TouchableOpacity>)
@@ -248,6 +256,29 @@ export default class MonthViewScreen extends React.Component {
             </View>
         </View >;
     }
+}
+
+function TaharaEventIcon(props) {
+    let color, name;
+    switch (props.taharaEvent.taharaEventType) {
+        case TaharaEventType.Hefsek:
+            color = '#4c4';
+            name = 'flare';
+            break;
+        case TaharaEventType.Shailah:
+            color = '#fa5';
+            name = 'notifications-active';
+            break;
+        case TaharaEventType.Mikvah:
+            color = '#99f';
+            name = 'sentiment-satisfied';
+            break;
+        case TaharaEventType.Bedika:
+            color = '#f5f';
+            name = 'remove-red-eye';
+            break;
+    }
+    return <Icon color={color} name={name} size={18} />;
 }
 
 const styles = StyleSheet.create({

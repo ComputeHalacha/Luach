@@ -166,7 +166,7 @@ export default class SingleDayDisplay extends Component {
                     (isPossibleHefsekDay ? '#f1fff1' :
                         (isToday ? '#e2e2f0' :
                             (isSpecialDay ? '#eef' : '#fff')))),
-            menuIconSize = (isLargeScreen ? 20 : 15);
+            menuIconSize = (isLargeScreen() ? 20 : 15);
         return (
             <View style={[styles.container, { backgroundColor: backgroundColor }]}>
                 <View>
@@ -240,30 +240,33 @@ export default class SingleDayDisplay extends Component {
                             <Text style={styles.menuItemText}>Entry</Text>
                         </View>
                     </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Hefsek)} style={{ flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
-                            <Icon color='#aac' name='event' size={menuIconSize} />
-                            <Text style={styles.menuItemText}>Hefsek</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Shailah)} style={{ flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
-                            <Icon color='#aac' name='event' size={menuIconSize} />
-                            <Text style={styles.menuItemText}>Shailah</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Mikvah)} style={{ flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
-                            <Icon color='#aac' name='event' size={menuIconSize} />
-                            <Text style={styles.menuItemText}>Mikvah</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newOccasion} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
                             <Icon color='#aac' name='event' size={menuIconSize} />
                             <Text style={styles.menuItemText}>Event</Text>
                         </View>
                     </TouchableWithoutFeedback>
+                    {(!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Hefsek)) &&
+                        <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Hefsek)} style={{ flex: 1 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <Icon color='#aac' name='flare' size={menuIconSize} />
+                                <Text style={styles.menuItemText}>Hefsek</Text>
+                            </View>
+                        </TouchableWithoutFeedback>}
+                    {(!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Shailah)) &&
+                        <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Shailah)} style={{ flex: 1 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <Icon color='#aac' name='notifications-active' size={menuIconSize} />
+                                <Text style={styles.menuItemText}>Shailah</Text>
+                            </View>
+                        </TouchableWithoutFeedback>}
+                    {(!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah)) &&
+                        <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Mikvah)} style={{ flex: 1 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <Icon color='#aac' name='sentiment-satisfied' size={menuIconSize} />
+                                <Text style={styles.menuItemText}>Mikvah</Text>
+                            </View>
+                        </TouchableWithoutFeedback>}
                 </View>
             </View>
         );
@@ -357,11 +360,28 @@ function TaharaEventsComponent(props) {
     if (props.list.length > 0) {
         return (<View style={styles.taharaEventsOuterView}>
             {props.list.map((te, i) => {
-                const bgColor = te.taharaEventType === TaharaEventType.Shailah ? '#f1d484' :
-                    (te.taharaEventType === TaharaEventType.Mikvah ? '#d4d4ff' :
-                        (te.taharaEventType === TaharaEventType.Hefsek ? '#d4ffd4' : '#ffd4f1'));
+                let bgColor, iconName;
+                switch (te.taharaEventType) {
+                    case TaharaEventType.Hefsek:
+                        bgColor = '#d4ffd4';
+                        iconName = 'flare';
+                        break;
+                    case TaharaEventType.Shailah:
+                        bgColor = '#f1d484';
+                        iconName = 'notifications-active';
+                        break;
+                    case TaharaEventType.Mikvah:
+                        bgColor = '#d4d4ff';
+                        iconName = 'sentiment-satisfied';
+                        break;
+                    case TaharaEventType.Bedika:
+                        bgColor = '#ffd4f1';
+                        iconName = 'remove-red-eye';
+                        break;
+                }
                 return (<TouchableOpacity key={i} onPress={() => props.remove(te.taharaEventType)}>
                     <View style={[styles.taharaEventsView, { backgroundColor: bgColor }]}>
+                        <Icon color='#555' name={iconName} size={isLargeScreen() ? 16 : 11} />
                         <Text style={styles.taharaEventsText}>
                             {te.toTypeString()}
                         </Text>
@@ -451,16 +471,17 @@ const styles = StyleSheet.create({
         padding: 0
     },
     taharaEventsView: {
-        justifyContent: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
         alignItems: 'center',
-        padding: 5,
+        padding: 3,
         margin: 2,
         borderRadius: 5
     },
     taharaEventsText: {
         color: '#555',
         fontSize: 10,
-        textAlign: 'left'
+        marginLeft:2
     },
     occasionText: {
         color: '#d87',
@@ -489,7 +510,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start'
     },
     menuItemText: {
-        fontSize: (isLargeScreen ? 13 : 10),
+        fontSize: (isLargeScreen() ? 13 : 9),
         color: '#889'
     },
     bottomSection: {
