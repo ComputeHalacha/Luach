@@ -112,7 +112,7 @@ export default class SideMenu extends React.PureComponent {
                             this.navigate('Entries', params);
                     }}>
                     <View style={styles.menuView}>
-                        <Icon iconStyle={styles.menuIcon} name='list' />
+                        <Icon iconStyle={styles.menuIcon} name='remove-red-eye' />
                         <Text style={styles.menuText}>Entries</Text>
                     </View>
                 </TouchableHighlight>

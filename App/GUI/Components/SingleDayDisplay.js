@@ -230,13 +230,13 @@ export default class SingleDayDisplay extends Component {
                 <View style={styles.menuView}>
                     <TouchableWithoutFeedback onPress={this.showDateDetails} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
-                            <Icon color='#aac' name='info' size={menuIconSize} />
+                            <Icon color='#aac' name='schedule' size={menuIconSize} />
                             <Text style={styles.menuItemText}>Zmanim</Text>
                         </View>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
-                            <Icon color='#aac' name='list' size={menuIconSize} />
+                            <Icon color='#aac' name='remove-red-eye' size={menuIconSize} />
                             <Text style={styles.menuItemText}>Entry</Text>
                         </View>
                     </TouchableWithoutFeedback>
@@ -256,14 +256,14 @@ export default class SingleDayDisplay extends Component {
                     {(!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Shailah)) &&
                         <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Shailah)} style={{ flex: 1 }}>
                             <View style={{ alignItems: 'center' }}>
-                                <Icon color='#aac' name='notifications-active' size={menuIconSize} />
+                                <Icon color='#aac' name='report-problem' size={menuIconSize} />
                                 <Text style={styles.menuItemText}>Shailah</Text>
                             </View>
                         </TouchableWithoutFeedback>}
                     {(!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah)) &&
                         <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Mikvah)} style={{ flex: 1 }}>
                             <View style={{ alignItems: 'center' }}>
-                                <Icon color='#aac' name='sentiment-satisfied' size={menuIconSize} />
+                                <Icon color='#aac' name='beenhere' size={menuIconSize} />
                                 <Text style={styles.menuItemText}>Mikvah</Text>
                             </View>
                         </TouchableWithoutFeedback>}
@@ -368,11 +368,11 @@ function TaharaEventsComponent(props) {
                         break;
                     case TaharaEventType.Shailah:
                         bgColor = '#f1d484';
-                        iconName = 'notifications-active';
+                        iconName = 'report-problem';
                         break;
                     case TaharaEventType.Mikvah:
                         bgColor = '#d4d4ff';
-                        iconName = 'sentiment-satisfied';
+                        iconName = 'beenhere';
                         break;
                     case TaharaEventType.Bedika:
                         bgColor = '#ffd4f1';
