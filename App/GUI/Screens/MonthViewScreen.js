@@ -159,8 +159,9 @@ export default class MonthViewScreen extends React.Component {
                                     <Text style={{ fontSize: 9, textAlign: 'center' }}>
                                         {holiday ? holiday : shabbos}</Text>
                                 </View>}
-                            {singleDay.taharaEvents.length > 0 &&
-                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'space-around', justifyContent: 'center' }}>
+                            {this.appData.Settings.showEntryFlagOnHome &&
+                                singleDay.taharaEvents.length > 0 &&
+                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
                                     {singleDay.taharaEvents.map((te, i) =>
                                         <TaharaEventIcon key={i} taharaEvent={te} />
                                     )}
@@ -262,11 +263,11 @@ function TaharaEventIcon(props) {
     let color, name;
     switch (props.taharaEvent.taharaEventType) {
         case TaharaEventType.Hefsek:
-            color = '#4c4';
+            color = '#8c8';
             name = 'flare';
             break;
         case TaharaEventType.Shailah:
-            color = '#fa5';
+            color = '#f1d484';
             name = 'report-problem';
             break;
         case TaharaEventType.Mikvah:
