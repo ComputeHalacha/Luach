@@ -26,7 +26,9 @@ export default class SingleDayDisplay extends Component {
         super(props);
         this.navigator = props.navigator;
         this.newEntry = this.newEntry.bind(this);
+        this.editEntry = this.editEntry.bind(this);
         this.newOccasion = this.newOccasion.bind(this);
+        this.editOccasion = this.editOccasion.bind(this);
         this.showDateDetails = this.showDateDetails.bind(this);
         this.showProblems = this.showProblems.bind(this);
         this.changeLocation = this.changeLocation.bind(this);
@@ -147,8 +149,9 @@ export default class SingleDayDisplay extends Component {
                 {`TODAY${isDayOff ? '*' : ''}`}</Text>,
             isSpecialDay = jdate.DayOfWeek === 6 || jdate.getMajorHoliday(location.Israel),
             //We only show the hefsek if there wasn't an actual hefsek on that day
-            isPossibleHefsekDay = this.props.isHefeskDay && !taharaEvents.some(te =>
-                te.taharaEventType === TaharaEventType.Hefsek),
+            isPossibleHefsekDay = (appData.Settings.showEntryFlagOnHome &&
+                this.props.isHefeskDay && !taharaEvents.some(te =>
+                    te.taharaEventType === TaharaEventType.Hefsek)),
             dailyInfos = jdate.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
             suntimes = Zmanim.getSunTimes(jdate, location, true),
@@ -195,36 +198,36 @@ export default class SingleDayDisplay extends Component {
                                 <Text>{'Sunrise: ' + sunrise}</Text>
                                 <Text>{'Sunset: ' + sunset}</Text>
                             </View>
-                            <View style={{
-                                flex: 0,
-                                maxWidth: '50%'
-                            }}>
+                            <View style={{ flex: 0, maxWidth: '50%', paddingTop: 10, paddingBottom: 10 }}>
                                 {flag &&
                                     <FlagComponent onPress={this.showProblems} />}
                                 {appData.Settings.showEntryFlagOnHome &&
-                                    <DaysLastEntryComponent
-                                        lastEntryDate={this.props.lastEntryDate}
-                                        currDate={jdate}
-                                        onPress={() => this.navigator.navigate('Entries', { ...this.props })} />}
-                                <EntriesComponent
-                                    list={entries}
-                                    edit={this.editEntry} />
-                                {isPossibleHefsekDay &&
-                                    <PossibleHefsekComponent
-                                        onPress={() => this.toggleTaharaEvent(TaharaEventType.Hefsek)} />}
-                                <DayOfSevenComponent
-                                    dayOfSeven={this.props.dayOfSeven}
-                                    hasMikvah={taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah)}
-                                    onPress={() => this.toggleTaharaEvent(TaharaEventType.Mikvah)} />
-                                <TaharaEventsComponent
-                                    list={taharaEvents}
-                                    remove={this.toggleTaharaEvent} />
-                                <OccasionsComponent
-                                    list={occasions}
-                                    edit={this.editOccasion} />
+                                    <View>
+                                        <DaysLastEntryComponent
+                                            lastEntryDate={this.props.lastEntryDate}
+                                            currDate={jdate}
+                                            onPress={() => this.navigator.navigate('Entries', { ...this.props })} />
+                                        <EntriesComponent
+                                            list={entries}
+                                            edit={this.editEntry} />
+                                        {isPossibleHefsekDay &&
+                                            <PossibleHefsekComponent
+                                                onPress={() => this.toggleTaharaEvent(TaharaEventType.Hefsek)} />}
+                                        <DayOfSevenComponent
+                                            dayOfSeven={this.props.dayOfSeven}
+                                            hasMikvah={taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah)}
+                                            onPress={() => this.toggleTaharaEvent(TaharaEventType.Mikvah)} />
+                                        <TaharaEventsComponent
+                                            list={taharaEvents}
+                                            remove={this.toggleTaharaEvent} />
+                                    </View>
+                                }
                             </View>
                         </View>
                     </View>
+                    <OccasionsComponent
+                        list={occasions}
+                        edit={this.editOccasion} />
                     {isDayOff && <DayOffComponent dayOfWeek={jdate.dayOfWeek} />}
                 </View>
                 <View style={styles.menuView}>
@@ -246,21 +249,24 @@ export default class SingleDayDisplay extends Component {
                             <Text style={styles.menuItemText}>Event</Text>
                         </View>
                     </TouchableWithoutFeedback>
-                    {(!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Hefsek)) &&
+                    {appData.Settings.showEntryFlagOnHome &&
+                        (!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Hefsek)) &&
                         <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Hefsek)} style={{ flex: 1 }}>
                             <View style={{ alignItems: 'center' }}>
                                 <Icon color='#aac' name='flare' size={menuIconSize} />
                                 <Text style={styles.menuItemText}>Hefsek</Text>
                             </View>
                         </TouchableWithoutFeedback>}
-                    {(!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Shailah)) &&
+                    {appData.Settings.showEntryFlagOnHome &&
+                        (!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Shailah)) &&
                         <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Shailah)} style={{ flex: 1 }}>
                             <View style={{ alignItems: 'center' }}>
                                 <Icon color='#aac' name='report-problem' size={menuIconSize} />
                                 <Text style={styles.menuItemText}>Shailah</Text>
                             </View>
                         </TouchableWithoutFeedback>}
-                    {(!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah)) &&
+                    {appData.Settings.showEntryFlagOnHome &&
+                        (!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah)) &&
                         <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Mikvah)} style={{ flex: 1 }}>
                             <View style={{ alignItems: 'center' }}>
                                 <Icon color='#aac' name='beenhere' size={menuIconSize} />
@@ -285,10 +291,13 @@ function EntriesComponent(props) {
 
 function OccasionsComponent(props) {
     if (props.list.length > 0) {
-        return (<View style={styles.additionsViews}>
+        return (<View style={styles.eventsView}>
             {props.list.map((o, i) =>
                 <TouchableOpacity key={i} onPress={() => props.edit(o)}>
-                    <Text style={styles.occasionText} key={i}>{o.title}</Text>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Icon size={12} color='#aae' name='event' />
+                        <Text style={styles.occasionText} key={i}>{o.title}</Text>
+                    </View>
                 </TouchableOpacity>)
             }
         </View>);
@@ -315,7 +324,7 @@ function FlagComponent(props) {
 }
 
 function DayOffComponent(props) {
-    return (<View style={{ alignItems: 'center' }}>
+    return (<View style={{ alignItems: 'center', marginTop: 10 }}>
         <Text style={styles.dayOffMessage}>
             {'* NOTE: As it is currently after Sunset,\n' +
                 `  the correct Jewish Day is ${Utils.dowEng[props.dayOfWeek]}.`}
@@ -328,8 +337,13 @@ function DaysLastEntryComponent(props) {
         const dayNum = props.lastEntryDate.diffDays(props.currDate) + 1;
         if (dayNum > 1) {
             return (<TouchableOpacity onPress={props.onPress}>
-                <View style={styles.additionsViews}>
-                    <Text style={{ fontSize: 10, color: '#e55' }}>{Utils.toSuffixed(dayNum) + ' day'}</Text>
+                <View style={[styles.additionsViews, { flexDirection: 'row' }]}>
+                    <Icon size={12} color='#e88' name='remove-red-eye' />
+                    <Text style={{
+                        fontSize: 10,
+                        color: '#e55',
+                        paddingLeft: 3
+                    }}>{Utils.toSuffixed(dayNum) + ' day'}</Text>
                 </View>
             </TouchableOpacity>);
         }
@@ -337,22 +351,33 @@ function DaysLastEntryComponent(props) {
     return null;
 }
 
+
 function DayOfSevenComponent(props) {
     if (props.dayOfSeven && props.dayOfSeven > 0) {
         return (<View style={styles.additionsViews}>
-            {props.dayOfSeven < 8 &&
-                (<Text style={{ fontSize: 10, color: '#55e', fontWeight: 'bold' }}>
-                    {Utils.toSuffixed(props.dayOfSeven) + ' day of 7'}
-                </Text>) ||
-                ((!props.hasMikvah) &&
-                    <TouchableOpacity onPress={props.onPress}>
-                        <Text style={{ fontSize: 10, color: '#55e', fontStyle: 'italic', fontWeight: 'bold' }}>
-                            Possible Mikvah Day
+            <Text style={{
+                fontSize: 10,
+                color: '#99b',
+                textAlign: 'center'
+            }}>
+                {Utils.toSuffixed(props.dayOfSeven) + ' day of 7\nfrom Hefsek Tahara'}
+            </Text>
+            {(props.dayOfSeven === 7 && (!props.hasMikvah) &&
+                (<TouchableOpacity onPress={props.onPress}>
+                    <Text style={{
+                        fontSize: 10,
+                        color: '#55e',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        paddingTop: 4
+
+                    }}>
+                        Mikvah possible after nightfall
                     </Text>
-                    </TouchableOpacity>)
-            }
+                </TouchableOpacity>))}
         </View>);
     }
+
     return null;
 }
 
@@ -456,6 +481,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         margin: 5
     },
+    eventsView: {
+        justifyContent: 'center',
+        marginLeft: 15,
+        marginRight: 15,
+        marginBottom: 10
+    },
     entriesText: {
         color: '#e55',
         fontWeight: 'bold',
@@ -463,12 +494,9 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     taharaEventsOuterView: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
-        margin: 0,
-        padding: 0
+        marginTop: 5
     },
     taharaEventsView: {
         flexDirection: 'row',
@@ -481,12 +509,13 @@ const styles = StyleSheet.create({
     taharaEventsText: {
         color: '#555',
         fontSize: 10,
-        marginLeft:2
+        marginLeft: 2
     },
     occasionText: {
-        color: '#d87',
+        color: '#88d',
+        paddingLeft: 2,
         fontWeight: 'bold',
-        padding: 4
+        fontSize: 11
     },
     hefsekText: {
         fontSize: 10,
@@ -494,7 +523,7 @@ const styles = StyleSheet.create({
         fontStyle: 'italic'
     },
     dayOffMessage: {
-        fontSize: 11,
+        fontSize: 10,
         color: '#955'
     },
     menuView: {

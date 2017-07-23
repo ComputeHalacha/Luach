@@ -320,7 +320,7 @@ export default class HomeScreen extends React.Component {
         const lastHefsek = this.state.appData.TaharaEvents.find(te =>
             te.taharaEventType === TaharaEventType.Hefsek &&
             te.jdate.Abs < jdate.Abs &&
-            te.jdate.diffDays(jdate) <= 8 //The 8th day will be flagged as a possible Mikvah day
+            te.jdate.diffDays(jdate) <= 7
         );
         if (lastHefsek) {
             return lastHefsek.jdate.diffDays(jdate);
