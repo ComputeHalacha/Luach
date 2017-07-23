@@ -9,6 +9,7 @@ import Entry from '../Chashavshavon/Entry';
 import EntryList from '../Chashavshavon/EntryList';
 import { NightDay, Onah } from '../Chashavshavon/Onah';
 import { Kavuah } from '../Chashavshavon/Kavuah';
+import { TaharaEvent } from '../Chashavshavon/TaharaEvent';
 
 SQLite.DEBUG(!!__DEV__);
 SQLite.enablePromise(true);
@@ -36,7 +37,7 @@ export default class DataUtils {
                     navigateBySecularDate: dbSet.navigateBySecularDate,
                     showIgnoredKavuahs: dbSet.showIgnoredKavuahs,
                     noProbsAfterEntry: dbSet.noProbsAfterEntry,
-                    hideHelp:dbSet.hideHelp,
+                    hideHelp: dbSet.hideHelp,
                     requirePIN: dbSet.requirePIN,
                     PIN: dbSet.PIN
                 });
@@ -219,7 +220,6 @@ export default class DataUtils {
             entries = entries.list;
         }
         let list = [];
-        //DataUtils._executeSql('DELETE from kavuahs');
         await DataUtils._executeSql('SELECT * from kavuahs')
             .then(results => {
                 list = results.list.map(k => new Kavuah(k.kavuahType,
@@ -232,6 +232,35 @@ export default class DataUtils {
             })
             .catch(err => {
                 warn('Error trying to get all kavuahs from the database.');
+                error(err);
+            });
+        return list;
+    }
+    /**
+    * Gets all TaharaEvents from the database.
+    */
+    static async GetAllTaharaEvents() {
+        let list = [];
+        //Because this table was added after the app launched, we add it if needed during app load.
+        await DataUtils._executeSql(`CREATE TABLE IF NOT EXISTS taharaEvents (
+                    taharaEventId INTEGER PRIMARY KEY ASC
+                                    UNIQUE
+                                    NOT NULL,
+                    dateAbs  INTEGER NOT NULL,
+                    taharaEventType  INTEGER NOT NULL);`)
+            .then(async () => await DataUtils._executeSql('SELECT * from taharaEvents ORDER BY dateAbs').then(
+                results => {
+                    list = results.list.map(te => new TaharaEvent(
+                        new jDate(te.dateAbs),
+                        te.taharaEventType,
+                        te.taharaEventId));
+                })
+                .catch(err => {
+                    warn('Error trying to get all taharaEvents from the database.');
+                    error(err);
+                }))
+            .catch(err => {
+                warn('Error trying to create taharaEvents  table on the database.');
                 error(err);
             });
         return list;
@@ -345,6 +374,47 @@ export default class DataUtils {
             .then(() => AppData.updateGlobalProbs(entry, true))
             .catch(err => {
                 warn(`Error trying to delete entry id ${entry.entryId} from the database`);
+                error(err);
+            });
+    }
+    static async TaharaEventToDatabase(taharaEvent) {
+        if (taharaEvent.hasId) {
+            await DataUtils._executeSql('UPDATE taharaEvents SET dateAbs=?, taharaEventType=? WHERE taharaEventId=?',
+                [
+                    taharaEvent.jdate.Abs,
+                    taharaEvent.taharaEventType,
+                    taharaEvent.taharaEventId
+                ])
+                .then(() => {
+                    log(`Updated TaharaEvent Id ${taharaEvent.taharaEventId.toString()}`);
+                })
+                .catch(err => {
+                    warn(`Error trying to update taharaEvent id ${taharaEvent.taharaEventId.toString()} to the database.`);
+                    error(err);
+                });
+        }
+        else {
+            await DataUtils._executeSql('INSERT INTO taharaEvents (dateAbs, taharaEventType) VALUES (?, ?)',
+                [
+                    taharaEvent.jdate.Abs,
+                    taharaEvent.taharaEventType
+                ])
+                .then(results => {
+                    taharaEvent.taharaEventId = results.id;
+                })
+                .catch(err => {
+                    warn('Error trying to insert taharaEvent into the database.');
+                    error(err);
+                });
+        }
+    }
+    static async DeleteTaharaEvent(taharaEvent) {
+        if (!taharaEvent.hasId) {
+            throw 'TaharaEvents can only be deleted from the database if they have an id';
+        }
+        await DataUtils._executeSql('DELETE from taharaEvents where taharaEventId=?', [taharaEvent.taharaEventId])
+            .catch(err => {
+                warn(`Error trying to delete taharaEvent id ${taharaEvent.taharaEventId} from the database`);
                 error(err);
             });
     }

@@ -20,7 +20,7 @@ export default class SettingsScreen extends Component {
                         url: 'index.html',
                         title: 'Help'
                     })}>
-                <View style={{marginRight:5}}>
+                <View style={{ marginRight: 5 }}>
                     <Icon name='help'
                         color='#aac'
                         size={25} />
@@ -176,16 +176,16 @@ export default class SettingsScreen extends Component {
                                 value={!!calcKavuahsOnNewEntry} />
                         </View>
                         <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Show Entry, Hefsek Tahara and Mikva information?</Text>
+                            <Switch style={GeneralStyles.switch}
+                                onValueChange={value => this.update('showEntryFlagOnHome', value)}
+                                value={!!showEntryFlagOnHome} />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Show flags for problem dates on Main Screen?</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('showProbFlagOnHome', value)}
                                 value={!!showProbFlagOnHome} />
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Show flags for dates that have an Entry on Main Screen</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('showEntryFlagOnHome', value)}
-                                value={!!showEntryFlagOnHome} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Calendar displays current:</Text>
@@ -214,7 +214,7 @@ export default class SettingsScreen extends Component {
                                 onValueChange={value => this.update('noProbsAfterEntry', value)}
                                 value={!!noProbsAfterEntry} />
                         </View>
-                         <View style={GeneralStyles.formRow}>
+                        <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Hide Help Button</Text>
                             <Switch style={GeneralStyles.switch}
                                 onValueChange={value => this.update('hideHelp', value)}

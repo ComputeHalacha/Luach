@@ -5,6 +5,8 @@ import Utils from '../../Code/JCal/Utils';
 import Zmanim from '../../Code/JCal/Zmanim';
 import { log, popUpMessage, isLargeScreen } from '../../Code/GeneralUtils';
 import { UserOccasion } from '../../Code/JCal/UserOccasion';
+import { TaharaEvent, TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
+import DataUtils from '../../Code/Data/DataUtils';
 /**
  * Display a home screen box for a single jewish date.
  *
@@ -16,17 +18,21 @@ import { UserOccasion } from '../../Code/JCal/UserOccasion';
  *   navigator
  *   onUpdate
  *   lastEntryDate
- *   isHefeskDay
+ *   dayOfSeven
+ *   isHefeskDay - is today the 5th day after the last entry?
  */
 export default class SingleDayDisplay extends Component {
     constructor(props) {
         super(props);
         this.navigator = props.navigator;
         this.newEntry = this.newEntry.bind(this);
+        this.editEntry = this.editEntry.bind(this);
         this.newOccasion = this.newOccasion.bind(this);
+        this.editOccasion = this.editOccasion.bind(this);
         this.showDateDetails = this.showDateDetails.bind(this);
         this.showProblems = this.showProblems.bind(this);
         this.changeLocation = this.changeLocation.bind(this);
+        this.toggleTaharaEvent = this.toggleTaharaEvent.bind(this);
     }
     componentWillUpdate(nextProps) {
         const prevAppData = this.props.appData,
@@ -66,6 +72,10 @@ export default class SingleDayDisplay extends Component {
             log('Refreshed Single Day:( - Probs were not all the same');
             return true;
         }
+        if (prevAppData.TaharaEvents.length !== newAppData.TaharaEvents.length) {
+            log('Refreshed Single Day:( - Tahara Events list were not the same length');
+            return true;
+        }
         log('Single Day Refresh Prevented');
         return false;
     }
@@ -74,6 +84,30 @@ export default class SingleDayDisplay extends Component {
     }
     newOccasion() {
         this.navigator.navigate('NewOccasion', this.props);
+    }
+    toggleTaharaEvent(taharaEventType) {
+        const appData = this.props.appData,
+            taharaEventsList = appData.TaharaEvents,
+            previousEvent = taharaEventsList.find(te =>
+                Utils.isSameJdate(te.jdate, this.props.jdate) &&
+                te.taharaEventType === taharaEventType
+            );
+        if (!previousEvent) {
+            const taharaEvent = new TaharaEvent(this.props.jdate, taharaEventType);
+            DataUtils.TaharaEventToDatabase(taharaEvent).then(() => {
+                taharaEventsList.push(taharaEvent);
+                appData.taharaEventsList = TaharaEvent.sortList(taharaEventsList);
+                this.props.onUpdate(appData);
+            });
+        }
+        else {
+            const index = taharaEventsList.indexOf(previousEvent);
+            DataUtils.DeleteTaharaEvent(previousEvent).then(() => {
+                taharaEventsList.splice(index, 1);
+                appData.TaharaEvents = taharaEventsList;
+                this.props.onUpdate(appData);
+            });
+        }
     }
     showDateDetails() {
         this.navigator.navigate('DateDetails', this.props);
@@ -103,22 +137,21 @@ export default class SingleDayDisplay extends Component {
             location = appData.Settings.location,
             flag = appData.Settings.showProbFlagOnHome &&
                 appData.ProblemOnahs.some(po => Utils.isSameJdate(po.jdate, jdate)),
-            occasions = appData.UserOccasions.length > 0 ?
-                UserOccasion.getOccasionsForDate(jdate, appData.UserOccasions) : [],
-            entries = appData.Settings.showEntryFlagOnHome ?
-                appData.EntryList.list.filter(e => Utils.isSameJdate(e.date, jdate)) : [],
+            occasions = (appData.UserOccasions.length > 0 ?
+                UserOccasion.getOccasionsForDate(jdate, appData.UserOccasions) : []),
+            entries = (appData.Settings.showEntryFlagOnHome ?
+                appData.EntryList.list.filter(e => Utils.isSameJdate(e.date, jdate)) : []),
+            taharaEvents = (appData.Settings.showEntryFlagOnHome ?
+                appData.TaharaEvents.filter(te => Utils.isSameJdate(te.jdate, jdate)) : []),
             sdate = (isToday && systemDate) ? systemDate : jdate.getDate(),
             isDayOff = isToday && systemDate && (systemDate.getDate() !== jdate.getDate().getDate()),
             todayText = isToday && <Text style={styles.todayText}>
                 {`TODAY${isDayOff ? '*' : ''}`}</Text>,
-            jdateOffText = isDayOff &&
-                <View style={{ alignItems: 'center' }}>
-                    <Text style={styles.dayOffMessage}>
-                        {'* NOTE: As it is currently after Sunset,\n' +
-                            `  the correct Jewish Day is ${Utils.dowEng[jdate.DayOfWeek]}.`}
-                    </Text>
-                </View>,
             isSpecialDay = jdate.DayOfWeek === 6 || jdate.getMajorHoliday(location.Israel),
+            //We only show the hefsek if there wasn't an actual hefsek on that day
+            isPossibleHefsekDay = (appData.Settings.showEntryFlagOnHome &&
+                this.props.isHefeskDay && !taharaEvents.some(te =>
+                    te.taharaEventType === TaharaEventType.Hefsek)),
             dailyInfos = jdate.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
             suntimes = Zmanim.getSunTimes(jdate, location, true),
@@ -131,34 +164,12 @@ export default class SingleDayDisplay extends Component {
                     Utils.getTimeString(Zmanim.getCandleLightingFromSunTimes(suntimes, location))}</Text>,
             eiruvTavshilin = jdate.hasEiruvTavshilin(location.Israel) &&
                 <Text style={{ fontWeight: 'bold' }}>Eiruv Tavshilin</Text>,
-            occasionText = occasions && occasions.length > 0 &&
-                occasions.map((o, i) =>
-                    <TouchableOpacity key={i} onPress={() => this.editOccasion(o)}>
-                        <Text style={styles.occasionText} key={i}>{o.title}</Text>
-                    </TouchableOpacity>),
-            entriesText = entries && entries.length > 0 &&
-                entries.map((e, i) => (
-                    <TouchableOpacity key={i} onPress={() => this.editEntry(e)}>
-                        <Text style={styles.entriesText}>{e.toKnownDateString()}</Text>
-                    </TouchableOpacity>)),
             backgroundColor = entries && entries.length > 0 ? '#fee' :
                 (flag ? '#fe9' :
-                    (this.props.isHefeskDay ? '#f1fff1' :
+                    (isPossibleHefsekDay ? '#f1fff1' :
                         (isToday ? '#e2e2f0' :
                             (isSpecialDay ? '#eef' : '#fff')))),
-            menuIconSize = (isLargeScreen ? 20 : 15);
-        let daysSinceLastEntry;
-        if (appData.Settings.showEntryFlagOnHome && this.props.lastEntryDate) {
-            const dayNum = this.props.lastEntryDate.diffDays(jdate) + 1;
-            if (dayNum > 1) {
-                daysSinceLastEntry =
-                    <TouchableOpacity onPress={() => this.navigator.navigate('Entries', { ...this.props })}>
-                        <View style={styles.additionsViews}>
-                            <Text style={{ fontSize: 10, color: '#e55' }}>{Utils.toSuffixed(dayNum) + ' day'}</Text>
-                        </View>
-                    </TouchableOpacity>;
-            }
-        }
+            menuIconSize = (isLargeScreen() ? 20 : 15);
         return (
             <View style={[styles.container, { backgroundColor: backgroundColor }]}>
                 <View>
@@ -187,63 +198,224 @@ export default class SingleDayDisplay extends Component {
                                 <Text>{'Sunrise: ' + sunrise}</Text>
                                 <Text>{'Sunset: ' + sunset}</Text>
                             </View>
-                            <View style={{
-                                flex: 0,
-                                maxWidth: '40%'
-                            }}>
+                            <View style={{ flex: 0, maxWidth: '50%', paddingTop: 10, paddingBottom: 10 }}>
                                 {flag &&
-                                    <TouchableWithoutFeedback style={styles.additionsViews} onPress={this.showProblems}>
-                                        <View style={styles.additionsViews}>
-                                            <View style={styles.flagView}>
-                                                <Icon size={15} name='flag' color={'#fff'} />
-                                            </View>
-                                        </View>
-                                    </TouchableWithoutFeedback>
-                                }
-                                {this.props.isHefeskDay &&
-                                    <View style={styles.additionsViews}>
-                                        <Text style={styles.hefsekText}>Hefsek Tahara</Text>
-                                    </View>
-                                }
-                                {daysSinceLastEntry}
-                                {entries && entries.length > 0 &&
-                                    <View style={styles.additionsViews}>
-                                        {entriesText}
-                                    </View>
-                                }
-                                {occasions && occasions.length > 0 &&
-                                    <View style={styles.additionsViews}>
-                                        {occasionText}
+                                    <FlagComponent onPress={this.showProblems} />}
+                                {appData.Settings.showEntryFlagOnHome &&
+                                    <View>
+                                        <DaysLastEntryComponent
+                                            lastEntryDate={this.props.lastEntryDate}
+                                            currDate={jdate}
+                                            onPress={() => this.navigator.navigate('Entries', { ...this.props })} />
+                                        <EntriesComponent
+                                            list={entries}
+                                            edit={this.editEntry} />
+                                        {isPossibleHefsekDay &&
+                                            <PossibleHefsekComponent
+                                                onPress={() => this.toggleTaharaEvent(TaharaEventType.Hefsek)} />}
+                                        <DayOfSevenComponent
+                                            dayOfSeven={this.props.dayOfSeven}
+                                            hasMikvah={taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah)}
+                                            onPress={() => this.toggleTaharaEvent(TaharaEventType.Mikvah)} />
+                                        <TaharaEventsComponent
+                                            list={taharaEvents}
+                                            remove={this.toggleTaharaEvent} />
                                     </View>
                                 }
                             </View>
                         </View>
                     </View>
-                    {jdateOffText}
+                    <OccasionsComponent
+                        list={occasions}
+                        edit={this.editOccasion} />
+                    {isDayOff && <DayOffComponent dayOfWeek={jdate.dayOfWeek} />}
                 </View>
                 <View style={styles.menuView}>
                     <TouchableWithoutFeedback onPress={this.showDateDetails} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
-                            <Icon color='#aac' name='info' size={menuIconSize} />
+                            <Icon color='#aac' name='schedule' size={menuIconSize} />
                             <Text style={styles.menuItemText}>Zmanim</Text>
                         </View>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
-                            <Icon color='#aac' name='list' size={menuIconSize} />
-                            <Text style={styles.menuItemText}>New Entry</Text>
+                            <Icon color='#aac' name='remove-red-eye' size={menuIconSize} />
+                            <Text style={styles.menuItemText}>Entry</Text>
                         </View>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newOccasion} style={{ flex: 1 }}>
                         <View style={{ alignItems: 'center' }}>
                             <Icon color='#aac' name='event' size={menuIconSize} />
-                            <Text style={styles.menuItemText}>New Event</Text>
+                            <Text style={styles.menuItemText}>Event</Text>
                         </View>
                     </TouchableWithoutFeedback>
+                    {appData.Settings.showEntryFlagOnHome &&
+                        (!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Hefsek)) &&
+                        <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Hefsek)} style={{ flex: 1 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <Icon color='#aac' name='flare' size={menuIconSize} />
+                                <Text style={styles.menuItemText}>Hefsek</Text>
+                            </View>
+                        </TouchableWithoutFeedback>}
+                    {appData.Settings.showEntryFlagOnHome &&
+                        (!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Shailah)) &&
+                        <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Shailah)} style={{ flex: 1 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <Icon color='#aac' name='report-problem' size={menuIconSize} />
+                                <Text style={styles.menuItemText}>Shailah</Text>
+                            </View>
+                        </TouchableWithoutFeedback>}
+                    {appData.Settings.showEntryFlagOnHome &&
+                        (!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah)) &&
+                        <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Mikvah)} style={{ flex: 1 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <Icon color='#aac' name='beenhere' size={menuIconSize} />
+                                <Text style={styles.menuItemText}>Mikvah</Text>
+                            </View>
+                        </TouchableWithoutFeedback>}
                 </View>
             </View>
         );
     }
+}
+
+function EntriesComponent(props) {
+    return (props.list.length > 0 &&
+        <View style={styles.additionsViews}>
+            {props.list.map((e, i) => (
+                <TouchableOpacity key={i} onPress={() => props.edit(e)}>
+                    <Text style={styles.entriesText}>{e.toKnownDateString()}</Text>
+                </TouchableOpacity>))}
+        </View>);
+}
+
+function OccasionsComponent(props) {
+    if (props.list.length > 0) {
+        return (<View style={styles.eventsView}>
+            {props.list.map((o, i) =>
+                <TouchableOpacity key={i} onPress={() => props.edit(o)}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Icon size={12} color='#aae' name='event' />
+                        <Text style={styles.occasionText} key={i}>{o.title}</Text>
+                    </View>
+                </TouchableOpacity>)
+            }
+        </View>);
+    }
+    return null;
+}
+
+function PossibleHefsekComponent(props) {
+    return (<TouchableOpacity onPress={props.onPress}>
+        <View style={styles.additionsViews}>
+            <Text style={styles.hefsekText}>Hefsek Tahara Permissible</Text>
+        </View>
+    </TouchableOpacity>);
+}
+
+function FlagComponent(props) {
+    return (<TouchableOpacity style={styles.additionsViews} onPress={props.onPress}>
+        <View style={styles.additionsViews}>
+            <View style={styles.flagView}>
+                <Icon size={15} name='flag' color={'#fff'} />
+            </View>
+        </View>
+    </TouchableOpacity>);
+}
+
+function DayOffComponent(props) {
+    return (<View style={{ alignItems: 'center', marginTop: 10 }}>
+        <Text style={styles.dayOffMessage}>
+            {'* NOTE: As it is currently after Sunset,\n' +
+                `  the correct Jewish Day is ${Utils.dowEng[props.dayOfWeek]}.`}
+        </Text>
+    </View>);
+}
+
+function DaysLastEntryComponent(props) {
+    if (props.lastEntryDate) {
+        const dayNum = props.lastEntryDate.diffDays(props.currDate) + 1;
+        if (dayNum > 1) {
+            return (<TouchableOpacity onPress={props.onPress}>
+                <View style={[styles.additionsViews, { flexDirection: 'row' }]}>
+                    <Icon size={12} color='#e88' name='remove-red-eye' />
+                    <Text style={{
+                        fontSize: 10,
+                        color: '#e55',
+                        paddingLeft: 3
+                    }}>{Utils.toSuffixed(dayNum) + ' day'}</Text>
+                </View>
+            </TouchableOpacity>);
+        }
+    }
+    return null;
+}
+
+
+function DayOfSevenComponent(props) {
+    if (props.dayOfSeven && props.dayOfSeven > 0) {
+        return (<View style={styles.additionsViews}>
+            <Text style={{
+                fontSize: 10,
+                color: '#99b',
+                textAlign: 'center'
+            }}>
+                {Utils.toSuffixed(props.dayOfSeven) + ' day of 7\nfrom Hefsek Tahara'}
+            </Text>
+            {(props.dayOfSeven === 7 && (!props.hasMikvah) &&
+                (<TouchableOpacity onPress={props.onPress}>
+                    <Text style={{
+                        fontSize: 10,
+                        color: '#55e',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        paddingTop: 4
+
+                    }}>
+                        Mikvah possible after nightfall
+                    </Text>
+                </TouchableOpacity>))}
+        </View>);
+    }
+
+    return null;
+}
+
+function TaharaEventsComponent(props) {
+    if (props.list.length > 0) {
+        return (<View style={styles.taharaEventsOuterView}>
+            {props.list.map((te, i) => {
+                let bgColor, iconName;
+                switch (te.taharaEventType) {
+                    case TaharaEventType.Hefsek:
+                        bgColor = '#d4ffd4';
+                        iconName = 'flare';
+                        break;
+                    case TaharaEventType.Shailah:
+                        bgColor = '#f1d484';
+                        iconName = 'report-problem';
+                        break;
+                    case TaharaEventType.Mikvah:
+                        bgColor = '#d4d4ff';
+                        iconName = 'beenhere';
+                        break;
+                    case TaharaEventType.Bedika:
+                        bgColor = '#ffd4f1';
+                        iconName = 'remove-red-eye';
+                        break;
+                }
+                return (<TouchableOpacity key={i} onPress={() => props.remove(te.taharaEventType)}>
+                    <View style={[styles.taharaEventsView, { backgroundColor: bgColor }]}>
+                        <Icon color='#555' name={iconName} size={isLargeScreen() ? 16 : 11} />
+                        <Text style={styles.taharaEventsText}>
+                            {te.toTypeString()}
+                        </Text>
+                    </View>
+                </TouchableOpacity>);
+            })}
+        </View>);
+    }
+    return null;
 }
 
 const styles = StyleSheet.create({
@@ -307,7 +479,13 @@ const styles = StyleSheet.create({
     additionsViews: {
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 3
+        margin: 5
+    },
+    eventsView: {
+        justifyContent: 'center',
+        marginLeft: 15,
+        marginRight: 15,
+        marginBottom: 10
     },
     entriesText: {
         color: '#e55',
@@ -315,34 +493,53 @@ const styles = StyleSheet.create({
         fontSize: 10,
         textAlign: 'center'
     },
+    taharaEventsOuterView: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 5
+    },
+    taharaEventsView: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        padding: 3,
+        margin: 2,
+        borderRadius: 5
+    },
+    taharaEventsText: {
+        color: '#555',
+        fontSize: 10,
+        marginLeft: 2
+    },
     occasionText: {
-        color: '#d87',
+        color: '#88d',
+        paddingLeft: 2,
         fontWeight: 'bold',
-        padding: 4
+        fontSize: 11
     },
     hefsekText: {
-        fontSize: 11,
+        fontSize: 10,
         color: '#050',
         fontStyle: 'italic'
     },
     dayOffMessage: {
-        fontSize: 11,
+        fontSize: 10,
         color: '#955'
     },
     menuView: {
-        paddingLeft: '10%',
-        paddingRight: '10%',
+        paddingLeft: 5,
+        paddingRight: 5,
         paddingTop: 3,
         paddingBottom: 2,
         marginTop: 2,
         backgroundColor: '#00000010',
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         alignItems: 'flex-start'
     },
     menuItemText: {
-        fontSize: (isLargeScreen ? 13 : 10),
+        fontSize: (isLargeScreen() ? 13 : 9),
         color: '#889'
     },
     bottomSection: {

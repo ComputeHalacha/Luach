@@ -3,7 +3,7 @@ import Settings from '../Settings';
 import Entry from '../Chashavshavon/Entry';
 import { Kavuah } from '../Chashavshavon/Kavuah';
 import EntryList from '../Chashavshavon/EntryList';
-import { error, warn } from '../GeneralUtils';
+import { log, error, warn } from '../GeneralUtils';
 
 /**
  * List of fields that have been added after the initial app launch.
@@ -35,13 +35,15 @@ export default class AppData {
      * @param {EntryList} entryList
      * @param {[Kavuah]} kavuahList
      * @param {[ProblemOnah]} problemOnahs
+     * * @param {[TaharaEvent]} taharaEvents
      */
-    constructor(settings, occasions, entryList, kavuahList, problemOnahs) {
+    constructor(settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents) {
         this.Settings = settings || new Settings({});
         this.UserOccasions = occasions || [];
         this.EntryList = entryList || new EntryList();
         this.KavuahList = kavuahList || [];
         this.ProblemOnahs = problemOnahs || [];
+        this.TaharaEvents = taharaEvents || [];
     }
     updateProbs() {
         this.EntryList.calulateHaflagas();
@@ -55,6 +57,7 @@ export default class AppData {
         if (!global.GlobalAppData) {
             await AppData.fromDatabase().then(ad => {
                 global.GlobalAppData = ad;
+                log(ad);
             });
         }
         return global.GlobalAppData;
@@ -120,7 +123,7 @@ export default class AppData {
         }
     }
     static async fromDatabase() {
-        let settings, occasions, entryList, kavuahList, problemOnahs;
+        let settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents;
         await DataUtils.SettingsFromDatabase()
             .then(s => settings = s)
             .catch(err => {
@@ -151,7 +154,15 @@ export default class AppData {
                 warn('Error running GetAllKavuahs.');
                 error(err);
             });
+        await DataUtils.GetAllTaharaEvents()
+            .then(te => {
+                taharaEvents = te;
+            })
+            .catch(err => {
+                warn('Error running GetAllTaharaEvents.');
+                error(err);
+            });
 
-        return new AppData(settings, occasions, entryList, kavuahList, problemOnahs);
+        return new AppData(settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents);
     }
 }
