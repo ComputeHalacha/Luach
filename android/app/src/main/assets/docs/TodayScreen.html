@@ -10,24 +10,24 @@
 <body>
     <div class="divCaption">
         <div class="container">
-            <a href="index.html" class="goHome visible-xs"><img src="Images/dots.png" /></a>
-            <h2>Today Screen</h2>
+            <a href="index.html" class="icon-home goHome visible-xs"></a>
+            <h2><img src="images/scroll.png" style="width:25px;vertical-align:top;" /> Main Screen</h2>
             <ul class="nav nav-tabs hidden-xs" id="ulNavLinks">
-                <li role="presentation"><a href="index.html">Home</a></li>
-                <li role="presentation" class="active"><a href="TodayScreen.html">Today Screen</a></li>
-                <li role="presentation"><a href="MonthView.html">Month View</a></li>
-                <li role="presentation"><a href="Entries.html">Entries</a></li>
-                <li role="presentation"><a href="Kavuahs.html">Kavuahs</a></li>
-                <li role="presentation"><a href="FlaggedDates.html">Flagged Date</a></li>
-                <li role="presentation"><a href="Events.html">Events</a></li>
-                <li role="presentation"><a href="Settings.html">Settings</a></li>
+                <li role="presentation"><a href="index.html" class="icon-home"> Home</a></li>
+                <li role="presentation" class="active"><a href="TodayScreen.html"><img src="images/scroll.png" style="width:10px;" /> Main Screen</a></li>
+                <li role="presentation"><a href="MonthView.html" class="icon-calendar"> Month View</a></li>
+                <li role="presentation"><a href="Entries.html" class="icon-remove-red-eye"> Entries</a></li>
+                <li role="presentation"><a href="Kavuahs.html" class="icon-device-hub"> Kavuahs</a></li>
+                <li role="presentation"><a href="FlaggedDates.html" class="icon-flag"> Flagged Date</a></li>
+                <li role="presentation" class="hidden-sm"><a href="Events.html" class="icon-event"> Events</a></li>
+                <li role="presentation"><a href="Settings.html" class="icon-settings"> Settings</a></li>
             </ul>
         </div>
     </div>
     <div class="container">
         <p>
             This is the screen that you will first come to when Luach first opens.
-            <br> It is called the Today Screen.
+            <br> It is called the Main Screen.
         </p>
         <p>
             On the right, there is a list of days. When Luach loads, the top day is always the current day.
@@ -39,14 +39,14 @@
         <div class="well">
             <h3 contenteditable="false">Halachic "Today"</h3>
             As Luach is a Halachic calendar, the correct Jewish Date always needs to be taken into account.
-            <br> For this reason, if the current system time is after sunset for your location, the Today screen
+            <br> For this reason, if the current system time is after sunset for your location, the Main Screen
             will display the following day as "Today".
             <br> For example, if the time is currently after sunset on Sunday the 3rd of Shvat / January 12th, the
-            Today screen will show, Monday the 4th of Shvat as "Today".
+            Main Screen will show, Monday the 4th of Shvat as "Today".
             <br> The secular date though, will continue to be displayed as January 12th as it does not change until
             midnight.
             <br>
-            <br> Due to the above behavior, you may notice that the list of days on the Today screen may look somewhat
+            <br> Due to the above behavior, you may notice that the list of days on the Main Screen may look somewhat
             strange as in the above scenario, the following day in the list will be Tuesday the 5th of Shvat with
             the secular day shown as the 14th of January - hereby seemingly skipping January the 13th.
             <br> This is a consequence of the fact that the secular date for Today's box is displaying the secular
@@ -77,7 +77,7 @@
             On the right side of each day, you will find a link to view the full Zmanim information for this day, and a link to view
             the entire month in the <a href="#MonthView">Month View Screen</a>.
             <h3>Background Colors</h3>
-            The background color of a day in the Today Screen can be a quick way to see the status of that day.
+            The background color of a day in the Main Screen can be a quick way to see the status of that day.
         </p>
         <p>
             Here are the possible colors that can be seen:
@@ -120,7 +120,7 @@
         </p>
         <h3>Days from latest Entry</h3>
         <p>
-            You may also see on the Today Screen, a small text label that informs how many days it has been since the last regular Entry.
+            You may also see on the Main Screen, a small text label that informs how many days it has been since the last regular Entry.
             <br /> Keep in mind that the number displayed is the Halachic number of days; where even a small part
             of a day is also a day.
             <br /> So for example, if the Entry occurred on Sunday and today is Tuesday, the text will read:

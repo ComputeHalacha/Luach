@@ -1,11 +1,28 @@
-﻿body { font-size: 14px; margin: 0; padding: 0; }
+﻿@font-face { font-family: 'MaterialIcons'; src: url('../../fonts/MaterialIcons.ttf'); }
+@font-face { font-family: 'Octicons'; src: url('../../fonts/Octicons.ttf'); }
+
+body { font-size: 14px; margin: 0; padding: 0; }
 img { border: 0; }
 blockquote, p, div, blockquote p { font-size: 14px; font-weight: normal; }
 .divCaption { margin: 0 0 5px 0; background-color: #f1f1ff; }
-    .divCaption a.goHome { float: right; padding-top: 25px; display: block; width: 30px; text-align: right; }
-        .divCaption a.goHome img { height: 15px; }
-    .divCaption h2 { font-weight: bold; color: #9099CE; }
-.nav-tabs > li > a { color: #aac; font-size: 12px; }
+    .divCaption a.goHome { float: right; padding-top: 25px; display: block; width: 30px; text-align: right; color: #9099CE; font-size: 20px; text-decoration: none; }
+a.goHome:hover { text-decoration: none; }
+.divCaption h2 { font-weight: bold; color: #9099CE; }
+.nav-tabs > li > a { color: #aac; font-size: 11px; }
 .nav > li > a:hover { background-color: #ddf; }
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover { color: #889; }
 break { display: block; margin-top: 5px; }
+
+/*ICONS********/
+.icon-home::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: ""; }
+.icon-help::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: ""; }
+.icon-flag::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: ""; }
+.icon-flare::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: ""; }
+.icon-event::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: ""; }
+.icon-device-hub::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: ""; }
+.icon-remove-red-eye::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: ""; }
+.icon-report-problem::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: ""; }
+.icon-beenhere::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: ""; }
+.icon-schedule::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: ""; }
+.icon-settings::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: ""; }
+.icon-calendar::before { font-family: Octicons; text-decoration: none; font-size: 0.8em; content: ""; }
