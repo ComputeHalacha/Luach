@@ -1,0 +1,532 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <title>Flagged Dates | Luach App | Instructions</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style type="text/css">
+        .menuItem { float: left; font-size: 11px; background-color: #eee; width: 16%; color: #889; text-align: center; padding: 3px 5px 2px 5px; border-width: 0 0 2px 0; border-style: solid; border-color: #ccc; }
+            .menuItem:first-child { border-radius: 0 0 0 10px; border-left-width: 2px; }
+            .menuItem:last-child { border-radius: 0 0 10px 0; border-right-width: 2px; }
+        .menuItemExp { font-size: 11px; color: #889; text-align: center; display: inline-block; }
+        .badge { display: inline-block; color: #555; font-size: 10px; padding: 4px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="divCaption">
+        <div class="container">
+            <a href="index.html" class="icon-home goHome visible-xs"></a>
+            <h2><img src="images/scroll.png" style="width:25px;vertical-align:top;" /> Main Screen</h2>
+            <ul class="nav nav-tabs hidden-xs" id="ulNavLinks">
+                <li role="presentation"><a href="index.html" class="icon-home"> Home</a></li>
+                <li role="presentation" class="active"><a href="MainScreen.html"><img src="images/scroll.png" style="width:10px;" /> Main Screen</a></li>
+                <li role="presentation"><a href="MonthView.html" class="icon-calendar"> Month View</a></li>
+                <li role="presentation"><a href="Entries.html" class="icon-remove-red-eye"> Entries</a></li>
+                <li role="presentation"><a href="Kavuahs.html" class="icon-device-hub"> Kavuahs</a></li>
+                <li role="presentation"><a href="FlaggedDates.html" class="icon-flag"> Flagged Date</a></li>
+                <li role="presentation" class="hidden-sm"><a href="Events.html" class="icon-event"> Events</a></li>
+                <li role="presentation"><a href="Settings.html" class="icon-settings"> Settings</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <p>
+            This is the screen that you will first come to when Luach first opens.
+        </p>
+        <p>
+            On the right, you will see a list of days.
+            <br />
+            When Luach first loads, the top day will be the current day.
+            <br /> By scrolling down you will see upcoming days. You can also scroll up to see the previous days.
+            <br /> There is technically no limit on how far into the future or past you can scroll.
+            <br /> You can also scroll through the days by using the arrow buttons on the menu on the right.
+            <br />
+            <br /> You can always return to Today, by pressing on the Today button from the menu on the right.
+        </p>
+        <div class="well well-sm">
+            <h4>Halachic "Today"</h4>
+            <small>
+                As Luach is a Halachic calendar, the correct Jewish Date always needs to be taken into account.
+                <br />
+                For this reason, if the current system time is after sunset for your location, the Main Screen
+                will display the following day as "Today".
+                <br />
+                For example, if the time is currently after sunset on Sunday the 3rd of Shvat / January 12th, the
+                Main Screen will show, Monday the 4th of Shvat as "Today".
+                <br />
+                The secular date though, will continue to be displayed as January 12th as it does not change until
+                midnight.
+                <break />
+                Due to the above behavior, you may notice that the list of days on the Main Screen may look somewhat
+                strange as in the above scenario, the following day in the list will be Tuesday the 5th of Shvat with
+                the secular day shown as the 14th of January - hereby seemingly skipping January the 13th.
+                <br />
+                This is a consequence of the fact that the secular date for Today's box is displaying the secular
+                date at the current time, while the other days box's are all showing the Secular Date at midnight of
+                that date.
+                <break />
+                This behavior can be changed from the <a href="Settings.html">Settings Screen</a>, by changing the
+                "Calendar displays current" setting.
+            </small>
+        </div>
+        <p>
+            Within the box of each day, you will find information about that day such as.
+            <br />
+            The information has two parts:
+            <ul>
+                <li><strong>Daily Calendar information</strong></li>
+                <li><strong>Personal Halachic information</strong></li>
+            </ul>
+        </p>
+        <h3>Daily Calendar Information</h3>
+        <ul>
+            <li>The current Jewish Date at your Location</li>
+            <li>The current Secular Date</li>
+            <li>The Sedra of the current week</li>
+            <li>Candle-Lighting time for your location, if it is <em>Erev Shabbos</em> or <em>Yom Tov</em>.</li>
+            <li>Any special information about this day such as <em>Chol Ha`Moed</em>, a fast day etc.</li>
+        </ul>
+        <p>
+            Under the date, you will see the name of your current location and the times for sunrise and sunset for this day at this
+            location.
+            <br /> The location can be changed to almost any place in the world.
+            <br /> To change the location, press on the name of the location.
+            <br /> You can also change the location from the <a href="Settings.html">Settings Screen</a>.
+        </p>
+        <h3>Personal Halachic Information</h3>
+        The following items may be shown on the lower right side of each day.
+        <div class="divList" style="margin-top:15px;">
+            <strong>
+                Flagged Date Indicator<a name="FlaggedDateIndicator">&nbsp;</a>
+            </strong>
+            <div class="icon-flag" style="color:#f00;font-size:20px;padding:10px;"></div>
+            <blockquote>
+                This flag will be show if the day is a <a href="FlaggedDates.html">Flagged Date</a>.
+                <br />
+                This means that Luach has calculated that at least part of the day needs
+                to be observed with some type of <em>Harchaka</em> restrictions (הרחקות).
+                <br />
+                Press on the flag to open the <a href="FlaggedDates.html">Flagged Dates Screen</a> to view the
+                full details and explanation for this flag.
+                <br />
+                In addition to the textual indication, any day that is a
+                <a href="FlaggedDates.html">Flagged Date</a> will have it's
+                background color shown in yellow.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show flags for problem dates on Main Screen" setting from the
+                <a href="Settings.html">Settings</a> screen.
+                <break />
+                Please note that by default, Luach does not show the Flagged Date Indicator
+                for the first week immediately following an Entry.
+                <br />
+                This is to prevent clogging up the calendar with Flagged Dates
+                that are irrelevant, as this time period (and more) is
+                where the strictest of <em>Niddah</em> restriction apply in any case.
+                <br />
+                You can change this functionality by turning off the "Don't show Flagged dates for a week after Entry"
+                setting from the <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong>Days since last Entry indicator</strong>
+            <div class="icon-remove-red-eye" style="color:#e55;font-size:13px;padding:10px;"> 27th day</div>
+            <blockquote>
+                An <a href="Entries.html">Entry</a> in Luach is a single period.
+                <br />
+                As part of keeping a proper <em>Vesset</em> calendar, it is often useful to
+                know how many days after the last Entry the current day is.
+                <br />
+                Luach shows a small indication by every day of how many days this day is after the last Entry.
+                <br />
+                <strong>Note:</strong> the tally of the number of days displayed, includes both the day of the Entry
+                and the current day.
+                <br />
+                So if the Entry began yesterday, the indicator will read "2nd day".
+                <br />
+                This is due to the fact that for most of the Halachic calculations related to the laws of <em>Niddah</em> and <em>Vesstot</em>,
+                a part of a day is considered a full day.
+                <break />
+                If the text of this indicator is pressed, the <a href="Entries.html">Entries Screen</a> will open showing the list
+                of Entries. The latest Entry will be the top one in the list.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong>Entry Indicator</strong><a name="EntryIndicator">&nbsp;</a>
+            <div style="color:#e55;font-size:12px;padding:10px;font-weight:bold;">Entry for Night-time [Haflaga of 29]</div>
+            <blockquote>
+                An <a href="Entries.html">Entry</a> in Luach is a single period.
+                <br />
+                If an Entry began on this day, the above indicator will be shown with the basic information
+                about this Entry.
+                <br />
+                In addition to the textual indication, any date that has an Entry will have it's
+                background color shown in light red.
+                <break />
+                To edit or remove this Entry, press on the text of the indicator.
+                <br />
+                Note: Not all Entries can be edited. If the Entry in question is the
+                <em><a href="Kavuahs.html#SettingEntry">Setting Entry</a></em> for a
+                <a href="Kavuahs.html">Kavuah</a>, you will not be able to edit the Entry details.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong>Possible Hefsek Tahara Indicator</strong><a name="HefsekIndicator">&nbsp;</a>
+            <div class="icon-flare" style="color:#050;font-size:12px;padding:10px;"> <em>Hefsek Tahara Permissible</em></div>
+            <blockquote>
+                If the day is the 5th day after an <a href="Entries.html">Entry</a>, a textual indication will shown that
+                it is permissible to do a <em>Hefsek Tahara</em> today before sunset.
+                <br />
+                If this indication is pressed, Luach will register that a <em>Hefsek Tahara</em> was
+                actually done, and will show the Hefsek Tahara Badge, the <em>Shiva Neki'im</em> Indicator
+                for the next seven days, and the Possible Mikvah Night Indicator for the 7th day.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong><em>Shiva Neki'im</em> Indicator</strong>
+            <div style="padding:10px;">
+                <div style="display:inline-block;text-align:center;color:#99b;font-size:12px;">
+                    4th day of 7<br />
+                    from Hefsek Tahara
+                </div>
+            </div>
+            <blockquote>
+                When a women is counting the 7 days of purity - the <em>Shiva Neki'im</em>, it
+                is important that she always know which of the seven days is the current day.
+                <br />
+                Luach therefore shows a textual indication for each of the seven days of purity.
+                <br />
+                Luach determines which days are part of the <em>Shiva Neki'im</em>, by when the
+                <em>Hefsek Tahara</em> took place.
+                <br />
+                So, to show the <em>Shiva Neki'im</em> Indicator, press the <em>Hefsek Tahara</em> button
+                on the day that the <em>Hefsek Tahara</em> actually took place.
+                <br />
+                If there is a question ("<em>Shailah</em>") that arises during the <em>Shiva Neki'im</em>,
+                press the <em>Shailah</em> Button to show the Shailah Badge.
+                <break />
+                <strong>Important note:</strong> If there was a <em>Shailah</em> and a second <em>Hefsek Tahara</em> was done,
+                the counting that the <em>Shiva Neki'im</em> Indicator will show is from the latest
+                <em>Hefsek Tahara</em>.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong>Possible Mikvah Night Indicator</strong>
+            <div style="padding:10px;color:#55e;font-size:11px;font-weight:bold;">
+                Mikvah possible after nightfall
+            </div>
+            <blockquote>
+                After nightfall of the last day of a successful <em>Shiva Neki'im</em> period,
+                a women goes to the <em>Mikvah</em>.
+                <br />
+                Luach shows an indication on the last day of the <em>Shiva Neki'im</em> that tonight may be a
+                Mikvah night.
+                <br />
+                To show the Possible Mikvah Night Indicator, press the <em>Hefsek Tahara</em> button
+                on the day that the <em>Hefsek Tahara</em> actually took place and Luach will calculate
+                <em>Shiva Neki'im</em> and Mikvah date.
+                <br />
+                If the Possible Mikvah Night Indicator is pressed, the Mikvah Badge will be shown instead of the Possible Mikvah Night Indicator.
+                <br />
+                <break />
+                <strong>Important note:</strong> If there was a <em>Shailah</em> and a second <em>Hefsek Tahara</em> was done,
+                the Possible Mikvah Night Indicator will show for the 7th day from the latest
+                <em>Hefsek Tahara</em>.
+                <break />
+                <strong>Another Important Note:</strong> As the Mikvah is attended to only AFTER nightfall
+                on the 7th day of the <em>Shiva Neki'im</em>,
+                the true Jewish Date for the Mikvah night is the next day after
+                the end of <em>Shiva Neki'im</em>.
+                <br />
+                As most people don't look at the Mikvah night as being on the next day,
+                it was decided in Luach to
+                show the Possible Mikvah Night Indicator and the Mikvah Badge
+                on the last day of the <em>Shiva Neki'im</em>.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong>Hefsek Tahara Badge</strong><a name="HefsekBadge">&nbsp;</a>
+            <div style="padding:10px">
+                <div class="icon-flare badge" style="background-color:#d4ffd4;">
+                    Hefsek Tahara
+                </div>
+            </div>
+            <blockquote>
+                This badge is shown on the day that a <em>Hefsek Tahara</em> was done.
+                <br />
+                To add the Hefsek Tahara Badge, press on the Hefsek Tahara Button from the daily menu, or
+                if the day is fifth day after the start of an <a href="Entries.html">Entry</a>, press the Possible Hefsek Tahara Indicator.
+                <br />
+                The Hefsek Tahara Badge is also shown on the <a href="MonthView.html">Month View</a> screen.
+                <br />
+                To remove a Hefsek Tahara Badge, press on the badge.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong>Shailah Badge</strong><a name="ShailahBadge">&nbsp;</a>
+            <div style="padding:10px">
+                <div class="icon-report-problem badge" style="background-color:#f1d484;">
+                    Shailah
+                </div>
+            </div>
+            <blockquote>
+                If there is a Halachic question such as a <em>Bedikah</em> that needs a Rabbinic decision etc.,
+                Luach allows to mark the date with the <em>Shailah</em>  Badge.
+                <br />
+                This will help to remind you about this question before  going to the Mikvah etc.
+                <br />
+                A <em>Shailah</em> Badge can be added on any date even those that are not part of <em>Shiva Neki'im</em>.
+                <br />
+                The <em>Shailah</em> Badge is also shown on the <a href="MonthView.html">Month View</a> screen.
+                <br />
+                To remove a <em>Shailah</em> Badge, press on the badge.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong>Mikvah Badge</strong><a name="MikvahBadge">&nbsp;</a>
+            <div style="padding:10px">
+                <div class="icon-beenhere badge" style="background-color:#d4d4ff;">
+                    Mikvah
+                </div>
+            </div>
+            <blockquote>
+                The Mikvah Badge is shown on the day of the Mikvah night as an indication that
+                the Mikvah was actually attended.
+                <br />
+                To add the Mikvah Badge, press on the Mikvah Button from the daily menu, or
+                if the day is the seventh day of <em>Shiva Neki'im</em>, press the Possible Mikvah Night Indicator.
+                <br />
+                The Mikvah  Badge is also shown on the <a href="MonthView.html">Month View</a> screen.
+                <br />
+                To remove a Mikvah  Badge, press on the badge.
+                <break />
+                <strong>Important Note:</strong> As the Mikvah is attended to only AFTER nightfall
+                on the 7th day of the <em>Shiva Neki'im</em>,
+                the true Jewish Date for the Mikvah night is the next day after
+                the end of <em>Shiva Neki'im</em>.
+                <br />
+                As most people don't look at the Mikvah night as being on the next day,
+                it was decided in Luach to
+                show the Possible Mikvah Night Indicator and the Mikvah Badge
+                on the last day of the <em>Shiva Neki'im</em>.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+        </div>
+        <h3>Background Colors</h3>
+        <p>
+            These alternative daily background colors are an indication of a special situation or notice for this day.
+        </p>
+        <div class="divList">
+            <div style="background-color:#fe9;border-radius:6px;padding:10px;margin:10px;">
+                <strong>Yellow - <em>Flagged</em></strong>
+                <div>
+                    If this day is a <a href="FlaggedDates.html">Flagged Date</a>, the background color of the day will
+                    be yellow and a red flag will be shown.
+                    <br />
+                    The flag can be pressed to view the details for this <a href="FlaggedDates.html">Flagged Date</a>.
+                    <br />
+                    See <a href="#FlaggedDateIndicator">Flagged Date Indicator</a>.
+                </div>
+            </div>
+            <div style="background-color:#fee;border-radius:6px;padding:10px;margin:10px;">
+                <strong>Light Red - <em>Entry</em></strong>
+                <div>
+                    If an <a href="Entries.html">Entry</a> occurred on this day, the background color of the day will
+                    be light red and a small label of bold red text with a brief synopsis of the
+                    Entry information will be shown.
+                    <br />
+                    This label can be pressed to view and/or edit this Entry's information.
+                    <br />
+                    See <a href="#EntryIndicator">Entry Indicator</a>.
+                </div>
+            </div>
+            <div style="background-color:#f1fff1;border-radius:6px;padding:10px;margin:10px;">
+                <strong>Light Green - <em>Hefesk</em></strong>
+                <div>
+                    If this day is the 5th day from the last Entry, the background color of the day will be light green, indicating that this
+                    day is possibly the first day that a Hefesk Tahara can be done.
+                    <br />
+                    The <a href="#HefsekIndicator">Possible Hefsek Tahara Indicator</a> will also be shown. It can be pressed
+                    to register that a <em>Hefsek Tahara</em> was actually done.
+                </div>
+            </div>
+            <div style="background-color:#eef;border-radius:6px;padding:10px;margin:10px;">
+                <strong>Light Blue - <em>Special Calendar Days</em></strong>
+                <div>
+                    Shabbos and other special days, are colored in light blue - unless they are a <a href="FlaggedDates.html">Flagged Date</a>,
+                    an <a href="Entries.html">Entry Date</a>, or a potential <em>Hefsek Tahara</em> day.
+                </div>
+            </div>
+            <div style="background-color:#e2e2f0;border-radius:6px;padding:10px;margin:10px;">
+                <strong>Medium Light Blue - <em>Today</em></strong>
+                <div>
+                    Todays box will be colored in slightly darker shade of light blue unless it is a <a href="FlaggedDates.html">Flagged Date</a>,
+                    an <a href="Entries.html">Entry Date</a>, or a potential <em>Hefsek Tahara</em> day.
+                </div>
+            </div>
+        </div>
+        <h3>Events</h3>
+        <p>
+            If you have added any <a href="#Events">Events</a> for this day, you will see the title of the event
+            displayed in that days' box.
+            <br /> To view the complete Event details or to edit the Event, press on the Event title.
+        </p>
+        <h2>Menu bar - actions for each day</h2>
+        <div style="width:80%;min-width:350px;margin:20px 0;">
+            <div class="icon-schedule menuItem">
+                <br />
+                Zmanim
+            </div>
+            <div class="icon-remove-red-eye menuItem">
+                <br />
+                Entry
+            </div>
+            <div class="icon-event menuItem">
+                <br />
+                Event
+            </div>
+            <div class="icon-flare menuItem">
+                <br />
+                Hefsek
+            </div>
+            <div class="icon-report-problem menuItem">
+                <br />
+                Shailah
+            </div>
+            <div class="icon-beenhere menuItem">
+                <br />
+                Mikvah
+            </div>
+        </div>
+        <br style="clear:both;" />
+        <div class="divList" style="margin-top:20px;">
+            <strong>Zmanim Button</strong>
+            <div style="padding:10px;">
+                <div class="icon-schedule menuItemExp">
+                    <br />
+                    Zmanim
+                </div>
+            </div>
+            <blockquote>
+                Press this button to view a list of all the daily <em>Zmanim</em>
+                for this day at your currently listed location.
+                <br />
+                You can view the <em>Zmanim</em> for anywhere in the world by temporarily changing your location
+                by clicking on the name of the location on the Main Screen
+                or from the <a href="Settings.html">Settings Screen</a>.
+            </blockquote>
+            <strong>New Entry Button</strong>
+            <div style="padding:10px;">
+                <div class="icon-remove-red-eye menuItemExp">
+                    <br />
+                    Entry
+                </div>
+            </div>
+            <blockquote>
+                Press on this button if a period began on this day.
+                <br />
+                You will be taken to the New Entry screen, with this day selected for you.
+                <br />
+                In Luach, a period called with the euphemism "<em>Entry</em>".
+                <br /> To see more about <em>Entries</em>, go to the <a href="Entries.html">Entries section</a>.
+            </blockquote>
+            <strong>New Event Button</strong>
+            <div style="padding:10px;">
+                <div class="icon-event menuItemExp">
+                    <br />
+                    Event
+                </div>
+            </div>
+            <blockquote>
+                Press on this button to create a new <a href="Events.html">Event</a> for this day.
+            </blockquote>
+            <strong>Hefsek Button</strong>
+            <div style="padding:10px;">
+                <div class="icon-flare menuItemExp">
+                    <br />
+                    Hefsek
+                </div>
+            </div>
+            <blockquote>
+                Press on this button if a <em>Hefsek Tahara</em> was completed successfully on this day.
+                <br />
+                This will add a <a href="#HefsekBadge">Hefsek Tahara Badge</a> for this day and show the <em>Shiva Neki'im</em> and Possible Mikvah Night Indicators.
+                <br />
+                Once a <em>Hefsek Tahara</em> was registered for this day, the Hefesk Button will no longer be shown for that day.
+                <br />
+                If the Hefsek Tahara Badge is removed by pressing on it, the Hefsek Button will once again be shown.
+                <break />
+                If you do not want Luach to show this button, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong>Shailah Button</strong>
+            <div style="padding:10px;">
+                <div class="icon-report-problem menuItemExp">
+                    <br />
+                    Shailah
+                </div>
+            </div>
+            <blockquote>
+                If there is a Halachic question on this day, press this button to add a <a href="#ShailahBadge">Shailah Badge</a>.
+                <br />
+                Once a <em>Shailah</em> was registered for this day, the Shailah Button will no longer be shown for that day.
+                <br />
+                If the Shailah Badge is removed by pressing on it, the Shailah Button will once again be shown.
+                <break />
+                If you do not want Luach to show this button, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong>Mikvah Button</strong>
+            <div style="padding:10px;">
+                <div class="icon-beenhere menuItemExp">
+                    <br />
+                    Mikvah
+                </div>
+            </div>
+            <blockquote>
+                On the day that the Mikvah was attended to after nightfall,
+                press on The Mikvah Button to show a <a href="#MikvahBadge">Mikvah Badge</a>.
+                <br />
+                Once a <em>Mikvah</em> was registered for this day, the Mikvah Button will no longer be shown for that day.
+                <br />
+                If the Mikvah Badge is removed by pressing on it, the Mikvah Button will once again be shown.
+                <break />
+                <strong>Important Note:</strong> As the Mikvah is attended to only AFTER nightfall
+                on the 7th day of the <em>Shiva Neki'im</em>,
+                the true Jewish Date for the Mikvah night is the next day after
+                the end of <em>Shiva Neki'im</em>.
+                <br />
+                As most people don't look at the Mikvah night as being on the next day,
+                it was decided in Luach to
+                show the Possible Mikvah Night Indicator and the Mikvah Badge
+                on the last day of the <em>Shiva Neki'im</em>.
+                <break />
+                If you do not want Luach to show this button, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+        </div>
+
+    </div>
+    <script src="scripts/scripts.js"></script>
+</body>
+</html>
