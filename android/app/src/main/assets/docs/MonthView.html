@@ -1,8 +1,7 @@
 ﻿<!doctype html>
 <html>
-
 <head>
-    <title>Settings | Luach App | Instructions</title>
+    <title>Month View | Luach App | Instructions</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/style.css" />
@@ -11,17 +10,17 @@
 <body>
     <div class="divCaption">
         <div class="container">
-            <a href="index.html" class="goHome visible-xs"><img src="Images/dots.png" /></a>
-            <h2>Month View</h2>
+            <a href="index.html" class="icon icon-home goHome visible-xs"></a>
+            <h2 class="icon-calendar"> Month View</h2>
             <ul class="nav nav-tabs hidden-xs" id="ulNavLinks">
-                <li role="presentation"><a href="index.html">Home</a></li>
-                <li role="presentation"><a href="TodayScreen.html">Today Screen</a></li>
-                <li role="presentation" class="active"><a href="MonthView.html">Month View</a></li>
-                <li role="presentation"><a href="Entries.html">Entries</a></li>
-                <li role="presentation"><a href="Kavuahs.html">Kavuahs</a></li>
-                <li role="presentation"><a href="FlaggedDates.html">Flagged Date</a></li>
-                <li role="presentation"><a href="Events.html">Events</a></li>
-                <li role="presentation"><a href="Settings.html">Settings</a></li>
+                <li role="presentation"><a href="index.html" class="icon icon-home"> Home</a></li>
+                <li role="presentation"><a href="MainScreen.html"><img src="Images/scroll.png" style="width:10px;" /> Main Screen</a></li>
+                <li role="presentation" class="active"><a href="MonthView.html" class="icon icon-calendar"> Month View</a></li>
+                <li role="presentation"><a href="Entries.html" class="icon icon-remove-red-eye"> Entries</a></li>
+                <li role="presentation"><a href="Kavuahs.html" class="icon icon-device-hub"> Kavuahs</a></li>
+                <li role="presentation"><a href="FlaggedDates.html" class="icon icon-flag"> Flagged Date</a></li>
+                <li role="presentation" class="hidden-sm"><a href="Events.html" class="icon icon-event"> Events</a></li>
+                <li role="presentation"><a href="Settings.html" class="icon icon-settings"> Settings</a></li>
             </ul>
         </div>
     </div>
@@ -35,52 +34,13 @@
             <br /> The initial type of month shown can be set from the <a href="Settings.html">Settings Screen</a>,
             by changing the "Calendar displays current" setting.
         </p>
-        <h3>Day Colors</h3>
-        <div class="divList">
-            <strong>Yellow - Flagged Days</strong>
-            <blockquote>
-                Any day that has a <a href="FlaggedDates.html">Flagged Date</a> will have the flagged section of
-                it colored in yellow.
-                <br /> If the Night <a href="Entries.html#Onahs">Onah</a> is <a href="FlaggedDates.html">Flagged</a>,
-                the left half of the day will be colored.
-                <br /> If the Day <a href="Entries.html#Onahs">Onah</a> is <a href="FlaggedDates.html">Flagged</a>,
-                the right half of the day will be colored.
-                <br /> An icon indicating the Flagged <a href="Entries.html#Onahs">Onah</a> is also shown in that
-                half of the day.
-                <br /> The moon icon indicates the Night <a href="Entries.html#Onahs">Onah</a> and the sun icon indicates
-                the Day <a href="Entries.html#Onahs">Onah</a>.
-            </blockquote>
-            <strong>Light Red - Days with an Entry</strong>
-            <blockquote>
-                Days that have an <a href="Entries.html">Entry</a>, will be partially colored light red, with an
-                icon indicating the <a href="Entries.html#Onahs">Onah</a> upon which it occurred.
-                <br /> If the <a href="Entries.html">Entry</a> occurred during the Night <a href="Entries.html#Onahs">Onah</a>,
-                the left half of the day will be colored.
-                <br /> If <a href="Entries.html">Entry</a> occurred during the Day <a href="Entries.html#Onahs">Onah</a>,
-                the right half of the day will be colored.
-                <br /> An icon indicating the <a href="Entries.html#Onahs">Onah</a> is also shown in that half of
-                the day.
-                <br /> The moon icon indicates the Night <a href="Entries.html#Onahs">Onah</a> and the sun icon indicates
-                the Day <a href="Entries.html#Onahs">Onah</a>.
-            </blockquote>
-            <strong>Light Green - Hefsek Day</strong>
-            <blockquote>
-                If this day is the 5th day from the last Entry, the background color of the day will be light green, indicating that this
-                day is possibly the first day that a Hefesk Tahara can be done.
-            </blockquote>
-            <strong>Light Blue - Special Calendar Days</strong>
-            <blockquote>
-                Shabbos and other special days, are colored in light blue - unless they are a <a href="FlaggedDates.html">Flagged Date</a>,
-                an <a href="Entries.html">Entry Date</a>, or a potential <em>Hefsek Tahara</em> day.
-            </blockquote>
-        </div>
-        If you press on any day (besides for <a href="FlaggedDates.html">Flagged Dates</a>), the Calendar will be
-        shown with information about the clicked date.
-        <br /> If you press on any day that is a <a href="FlaggedDates.html">Flagged Date</a>, the Flagged Dates
-        Screen will open with information about the <a href="FlaggedDates.html">Flagged Dates</a> for the current
-        day.
         <p>
-            <h3>Navigation</h3>
+            If you press on any day in the Month View,
+            the <a href="MainScreen.html">Main Screen</a> will be
+            shown with the day on top being the pressed date.
+        </p>
+        <h3>Navigation</h3>
+        <p>
             You can navigate through the months in the Month View by using the navigation buttons on the bottom.
             <br /> You can also navigate through the months by swiping on the screen:
             <ul>
@@ -91,6 +51,129 @@
             </ul>
             You can always return to the current month by pressing the "This Month" menu item on the bottom.
         </p>
+        <h3>Background Colors</h3>
+        <p>
+            These alternative daily background colors are an indication of a special situation or notice for this day.
+        </p>
+        <div class="divList">
+            <div style="background-color:#fe9;border-radius:6px;padding:10px;margin:10px;">
+                <strong>Yellow - <em>Flagged</em></strong>
+                <div>
+                    Any day that has a <a href="FlaggedDates.html">Flagged Date</a> will have the flagged section of
+                    it colored in yellow.
+                    <br /> If the Night <a href="Entries.html#Onahs">Onah</a> is <a href="FlaggedDates.html">Flagged</a>,
+                    the left half of the day will be colored.
+                    <br /> If the Day <a href="Entries.html#Onahs">Onah</a> is <a href="FlaggedDates.html">Flagged</a>,
+                    the right half of the day will be colored.
+                    <br /> An icon indicating the Flagged <a href="Entries.html#Onahs">Onah</a> is also shown in that
+                    half of the day.
+                    <br /> The moon icon indicates the Night <a href="Entries.html#Onahs">Onah</a> and the sun icon indicates
+                    the Day <a href="Entries.html#Onahs">Onah</a>.
+                </div>
+            </div>
+            <div style="background-color:#fee;border-radius:6px;padding:10px;margin:10px;">
+                <strong>Light Red - <em>Entry</em></strong>
+                <div>
+                    Days that have an <a href="Entries.html">Entry</a>, will be partially colored light red, with an
+                    icon indicating the <a href="Entries.html#Onahs">Onah</a> upon which it occurred.
+                    <br /> If the <a href="Entries.html">Entry</a> occurred during the Night <a href="Entries.html#Onahs">Onah</a>,
+                    the left half of the day will be colored.
+                    <br /> If <a href="Entries.html">Entry</a> occurred during the Day <a href="Entries.html#Onahs">Onah</a>,
+                    the right half of the day will be colored.
+                    <br /> An icon indicating the <a href="Entries.html#Onahs">Onah</a> is also shown in that half of
+                    the day.
+                    <br /> The moon icon indicates the Night <a href="Entries.html#Onahs">Onah</a> and the sun icon indicates
+                    the Day <a href="Entries.html#Onahs">Onah</a>.
+                </div>
+            </div>
+            <div style="background-color:#f1fff1;border-radius:6px;padding:10px;margin:10px;">
+                <strong>Light Green - <em>Hefesk</em></strong>
+                <div>
+                    If this day is the 5th day from the last Entry, the background color of the day will be light green, indicating that this
+                    day is possibly the first day that a Hefesk Tahara can be done.
+                </div>
+            </div>
+            <div style="background-color:#eef;border-radius:6px;padding:10px;margin:10px;">
+                <strong>Light Blue - <em>Special Calendar Days</em></strong>
+                <div>
+                    Shabbos and other special days, are colored in light blue - unless they are a <a href="FlaggedDates.html">Flagged Date</a>,
+                    an <a href="Entries.html">Entry Date</a>, or a potential <em>Hefsek Tahara</em> day.
+                </div>
+            </div>
+        </div>
+        <h3>Special Icons</h3>
+        <p>
+            The Month View also shows information about the day by the use of special icons.
+            <br />
+            Here are the explanations as to what these icons may be and what they indicate.
+        </p>
+        <div class="divList" style="margin-top:20px;">
+            <strong>Hefsek Tahara Icon</strong>
+            <div style="color:#8c8;font-size:25px;" class="icon-flare">
+            </div>
+            <blockquote>
+                This icon is shown on the day that a <em>Hefsek Tahara</em> was done.
+                <br />
+                To add a Hefsek Tahara Icon, go to the <a href="MainScreen.html">Main Screen</a> for this day by
+                pressing on the day, and then press on the Hefsek Tahara Button from the daily menu, or
+                if the day is fifth day after the start of an <a href="Entries.html">Entry</a>, press the Possible Hefsek Tahara Indicator.
+                <br />
+                To remove a Hefsek Tahara Icon, from the <a href="MainScreen.html">Main Screen</a>,
+                press on the Hefsek Tahara Badge.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong>Shailah Icon</strong>
+            <div style="color:#f1d484;font-size:25px;" class="icon-report-problem">
+            </div>
+            <blockquote>
+                If there is a Halachic question such as a <em>Bedikah</em> that needs a Rabbinic decision etc.,
+                Luach allows you to mark the date with a <em>Shailah</em>.
+                <br />
+                This will help to remind you about this question before going to the Mikvah etc.
+                <br />
+                A <em>Shailah</em> Icon can be added on any date even those that are not part of <em>Shiva Neki'im</em>.
+                <br />
+                To add the Shailah Icon, go to the <a href="MainScreen.html">Main Screen</a> for this day by
+                pressing on the day, and then press on the Shailah Button from the daily menu.
+                <br />
+                To remove a Shailah Icon, from the <a href="MainScreen.html">Main Screen</a>,
+                press on the Shailah Badge.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+            <strong>Mikvah Icon</strong>
+            <div style="color:#99f;font-size:25px;" class="icon-beenhere">
+            </div>
+            <blockquote>
+                The Mikvah Icon is shown on the day of the Mikvah night as an indication that
+                the Mikvah was attended.
+                <br />
+                To add the Mikvah Icon, go to the <a href="MainScreen.html">Main Screen</a> for this day by
+                pressing on the day, and then press on the Mikvah Button from the daily menu, or
+                if the day is the seventh day of <em>Shiva Neki'im</em>, press the Possible Mikvah Night Indicator.
+                <br />
+                To remove a Mikvah Icon, from the <a href="MainScreen.html">Main Screen</a>,
+                press on the Mikvah Badge.
+                <break />
+                <strong>Important Note:</strong> As the Mikvah is attended to only AFTER nightfall
+                on the 7th day of the <em>Shiva Neki'im</em>,
+                the true Jewish Date for the Mikvah night is the next day after
+                the end of <em>Shiva Neki'im</em>.
+                <br />
+                As most people don't look at the Mikvah night as being on the next day,
+                it was decided in Luach to
+                show all Mikvah indicators on the last day of the <em>Shiva Neki'im</em>.
+                <break />
+                If you do not want Luach to show this indication, you can turn off the
+                "Show Entry, Hefsek Tahara and Mikvah information" setting from the
+                <a href="Settings.html">Settings</a> screen.
+            </blockquote>
+        </div>
     </div>
     <script src="scripts/scripts.js"></script>
 </body>

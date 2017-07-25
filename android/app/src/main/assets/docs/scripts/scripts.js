@@ -1,7 +1,7 @@
 ﻿function windowSized() {
     var ul = document.getElementById('ulNavLinks');
     if (ul) {
-        if (window.innerWidth < 743) {
+        if (window.innerWidth < 768) {
             ul.classList.add('nav-justified');
         }
         else {
@@ -11,6 +11,5 @@
 }
 
 document.body.onresize = windowSized;
-
 windowSized();
 

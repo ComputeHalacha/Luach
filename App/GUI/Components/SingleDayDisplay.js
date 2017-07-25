@@ -169,7 +169,10 @@ export default class SingleDayDisplay extends Component {
                     (isPossibleHefsekDay ? '#f1fff1' :
                         (isToday ? '#e2e2f0' :
                             (isSpecialDay ? '#eef' : '#fff')))),
-            menuIconSize = (isLargeScreen() ? 20 : 15);
+            menuIconSize = (isLargeScreen() ? 20 : 15),
+            hasHefsek = taharaEvents.some(te => te.taharaEventType === TaharaEventType.Hefsek),
+            hasShailah = taharaEvents.some(te => te.taharaEventType === TaharaEventType.Shailah),
+            hasMikvah = taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah);
         return (
             <View style={[styles.container, { backgroundColor: backgroundColor }]}>
                 <View>
@@ -232,43 +235,40 @@ export default class SingleDayDisplay extends Component {
                 </View>
                 <View style={styles.menuView}>
                     <TouchableWithoutFeedback onPress={this.showDateDetails} style={{ flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
+                        <View style={styles.menuItemView}>
                             <Icon color='#aac' name='schedule' size={menuIconSize} />
                             <Text style={styles.menuItemText}>Zmanim</Text>
                         </View>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
+                        <View style={styles.menuItemView}>
                             <Icon color='#aac' name='remove-red-eye' size={menuIconSize} />
                             <Text style={styles.menuItemText}>Entry</Text>
                         </View>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newOccasion} style={{ flex: 1 }}>
-                        <View style={{ alignItems: 'center' }}>
+                        <View style={styles.menuItemView}>
                             <Icon color='#aac' name='event' size={menuIconSize} />
                             <Text style={styles.menuItemText}>Event</Text>
                         </View>
                     </TouchableWithoutFeedback>
-                    {appData.Settings.showEntryFlagOnHome &&
-                        (!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Hefsek)) &&
+                    {appData.Settings.showEntryFlagOnHome && !hasHefsek &&
                         <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Hefsek)} style={{ flex: 1 }}>
-                            <View style={{ alignItems: 'center' }}>
+                            <View style={[styles.menuItemView, ((hasMikvah || hasShailah) ? styles.lastMenuView : null)]}>
                                 <Icon color='#aac' name='flare' size={menuIconSize} />
                                 <Text style={styles.menuItemText}>Hefsek</Text>
                             </View>
                         </TouchableWithoutFeedback>}
-                    {appData.Settings.showEntryFlagOnHome &&
-                        (!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Shailah)) &&
+                    {appData.Settings.showEntryFlagOnHome && !hasShailah &&
                         <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Shailah)} style={{ flex: 1 }}>
-                            <View style={{ alignItems: 'center' }}>
+                            <View style={[styles.menuItemView, (hasMikvah ? styles.lastMenuView : null)]}>
                                 <Icon color='#aac' name='report-problem' size={menuIconSize} />
                                 <Text style={styles.menuItemText}>Shailah</Text>
                             </View>
                         </TouchableWithoutFeedback>}
-                    {appData.Settings.showEntryFlagOnHome &&
-                        (!taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah)) &&
+                    {appData.Settings.showEntryFlagOnHome && !hasMikvah &&
                         <TouchableWithoutFeedback onPress={() => this.toggleTaharaEvent(TaharaEventType.Mikvah)} style={{ flex: 1 }}>
-                            <View style={{ alignItems: 'center' }}>
+                            <View style={[styles.menuItemView, styles.lastMenuView]}>
                                 <Icon color='#aac' name='beenhere' size={menuIconSize} />
                                 <Text style={styles.menuItemText}>Mikvah</Text>
                             </View>
@@ -538,6 +538,13 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-start'
     },
+    menuItemView: {
+        alignItems: 'center',
+        borderRightWidth: 1,
+        borderColor: '#0000020c',
+        flex: 1
+    },
+    lastMenuView: { borderRightWidth: 0 },
     menuItemText: {
         fontSize: (isLargeScreen() ? 13 : 9),
         color: '#889'

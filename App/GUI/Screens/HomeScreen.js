@@ -317,13 +317,15 @@ export default class HomeScreen extends React.Component {
         return daysList;
     }
     getDayOfSeven(jdate) {
-        const lastHefsek = this.state.appData.TaharaEvents.find(te =>
+        //Due to questions etc. there can be more than one Hefsek.
+        const lastHefseks = this.state.appData.TaharaEvents.filter(te =>
             te.taharaEventType === TaharaEventType.Hefsek &&
             te.jdate.Abs < jdate.Abs &&
             te.jdate.diffDays(jdate) <= 7
         );
-        if (lastHefsek) {
-            return lastHefsek.jdate.diffDays(jdate);
+        if (lastHefseks.length > 0) {
+            //For the Shiva Neki'im indicator we want only the latest one
+            return lastHefseks[lastHefseks.length - 1].jdate.diffDays(jdate);
         }
     }
     /**
