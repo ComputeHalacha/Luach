@@ -1,5 +1,5 @@
-﻿@font-face { font-family: 'MaterialIcons'; src: url('../../fonts/MaterialIcons.ttf'); }
-@font-face { font-family: 'Octicons'; src: url('../../fonts/Octicons.ttf'); }
+﻿@font-face { font-family: 'Material Icons'; font-style: normal; font-weight: 400; src: local('Material Icons'), local('MaterialIcons-Regular'), url(../../fonts/MaterialIcons-Regular.woff2) format('woff2'), url(../../fonts/MaterialIcons-Regular.woff) format('woff'), url(../../fonts/MaterialIcons.ttf) format('truetype'); }
+@font-face { font-family: 'Octicons'; font-style: normal; font-weight: 400; src: local('Octicons'), url('../../fonts/Octicons.ttf') format('truetype'); }
 
 body { font-size: 14px; margin: 0; padding: 0; }
 img { border: 0; }
@@ -11,18 +11,22 @@ a.goHome:hover { text-decoration: none; }
 .nav-tabs > li > a { color: #aac; font-size: 11px; }
 .nav > li > a:hover { background-color: #ddf; }
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover { color: #889; }
+.nav-justified { border: solid 1px #ddf; border-radius: 10px; background-color: #fff; margin-bottom: 10px; }
+    .nav-justified > li > a { font-size: 1em; text-align: left !important; }
+    .nav-justified > li:last-child > a { border-radius: 0 0 10px 10px; }
 break { display: block; margin-top: 5px; }
 
 /*ICONS********/
-.icon-home::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: "\e88a"; }
-.icon-help::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: "\e887"; }
-.icon-flag::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: "\e153"; }
-.icon-flare::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: "\e3e4"; }
-.icon-event::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: "\e878"; }
-.icon-device-hub::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: "\e335"; }
-.icon-remove-red-eye::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: "\e417"; }
-.icon-report-problem::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: "\e8b2"; }
-.icon-beenhere::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: "\e52d"; }
-.icon-schedule::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: "\e8b5"; }
-.icon-settings::before { font-family: MaterialIcons; text-decoration: none; font-size: 0.8em; content: "\e8b8"; }
-.icon-calendar::before { font-family: Octicons; text-decoration: none; font-size: 0.8em; content: "\f112"; }
+.icon, .icon:hover { text-decoration: none; }
+.icon-home:before { font-family: Material Icons; font-size: 0.9em; content: "\e88a"; }
+.icon-help:before { font-family: Material Icons; font-size: 0.9em; content: "\e887"; }
+.icon-flag:before { font-family: Material Icons; font-size: 0.9em; content: "\e153"; }
+.icon-flare:before { font-family: Material Icons; font-size: 0.9em; content: "\e3e4"; }
+.icon-event:before { font-family: Material Icons; font-size: 0.9em; content: "\e878"; }
+.icon-device-hub:before { font-family: Material Icons; font-size: 0.9em; content: "\e335"; }
+.icon-remove-red-eye:before { font-family: Material Icons; font-size: 0.9em; content: "\e417"; }
+.icon-report-problem:before { font-family: Material Icons; font-size: 0.9em; content: "\e8b2"; }
+.icon-beenhere:before { font-family: Material Icons; font-size: 0.9em; content: "\e52d"; }
+.icon-schedule:before { font-family: Material Icons; font-size: 0.9em; content: "\e8b5"; }
+.icon-settings:before { font-family: Material Icons; font-size: 0.9em; content: "\e8b8"; }
+.icon-calendar:before { font-family: Octicons; font-size: 0.99em; content: "\f112"; }
