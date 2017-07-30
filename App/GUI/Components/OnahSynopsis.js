@@ -2,10 +2,11 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../../Code/JCal/Utils';
+import { NightDay } from '../../Code/Chashavshavon/Onah';
 
 export default function OnahSynopsis(props) {
     const jdate = props.jdate,
-        isNight = props.isNight;
+        isNight = props.nightDay === NightDay.Night;
 
     return <View style={styles.viewSynopsis}>
         <Text style={styles.textSynopsisLabel}>
@@ -41,13 +42,13 @@ const styles = StyleSheet.create({
         margin: 10,
         borderRadius: 10,
         alignSelf: 'center',
-        alignItems:'center',
-        backgroundColor:'#f4f4f5'
+        alignItems: 'center',
+        backgroundColor: '#f4f4f5'
     },
     textSynopsisLabel: {
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom:5
+        marginBottom: 5
     },
     viewSynopsisContent: {
         flexDirection: 'row',

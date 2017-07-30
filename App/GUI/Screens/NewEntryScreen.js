@@ -2,11 +2,14 @@ import React from 'react';
 import { ScrollView, View, Text, Button, Switch, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import SideMenu from '../Components/SideMenu';
 import OnahChooser from '../Components/OnahChooser';
+import OnahSynopsis from '../Components/OnahSynopsis';
 import Entry from '../../Code/Chashavshavon/Entry';
 import { Kavuah } from '../../Code/Chashavshavon/Kavuah';
 import Utils from '../../Code/JCal/Utils';
+import jDate from '../../Code/JCal/jDate';
 import { NightDay, Onah } from '../../Code/Chashavshavon/Onah';
 import DataUtils from '../../Code/Data/DataUtils';
 import { warn, error, popUpMessage, buttonColor } from '../../Code/GeneralUtils';
@@ -66,6 +69,7 @@ export default class NewEntry extends React.Component {
 
         this.addEntry = this.addEntry.bind(this);
         this.updateEntry = this.updateEntry.bind(this);
+        this.changeSDate = this.changeSDate.bind(this);
     }
     addEntry() {
         const appData = this.state.appData,
@@ -242,6 +246,10 @@ export default class NewEntry extends React.Component {
                     }]);
         }
     }
+    changeSDate(sdate) {
+        const jdate = new jDate(sdate);
+        this.setState({ jdate, showDatePicker: false });
+    }
     render() {
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -252,6 +260,23 @@ export default class NewEntry extends React.Component {
                     helpUrl='Entries.html'
                     helpTitle='Entries' />
                 <ScrollView style={{ flex: 1 }}>
+                    <OnahSynopsis
+                        jdate={this.state.jdate}
+                        nightDay={this.state.nightDay} />
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Secular Date</Text>
+                        <View style={GeneralStyles.textInput}>
+                            <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
+                                <Text>{Utils.toStringDate(this.state.jdate.getDate())}</Text>
+                            </TouchableOpacity>
+                            <DateTimePicker
+                                isVisible={this.state.showDatePicker}
+                                date={this.state.jdate.getDate()}
+                                onConfirm={this.changeSDate}
+                                onCancel={() => this.setState({ showDatePicker: false })}
+                            />
+                        </View>
+                    </View>
                     <OnahChooser
                         jdate={this.state.jdate}
                         nightDay={this.state.nightDay}
