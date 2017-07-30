@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, Switch } from 'react-native';
+import { View, Text, Switch, DatePickerIOS } from 'react-native';
 import { Select, Option } from 'react-native-chooser';
 import Utils from '../../Code/JCal/Utils';
 import jDate from '../../Code/JCal/jDate';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
 import { range } from '../../Code/GeneralUtils';
+import OnahSynopsis from './OnahSynopsis';
 import { GeneralStyles } from '../styles';
 
 export default class OnahChooser extends React.Component {
@@ -16,6 +17,9 @@ export default class OnahChooser extends React.Component {
         this.years = range(jdate.Year - 30, jdate.Year).reverse();
         this.daysOfMonth = range(1, 30);
         this.setDate = this.props.setDate;
+
+        this.changeDate = this.changeDate.bind(this);
+        this.changeSDate = this.changeSDate.bind(this);
     }
     changeDate(year, month, day) {
         //To prevent user from choosing a non-exiting month or day
@@ -31,9 +35,22 @@ export default class OnahChooser extends React.Component {
         this.setDate(jdate);
         this.setState({ jdate });
     }
+    changeSDate(sdate) {
+        const jdate = new jDate(sdate);
+        this.changeDate(jdate.Year, jdate.Month, jdate.Day);
+    }
     render() {
-        const jdate = this.state.jdate;
+        const jdate = this.state.jdate,
+            isNight = this.props.nightDay === NightDay.Night;
         return <View>
+            <OnahSynopsis {... { jdate, isNight }} />
+            <View style={GeneralStyles.formRow}>
+                <Text style={GeneralStyles.label}>Secular Date</Text>
+                <DatePickerIOS
+                    date={jdate.getDate()}
+                    mode='date'
+                    onDateChange={this.changeSDate} />
+            </View>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Day</Text>
                 <Select
@@ -86,7 +103,7 @@ export default class OnahChooser extends React.Component {
                     <Switch style={GeneralStyles.switch}
                         onValueChange={value =>
                             this.props.setNightDay(value ? NightDay.Day : NightDay.Night)}
-                        value={(this.props.nightDay === NightDay.Day)} />
+                        value={!isNight} />
                     <Text>Day</Text>
                 </View>
             </View>

@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, Picker, Switch } from 'react-native';
+import { View, Text, Picker, Switch, TouchableOpacity, DatePickerAndroid } from 'react-native';
+import { Icon } from 'react-native-elements';
 import Utils from '../../Code/JCal/Utils';
 import jDate from '../../Code/JCal/jDate';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
-import { range } from '../../Code/GeneralUtils';
+import { range, warn } from '../../Code/GeneralUtils';
+import OnahSynopsis from './OnahSynopsis';
 import { GeneralStyles } from '../styles';
 
 export default class OnahChooser extends React.Component {
@@ -17,6 +19,7 @@ export default class OnahChooser extends React.Component {
         this.years = range(jdate.Year - 30, jdate.Year).reverse();
 
         this.changeDate = this.changeDate.bind(this);
+        this.chooseSecularDate = this.chooseSecularDate.bind(this);
     }
     changeDate(year, month, day) {
         //To prevent user from choosing a non-exiting month or day
@@ -32,9 +35,32 @@ export default class OnahChooser extends React.Component {
         this.setDate(jdate);
         this.setState({ jdate });
     }
+    async chooseSecularDate() {
+        try {
+            const { action, year, month, day } = await DatePickerAndroid.open({
+                date: this.state.jdate.getDate()
+            });
+            if (action !== DatePickerAndroid.dismissedAction) {
+                const newDate = new Date(year, month, day),
+                    jdate = new jDate(newDate);
+                this.changeDate(jdate.Year, jdate.Month, jdate.Day);
+            }
+        } catch ({ code, message }) {
+            warn('Cannot open date picker: ' + message);
+        }
+    }
     render() {
-        const jdate = this.state.jdate;
+        const jdate = this.state.jdate,
+            isNight = this.props.nightDay === NightDay.Night;
         return <View>
+            <OnahSynopsis {... { jdate, isNight }} />
+            <TouchableOpacity onPress={this.chooseSecularDate}>
+                <View style={{ margin: 10, flexDirection: 'row'}}>
+                    <Icon name='date-range' color='#55c' size={15} />
+                    <Text style={{ marginLeft: 6, color: '#55c', textAlign: 'center', fontSize: 12 }}>
+                        Select secular date...</Text>
+                </View>
+            </TouchableOpacity>
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Day</Text>
                 <Picker style={GeneralStyles.picker}
@@ -72,10 +98,10 @@ export default class OnahChooser extends React.Component {
                     <Switch style={GeneralStyles.switch}
                         onValueChange={value =>
                             this.props.setNightDay(value ? NightDay.Day : NightDay.Night)}
-                        value={(this.props.nightDay === NightDay.Day)} />
+                        value={!isNight} />
                     <Text>Day</Text>
                 </View>
             </View>
-        </View>;
+        </View >;
     }
 }
