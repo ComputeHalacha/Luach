@@ -251,6 +251,13 @@ export default class NewEntry extends React.Component {
         this.setState({ jdate, showDatePicker: false });
     }
     render() {
+        const sdate = this.state.jdate.getDate(),
+            location = this.state.appData.Settings.location,
+            suntimes = this.state.jdate.getSunriseSunset(location),
+            sunrise = suntimes && suntimes.sunrise ?
+                Utils.getTimeString(suntimes.sunrise) : 'Never',
+            sunset = suntimes && suntimes.sunset ?
+                Utils.getTimeString(suntimes.sunset) : 'Never';
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
@@ -267,7 +274,7 @@ export default class NewEntry extends React.Component {
                         <Text style={GeneralStyles.label}>Secular Date</Text>
                         <View style={GeneralStyles.textInput}>
                             <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
-                                <Text>{Utils.toStringDate(this.state.jdate.getDate())}</Text>
+                                <Text>{`${Utils.toStringDate(sdate, true)} - ${Utils.dowEng[sdate.getDay()]}`}</Text>
                             </TouchableOpacity>
                             <DateTimePicker
                                 isVisible={this.state.showDatePicker}
@@ -282,6 +289,19 @@ export default class NewEntry extends React.Component {
                         nightDay={this.state.nightDay}
                         setDate={jdate => this.setState({ jdate })}
                         setNightDay={nightDay => this.setState({ nightDay })} />
+                    <View style={{ padding: 5 }}>
+                        <Text style={{ fontSize: 11 }}>
+                            {`On ${sdate.toLocaleDateString()} in `}
+                            <Text style={{ fontWeight: 'bold' }}>{location.Name}</Text>,
+                        </Text>
+                        <Text style={{ fontSize: 11 }}>
+                            {'Sunrise was at '}
+                            <Text style={{ fontWeight: 'bold' }}>{sunrise}</Text>
+                            {' and Sunset was at '}
+                            <Text style={{ fontWeight: 'bold' }}>{sunset}</Text>.
+                            {'\n\nDo not forget that after sunset, the Jewish Date changes.'}
+                        </Text>
+                    </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Comments</Text>
                         <TextInput style={GeneralStyles.textInput}
