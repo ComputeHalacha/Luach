@@ -58,7 +58,7 @@ export default class OnahChooser extends React.Component {
                 <View style={{ margin: 10, flexDirection: 'row'}}>
                     <Icon name='date-range' color='#55c' size={15} />
                     <Text style={{ marginLeft: 6, color: '#55c', textAlign: 'center', fontSize: 12 }}>
-                        Select secular date...</Text>
+                        Choose secular date...</Text>
                 </View>
             </TouchableOpacity>
             <View style={GeneralStyles.formRow}>
