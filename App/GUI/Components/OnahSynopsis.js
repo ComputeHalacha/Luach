@@ -10,7 +10,7 @@ export default function OnahSynopsis(props) {
 
     return <View style={styles.viewSynopsis}>
         <Text style={styles.textSynopsisLabel}>
-            Currently Selected Date and Onah
+            Please review the chosen Date and Onah
                 </Text>
         <View style={styles.viewSynopsisContent}>
             <View style={[styles.iconContainer,
@@ -32,22 +32,7 @@ export default function OnahSynopsis(props) {
 }
 
 const styles = StyleSheet.create({
-    viewSynopsis: {
-        borderWidth: 1,
-        borderColor: '#88c',
-        paddingTop: 5,
-        paddingBottom: 5,
-        paddingLeft: '10%',
-        paddingRight: '10%',
-        margin: 10,
-        borderRadius: 10,
-        alignSelf: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f4f4f5'
-    },
     textSynopsisLabel: {
-        fontWeight: 'bold',
-        textAlign: 'center',
         marginBottom: 5
     },
     viewSynopsisContent: {

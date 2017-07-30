@@ -12,7 +12,7 @@ import Utils from '../../Code/JCal/Utils';
 import jDate from '../../Code/JCal/jDate';
 import { NightDay, Onah } from '../../Code/Chashavshavon/Onah';
 import DataUtils from '../../Code/Data/DataUtils';
-import { warn, error, popUpMessage, buttonColor } from '../../Code/GeneralUtils';
+import { warn, error, popUpMessage, buttonColor, isSmallScreen } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class NewEntry extends React.Component {
@@ -267,9 +267,6 @@ export default class NewEntry extends React.Component {
                     helpUrl='Entries.html'
                     helpTitle='Entries' />
                 <ScrollView style={{ flex: 1 }}>
-                    <OnahSynopsis
-                        jdate={this.state.jdate}
-                        nightDay={this.state.nightDay} />
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Secular Date</Text>
                         <View style={GeneralStyles.textInput}>
@@ -284,22 +281,28 @@ export default class NewEntry extends React.Component {
                             />
                         </View>
                     </View>
+                    <View style={{ padding: 10 }}>
+                        <Text style={{
+                            fontSize: 12,
+                            color: '#955'
+                        }}>
+                            You can choose by either Secular or Jewish Date.</Text>
+                    </View>
                     <OnahChooser
                         jdate={this.state.jdate}
                         nightDay={this.state.nightDay}
                         setDate={jdate => this.setState({ jdate })}
                         setNightDay={nightDay => this.setState({ nightDay })} />
-                    <View style={{ padding: 5 }}>
-                        <Text style={{ fontSize: 11 }}>
+                    <View style={{ padding: 10, marginTop: 7 }}>
+                        <Text style={{ fontSize: 12 }}>
                             {`On ${sdate.toLocaleDateString()} in `}
                             <Text style={{ fontWeight: 'bold' }}>{location.Name}</Text>,
-                        </Text>
-                        <Text style={{ fontSize: 11 }}>
-                            {'Sunrise was at '}
+                            {'\nSunrise was at '}
                             <Text style={{ fontWeight: 'bold' }}>{sunrise}</Text>
                             {' and Sunset was at '}
                             <Text style={{ fontWeight: 'bold' }}>{sunset}</Text>.
-                            {'\n\nDo not forget that after sunset, the Jewish Date changes.'}
+                            <Text style={{ fontStyle: 'italic' }}>
+                                {'\n\nDo not forget that after sunset, the Jewish Date changes.'}</Text>
                         </Text>
                     </View>
                     <View style={GeneralStyles.formRow}>
@@ -313,11 +316,10 @@ export default class NewEntry extends React.Component {
                             maxLength={500} />
                     </View>
                     {(!this.state.showAdvancedOptions &&
-                        <TouchableOpacity onPress={() => this.setState({ showAdvancedOptions: true })}>
+                        <TouchableOpacity style={{ margin: 7 }} onPress={() => this.setState({ showAdvancedOptions: true })}>
                             <Text style={{
                                 color: '#66b',
-                                textAlign: 'center',
-                                fontSize: 12
+                                fontSize: 13
                             }}>Show Advanced Entry Options</Text>
                         </TouchableOpacity>)
                         ||
@@ -336,13 +338,27 @@ export default class NewEntry extends React.Component {
                             </View>
                         </View>
                     }
-                    <View style={GeneralStyles.btnAddNew}>
-                        <Button
-                            title={this.entry ? 'Save Changes' : 'Add Entry'}
-                            onPress={this.entry ? this.updateEntry : this.addEntry}
-                            accessibilityLabel={this.entry ?
-                                'Save Changes to this Entry' : 'Add this new Entry'}
-                            color={buttonColor} />
+                    <View style={{
+                        marginTop: 5,
+                        paddingTop: 8,
+                        paddingBottom: 5,
+                        paddingLeft: '10%',
+                        paddingRight: '10%',
+                        alignItems: 'center',
+                        backgroundColor: '#f4f4f5',
+                        flex: 1
+                    }}>
+                        <OnahSynopsis
+                            jdate={this.state.jdate}
+                            nightDay={this.state.nightDay} />
+                        <View style={GeneralStyles.btnAddNew}>
+                            <Button
+                                title={this.entry ? 'Save Changes' : 'Add This Entry'}
+                                onPress={this.entry ? this.updateEntry : this.addEntry}
+                                accessibilityLabel={this.entry ?
+                                    'Save Changes to this Entry' : 'Add this new Entry'}
+                                color={buttonColor} />
+                        </View>
                     </View>
                 </ScrollView>
             </View>
