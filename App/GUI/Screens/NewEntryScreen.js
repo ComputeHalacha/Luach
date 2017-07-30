@@ -9,7 +9,7 @@ import { Kavuah } from '../../Code/Chashavshavon/Kavuah';
 import Utils from '../../Code/JCal/Utils';
 import { NightDay, Onah } from '../../Code/Chashavshavon/Onah';
 import DataUtils from '../../Code/Data/DataUtils';
-import { warn, error, popUpMessage } from '../../Code/GeneralUtils';
+import { warn, error, popUpMessage, buttonColor } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class NewEntry extends React.Component {
@@ -297,7 +297,7 @@ export default class NewEntry extends React.Component {
                             onPress={this.entry ? this.updateEntry : this.addEntry}
                             accessibilityLabel={this.entry ?
                                 'Save Changes to this Entry' : 'Add this new Entry'}
-                            color='#99b' />
+                            color={buttonColor} />
                     </View>
                 </ScrollView>
             </View>

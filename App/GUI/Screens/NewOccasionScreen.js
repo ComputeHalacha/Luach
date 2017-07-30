@@ -6,7 +6,7 @@ import SideMenu from '../Components/SideMenu';
 import OccasionTypeChooser from '../Components/OccasionTypeChooser';
 import { UserOccasionTypes, UserOccasion } from '../../Code/JCal/UserOccasion';
 import DataUtils from '../../Code/Data/DataUtils';
-import { popUpMessage, warn, error } from '../../Code/GeneralUtils';
+import { popUpMessage, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class NewOccasion extends React.Component {
@@ -191,7 +191,7 @@ export default class NewOccasion extends React.Component {
                             onPress={this.occasion ? this.updateOccasion : this.addOccasion}
                             accessibilityLabel={this.occasion ?
                                 'Save Changes to this Event' : 'Add this new Event'}
-                            color='#99b' />
+                            color={buttonColor} />
                     </View>
                 </ScrollView>
             </View>

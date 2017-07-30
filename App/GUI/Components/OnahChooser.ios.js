@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, Switch, DatePickerIOS } from 'react-native';
+import { View, Text, Switch, TouchableOpacity } from 'react-native';
 import { Select, Option } from 'react-native-chooser';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import Utils from '../../Code/JCal/Utils';
 import jDate from '../../Code/JCal/jDate';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
@@ -13,7 +14,7 @@ export default class OnahChooser extends React.Component {
     constructor(props) {
         super(props);
         const jdate = this.props.jdate;
-        this.state = { jdate };
+        this.state = { jdate, showDatePicker: false };
         this.years = range(jdate.Year - 30, jdate.Year).reverse();
         this.daysOfMonth = range(1, 30);
         this.setDate = this.props.setDate;
@@ -38,6 +39,7 @@ export default class OnahChooser extends React.Component {
     changeSDate(sdate) {
         const jdate = new jDate(sdate);
         this.changeDate(jdate.Year, jdate.Month, jdate.Day);
+        this.setState({ showDatePicker: false });
     }
     render() {
         const jdate = this.state.jdate,
@@ -46,13 +48,20 @@ export default class OnahChooser extends React.Component {
             <OnahSynopsis {... { jdate, isNight }} />
             <View style={GeneralStyles.formRow}>
                 <Text style={GeneralStyles.label}>Secular Date</Text>
-                <DatePickerIOS
-                    date={jdate.getDate()}
-                    mode='date'
-                    onDateChange={this.changeSDate} />
+                <View style={GeneralStyles.textInput}>
+                    <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
+                        <Text>{Utils.toStringDate(jdate.getDate())}</Text>
+                    </TouchableOpacity>
+                    <DateTimePicker
+                        isVisible={this.state.showDatePicker}
+                        date={jdate.getDate()}
+                        onConfirm={this.changeSDate}
+                        onCancel={() => this.setState({ showDatePicker: false })}
+                    />
+                </View>
             </View>
             <View style={GeneralStyles.formRow}>
-                <Text style={GeneralStyles.label}>Day</Text>
+                <Text style={GeneralStyles.label}>Jewish Day</Text>
                 <Select
                     onSelect={value => this.changeDate(jdate.Year, jdate.Month, value)}
                     defaultText={jdate.Day.toString()}
@@ -67,7 +76,7 @@ export default class OnahChooser extends React.Component {
                 </Select>
             </View>
             <View style={GeneralStyles.formRow}>
-                <Text style={GeneralStyles.label}>Month</Text>
+                <Text style={GeneralStyles.label}>Jewish Month</Text>
                 <Select
                     onSelect={value => this.changeDate(jdate.Year, value, jdate.Day)}
                     defaultText={Utils.jMonthsEng[jdate.Month]}
@@ -82,7 +91,7 @@ export default class OnahChooser extends React.Component {
                 </Select>
             </View>
             <View style={GeneralStyles.formRow}>
-                <Text style={GeneralStyles.label}>Year</Text>
+                <Text style={GeneralStyles.label}>Jewish Year</Text>
                 <Select
                     onSelect={value => this.changeDate(value, jdate.Month, jdate.Day)}
                     defaultText={jdate.Year.toString()}
