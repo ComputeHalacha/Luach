@@ -9,9 +9,6 @@ export default function OnahSynopsis(props) {
         isNight = props.nightDay === NightDay.Night;
 
     return <View style={styles.viewSynopsis}>
-        <Text style={styles.textSynopsisLabel}>
-            Please review the chosen Date and Onah
-                </Text>
         <View style={styles.viewSynopsisContent}>
             <View style={[styles.iconContainer,
             { backgroundColor: isNight ? '#eaeaf5' : '#fff' }]}>
@@ -32,9 +29,6 @@ export default function OnahSynopsis(props) {
 }
 
 const styles = StyleSheet.create({
-    textSynopsisLabel: {
-        marginBottom: 5
-    },
     viewSynopsisContent: {
         flexDirection: 'row',
         padding: 4

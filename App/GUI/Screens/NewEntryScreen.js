@@ -4,7 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import SideMenu from '../Components/SideMenu';
-import OnahChooser from '../Components/OnahChooser';
+import JdateChooser from '../Components/JdateChooser';
 import OnahSynopsis from '../Components/OnahSynopsis';
 import Entry from '../../Code/Chashavshavon/Entry';
 import { Kavuah } from '../../Code/Chashavshavon/Kavuah';
@@ -268,6 +268,18 @@ export default class NewEntry extends React.Component {
                     helpTitle='Entries' />
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Jewish Date</Text>
+                        <JdateChooser jdate={this.state.jdate} setDate={jdate =>
+                            this.setState({ jdate })} />
+                    </View>
+                    <View style={{ padding: 10 }}>
+                        <Text style={{
+                            fontSize: 12,
+                            color: '#955'
+                        }}>
+                            You can choose by either Secular or Jewish Date.</Text>
+                    </View>
+                    <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Secular Date</Text>
                         <View style={GeneralStyles.textInput}>
                             <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
@@ -281,18 +293,17 @@ export default class NewEntry extends React.Component {
                             />
                         </View>
                     </View>
-                    <View style={{ padding: 10 }}>
-                        <Text style={{
-                            fontSize: 12,
-                            color: '#955'
-                        }}>
-                            You can choose by either Secular or Jewish Date.</Text>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Onah - Day or Night?</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 15 }}>
+                            <Text>Night</Text>
+                            <Switch style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.setState({ nightDay: (value ? NightDay.Day : NightDay.Night) })}
+                                value={this.state.nightDay === NightDay.Day} />
+                            <Text>Day</Text>
+                        </View>
                     </View>
-                    <OnahChooser
-                        jdate={this.state.jdate}
-                        nightDay={this.state.nightDay}
-                        setDate={jdate => this.setState({ jdate })}
-                        setNightDay={nightDay => this.setState({ nightDay })} />
                     <View style={{ padding: 10, marginTop: 7 }}>
                         <Text style={{ fontSize: 12 }}>
                             {`On ${sdate.toLocaleDateString()} in `}
@@ -338,16 +349,8 @@ export default class NewEntry extends React.Component {
                             </View>
                         </View>
                     }
-                    <View style={{
-                        marginTop: 5,
-                        paddingTop: 8,
-                        paddingBottom: 5,
-                        paddingLeft: '10%',
-                        paddingRight: '10%',
-                        alignItems: 'center',
-                        backgroundColor: '#f4f4f5',
-                        flex: 1
-                    }}>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Please review chosen Date and Onah</Text>
                         <OnahSynopsis
                             jdate={this.state.jdate}
                             nightDay={this.state.nightDay} />
