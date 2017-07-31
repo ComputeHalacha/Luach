@@ -44,25 +44,33 @@ export default class OnahChooser extends React.Component {
                 transparent={true}
                 visible={this.state.modalVisible}
                 onRequestClose={() => this.setState({ modalVisible: false })}>
-                <View style={{ flex: 1, backgroundColor: '#000a' }}>
+                <View style={{
+                    flex: 1,
+                    backgroundColor: '#0009',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
                     <View style={{
-                        margin: '10%',
                         backgroundColor: '#fff',
-                        alignSelf: 'center',
                         flex: 0,
-                        minWidth: '70%'
+                        width: 350,
+                        maxWidth:'90%'
                     }}>
                         <View style={{
-                            backgroundColor: '#99b',
-                            paddingTop: 20,
-                            paddingBottom: 20,
-                            paddingLeft: 10
+                            backgroundColor: '#88a',
+                            paddingTop: 30,
+                            paddingBottom: 30,
+                            paddingLeft: 10,
+                            paddingRight: 10
                         }}>
                             <Text style={{
                                 color: '#fff',
                                 fontWeight: 'bold',
-                                fontSize: 18
-                            }}>{jdate.toString()}</Text>
+                                fontSize: 22,
+                                textAlign: 'center'
+                            }}>
+                                {jdate.toString() + '\n' + jdate.toStringHeb()}
+                            </Text>
                         </View>
                         <View>
                             <Text style={GeneralStyles.label}>Jewish Day</Text>
@@ -97,8 +105,8 @@ export default class OnahChooser extends React.Component {
                         <View>
                             <TouchableOpacity onPress={() =>
                                 this.setState({ modalVisible: false })}>
-                                <View style={{ alignItems: 'flex-end', margin: 10 }}>
-                                    <Text style={{ fontWeight: 'bold', fontSize: 13, color: '#99b' }}>CLOSE</Text>
+                                <View style={{ alignItems: 'flex-end', margin: 30 }}>
+                                    <Text style={{ fontWeight: 'bold', fontSize: 15, color: '#77a' }}>CLOSE</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>

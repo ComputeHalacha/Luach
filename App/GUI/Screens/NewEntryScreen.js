@@ -283,7 +283,7 @@ export default class NewEntry extends React.Component {
                         <Text style={GeneralStyles.label}>Secular Date</Text>
                         <View style={GeneralStyles.textInput}>
                             <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
-                                <Text>{`${Utils.toStringDate(sdate, true)} - ${Utils.dowEng[sdate.getDay()]}`}</Text>
+                                <Text>{Utils.toStringDate(sdate)}</Text>
                             </TouchableOpacity>
                             <DateTimePicker
                                 isVisible={this.state.showDatePicker}
@@ -308,10 +308,10 @@ export default class NewEntry extends React.Component {
                         <Text style={{ fontSize: 12 }}>
                             {`On ${sdate.toLocaleDateString()} in `}
                             <Text style={{ fontWeight: 'bold' }}>{location.Name}</Text>,
-                            {'\nSunrise was at '}
-                            <Text style={{ fontWeight: 'bold' }}>{sunrise}</Text>
-                            {' and Sunset was at '}
-                            <Text style={{ fontWeight: 'bold' }}>{sunset}</Text>.
+                            {'\nSunrise: '}
+                            <Text style={{ fontWeight: 'bold',color:'#668' }}>{sunrise}</Text>
+                            {'    Sunset: '}
+                            <Text style={{ fontWeight: 'bold', color:'#668' }}>{sunset}</Text>
                             <Text style={{ fontStyle: 'italic' }}>
                                 {'\n\nDo not forget that after sunset, the Jewish Date changes.'}</Text>
                         </Text>
