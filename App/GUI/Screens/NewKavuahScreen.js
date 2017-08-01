@@ -6,7 +6,7 @@ import KavuahPickers from '../Components/KavuahPickers';
 import { KavuahTypes, Kavuah } from '../../Code/Chashavshavon/Kavuah';
 import DataUtils from '../../Code/Data/DataUtils';
 import AppData from '../../Code/Data/AppData';
-import { popUpMessage, warn, error } from '../../Code/GeneralUtils';
+import { popUpMessage, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class NewKavuah extends React.Component {
@@ -153,7 +153,7 @@ export default class NewKavuah extends React.Component {
                             title='Add Kavuah'
                             onPress={this.addKavuah.bind(this)}
                             accessibilityLabel='Add this new Kavuah'
-                            color='#99b' />
+                            color={buttonColor} />
                     </View>
                 </ScrollView>
             </View>

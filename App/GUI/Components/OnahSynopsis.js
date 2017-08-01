@@ -2,15 +2,13 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../../Code/JCal/Utils';
+import { NightDay } from '../../Code/Chashavshavon/Onah';
 
 export default function OnahSynopsis(props) {
     const jdate = props.jdate,
-        isNight = props.isNight;
+        isNight = props.nightDay === NightDay.Night;
 
     return <View style={styles.viewSynopsis}>
-        <Text style={styles.textSynopsisLabel}>
-            Currently Selected Date and Onah
-                </Text>
         <View style={styles.viewSynopsisContent}>
             <View style={[styles.iconContainer,
             { backgroundColor: isNight ? '#eaeaf5' : '#fff' }]}>
@@ -31,19 +29,6 @@ export default function OnahSynopsis(props) {
 }
 
 const styles = StyleSheet.create({
-    viewSynopsis: {
-        borderWidth: 1,
-        borderColor: '#88c',
-        paddingTop: 5,
-        paddingLeft: 10,
-        paddingRight: 10,
-        margin: 10,
-        borderRadius: 10
-    },
-    textSynopsisLabel: {
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
     viewSynopsisContent: {
         flexDirection: 'row',
         padding: 4

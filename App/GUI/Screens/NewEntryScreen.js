@@ -2,14 +2,17 @@ import React from 'react';
 import { ScrollView, View, Text, Button, Switch, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import SideMenu from '../Components/SideMenu';
-import OnahChooser from '../Components/OnahChooser';
+import JdateChooser from '../Components/JdateChooser';
+import OnahSynopsis from '../Components/OnahSynopsis';
 import Entry from '../../Code/Chashavshavon/Entry';
 import { Kavuah } from '../../Code/Chashavshavon/Kavuah';
 import Utils from '../../Code/JCal/Utils';
+import jDate from '../../Code/JCal/jDate';
 import { NightDay, Onah } from '../../Code/Chashavshavon/Onah';
 import DataUtils from '../../Code/Data/DataUtils';
-import { warn, error, popUpMessage } from '../../Code/GeneralUtils';
+import { warn, error, popUpMessage, buttonColor, isSmallScreen } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class NewEntry extends React.Component {
@@ -66,6 +69,7 @@ export default class NewEntry extends React.Component {
 
         this.addEntry = this.addEntry.bind(this);
         this.updateEntry = this.updateEntry.bind(this);
+        this.changeSDate = this.changeSDate.bind(this);
     }
     addEntry() {
         const appData = this.state.appData,
@@ -242,7 +246,18 @@ export default class NewEntry extends React.Component {
                     }]);
         }
     }
+    changeSDate(sdate) {
+        const jdate = new jDate(sdate);
+        this.setState({ jdate, showDatePicker: false });
+    }
     render() {
+        const sdate = this.state.jdate.getDate(),
+            location = this.state.appData.Settings.location,
+            suntimes = this.state.jdate.getSunriseSunset(location),
+            sunrise = suntimes && suntimes.sunrise ?
+                Utils.getTimeString(suntimes.sunrise) : 'Never',
+            sunset = suntimes && suntimes.sunset ?
+                Utils.getTimeString(suntimes.sunset) : 'Never';
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
@@ -252,11 +267,55 @@ export default class NewEntry extends React.Component {
                     helpUrl='Entries.html'
                     helpTitle='Entries' />
                 <ScrollView style={{ flex: 1 }}>
-                    <OnahChooser
-                        jdate={this.state.jdate}
-                        nightDay={this.state.nightDay}
-                        setDate={jdate => this.setState({ jdate })}
-                        setNightDay={nightDay => this.setState({ nightDay })} />
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Jewish Date</Text>
+                        <JdateChooser jdate={this.state.jdate} setDate={jdate =>
+                            this.setState({ jdate })} />
+                    </View>
+                    <View style={{ padding: 10 }}>
+                        <Text style={{
+                            fontSize: 12,
+                            color: '#955'
+                        }}>
+                            You can choose by either Secular or Jewish Date.</Text>
+                    </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Secular Date</Text>
+                        <View style={GeneralStyles.textInput}>
+                            <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
+                                <Text>{Utils.toStringDate(sdate)}</Text>
+                            </TouchableOpacity>
+                            <DateTimePicker
+                                isVisible={this.state.showDatePicker}
+                                date={this.state.jdate.getDate()}
+                                onConfirm={this.changeSDate}
+                                onCancel={() => this.setState({ showDatePicker: false })}
+                            />
+                        </View>
+                    </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Onah - Day or Night?</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 15 }}>
+                            <Text>Night</Text>
+                            <Switch style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.setState({ nightDay: (value ? NightDay.Day : NightDay.Night) })}
+                                value={this.state.nightDay === NightDay.Day} />
+                            <Text>Day</Text>
+                        </View>
+                    </View>
+                    <View style={{ padding: 10, marginTop: 7 }}>
+                        <Text style={{ fontSize: 12 }}>
+                            {`On ${sdate.toLocaleDateString()} in `}
+                            <Text style={{ fontWeight: 'bold' }}>{location.Name}</Text>,
+                            {'\nSunrise: '}
+                            <Text style={{ fontWeight: 'bold',color:'#668' }}>{sunrise}</Text>
+                            {'    Sunset: '}
+                            <Text style={{ fontWeight: 'bold', color:'#668' }}>{sunset}</Text>
+                            <Text style={{ fontStyle: 'italic' }}>
+                                {'\n\nDo not forget that after sunset, the Jewish Date changes.'}</Text>
+                        </Text>
+                    </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Comments</Text>
                         <TextInput style={GeneralStyles.textInput}
@@ -268,11 +327,10 @@ export default class NewEntry extends React.Component {
                             maxLength={500} />
                     </View>
                     {(!this.state.showAdvancedOptions &&
-                        <TouchableOpacity onPress={() => this.setState({ showAdvancedOptions: true })}>
+                        <TouchableOpacity style={{ margin: 7 }} onPress={() => this.setState({ showAdvancedOptions: true })}>
                             <Text style={{
                                 color: '#66b',
-                                textAlign: 'center',
-                                fontSize: 12
+                                fontSize: 13
                             }}>Show Advanced Entry Options</Text>
                         </TouchableOpacity>)
                         ||
@@ -291,13 +349,19 @@ export default class NewEntry extends React.Component {
                             </View>
                         </View>
                     }
-                    <View style={GeneralStyles.btnAddNew}>
-                        <Button
-                            title={this.entry ? 'Save Changes' : 'Add Entry'}
-                            onPress={this.entry ? this.updateEntry : this.addEntry}
-                            accessibilityLabel={this.entry ?
-                                'Save Changes to this Entry' : 'Add this new Entry'}
-                            color='#99b' />
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Please review chosen Date and Onah</Text>
+                        <OnahSynopsis
+                            jdate={this.state.jdate}
+                            nightDay={this.state.nightDay} />
+                        <View style={GeneralStyles.btnAddNew}>
+                            <Button
+                                title={this.entry ? 'Save Changes' : 'Add This Entry'}
+                                onPress={this.entry ? this.updateEntry : this.addEntry}
+                                accessibilityLabel={this.entry ?
+                                    'Save Changes to this Entry' : 'Add this new Entry'}
+                                color={buttonColor} />
+                        </View>
                     </View>
                 </ScrollView>
             </View>

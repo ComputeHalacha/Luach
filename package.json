@@ -10,6 +10,7 @@
     "react-native": "^0.45.1",
     "react-native-chooser": "^1.5.3",
     "react-native-elements": "^0.13.0",
+    "react-native-modal-datetime-picker": "^4.9.0",
     "react-native-sqlite-storage": "^3.2.2",
     "react-native-swipe-gestures": "^1.0.2",
     "react-native-vector-icons": "^4.2.0",

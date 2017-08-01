@@ -3,6 +3,8 @@ import { NavigationActions } from 'react-navigation';
 import jDate from './JCal/jDate';
 import Utils from './JCal/Utils';
 
+export const buttonColor = (Platform.OS === 'android' ? '#99b' : null);
+
 /**Gets the current window width in points */
 export function getScreenWidth() {
     return Dimensions.get('window').width;

@@ -39,7 +39,8 @@ const GeneralStyles = StyleSheet.create({
         backgroundColor: '#fff',
         height: '80%',
         width: '80%',
-        borderRadius: 6 },
+        borderRadius: 6
+    },
     switch: {
         margin: 5,
         alignSelf: 'flex-start'
@@ -52,7 +53,8 @@ const GeneralStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#cce',
         borderRadius: 5,
-        padding: 3
+        padding: 3,
+        justifyContent: 'center'
     },
     buttonList: {
         flex: 1,
