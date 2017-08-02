@@ -27,6 +27,7 @@
 		267B28B61F1D315C00FC30AB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 267B28B51F1D315C00FC30AB /* LaunchScreen.xib */; };
 		267B28B81F1D39D700FC30AB /* scroll.png in Resources */ = {isa = PBXBuildFile; fileRef = 267B28B71F1D39D700FC30AB /* scroll.png */; };
 		267B28BA1F1D3BE700FC30AB /* Menu.png in Resources */ = {isa = PBXBuildFile; fileRef = 267B28B91F1D3BE700FC30AB /* Menu.png */; };
+		268D0D991F3189CA00C5F8F4 /* scroll_512.png in Resources */ = {isa = PBXBuildFile; fileRef = 268D0D981F3189CA00C5F8F4 /* scroll_512.png */; };
 		26B7F08D1EE93C2E0074B5B5 /* data in Resources */ = {isa = PBXBuildFile; fileRef = 26B7F08C1EE93C2E0074B5B5 /* data */; };
 		26BD307D1F0CDFDA008D4CA3 /* docs in Resources */ = {isa = PBXBuildFile; fileRef = 26BD307C1F0CDFDA008D4CA3 /* docs */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -286,6 +287,7 @@
 		267B28B51F1D315C00FC30AB /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = LaunchScreen.xib; path = LuachAndroid/LaunchScreen.xib; sourceTree = "<group>"; };
 		267B28B71F1D39D700FC30AB /* scroll.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = scroll.png; sourceTree = "<group>"; };
 		267B28B91F1D3BE700FC30AB /* Menu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Menu.png; sourceTree = "<group>"; };
+		268D0D981F3189CA00C5F8F4 /* scroll_512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = scroll_512.png; sourceTree = "<group>"; };
 		26B7F08C1EE93C2E0074B5B5 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../android/app/src/main/assets/data; sourceTree = "<group>"; };
 		26BD307C1F0CDFDA008D4CA3 /* docs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = docs; path = ../android/app/src/main/assets/docs; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* LuachAndroid-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LuachAndroid-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -444,6 +446,7 @@
 		13B07FAE1A68108700A75B9A /* LuachAndroid */ = {
 			isa = PBXGroup;
 			children = (
+				268D0D981F3189CA00C5F8F4 /* scroll_512.png */,
 				265BFAD81F1E74870067BEC6 /* DayPlaceholder.png */,
 				267B28B91F1D3BE700FC30AB /* Menu.png */,
 				267B28B71F1D39D700FC30AB /* scroll.png */,
@@ -987,6 +990,7 @@
 				79A068D3E7134005B3477702 /* MaterialIcons.ttf in Resources */,
 				267B28B61F1D315C00FC30AB /* LaunchScreen.xib in Resources */,
 				DC194B40E7B84590B17E71CB /* Octicons.ttf in Resources */,
+				268D0D991F3189CA00C5F8F4 /* scroll_512.png in Resources */,
 				7B858E5E0AEB4958B07CB520 /* SimpleLineIcons.ttf in Resources */,
 				E34BE92044C54BA297966CB4 /* Zocial.ttf in Resources */,
 			);

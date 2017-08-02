@@ -54,7 +54,7 @@ export default class OnahChooser extends React.Component {
                         backgroundColor: '#fff',
                         flex: 0,
                         width: 350,
-                        maxWidth:'90%'
+                        maxWidth: '90%'
                     }}>
                         <View style={{
                             backgroundColor: '#88a',
@@ -66,10 +66,13 @@ export default class OnahChooser extends React.Component {
                             <Text style={{
                                 color: '#fff',
                                 fontWeight: 'bold',
-                                fontSize: 22,
+                                fontSize: 18,
                                 textAlign: 'center'
                             }}>
-                                {jdate.toString() + '\n' + jdate.toStringHeb()}
+                                {jdate.toString() + '\n'}
+                                <Text style={{ fontSize: 22 }}>
+                                    {jdate.toStringHeb()}
+                                </Text>
                             </Text>
                         </View>
                         <View>
@@ -105,8 +108,15 @@ export default class OnahChooser extends React.Component {
                         <View>
                             <TouchableOpacity onPress={() =>
                                 this.setState({ modalVisible: false })}>
-                                <View style={{ alignItems: 'flex-end', margin: 30 }}>
-                                    <Text style={{ fontWeight: 'bold', fontSize: 15, color: '#77a' }}>CLOSE</Text>
+                                <View style={{
+                                    alignItems: 'flex-end',
+                                    margin: 30
+                                }}>
+                                    <Text style={{
+                                        fontWeight: 'bold',
+                                        fontSize: 15,
+                                        color: '#77a'
+                                    }}>CLOSE</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
