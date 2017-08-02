@@ -67,10 +67,13 @@ export default class OnahChooser extends React.Component {
                             <Text style={{
                                 color: '#fff',
                                 fontWeight: 'bold',
-                                fontSize: 22,
+                                fontSize: 18,
                                 textAlign: 'center'
                             }}>
-                                {jdate.toString() + '\n' + jdate.toStringHeb()}
+                                {jdate.toString() + '\n'}
+                                <Text style={{ fontSize: 22 }}>
+                                    {jdate.toStringHeb()}
+                                </Text>
                             </Text>
                         </View>
                         <View>
