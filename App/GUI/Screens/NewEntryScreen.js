@@ -264,6 +264,7 @@ export default class NewEntry extends React.Component {
                     onUpdate={this.onUpdate}
                     appData={this.state.appData}
                     navigator={this.props.navigation}
+                    currDate={this.state.jdate}
                     helpUrl='Entries.html'
                     helpTitle='Entries' />
                 <ScrollView style={{ flex: 1 }}>
@@ -309,9 +310,9 @@ export default class NewEntry extends React.Component {
                             {`On ${sdate.toLocaleDateString()} in `}
                             <Text style={{ fontWeight: 'bold' }}>{location.Name}</Text>,
                             {'\nSunrise: '}
-                            <Text style={{ fontWeight: 'bold',color:'#668' }}>{sunrise}</Text>
+                            <Text style={{ fontWeight: 'bold', color: '#668' }}>{sunrise}</Text>
                             {'    Sunset: '}
-                            <Text style={{ fontWeight: 'bold', color:'#668' }}>{sunset}</Text>
+                            <Text style={{ fontWeight: 'bold', color: '#668' }}>{sunset}</Text>
                             <Text style={{ fontStyle: 'italic' }}>
                                 {'\n\nDo not forget that after sunset, the Jewish Date changes.'}</Text>
                         </Text>
