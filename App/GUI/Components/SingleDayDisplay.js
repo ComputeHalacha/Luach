@@ -295,7 +295,7 @@ function OccasionsComponent(props) {
             {props.list.map((o, i) =>
                 <TouchableOpacity key={i} onPress={() => props.edit(o)}>
                     <View style={{ flexDirection: 'row' }}>
-                        <Icon size={12} color='#aae' name='event' />
+                        <Icon size={14} color='#b96' name='event' />
                         <Text style={styles.occasionText} key={i}>{o.title}</Text>
                     </View>
                 </TouchableOpacity>)
@@ -512,10 +512,10 @@ const styles = StyleSheet.create({
         marginLeft: 2
     },
     occasionText: {
-        color: '#88d',
+        color: '#a85',
         paddingLeft: 2,
         fontWeight: 'bold',
-        fontSize: 11
+        fontSize: 12
     },
     hefsekText: {
         fontSize: 10,
