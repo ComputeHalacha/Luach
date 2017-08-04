@@ -294,8 +294,8 @@ function OccasionsComponent(props) {
         return (<View style={styles.eventsView}>
             {props.list.map((o, i) =>
                 <TouchableOpacity key={i} onPress={() => props.edit(o)}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Icon size={12} color='#aae' name='event' />
+                    <View style={styles.occasionBadge}>
+                        <Icon size={14} color='#ffe' name='event' />
                         <Text style={styles.occasionText} key={i}>{o.title}</Text>
                     </View>
                 </TouchableOpacity>)
@@ -383,7 +383,7 @@ function DayOfSevenComponent(props) {
 
 function TaharaEventsComponent(props) {
     if (props.list.length > 0) {
-        return (<View style={styles.taharaEventsOuterView}>
+        return (<View style={styles.badgesOuterView}>
             {props.list.map((te, i) => {
                 let bgColor, iconName;
                 switch (te.taharaEventType) {
@@ -405,7 +405,7 @@ function TaharaEventsComponent(props) {
                         break;
                 }
                 return (<TouchableOpacity key={i} onPress={() => props.remove(te.taharaEventType)}>
-                    <View style={[styles.taharaEventsView, { backgroundColor: bgColor }]}>
+                    <View style={[styles.badgeView, { backgroundColor: bgColor }]}>
                         <Icon color='#555' name={iconName} size={isLargeScreen() ? 16 : 11} />
                         <Text style={styles.taharaEventsText}>
                             {te.toTypeString()}
@@ -482,7 +482,6 @@ const styles = StyleSheet.create({
         margin: 5
     },
     eventsView: {
-        justifyContent: 'center',
         marginLeft: 15,
         marginRight: 15,
         marginBottom: 10
@@ -493,12 +492,12 @@ const styles = StyleSheet.create({
         fontSize: 10,
         textAlign: 'center'
     },
-    taharaEventsOuterView: {
+    badgesOuterView: {
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 5
     },
-    taharaEventsView: {
+    badgeView: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
@@ -511,11 +510,20 @@ const styles = StyleSheet.create({
         fontSize: 10,
         marginLeft: 2
     },
+    occasionBadge: {
+        backgroundColor: '#b96',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        padding: 5,
+        borderRadius: 5,
+        marginBottom: 4
+    },
     occasionText: {
-        color: '#88d',
+        color: '#ffe',
         paddingLeft: 2,
         fontWeight: 'bold',
-        fontSize: 11
+        fontSize: 12,
+        marginLeft: 4
     },
     hefsekText: {
         fontSize: 10,

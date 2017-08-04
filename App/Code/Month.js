@@ -1,5 +1,6 @@
 import jDate from './JCal/jDate';
 import Utils from './JCal/Utils';
+import { UserOccasion } from './JCal/UserOccasion';
 import { NightDay } from './Chashavshavon/Onah';
 
 /**
@@ -60,7 +61,15 @@ export default class Month {
     /**
      * Gets a 2 dimentional array for all the days in the month grouped by week.
      * Format is [weeks][days] where days are each an object:
-     * { jdate, sdate, hasEntryNight, hasEntryDay, hasProbNight, hasProbDay, isHefeskDay, taharaEvents }
+     * { jdate,
+     *  sdate,
+     *  hasEntryNight,
+     *  hasEntryDay,
+     *  hasProbNight,
+     *  hasProbDay,
+     *  isHefeskDay,
+     *  taharaEvents,
+     *  hasEvent }
      */
     getAllDays() {
         return this.isJdate ?
@@ -80,7 +89,9 @@ export default class Month {
             isHefeskDay = this.appData.EntryList.list.length > 0 &&
                 Utils.isSameJdate(jdate, this.appData.EntryList.lastEntry().hefsekDate),
             taharaEvents = this.appData.TaharaEvents.filter(te =>
-                Utils.isSameJdate(jdate, te.jdate));
+                Utils.isSameJdate(jdate, te.jdate)),
+            hasEvent = this.appData.UserOccasions.length > 0 &&
+                UserOccasion.getOccasionsForDate(jdate, this.appData.UserOccasions).length > 0;
         return {
             jdate,
             sdate,
@@ -89,7 +100,8 @@ export default class Month {
             hasProbNight,
             hasProbDay,
             isHefeskDay,
-            taharaEvents
+            taharaEvents,
+            hasEvent
         };
     }
     getAllDaysJdate() {

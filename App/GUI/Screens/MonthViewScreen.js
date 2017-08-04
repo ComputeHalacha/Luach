@@ -159,14 +159,16 @@ export default class MonthViewScreen extends React.Component {
                                     <Text style={{ fontSize: 9, textAlign: 'center' }}>
                                         {holiday ? holiday : shabbos}</Text>
                                 </View>}
-                            {this.appData.Settings.showEntryFlagOnHome &&
-                                singleDay.taharaEvents.length > 0 &&
-                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
-                                    {singleDay.taharaEvents.map((te, i) =>
-                                        <TaharaEventIcon key={i} taharaEvent={te} />
-                                    )}
-                                </View>
-                            }
+                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+                                {this.appData.Settings.showEntryFlagOnHome &&
+                                    singleDay.taharaEvents.length > 0 &&
+                                    singleDay.taharaEvents.map((te, i) =>
+                                        <TaharaEventIcon key={i} taharaEvent={te} />)
+                                }
+                                {singleDay.hasEvent &&
+                                    <Icon size={18} color='#ca7' name='event' />
+                                }
+                            </View>
                         </View>
                     </View>
                 </TouchableOpacity>)
