@@ -95,6 +95,14 @@ export default class DataUtils {
                 error(err);
             });
     }
+    static async LocationSettingToDatabase(location) {
+        await DataUtils._executeSql(`UPDATE settings SET
+            locationId=?`, [location.locationId])
+            .catch(err => {
+                warn('Error trying to enter location setting into the database.');
+                error(err);
+            });
+    }
     static async EntryListFromDatabase() {
         const entryList = new EntryList();
         await DataUtils._executeSql('SELECT * from entries ORDER BY dateAbs, day')
