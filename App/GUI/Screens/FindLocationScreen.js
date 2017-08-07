@@ -5,6 +5,7 @@ import { NavigationActions } from 'react-navigation';
 import SideMenu from '../Components/SideMenu';
 import { popUpMessage } from '../../Code/GeneralUtils';
 import DataUtils from '../../Code/Data/DataUtils';
+import Settings from '../../Code/Settings';
 import { GeneralStyles } from '../styles';
 
 export default class FindLocation extends Component {
@@ -26,9 +27,13 @@ export default class FindLocation extends Component {
     }
     update(location) {
         const appData = this.appData;
-        appData.Settings.location = location;
-        if (this.onUpdate) {
-            this.onUpdate(appData);
+        if (appData.Settings.location.locationId !== location.locationId) {
+            Settings.saveLocation(location).then(() => {
+                appData.Settings.location = location;
+                if (this.onUpdate) {
+                    this.onUpdate(appData);
+                }
+            });
         }
         this.dispatch(NavigationActions.back());
     }

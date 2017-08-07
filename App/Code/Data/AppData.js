@@ -93,7 +93,7 @@ export default class AppData {
                     }
                 }
             }
-            appData.updateProbs(appData);
+             appData.updateProbs(appData);
         });
     }
     /**

@@ -33,6 +33,9 @@ export default class Settings {
     save() {
         DataUtils.SettingsToDatabase(this);
     }
+    static async saveLocation(location) {
+        await DataUtils.LocationSettingToDatabase(location);
+    }
     isSameSettings(other) {
         if (!!this != !!other) {
             return false;
