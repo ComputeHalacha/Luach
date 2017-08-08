@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, View, TouchableHighlight, Alert } from 'react-native';
+import { ScrollView, Text, View, TouchableHighlight, TouchableOpacity, Alert } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
 import CustomList from '../Components/CustomList';
@@ -23,7 +23,16 @@ export default class OccasionsScreen extends Component {
             occasionList: appData.UserOccasions
         };
 
+        this.editOccasion = this.editOccasion.bind(this);
         this.deleteOccasion = this.deleteOccasion.bind(this);
+    }
+    editOccasion(occasion) {
+        this.navigate('NewOccasion',
+            {
+                occasion,
+                appData: this.state.appData,
+                onUpdate: this.onUpdate
+            });
     }
     deleteOccasion(occasion) {
         Alert.alert(
@@ -77,8 +86,37 @@ export default class OccasionsScreen extends Component {
                     <ScrollView style={{ flex: 1 }}>
                         <CustomList
                             data={this.state.occasionList}
-                            iconname='remove-red-eye'
+                            iconname='event'
                             emptyListText='There are no Events in the list'
+                            title={occasion =>
+                                <View>
+                                    <TouchableOpacity
+                                        onPress={() => this.editOccasion(occasion)}>
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'flex-start',
+                                            padding: 5,
+                                            borderRadius: 5,
+                                            margin: 4,
+                                            backgroundColor: occasion.color
+                                        }}>
+                                            <Icon size={14} color='#ffe' name='event' />
+                                            <Text style={{
+                                                color: '#ffe',
+                                                paddingLeft: 2,
+                                                fontWeight: 'bold',
+                                                fontSize: 12,
+                                                marginLeft: 4
+                                            }}>
+                                                {occasion.title}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <Text>
+                                        {occasion.toString()}
+                                    </Text>
+                                </View>
+                            }
                             secondSection={occasion => <View style={GeneralStyles.inItemButtonList}>
                                 <TouchableHighlight
                                     underlayColor='#696'
@@ -99,11 +137,7 @@ export default class OccasionsScreen extends Component {
                                 <TouchableHighlight
                                     underlayColor='#788778'
                                     style={{ flex: 1 }}
-                                    onPress={() => this.navigate('NewOccasion', {
-                                        occasion,
-                                        appData: this.state.appData,
-                                        onUpdate: this.onUpdate
-                                    })}>
+                                    onPress={() => this.editOccasion(occasion)}>
                                     <View style={{ alignItems: 'center' }}>
                                         <Icon
                                             name='edit'

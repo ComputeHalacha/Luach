@@ -10,38 +10,34 @@ const UserOccasionTypes = Object.freeze({
 });
 
 class UserOccasion {
-    constructor(title, occasionType, dateAbs, comments, occasionId) {
+    static defaultColor = '#b96';
+
+    constructor(title, occasionType, dateAbs, color, comments, occasionId) {
         this.title = title;
         this.occasionType = occasionType;
         this.dateAbs = dateAbs;
+        this.color = color || UserOccasion.defaultColor;
         this.comments = comments;
         this.occasionId = occasionId;
     }
     toString() {
-        let str = this.title + ' - ';
         switch (this.occasionType) {
             case UserOccasionTypes.OneTime:
-                str += 'One time event on ' + this.jdate.toString(true) + '  (' +
+                return 'One time event on ' + this.jdate.toString(true) + '  (' +
                     Utils.toStringDate(this.sdate, true) + ')';
-                break;
             case UserOccasionTypes.HebrewDateRecurringYearly:
-                str += 'Yearly event on the ' + Utils.toSuffixed(this.jdate.Day) +
+                return 'Yearly event on the ' + Utils.toSuffixed(this.jdate.Day) +
                     ' day of ' + Utils.jMonthsEng[this.jdate.Month];
-                break;
             case UserOccasionTypes.HebrewDateRecurringMonthly:
-                str += 'Monthly event on the ' + Utils.toSuffixed(this.jdate.Day)
+                return 'Monthly event on the ' + Utils.toSuffixed(this.jdate.Day)
                     + ' day of each Jewish month';
-                break;
             case UserOccasionTypes.SecularDateRecurringYearly:
-                str += 'Yearly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
+                return 'Yearly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
                     ' day of ' + Utils.sMonthsEng[this.sdate.getMonth()];
-                break;
             case UserOccasionTypes.SecularDateRecurringMonthly:
-                str += 'Monthly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
+                return 'Monthly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
                     ' day of each Secular month';
-                break;
         }
-        return str;
     }
     isSameOccasion(occasion) {
         if (!occasion) {
@@ -50,7 +46,11 @@ class UserOccasion {
         return this.title === occasion.title &&
             this.occasionType === occasion.occasionType &&
             this.dateAbs === occasion.dateAbs &&
+            this.color === occasion.color &&
             this.comments === occasion.comments;
+    }
+    isCustomColor() {
+        return this.color !== UserOccasion.defaultColor;
     }
     get jdate() {
         if (!this._jdate) {

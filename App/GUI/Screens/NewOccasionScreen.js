@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, TextInput, Button, Alert } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TextInput, Button, Alert, TouchableOpacity, Modal } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
@@ -39,7 +39,9 @@ export default class NewOccasion extends React.Component {
                 jdate: occasion.jdate,
                 occasionType: occasion.occasionType,
                 title: occasion.title,
-                comments: occasion.comments
+                color: occasion.color,
+                comments: occasion.comments,
+                modalVisible: false
             };
         }
         else {
@@ -48,11 +50,14 @@ export default class NewOccasion extends React.Component {
                 jdate: jdate,
                 occasionType: UserOccasionTypes.OneTime,
                 title: '',
-                comments: ''
+                color: UserOccasion.defaultColor,
+                comments: '',
+                modalVisible: false
             };
         }
         this.addOccasion = this.addOccasion.bind(this);
         this.updateOccasion = this.updateOccasion.bind(this);
+        this.chooseColor = this.chooseColor.bind(this);
     }
     addOccasion() {
         if (this.state.title.length < 1) {
@@ -65,6 +70,7 @@ export default class NewOccasion extends React.Component {
                 this.state.title,
                 this.state.occasionType,
                 this.state.jdate.Abs,
+                this.state.color,
                 this.state.comments);
         ad.UserOccasions.push(occasion);
         this.setState({ appData: ad });
@@ -92,6 +98,7 @@ export default class NewOccasion extends React.Component {
 
         occasion.title = this.state.title;
         occasion.occasionType = this.state.occasionType;
+        occasion.color = this.state.color;
         occasion.comments = this.state.comments;
 
         DataUtils.UserOccasionToDatabase(occasion).then(() => {
@@ -146,6 +153,9 @@ export default class NewOccasion extends React.Component {
                     }
                 }]);
     }
+    chooseColor(color) {
+        this.setState({ color: color, modalVisible: false });
+    }
     render() {
         const sdate = this.state.jdate.getDate(),
             muxedDate = `${this.state.jdate.toShortString(false)} (${sdate.toLocaleDateString()})`;
@@ -177,6 +187,72 @@ export default class NewOccasion extends React.Component {
                         occasionType={this.state.occasionType || 0}
                         setOccasionType={value => this.setState({ occasionType: value })} />
                     <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Background Color</Text>
+                        <TouchableOpacity onPress={() => this.setState({ modalVisible: true })}>
+                            <View style={[GeneralStyles.textInput, { backgroundColor: this.state.color }]}>
+                            </View>
+                        </TouchableOpacity>
+                        <Modal
+                            style={{ flex: 1 }}
+                            transparent={true}
+                            visible={this.state.modalVisible}
+                            onRequestClose={() => this.setState({ modalVisible: false })}>
+                            <View style={{
+                                flex: 1,
+                                backgroundColor: '#0009',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}>
+                                <View style={{
+                                    backgroundColor: '#fff',
+                                    flex: 0,
+                                    width: 350,
+                                    maxWidth: '90%'
+                                }}>
+                                    <View style={{
+                                        backgroundColor: '#88a',
+                                        paddingTop: 30,
+                                        paddingBottom: 30,
+                                        paddingLeft: 10,
+                                        paddingRight: 10
+                                    }}>
+                                        <Text style={{
+                                            color: '#fff',
+                                            fontWeight: 'bold',
+                                            fontSize: 15,
+                                            textAlign: 'center'
+                                        }}>
+                                            Choose Background Color
+                                        </Text>
+                                    </View>
+                                    <View style={{ height: 50, flexDirection: 'row' }}>
+                                        <ColorCell color={UserOccasion.defaultColor} chooseColor={this.chooseColor} />
+                                        <ColorCell color={'#9b6'} chooseColor={this.chooseColor} />
+                                        <ColorCell color={'#96b'} chooseColor={this.chooseColor} />
+                                    </View>
+                                    <View style={{ height: 50, flexDirection: 'row' }}>
+                                        <ColorCell color={'#f00'} chooseColor={this.chooseColor} />
+                                        <ColorCell color={'#090'} chooseColor={this.chooseColor} />
+                                        <ColorCell color={'#00f'} chooseColor={this.chooseColor} />
+                                    </View>
+                                    <View style={{ height: 50, flexDirection: 'row' }}>
+                                        <ColorCell color={'#707'} chooseColor={this.chooseColor} />
+                                        <ColorCell color={'#770'} chooseColor={this.chooseColor} />
+                                        <ColorCell color={'#077'} chooseColor={this.chooseColor} />
+                                    </View>
+                                    <View style={{
+                                        alignItems: 'center',
+                                        marginBottom: 10,
+                                        marginTop: 10
+                                    }}>
+                                        <Button onPress={() =>
+                                            this.setState({ modalVisible: false })} title='Close' />
+                                    </View>
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
+                    <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Comments</Text>
                         <TextInput style={[GeneralStyles.textInput, { height: 100 }]}
                             onEndEditing={event =>
@@ -199,3 +275,15 @@ export default class NewOccasion extends React.Component {
         </View>;
     }
 }
+function ColorCell(props) {
+    return <TouchableOpacity style={{ flex: 1 }} onPress={() => props.chooseColor(props.color)}>
+        <View style={[styles.colorCell, { backgroundColor: props.color }]}></View>
+    </TouchableOpacity>;
+}
+const styles = StyleSheet.create({
+    colorCell: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: '#aaa'
+    },
+});

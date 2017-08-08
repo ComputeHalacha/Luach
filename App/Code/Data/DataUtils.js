@@ -161,6 +161,7 @@ export default class DataUtils {
                 list = results.list.map(o => new UserOccasion(o.title,
                     o.type,
                     o.dateAbs,
+                    o.color,
                     o.comments,
                     o.occasionId));
             })
@@ -175,6 +176,7 @@ export default class DataUtils {
             occasion.title,
             occasion.occasionType,
             occasion.dateAbs,
+            (occasion.isCustomColor() ? occasion.color : null),
             occasion.comments
         ];
         if (occasion.hasId) {
@@ -182,6 +184,7 @@ export default class DataUtils {
                     title=?,
                     type=?,
                     dateAbs=?,
+                    color=?,
                     comments=?
                 WHERE occasionId=?`,
                 [...params, occasion.occasionId])
@@ -198,8 +201,9 @@ export default class DataUtils {
                         title,
                         type,
                         dateAbs,
+                        color,
                         comments)
-                    VALUES (?,?,?,?)`,
+                    VALUES (?,?,?,?,?)`,
                 params)
                 .then(results => occasion.occasionId = results.id)
                 .catch(err => {

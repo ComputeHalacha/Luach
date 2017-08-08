@@ -294,7 +294,7 @@ function OccasionsComponent(props) {
         return (<View style={styles.eventsView}>
             {props.list.map((o, i) =>
                 <TouchableOpacity key={i} onPress={() => props.edit(o)}>
-                    <View style={styles.occasionBadge}>
+                    <View style={[styles.occasionBadge, { backgroundColor: o.color }]}>
                         <Icon size={14} color='#ffe' name='event' />
                         <Text style={styles.occasionText} key={i}>{o.title}</Text>
                     </View>
@@ -511,7 +511,6 @@ const styles = StyleSheet.create({
         marginLeft: 2
     },
     occasionBadge: {
-        backgroundColor: '#b96',
         flexDirection: 'row',
         alignItems: 'flex-start',
         padding: 5,
