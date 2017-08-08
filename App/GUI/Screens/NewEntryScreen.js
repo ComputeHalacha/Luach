@@ -12,7 +12,7 @@ import Utils from '../../Code/JCal/Utils';
 import jDate from '../../Code/JCal/jDate';
 import { NightDay, Onah } from '../../Code/Chashavshavon/Onah';
 import DataUtils from '../../Code/Data/DataUtils';
-import { warn, error, popUpMessage, buttonColor, isSmallScreen } from '../../Code/GeneralUtils';
+import { warn, error, popUpMessage, buttonColor } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class NewEntry extends React.Component {
@@ -288,7 +288,7 @@ export default class NewEntry extends React.Component {
                             </TouchableOpacity>
                             <DateTimePicker
                                 isVisible={this.state.showDatePicker}
-                                date={this.state.jdate.getDate()}
+                                date={sdate}
                                 onConfirm={this.changeSDate}
                                 onCancel={() => this.setState({ showDatePicker: false })}
                             />

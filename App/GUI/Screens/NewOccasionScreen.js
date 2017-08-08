@@ -2,9 +2,13 @@ import React from 'react';
 import { StyleSheet, ScrollView, View, Text, TextInput, Button, Alert, TouchableOpacity, Modal } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import SideMenu from '../Components/SideMenu';
 import OccasionTypeChooser from '../Components/OccasionTypeChooser';
+import JdateChooser from '../Components/JdateChooser';
 import { UserOccasionTypes, UserOccasion } from '../../Code/JCal/UserOccasion';
+import jDate from '../../Code/JCal/jDate';
+import Utils from '../../Code/JCal/Utils';
 import DataUtils from '../../Code/Data/DataUtils';
 import { popUpMessage, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
@@ -41,6 +45,7 @@ export default class NewOccasion extends React.Component {
                 title: occasion.title,
                 color: occasion.color,
                 comments: occasion.comments,
+                showDatePicker: false,
                 modalVisible: false
             };
         }
@@ -52,12 +57,14 @@ export default class NewOccasion extends React.Component {
                 title: '',
                 color: UserOccasion.defaultColor,
                 comments: '',
+                showDatePicker: false,
                 modalVisible: false
             };
         }
         this.addOccasion = this.addOccasion.bind(this);
         this.updateOccasion = this.updateOccasion.bind(this);
         this.chooseColor = this.chooseColor.bind(this);
+        this.changeSDate = this.changeSDate.bind(this);
     }
     addOccasion() {
         if (this.state.title.length < 1) {
@@ -96,6 +103,7 @@ export default class NewOccasion extends React.Component {
         const ad = this.state.appData,
             occasion = this.occasion;
 
+        occasion.dateAbs = this.state.jdate.Abs;
         occasion.title = this.state.title;
         occasion.occasionType = this.state.occasionType;
         occasion.color = this.state.color;
@@ -156,6 +164,10 @@ export default class NewOccasion extends React.Component {
     chooseColor(color) {
         this.setState({ color: color, modalVisible: false });
     }
+    changeSDate(sdate) {
+        const jdate = new jDate(sdate);
+        this.setState({ jdate, showDatePicker: false });
+    }
     render() {
         const sdate = this.state.jdate.getDate(),
             muxedDate = `${this.state.jdate.toShortString(false)} (${sdate.toLocaleDateString()})`;
@@ -181,6 +193,32 @@ export default class NewOccasion extends React.Component {
                             onEndEditing={event =>
                                 this.setState({ title: event.nativeEvent.text })}
                             defaultValue={this.state.title} />
+                    </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Jewish Date</Text>
+                        <JdateChooser jdate={this.state.jdate} setDate={jdate =>
+                            this.setState({ jdate })} />
+                    </View>
+                    <View style={{ padding: 10 }}>
+                        <Text style={{
+                            fontSize: 12,
+                            color: '#955'
+                        }}>
+                            You can choose by either Secular or Jewish Date.</Text>
+                    </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Secular Date</Text>
+                        <View style={GeneralStyles.textInput}>
+                            <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
+                                <Text>{Utils.toStringDate(sdate)}</Text>
+                            </TouchableOpacity>
+                            <DateTimePicker
+                                isVisible={this.state.showDatePicker}
+                                date={sdate}
+                                onConfirm={this.changeSDate}
+                                onCancel={() => this.setState({ showDatePicker: false })}
+                            />
+                        </View>
                     </View>
                     <OccasionTypeChooser
                         jdate={this.state.jdate}
