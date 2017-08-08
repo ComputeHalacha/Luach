@@ -165,8 +165,8 @@ export default class MonthViewScreen extends React.Component {
                                     singleDay.taharaEvents.map((te, i) =>
                                         <TaharaEventIcon key={i} taharaEvent={te} />)
                                 }
-                                {singleDay.hasEvent &&
-                                    <Icon size={18} color='#ca7' name='event' />
+                                {singleDay.event &&
+                                    <Icon size={18} color={singleDay.event.color} name='event' />
                                 }
                             </View>
                         </View>
