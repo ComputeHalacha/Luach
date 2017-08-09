@@ -198,8 +198,13 @@ export default class SingleDayDisplay extends Component {
                                 <TouchableOpacity onPress={this.changeLocation}>
                                     <Text style={styles.location}>{'In ' + location.Name}</Text>
                                 </TouchableOpacity>
-                                <Text>{'Sunrise: ' + sunrise}</Text>
-                                <Text>{'Sunset: ' + sunset}</Text>
+                                <TouchableWithoutFeedback onPress={this.showDateDetails}>
+                                    <View>
+                                        <Text>{'Sunrise: ' + sunrise}</Text>
+                                        <Text>{'Sunset: ' + sunset}</Text>
+                                        <Text style={{ color: '#557a55', fontSize: 10, paddingTop: 2 }}>more Zmanim...</Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
                             </View>
                             <View style={{ flex: 0, maxWidth: '50%', paddingTop: 10, paddingBottom: 10 }}>
                                 {flag &&
@@ -234,12 +239,6 @@ export default class SingleDayDisplay extends Component {
                     {isDayOff && <DayOffComponent dayOfWeek={jdate.dayOfWeek} />}
                 </View>
                 <View style={styles.menuView}>
-                    <TouchableWithoutFeedback onPress={this.showDateDetails} style={{ flex: 1 }}>
-                        <View style={styles.menuItemView}>
-                            <Icon color='#aac' name='schedule' size={menuIconSize} />
-                            <Text style={styles.menuItemText}>Zmanim</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
                         <View style={styles.menuItemView}>
                             <Icon color='#aac' name='remove-red-eye' size={menuIconSize} />
