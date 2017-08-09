@@ -100,8 +100,8 @@ export default class NewOccasion extends React.Component {
                 'Add occasion');
             return;
         }
-        const ad = this.state.appData,
-            occasion = this.occasion;
+        const occasion = this.occasion,
+            origValues = occasion.clone();
 
         occasion.dateAbs = this.state.jdate.Abs;
         occasion.title = this.state.title;
@@ -110,16 +110,20 @@ export default class NewOccasion extends React.Component {
         occasion.comments = this.state.comments;
 
         DataUtils.UserOccasionToDatabase(occasion).then(() => {
-            if (this.onUpdate) {
-                this.onUpdate(ad);
-                popUpMessage(`The occasion ${occasion.title} has been successfully saved.`,
-                    'Edit occasion');
-                this.dispatch(NavigationActions.back());
-            }
+            popUpMessage(`The occasion ${occasion.title} has been successfully saved.`,
+                'Edit occasion');
+            this.onUpdate(this.state.appData);
+            this.dispatch(NavigationActions.back());
         }).catch(err => {
             warn('Error trying to add save the changes to User Occasion in the database.');
             error(err);
             popUpMessage('We are sorry, Luach is unable to save the changes to this Occasion.\nPlease contact luach@compute.co.il.');
+            //Revert values
+            occasion.title = origValues.title;
+            occasion.occasionType = origValues.occasionType;
+            occasion.dateAbs = origValues.dateAbs;
+            occasion.color = origValues.color;
+            occasion.comments = origValues.comments;
         });
     }
     /**

@@ -25,18 +25,19 @@ export default class OccasionsScreen extends Component {
 
         this.editOccasion = this.editOccasion.bind(this);
         this.deleteOccasion = this.deleteOccasion.bind(this);
+        this.update = this.update.bind(this);
     }
     editOccasion(occasion) {
         this.navigate('NewOccasion',
             {
                 occasion,
                 appData: this.state.appData,
-                onUpdate: this.onUpdate
+                onUpdate: this.update
             });
     }
     deleteOccasion(occasion) {
         Alert.alert(
-            'Confirm Event Removal', 'Are you sue that you want to remove this Event?', [
+            'Confirm Event Removal', 'Are you sure that you want to remove this Event?', [
                 //Button 1
                 {
                     text: 'Cancel',
@@ -53,13 +54,7 @@ export default class OccasionsScreen extends Component {
                             if (index > -1) {
                                 occasionList.splice(index, 1);
                                 appData.UserOccasions = occasionList;
-                                if (this.onUpdate) {
-                                    this.onUpdate(appData);
-                                }
-                                this.setState({
-                                    appData: appData,
-                                    occasionList: occasionList
-                                });
+                                this.onUpdate(appData);
                                 popUpMessage(`The Event "${occasion.title}" has been successfully removed.`,
                                     'Remove Event');
                             }
@@ -71,6 +66,16 @@ export default class OccasionsScreen extends Component {
                         });
                     }
                 }]);
+    }
+    update(appData) {
+        if (this.onUpdate) {
+            this.onUpdate(appData);
+        }
+        this.setState({
+            appData: appData,
+            //force a refresh
+            occasionList: [...appData.UserOccasions]
+        });
     }
     render() {
         return (

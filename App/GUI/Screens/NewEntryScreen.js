@@ -124,7 +124,8 @@ export default class NewEntry extends React.Component {
         const appData = this.state.appData,
             entryList = appData.EntryList,
             onah = new Onah(this.state.jdate, this.state.nightDay),
-            entry = this.entry;
+            entry = this.entry,
+            origEntry = entry.clone();
         entry.onah = onah;
         entry.ignoreForFlaggedDates = this.state.ignoreForFlaggedDates;
         entry.ignoreForKavuah = this.state.ignoreForKavuah;
@@ -163,8 +164,14 @@ export default class NewEntry extends React.Component {
             }
         }
         ).catch(err => {
+            popUpMessage('We are sorry, Luach is unable to save the changes to this Entry.\nPlease contact luach@compute.co.il.');
             warn('Error trying to add save the changes to the database.');
             error(err);
+            //Revert changes
+            entry.onah = origEntry.onah;
+            entry.ignoreForFlaggedDates = origEntry.ignoreForFlaggedDates;
+            entry.ignoreForKavuah = origEntry.ignoreForKavuah;
+            entry.comments = origEntry.comments;
         });
     }
     /**

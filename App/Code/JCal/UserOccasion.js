@@ -52,6 +52,15 @@ class UserOccasion {
     isCustomColor() {
         return this.color !== UserOccasion.defaultColor;
     }
+    clone() {
+        return new UserOccasion(
+            this.title,
+            this.occasionType,
+            this.dateAbs,
+            this.color,
+            this.comments,
+            this.occasionId);
+    }
     get jdate() {
         if (!this._jdate) {
             this._jdate = new jDate(this.dateAbs);
