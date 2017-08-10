@@ -16,11 +16,10 @@ export default class ColorChooser extends React.Component {
         this.setState({ modalVisible: false });
     }
     render() {
-        const color = this.props.color;
-        selectedColor = color;
+        selectedColor = this.props.color;
         return <View>
             <TouchableOpacity onPress={() => this.setState({ modalVisible: true })}>
-                <View style={[GeneralStyles.textInput, { backgroundColor: color }]}>
+                <View style={[GeneralStyles.textInput, { backgroundColor: selectedColor }]}>
                 </View>
             </TouchableOpacity>
             <Modal
