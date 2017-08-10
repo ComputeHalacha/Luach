@@ -4,12 +4,35 @@ import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
 import CustomList from '../Components/CustomList';
 import DataUtils from '../../Code/Data/DataUtils';
+import jDate from '../../Code/JCal/jDate';
 import { warn, error, popUpMessage } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class OccasionsScreen extends Component {
-    static navigationOptions = {
-        title: 'Events / Occasions',
+    static navigationOptions = ({ navigation }) => {
+        const { appData, onUpdate } = navigation.state.params;
+        return {
+            title: 'Events / Occasions',
+            headerRight: <TouchableHighlight onPress={() =>
+                navigation.navigate('NewOccasion', {
+                    appData: appData,
+                    onUpdate: onUpdate,
+                    jdate: new jDate()
+                })}>
+                <View style={{ alignItems: 'center' }}>
+                    <Icon
+                        size={9}
+                        reverse
+                        name='add'
+                        color='#484' />
+                    <Text style={{
+                        fontSize: 9,
+                        color: '#262',
+                        paddingRight: 4
+                    }}>New Event</Text>
+                </View>
+            </TouchableHighlight>
+        };
     };
     constructor(props) {
         super(props);

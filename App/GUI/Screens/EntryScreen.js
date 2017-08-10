@@ -122,13 +122,13 @@ export default class EntryScreen extends Component {
                             <TouchableHighlight onPress={this.newEntry}>
                                 <View style={{ alignItems: 'center' }}>
                                     <Icon
-                                        size={12}
+                                        size={9}
                                         reverse
                                         name='add'
                                         color='#484'
                                     />
                                     <Text style={{
-                                        fontSize: 12,
+                                        fontSize: 9,
                                         color: '#262',
                                         fontStyle: 'italic'
                                     }}>New Entry</Text>
@@ -137,13 +137,13 @@ export default class EntryScreen extends Component {
                             <TouchableHighlight onPress={this.findKavuahs}>
                                 <View style={{ alignItems: 'center' }}>
                                     <Icon
-                                        size={12}
+                                        size={9}
                                         reverse
                                         name='search'
                                         color='#669'
                                     />
                                     <Text style={{
-                                        fontSize: 12,
+                                        fontSize: 9,
                                         color: '#669',
                                         fontStyle: 'italic'
                                     }}>Calculate Possible Kavuahs</Text>

@@ -22,15 +22,23 @@ export default class NewEntry extends React.Component {
         return {
             title: entry ? 'Edit Entry' : 'New Entry',
             headerRight: entry &&
-            <Icon name='delete-forever'
-                color='#a33'
-                size={20}
-                onPress={() => NewEntry.deleteEntry(entry, appData, ad => {
+            <TouchableOpacity onPress={() =>
+                NewEntry.deleteEntry(entry, appData, ad => {
                     if (onUpdate) {
                         onUpdate(ad);
                     }
                     navigation.dispatch(NavigationActions.back());
-                })} />
+                })}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', marginRight: 5 }}>
+                    <Icon name='delete-forever'
+                        color='#a33'
+                        size={20} />
+                    <Text style={{
+                        fontSize: 9,
+                        color: '#a33'
+                    }}>Remove</Text>
+                </View>
+            </TouchableOpacity>
         };
     };
 

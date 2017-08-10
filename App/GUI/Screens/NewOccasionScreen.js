@@ -19,15 +19,23 @@ export default class NewOccasion extends React.Component {
         return {
             title: (occasion ? 'Edit' : 'New') + ' Event / Occasion',
             headerRight: occasion &&
-            <Icon name='delete-forever'
-                color='#a33'
-                size={20}
-                onPress={() => NewOccasion.deleteOccasion(occasion, appData, ad => {
+            <TouchableOpacity onPress={() =>
+                NewOccasion.deleteOccasion(occasion, appData, ad => {
                     if (onUpdate) {
                         onUpdate(ad);
                     }
                     navigation.dispatch(NavigationActions.back());
-                })} />
+                })}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', marginRight: 5 }}>
+                    <Icon name='delete-forever'
+                        color='#a33'
+                        size={20} />
+                    <Text style={{
+                        fontSize: 9,
+                        color: '#a33'
+                    }}>Remove</Text>
+                </View>
+            </TouchableOpacity>
         };
     };
     constructor(props) {
