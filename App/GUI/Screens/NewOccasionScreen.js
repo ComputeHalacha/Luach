@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Text, TextInput, Button, Alert, TouchableOpacity, Modal } from 'react-native';
+import { ScrollView, View, Text, TextInput, Button, Alert, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import SideMenu from '../Components/SideMenu';
+import ColorChooser from '../Components/ColorChooser';
 import OccasionTypeChooser from '../Components/OccasionTypeChooser';
 import JdateChooser from '../Components/JdateChooser';
 import { UserOccasionTypes, UserOccasion } from '../../Code/JCal/UserOccasion';
@@ -216,7 +217,7 @@ export default class NewOccasion extends React.Component {
                             fontSize: 12,
                             color: '#955'
                         }}>
-                            You can choose by either Secular or Jewish Date.</Text>
+                            You can choose by either Jewish or Secular Date</Text>
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Secular Date</Text>
@@ -238,69 +239,11 @@ export default class NewOccasion extends React.Component {
                         setOccasionType={value => this.setState({ occasionType: value })} />
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Background Color</Text>
-                        <TouchableOpacity onPress={() => this.setState({ modalVisible: true })}>
-                            <View style={[GeneralStyles.textInput, { backgroundColor: this.state.color }]}>
-                            </View>
-                        </TouchableOpacity>
-                        <Modal
-                            style={{ flex: 1 }}
-                            transparent={true}
-                            visible={this.state.modalVisible}
-                            onRequestClose={() => this.setState({ modalVisible: false })}>
-                            <View style={{
-                                flex: 1,
-                                backgroundColor: '#0009',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}>
-                                <View style={{
-                                    backgroundColor: '#fff',
-                                    flex: 0,
-                                    width: 350,
-                                    maxWidth: '90%'
-                                }}>
-                                    <View style={{
-                                        backgroundColor: '#88a',
-                                        paddingTop: 30,
-                                        paddingBottom: 30,
-                                        paddingLeft: 10,
-                                        paddingRight: 10
-                                    }}>
-                                        <Text style={{
-                                            color: '#fff',
-                                            fontWeight: 'bold',
-                                            fontSize: 15,
-                                            textAlign: 'center'
-                                        }}>
-                                            Choose Background Color
-                                        </Text>
-                                    </View>
-                                    <View style={{ height: 50, flexDirection: 'row' }}>
-                                        <ColorCell color={UserOccasion.defaultColor} chooseColor={this.chooseColor} />
-                                        <ColorCell color={'#9b6'} chooseColor={this.chooseColor} />
-                                        <ColorCell color={'#96b'} chooseColor={this.chooseColor} />
-                                    </View>
-                                    <View style={{ height: 50, flexDirection: 'row' }}>
-                                        <ColorCell color={'#f00'} chooseColor={this.chooseColor} />
-                                        <ColorCell color={'#090'} chooseColor={this.chooseColor} />
-                                        <ColorCell color={'#00f'} chooseColor={this.chooseColor} />
-                                    </View>
-                                    <View style={{ height: 50, flexDirection: 'row' }}>
-                                        <ColorCell color={'#707'} chooseColor={this.chooseColor} />
-                                        <ColorCell color={'#770'} chooseColor={this.chooseColor} />
-                                        <ColorCell color={'#077'} chooseColor={this.chooseColor} />
-                                    </View>
-                                    <View style={{
-                                        alignItems: 'center',
-                                        marginBottom: 10,
-                                        marginTop: 10
-                                    }}>
-                                        <Button onPress={() =>
-                                            this.setState({ modalVisible: false })} title='Close' />
-                                    </View>
-                                </View>
-                            </View>
-                        </Modal>
+                        <ColorChooser
+                            caption='Choose Background Color'
+                            color={this.state.color}
+                            firstColor={UserOccasion.defaultColor}
+                            onChange={this.chooseColor} />
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Comments</Text>
@@ -325,15 +268,3 @@ export default class NewOccasion extends React.Component {
         </View>;
     }
 }
-function ColorCell(props) {
-    return <TouchableOpacity style={{ flex: 1 }} onPress={() => props.chooseColor(props.color)}>
-        <View style={[styles.colorCell, { backgroundColor: props.color }]}></View>
-    </TouchableOpacity>;
-}
-const styles = StyleSheet.create({
-    colorCell: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: '#aaa'
-    },
-});

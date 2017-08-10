@@ -202,7 +202,7 @@ export default class SingleDayDisplay extends Component {
                                     <View>
                                         <Text>{'Sunrise: ' + sunrise}</Text>
                                         <Text>{'Sunset: ' + sunset}</Text>
-                                        <Text style={{ color: '#557a55', fontSize: 10, paddingTop: 2 }}>more Zmanim...</Text>
+                                        <Text style={{ fontSize: 10, fontWeight:'bold' }}>More...</Text>
                                     </View>
                                 </TouchableWithoutFeedback>
                             </View>

@@ -293,7 +293,7 @@ export default class NewEntry extends React.Component {
                             fontSize: 12,
                             color: '#955'
                         }}>
-                            You can choose by either Secular or Jewish Date.</Text>
+                            You can choose by either Jewish or Secular Date</Text>
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Secular Date</Text>
