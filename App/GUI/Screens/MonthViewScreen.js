@@ -165,8 +165,8 @@ export default class MonthViewScreen extends React.Component {
                                     singleDay.taharaEvents.map((te, i) =>
                                         <TaharaEventIcon key={i} taharaEvent={te} />)
                                 }
-                                {singleDay.hasEvent &&
-                                    <Icon size={18} color='#ca7' name='event' />
+                                {singleDay.event &&
+                                    <Icon size={18} color={singleDay.event.color} name='event' />
                                 }
                             </View>
                         </View>
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#999',
-        borderWidth: 1,
+        borderWidth: StyleSheet.hairlineWidth,
         borderColor: '#aaa'
     },
     dayHead: {
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     singleDayBlank: {
         flex: 1,
         backgroundColor: '#eee',
-        borderWidth: 1,
+        borderWidth: StyleSheet.hairlineWidth,
         borderColor: '#ddd'
     },
     singleDayTextContent: {
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     },
     singleDayView: {
         flex: 1,
-        borderWidth: 1,
+        borderWidth: StyleSheet.hairlineWidth,
         width: '100%',
         height: '100%',
     },

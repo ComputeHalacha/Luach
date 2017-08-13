@@ -26,6 +26,8 @@ const addedFields = [
     { table: 'settings', name: 'kavuahDiffOnahs', type: 'BOOLEAN', allowNull: true },
     //Added 7/3/17
     { table: 'settings', name: 'hideHelp', type: 'BOOLEAN', allowNull: true },
+    //Added 8/8/17
+    { table: 'occasions', name: 'color', type: 'VARCHAR (25)', allowNull: true },
 ];
 
 export default class AppData {
@@ -93,7 +95,7 @@ export default class AppData {
                     }
                 }
             }
-             appData.updateProbs(appData);
+            appData.updateProbs(appData);
         });
     }
     /**

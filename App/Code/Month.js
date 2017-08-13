@@ -90,8 +90,8 @@ export default class Month {
                 Utils.isSameJdate(jdate, this.appData.EntryList.lastEntry().hefsekDate),
             taharaEvents = this.appData.TaharaEvents.filter(te =>
                 Utils.isSameJdate(jdate, te.jdate)),
-            hasEvent = this.appData.UserOccasions.length > 0 &&
-                UserOccasion.getOccasionsForDate(jdate, this.appData.UserOccasions).length > 0;
+            event = (this.appData.UserOccasions.length > 0 &&
+                UserOccasion.getOccasionsForDate(jdate, this.appData.UserOccasions)[0]);
         return {
             jdate,
             sdate,
@@ -101,7 +101,7 @@ export default class Month {
             hasProbDay,
             isHefeskDay,
             taharaEvents,
-            hasEvent
+            event
         };
     }
     getAllDaysJdate() {

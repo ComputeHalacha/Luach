@@ -198,8 +198,13 @@ export default class SingleDayDisplay extends Component {
                                 <TouchableOpacity onPress={this.changeLocation}>
                                     <Text style={styles.location}>{'In ' + location.Name}</Text>
                                 </TouchableOpacity>
-                                <Text>{'Sunrise: ' + sunrise}</Text>
-                                <Text>{'Sunset: ' + sunset}</Text>
+                                <TouchableWithoutFeedback onPress={this.showDateDetails}>
+                                    <View>
+                                        <Text>{'Sunrise: ' + sunrise}</Text>
+                                        <Text>{'Sunset: ' + sunset}</Text>
+                                        <Text style={{ fontSize: 10, fontWeight:'bold' }}>More...</Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
                             </View>
                             <View style={{ flex: 0, maxWidth: '50%', paddingTop: 10, paddingBottom: 10 }}>
                                 {flag &&
@@ -234,12 +239,6 @@ export default class SingleDayDisplay extends Component {
                     {isDayOff && <DayOffComponent dayOfWeek={jdate.dayOfWeek} />}
                 </View>
                 <View style={styles.menuView}>
-                    <TouchableWithoutFeedback onPress={this.showDateDetails} style={{ flex: 1 }}>
-                        <View style={styles.menuItemView}>
-                            <Icon color='#aac' name='schedule' size={menuIconSize} />
-                            <Text style={styles.menuItemText}>Zmanim</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
                         <View style={styles.menuItemView}>
                             <Icon color='#aac' name='remove-red-eye' size={menuIconSize} />
@@ -294,7 +293,7 @@ function OccasionsComponent(props) {
         return (<View style={styles.eventsView}>
             {props.list.map((o, i) =>
                 <TouchableOpacity key={i} onPress={() => props.edit(o)}>
-                    <View style={styles.occasionBadge}>
+                    <View style={[styles.occasionBadge, { backgroundColor: o.color }]}>
                         <Icon size={14} color='#ffe' name='event' />
                         <Text style={styles.occasionText} key={i}>{o.title}</Text>
                     </View>
@@ -422,7 +421,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexWrap: 'wrap',
-        borderWidth: 1,
+        borderWidth: StyleSheet.hairlineWidth,
         borderColor: '#777',
         borderRadius: 6,
         padding: 0,
@@ -511,7 +510,6 @@ const styles = StyleSheet.create({
         marginLeft: 2
     },
     occasionBadge: {
-        backgroundColor: '#b96',
         flexDirection: 'row',
         alignItems: 'flex-start',
         padding: 5,

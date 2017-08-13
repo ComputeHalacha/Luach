@@ -12,7 +12,7 @@ import Utils from '../../Code/JCal/Utils';
 import jDate from '../../Code/JCal/jDate';
 import { NightDay, Onah } from '../../Code/Chashavshavon/Onah';
 import DataUtils from '../../Code/Data/DataUtils';
-import { warn, error, popUpMessage, buttonColor, isSmallScreen } from '../../Code/GeneralUtils';
+import { warn, error, popUpMessage, buttonColor } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class NewEntry extends React.Component {
@@ -22,15 +22,23 @@ export default class NewEntry extends React.Component {
         return {
             title: entry ? 'Edit Entry' : 'New Entry',
             headerRight: entry &&
-            <Icon name='delete-forever'
-                color='#a33'
-                size={20}
-                onPress={() => NewEntry.deleteEntry(entry, appData, ad => {
+            <TouchableOpacity onPress={() =>
+                NewEntry.deleteEntry(entry, appData, ad => {
                     if (onUpdate) {
                         onUpdate(ad);
                     }
                     navigation.dispatch(NavigationActions.back());
-                })} />
+                })}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', marginRight: 5 }}>
+                    <Icon name='delete-forever'
+                        color='#a33'
+                        size={20} />
+                    <Text style={{
+                        fontSize: 9,
+                        color: '#a33'
+                    }}>Remove</Text>
+                </View>
+            </TouchableOpacity>
         };
     };
 
@@ -124,7 +132,8 @@ export default class NewEntry extends React.Component {
         const appData = this.state.appData,
             entryList = appData.EntryList,
             onah = new Onah(this.state.jdate, this.state.nightDay),
-            entry = this.entry;
+            entry = this.entry,
+            origEntry = entry.clone();
         entry.onah = onah;
         entry.ignoreForFlaggedDates = this.state.ignoreForFlaggedDates;
         entry.ignoreForKavuah = this.state.ignoreForKavuah;
@@ -163,8 +172,14 @@ export default class NewEntry extends React.Component {
             }
         }
         ).catch(err => {
+            popUpMessage('We are sorry, Luach is unable to save the changes to this Entry.\nPlease contact luach@compute.co.il.');
             warn('Error trying to add save the changes to the database.');
             error(err);
+            //Revert changes
+            entry.onah = origEntry.onah;
+            entry.ignoreForFlaggedDates = origEntry.ignoreForFlaggedDates;
+            entry.ignoreForKavuah = origEntry.ignoreForKavuah;
+            entry.comments = origEntry.comments;
         });
     }
     /**
@@ -278,7 +293,7 @@ export default class NewEntry extends React.Component {
                             fontSize: 12,
                             color: '#955'
                         }}>
-                            You can choose by either Secular or Jewish Date.</Text>
+                            You can choose by either Jewish or Secular Date</Text>
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Secular Date</Text>
@@ -288,7 +303,7 @@ export default class NewEntry extends React.Component {
                             </TouchableOpacity>
                             <DateTimePicker
                                 isVisible={this.state.showDatePicker}
-                                date={this.state.jdate.getDate()}
+                                date={sdate}
                                 onConfirm={this.changeSDate}
                                 onCancel={() => this.setState({ showDatePicker: false })}
                             />

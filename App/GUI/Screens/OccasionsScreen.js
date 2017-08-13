@@ -1,15 +1,38 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, View, TouchableHighlight, Alert } from 'react-native';
+import { ScrollView, Text, View, TouchableHighlight, TouchableOpacity, Alert } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
 import CustomList from '../Components/CustomList';
 import DataUtils from '../../Code/Data/DataUtils';
+import jDate from '../../Code/JCal/jDate';
 import { warn, error, popUpMessage } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class OccasionsScreen extends Component {
-    static navigationOptions = {
-        title: 'Events / Occasions',
+    static navigationOptions = ({ navigation }) => {
+        const { appData, onUpdate } = navigation.state.params;
+        return {
+            title: 'Events / Occasions',
+            headerRight: <TouchableHighlight onPress={() =>
+                navigation.navigate('NewOccasion', {
+                    appData: appData,
+                    onUpdate: onUpdate,
+                    jdate: new jDate()
+                })}>
+                <View style={{ alignItems: 'center' }}>
+                    <Icon
+                        size={9}
+                        reverse
+                        name='add'
+                        color='#484' />
+                    <Text style={{
+                        fontSize: 9,
+                        color: '#262',
+                        paddingRight: 4
+                    }}>New Event</Text>
+                </View>
+            </TouchableHighlight>
+        };
     };
     constructor(props) {
         super(props);
@@ -23,11 +46,21 @@ export default class OccasionsScreen extends Component {
             occasionList: appData.UserOccasions
         };
 
+        this.editOccasion = this.editOccasion.bind(this);
         this.deleteOccasion = this.deleteOccasion.bind(this);
+        this.update = this.update.bind(this);
+    }
+    editOccasion(occasion) {
+        this.navigate('NewOccasion',
+            {
+                occasion,
+                appData: this.state.appData,
+                onUpdate: this.update
+            });
     }
     deleteOccasion(occasion) {
         Alert.alert(
-            'Confirm Event Removal', 'Are you sue that you want to remove this Event?', [
+            'Confirm Event Removal', 'Are you sure that you want to remove this Event?', [
                 //Button 1
                 {
                     text: 'Cancel',
@@ -44,13 +77,7 @@ export default class OccasionsScreen extends Component {
                             if (index > -1) {
                                 occasionList.splice(index, 1);
                                 appData.UserOccasions = occasionList;
-                                if (this.onUpdate) {
-                                    this.onUpdate(appData);
-                                }
-                                this.setState({
-                                    appData: appData,
-                                    occasionList: occasionList
-                                });
+                                this.onUpdate(appData);
                                 popUpMessage(`The Event "${occasion.title}" has been successfully removed.`,
                                     'Remove Event');
                             }
@@ -62,6 +89,16 @@ export default class OccasionsScreen extends Component {
                         });
                     }
                 }]);
+    }
+    update(appData) {
+        if (this.onUpdate) {
+            this.onUpdate(appData);
+        }
+        this.setState({
+            appData: appData,
+            //force a refresh
+            occasionList: [...appData.UserOccasions]
+        });
     }
     render() {
         return (
@@ -77,8 +114,37 @@ export default class OccasionsScreen extends Component {
                     <ScrollView style={{ flex: 1 }}>
                         <CustomList
                             data={this.state.occasionList}
-                            iconname='remove-red-eye'
+                            iconname='event'
                             emptyListText='There are no Events in the list'
+                            title={occasion =>
+                                <View>
+                                    <TouchableOpacity
+                                        onPress={() => this.editOccasion(occasion)}>
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'flex-start',
+                                            padding: 5,
+                                            borderRadius: 5,
+                                            margin: 4,
+                                            backgroundColor: occasion.color
+                                        }}>
+                                            <Icon size={14} color='#ffe' name='event' />
+                                            <Text style={{
+                                                color: '#ffe',
+                                                paddingLeft: 2,
+                                                fontWeight: 'bold',
+                                                fontSize: 12,
+                                                marginLeft: 4
+                                            }}>
+                                                {occasion.title}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <Text>
+                                        {occasion.toString()}
+                                    </Text>
+                                </View>
+                            }
                             secondSection={occasion => <View style={GeneralStyles.inItemButtonList}>
                                 <TouchableHighlight
                                     underlayColor='#696'
@@ -99,11 +165,7 @@ export default class OccasionsScreen extends Component {
                                 <TouchableHighlight
                                     underlayColor='#788778'
                                     style={{ flex: 1 }}
-                                    onPress={() => this.navigate('NewOccasion', {
-                                        occasion,
-                                        appData: this.state.appData,
-                                        onUpdate: this.onUpdate
-                                    })}>
+                                    onPress={() => this.editOccasion(occasion)}>
                                     <View style={{ alignItems: 'center' }}>
                                         <Icon
                                             name='edit'

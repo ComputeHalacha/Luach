@@ -1,10 +1,15 @@
 import React from 'react';
-import { ScrollView, View, Text, TextInput, Button, Alert } from 'react-native';
+import { ScrollView, View, Text, TextInput, Button, Alert, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import SideMenu from '../Components/SideMenu';
+import ColorChooser from '../Components/ColorChooser';
 import OccasionTypeChooser from '../Components/OccasionTypeChooser';
+import JdateChooser from '../Components/JdateChooser';
 import { UserOccasionTypes, UserOccasion } from '../../Code/JCal/UserOccasion';
+import jDate from '../../Code/JCal/jDate';
+import Utils from '../../Code/JCal/Utils';
 import DataUtils from '../../Code/Data/DataUtils';
 import { popUpMessage, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
@@ -15,15 +20,23 @@ export default class NewOccasion extends React.Component {
         return {
             title: (occasion ? 'Edit' : 'New') + ' Event / Occasion',
             headerRight: occasion &&
-            <Icon name='delete-forever'
-                color='#a33'
-                size={20}
-                onPress={() => NewOccasion.deleteOccasion(occasion, appData, ad => {
+            <TouchableOpacity onPress={() =>
+                NewOccasion.deleteOccasion(occasion, appData, ad => {
                     if (onUpdate) {
                         onUpdate(ad);
                     }
                     navigation.dispatch(NavigationActions.back());
-                })} />
+                })}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', marginRight: 5 }}>
+                    <Icon name='delete-forever'
+                        color='#a33'
+                        size={20} />
+                    <Text style={{
+                        fontSize: 9,
+                        color: '#a33'
+                    }}>Remove</Text>
+                </View>
+            </TouchableOpacity>
         };
     };
     constructor(props) {
@@ -39,7 +52,10 @@ export default class NewOccasion extends React.Component {
                 jdate: occasion.jdate,
                 occasionType: occasion.occasionType,
                 title: occasion.title,
-                comments: occasion.comments
+                color: occasion.color,
+                comments: occasion.comments,
+                showDatePicker: false,
+                modalVisible: false
             };
         }
         else {
@@ -48,11 +64,16 @@ export default class NewOccasion extends React.Component {
                 jdate: jdate,
                 occasionType: UserOccasionTypes.OneTime,
                 title: '',
-                comments: ''
+                color: UserOccasion.defaultColor,
+                comments: '',
+                showDatePicker: false,
+                modalVisible: false
             };
         }
         this.addOccasion = this.addOccasion.bind(this);
         this.updateOccasion = this.updateOccasion.bind(this);
+        this.chooseColor = this.chooseColor.bind(this);
+        this.changeSDate = this.changeSDate.bind(this);
     }
     addOccasion() {
         if (this.state.title.length < 1) {
@@ -65,6 +86,7 @@ export default class NewOccasion extends React.Component {
                 this.state.title,
                 this.state.occasionType,
                 this.state.jdate.Abs,
+                this.state.color,
                 this.state.comments);
         ad.UserOccasions.push(occasion);
         this.setState({ appData: ad });
@@ -87,24 +109,30 @@ export default class NewOccasion extends React.Component {
                 'Add occasion');
             return;
         }
-        const ad = this.state.appData,
-            occasion = this.occasion;
+        const occasion = this.occasion,
+            origValues = occasion.clone();
 
+        occasion.dateAbs = this.state.jdate.Abs;
         occasion.title = this.state.title;
         occasion.occasionType = this.state.occasionType;
+        occasion.color = this.state.color;
         occasion.comments = this.state.comments;
 
         DataUtils.UserOccasionToDatabase(occasion).then(() => {
-            if (this.onUpdate) {
-                this.onUpdate(ad);
-                popUpMessage(`The occasion ${occasion.title} has been successfully saved.`,
-                    'Edit occasion');
-                this.dispatch(NavigationActions.back());
-            }
+            popUpMessage(`The occasion ${occasion.title} has been successfully saved.`,
+                'Edit occasion');
+            this.onUpdate(this.state.appData);
+            this.dispatch(NavigationActions.back());
         }).catch(err => {
             warn('Error trying to add save the changes to User Occasion in the database.');
             error(err);
             popUpMessage('We are sorry, Luach is unable to save the changes to this Occasion.\nPlease contact luach@compute.co.il.');
+            //Revert values
+            occasion.title = origValues.title;
+            occasion.occasionType = origValues.occasionType;
+            occasion.dateAbs = origValues.dateAbs;
+            occasion.color = origValues.color;
+            occasion.comments = origValues.comments;
         });
     }
     /**
@@ -146,6 +174,13 @@ export default class NewOccasion extends React.Component {
                     }
                 }]);
     }
+    chooseColor(color) {
+        this.setState({ color: color, modalVisible: false });
+    }
+    changeSDate(sdate) {
+        const jdate = new jDate(sdate);
+        this.setState({ jdate, showDatePicker: false });
+    }
     render() {
         const sdate = this.state.jdate.getDate(),
             muxedDate = `${this.state.jdate.toShortString(false)} (${sdate.toLocaleDateString()})`;
@@ -172,10 +207,44 @@ export default class NewOccasion extends React.Component {
                                 this.setState({ title: event.nativeEvent.text })}
                             defaultValue={this.state.title} />
                     </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Jewish Date</Text>
+                        <JdateChooser jdate={this.state.jdate} setDate={jdate =>
+                            this.setState({ jdate })} />
+                    </View>
+                    <View style={{ padding: 10 }}>
+                        <Text style={{
+                            fontSize: 12,
+                            color: '#955'
+                        }}>
+                            You can choose by either Jewish or Secular Date</Text>
+                    </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Secular Date</Text>
+                        <View style={GeneralStyles.textInput}>
+                            <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
+                                <Text>{Utils.toStringDate(sdate)}</Text>
+                            </TouchableOpacity>
+                            <DateTimePicker
+                                isVisible={this.state.showDatePicker}
+                                date={sdate}
+                                onConfirm={this.changeSDate}
+                                onCancel={() => this.setState({ showDatePicker: false })}
+                            />
+                        </View>
+                    </View>
                     <OccasionTypeChooser
                         jdate={this.state.jdate}
                         occasionType={this.state.occasionType || 0}
                         setOccasionType={value => this.setState({ occasionType: value })} />
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Background Color</Text>
+                        <ColorChooser
+                            caption='Choose Background Color'
+                            color={this.state.color}
+                            scheme='dark'
+                            onChange={this.chooseColor} />
+                    </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Comments</Text>
                         <TextInput style={[GeneralStyles.textInput, { height: 100 }]}
