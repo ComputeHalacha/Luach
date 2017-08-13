@@ -242,7 +242,7 @@ export default class NewOccasion extends React.Component {
                         <ColorChooser
                             caption='Choose Background Color'
                             color={this.state.color}
-                            firstColor={UserOccasion.defaultColor}
+                            scheme='dark'
                             onChange={this.chooseColor} />
                     </View>
                     <View style={GeneralStyles.formRow}>
