@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexWrap: 'wrap',
-        borderWidth: StyleSheet.hairlineWidth,
+        borderWidth: 1,
         borderColor: '#777',
         borderRadius: 6,
         padding: 0,

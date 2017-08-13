@@ -50,7 +50,7 @@ const GeneralStyles = StyleSheet.create({
         alignSelf: 'flex-start',
         width: '95%',
         height: 40,
-        borderWidth: StyleSheet.hairlineWidth,
+        borderWidth: 1,
         borderColor: '#cce',
         borderRadius: 5,
         padding: 3,
