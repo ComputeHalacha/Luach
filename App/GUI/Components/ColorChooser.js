@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Modal, TouchableOpacity, Button, processColor }
 import { GeneralStyles } from '../styles';
 import { getScreenWidth } from '../../Code/GeneralUtils';
 
-const darkColors = ['#b96', '#9b6', '#96b', '#f00', '#090', '#00f', '#707', '#770', '#077', '#000', '#853', '#777', '#eee'],
+const darkColors = ['#b96', '#9b6', '#96b', '#f00', '#090', '#00f', '#707', '#770', '#077', '#000', '#853', '#777'],
     lightColors = ['#fff', '#f88', '#8f8', '#88f', '#ff0', '#f0f', '#0ff', '#f00', '#0f0', '#00f', '#ef9', '#9fe'],
     componentWidth = Math.trunc(getScreenWidth() * 0.9),
     tileWidth = Math.trunc(componentWidth / 3.0) - 3;
