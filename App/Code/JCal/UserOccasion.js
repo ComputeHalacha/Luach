@@ -67,11 +67,21 @@ class UserOccasion {
         }
         return this._jdate;
     }
+    set jdate(jd) {
+        this._jdate = jd;
+        this.dateAbs = jd.Abs;
+        this._sdate = jd.getDate();
+    }
     get sdate() {
         if (!this._sdate) {
             this._sdate = jDate.sdFromAbs(this.dateAbs);
         }
         return this._sdate;
+    }
+    set sdate(sd) {
+        this._jdate = new jDate(sd);
+        this._sdate = sd;
+        this.dateAbs = this._jdate.Abs;
     }
     get hasId() {
         return !!this.occasionId;

@@ -112,7 +112,7 @@ export default class NewOccasion extends React.Component {
         const occasion = this.occasion,
             origValues = occasion.clone();
 
-        occasion.dateAbs = this.state.jdate.Abs;
+        occasion.jdate = this.state.jdate;
         occasion.title = this.state.title;
         occasion.occasionType = this.state.occasionType;
         occasion.color = this.state.color;
@@ -130,7 +130,7 @@ export default class NewOccasion extends React.Component {
             //Revert values
             occasion.title = origValues.title;
             occasion.occasionType = origValues.occasionType;
-            occasion.dateAbs = origValues.dateAbs;
+            occasion.jdate = origValues.jdate;
             occasion.color = origValues.color;
             occasion.comments = origValues.comments;
         });
