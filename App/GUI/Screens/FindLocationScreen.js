@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     singleLocation: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderWidth: StyleSheet.hairlineWidth,
+        borderWidth: 1,
         borderColor: '#eee',
         padding: 10
     },

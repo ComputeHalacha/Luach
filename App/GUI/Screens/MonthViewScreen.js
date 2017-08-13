@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#999',
-        borderWidth: StyleSheet.hairlineWidth,
+        borderWidth: 1,
         borderColor: '#aaa'
     },
     dayHead: {
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     singleDayBlank: {
         flex: 1,
         backgroundColor: '#eee',
-        borderWidth: StyleSheet.hairlineWidth,
+        borderWidth: 1,
         borderColor: '#ddd'
     },
     singleDayTextContent: {
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     },
     singleDayView: {
         flex: 1,
-        borderWidth: StyleSheet.hairlineWidth,
+        borderWidth: 1,
         width: '100%',
         height: '100%',
     },
