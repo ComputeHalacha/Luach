@@ -14,6 +14,7 @@ import FindKavuahScreen from './GUI/Screens/FindKavuahScreen';
 import FindLocationScreen from './GUI/Screens/FindLocationScreen';
 import MontheViewScreen from './GUI/Screens/MonthViewScreen';
 import BrowserScreen from './GUI/Screens/BrowserScreen';
+import ExportDataScreen from './GUI/Screens/ExportDataScreen';
 
 //If not in __DEV__  turn off the built-in logger
 const navOptions = __DEV__ ? undefined : { onNavigationStateChange: null };
@@ -32,5 +33,6 @@ AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
     FindKavuahs: { screen: FindKavuahScreen },
     FindLocation: { screen: FindLocationScreen },
     MonthView: { screen: MontheViewScreen },
-    Browser: { screen: BrowserScreen }
+    Browser: { screen: BrowserScreen },
+    ExportData: { screen: ExportDataScreen }
 }, navOptions));
