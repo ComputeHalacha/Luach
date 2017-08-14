@@ -127,6 +127,7 @@ export default class NewOccasion extends React.Component {
             warn('Error trying to add save the changes to User Occasion in the database.');
             error(err);
             popUpMessage('We are sorry, Luach is unable to save the changes to this Occasion.\nPlease contact luach@compute.co.il.');
+
             //Revert values
             occasion.title = origValues.title;
             occasion.occasionType = origValues.occasionType;

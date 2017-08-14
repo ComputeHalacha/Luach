@@ -15,6 +15,7 @@ class UserOccasion {
     constructor(title, occasionType, dateAbs, color, comments, occasionId) {
         this.title = title;
         this.occasionType = occasionType;
+        //This should only be changed by setting the jdate or sdate properties
         this.dateAbs = dateAbs;
         this.color = color || UserOccasion.defaultColor;
         this.comments = comments;
