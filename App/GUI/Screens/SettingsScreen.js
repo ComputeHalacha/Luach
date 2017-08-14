@@ -12,21 +12,33 @@ export default class SettingsScreen extends Component {
         return {
             title: 'Settings',
             headerRight:
-            <TouchableHighlight
-                onPress={() =>
-                    navigation.navigate('Browser', {
-                        appData,
-                        onUpdate,
-                        url: 'index.html',
-                        title: 'Help'
-                    })}>
-                <View style={{ marginRight: 5 }}>
-                    <Icon name='help'
-                        color='#aac'
-                        size={25} />
-                    <Text>Luach Help</Text>
-                </View>
-            </TouchableHighlight>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                <TouchableHighlight
+                    onPress={() =>
+                        navigation.navigate('ExportData', { appData })}>
+                    <View style={{ marginRight: 10 }}>
+                        <Icon name='import-export'
+                            color='#aca'
+                            size={25} />
+                        <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
+                    </View>
+                </TouchableHighlight>
+                <TouchableHighlight
+                    onPress={() =>
+                        navigation.navigate('Browser', {
+                            appData,
+                            onUpdate,
+                            url: 'index.html',
+                            title: 'Help'
+                        })}>
+                    <View style={{ marginRight: 3 }}>
+                        <Icon name='help'
+                            color='#aac'
+                            size={25} />
+                        <Text style={{ fontSize: 10, color: '#aac' }}>Luach Help</Text>
+                    </View>
+                </TouchableHighlight>
+            </View>
         };
     };
     constructor(props) {
