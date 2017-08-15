@@ -6,6 +6,7 @@ import CustomList from '../Components/CustomList';
 import DataUtils from '../../Code/Data/DataUtils';
 import { UserOccasionTypes, UserOccasion } from '../../Code/JCal/UserOccasion';
 import { warn, error, popUpMessage, getTodayJdate } from '../../Code/GeneralUtils';
+import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
 let today;
@@ -148,8 +149,10 @@ export default class OccasionsScreen extends Component {
                             data={this.state.occasionList}
                             iconname='event'
                             emptyListText='There are no Events in the list'
-                            title={occasion =>
-                                <View>
+                            keyExtractor={(item, index) => item.occasionId || index.toString()}
+                            title={occasion => {
+                                const currentYear = occasion.getCurrentYear();
+                                return <View>
                                     <TouchableOpacity
                                         onPress={() => this.editOccasion(occasion)}>
                                         <View style={{
@@ -170,13 +173,24 @@ export default class OccasionsScreen extends Component {
                                             }}>
                                                 {occasion.title}
                                             </Text>
+                                            {currentYear &&
+                                                <Text style={{
+                                                    marginLeft: 4,
+                                                    marginTop: 2,
+                                                    color: '#ffe',
+                                                    fontStyle: 'italic',
+                                                    fontSize: 9
+                                                }}>
+                                                    {Utils.toSuffixed(currentYear) + ' year'}
+                                                </Text>
+                                            }
                                         </View>
                                     </TouchableOpacity>
                                     <Text>
                                         {occasion.toString()}
                                     </Text>
-                                </View>
-                            }
+                                </View>;
+                            }}
                             secondSection={occasion => <View style={GeneralStyles.inItemButtonList}>
                                 <TouchableHighlight
                                     underlayColor='#696'

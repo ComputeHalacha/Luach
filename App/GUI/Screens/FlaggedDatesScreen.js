@@ -75,6 +75,7 @@ export default class FlaggedDatesScreen extends Component {
                         <CustomList
                             data={problemOnahs}
                             nightDay={po => po.nightDay}
+                            keyExtractor={item => item.jdate.Abs.toString() + item.nightDay.toString()}
                             emptyListText={this.isToday ?
                                 'There are no upcoming flagged dates' :
                                 'There is nothing Flagged for ' + this.state.currDate.toString()}

@@ -25,6 +25,7 @@ import { GeneralStyles } from '../styles';
  *    iconSize = size of main icon
  *    textSectionViewStyle = the style for the section that contains the title and buttons
  *    secondSection = secondary section. Usually used for buttons.
+ *    keyExtractor = optional function to extract key of items.
  **********************************************************************************************************************/
 
 export default class CustomList extends Component {
@@ -56,6 +57,7 @@ export default class CustomList extends Component {
                 this.props.textSectionViewStyle(item, index) : this.props.textSectionViewStyle,
             secondSection = typeof this.props.secondSection === 'function' ?
                 this.props.secondSection(item, index) : this.props.secondSection;
+
         return (<View style={[
             styles.mainViewStyle,
             (nightDay && ({ backgroundColor: nightDay === NightDay.Night ? '#d5d5e6' : '#fff' })),
@@ -90,7 +92,9 @@ export default class CustomList extends Component {
                         {title}
                     </Text>)
                     ||
-                    [title]
+                    <View>
+                        {title}
+                    </View>
                 }
                 {secondSection}
             </View>
@@ -103,7 +107,7 @@ export default class CustomList extends Component {
                     <FlatList
                         data={this.props.data}
                         renderItem={this.renderItem}
-                        keyExtractor={(item, index) => index.toString()} />
+                        keyExtractor={this.props.keyExtractor || ((item, index) => index.toString())} />
                 </View>)
                 ||
                 <View style={GeneralStyles.emptyListView}>
@@ -129,7 +133,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e0e0d0',
         flexDirection: 'row'
     },
-    iconContainerStyle: {        
+    iconContainerStyle: {
         alignItems: 'center',
         justifyContent: 'center',
         width: 30
