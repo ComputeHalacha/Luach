@@ -4,6 +4,8 @@ import { NavigationActions } from 'react-navigation';
 import RNFS from 'react-native-fs';
 import SideMenu from '../Components/SideMenu';
 import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralUtils';
+import { NightDay } from '../../Code/Chashavshavon/Onah';
+import { UserOccasionTypes } from '../../Code/JCal/UserOccasion';
 import { GeneralStyles } from '../styles';
 
 const exportPath = RNFS.DocumentDirectoryPath + '/exported';
@@ -22,9 +24,10 @@ export default class ExportData extends React.Component {
         };
         this.setDataSet = this.setDataSet.bind(this);
         this.doExport = this.doExport.bind(this);
+        this.getCsvText = this.getCsvText.bind(this);
     }
     getFileName(dataSet) {
-        return `${dataSet} - ${(new Date()).toLocaleString().replace(/[\/,: ]/gi, '-')}`;
+        return `${dataSet}-${(new Date()).toLocaleString().replace(/[\/,: ]/gi, '-')}.csv`;
     }
     setDataSet(dataSet) {
         this.setState({
@@ -32,26 +35,52 @@ export default class ExportData extends React.Component {
             dataSet: dataSet
         });
     }
+    getCsvText() {
+        let csv = '';
+        switch (this.state.dataSet) {
+            case 'Entries':
+                csv = '"Date","Onah","Haflaga","IgnoreForFlaggedDates","IgnoreForKavuahs","Comments"\r\n';
+                for (let entry of this.appData.EntryList.list) {
+                    csv += `"${entry.date.toString()}","${(entry.nightDay === NightDay.Night ?
+                        'Night' : 'Day')}","${entry.haflaga.toString()}","${(entry.ignoreForFlaggedDates ?
+                            'Yes' : 'No')}","${(entry.ignoreForKavuah ?
+                                'Yes' : 'No')}","${entry.comments}"\r\n`;
+                }
+                break;
+            case 'Events':
+                csv = '"Jewish Date","Secular Date","Description","Comments","Color"\r\n';
+                for (let occ of this.appData.UserOccasions) {
+                    csv += `"${occ.jdate.toShortString(false)}","${occ.sdate.toLocaleDateString()}","${occ.toString(true)}","${occ.comments}","${occ.color}"\r\n`;
+                }
+                break;
+            case 'Kavuahs':
+                csv = '"Description","Setting Entry","Cancels Onah Beinunis","Active","Ignored"\r\n';
+                for (let kavuah of this.appData.KavuahList) {
+                    csv += `"${kavuah.toString()}","${kavuah.settingEntry.toLongString()}","${(kavuah.cancelsOnahBeinunis ?
+                        'Yes' : 'No')}","${(kavuah.active ?
+                            'Yes' : 'No')}","${(kavuah.ignore ?
+                                'Yes' : 'No')}"\r\n`;
+                }
+                break;
+        }
+        return csv;
+    }
     doExport() {
-        if (!RNFS.exists(exportPath)) {
-            RNFS.mkdir(exportPath).then(() => {
-                this.doExport();
-                return;
-            });
-        }
-        if (__DEV__) {
-            RNFS.readDir(exportPath)
-                .then((result) => {
-                    log('_ FILES IN ' + exportPath + ' ___________________________________________');
-                    log(result);
+        RNFS.exists(exportPath).then(exists => {
+            if (!exists) {
+                RNFS.mkdir(exportPath).then(() => {
+                    this.doExport();
+                    return;
                 });
-        }
-        RNFS.writeFile(`${exportPath}/${(new Date()).toLocaleString().replace(/[\/,: ]/gi, '-')}`,
-            'This is a test')
+                return;
+            }
+        });
+        const csv = this.getCsvText();
+        log(csv);
+        RNFS.writeFile(`${exportPath}/${this.state.fileName}`, csv)
             .then(() => {
                 popUpMessage(`The file ${this.state.fileName} has been successfully created.`,
                     'Export ' + this.state.dataSet);
-                this.navigator.dispatch(NavigationActions.back());
             })
             .catch(err => {
                 warn('Error trying to create ' + this.state.fileName);
@@ -84,7 +113,7 @@ export default class ExportData extends React.Component {
                             autoFocus
                             placeholder='File Name'
                             onEndEditing={event =>
-                                this.setState({ fileName: event.nativeEvent.text })}
+                                this.setState({ fileName: event.nativeEvent.text.replace(/[\/,: ]/gi, '-') })}
                             defaultValue={this.state.fileName} />
                     </View>
                     <View style={GeneralStyles.btnAddNew}>
