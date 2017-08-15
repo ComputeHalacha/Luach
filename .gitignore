@@ -57,3 +57,4 @@ android/gradle.properties
 .vs/
 /android/app/gradle.properties
 scripts/
+debug.log

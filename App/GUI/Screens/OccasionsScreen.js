@@ -4,20 +4,28 @@ import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
 import CustomList from '../Components/CustomList';
 import DataUtils from '../../Code/Data/DataUtils';
-import jDate from '../../Code/JCal/jDate';
-import { warn, error, popUpMessage } from '../../Code/GeneralUtils';
+import { UserOccasionTypes, UserOccasion } from '../../Code/JCal/UserOccasion';
+import { warn, error, popUpMessage, getTodayJdate } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
+let today;
+function getToday(appData) {
+    if (!today) {
+        today = getTodayJdate(appData);
+    }
+    return today;
+}
 export default class OccasionsScreen extends Component {
+    static doUpdate = null;
     static navigationOptions = ({ navigation }) => {
-        const { appData, onUpdate } = navigation.state.params;
+        const { appData } = navigation.state.params;
         return {
             title: 'Events / Occasions',
             headerRight: <TouchableHighlight onPress={() =>
                 navigation.navigate('NewOccasion', {
                     appData: appData,
-                    onUpdate: onUpdate,
-                    jdate: new jDate()
+                    onUpdate: OccasionsScreen.doUpdate,
+                    jdate: getToday(appData)
                 })}>
                 <View style={{ alignItems: 'center' }}>
                     <Icon
@@ -43,19 +51,21 @@ export default class OccasionsScreen extends Component {
         this.onUpdate = onUpdate;
         this.state = {
             appData: appData,
-            occasionList: appData.UserOccasions
+            occasionList: (appData && appData.UserOccasions) || []
         };
 
         this.editOccasion = this.editOccasion.bind(this);
         this.deleteOccasion = this.deleteOccasion.bind(this);
         this.update = this.update.bind(this);
+        this.getYearText = this.getYearText.bind(this);
     }
+
     editOccasion(occasion) {
         this.navigate('NewOccasion',
             {
                 occasion,
                 appData: this.state.appData,
-                onUpdate: this.update
+                onUpdate: OccasionsScreen.doUpdate
             });
     }
     deleteOccasion(occasion) {
@@ -77,7 +87,7 @@ export default class OccasionsScreen extends Component {
                             if (index > -1) {
                                 occasionList.splice(index, 1);
                                 appData.UserOccasions = occasionList;
-                                this.onUpdate(appData);
+                                OccasionsScreen.doUpdate(appData);
                                 popUpMessage(`The Event "${occasion.title}" has been successfully removed.`,
                                     'Remove Event');
                             }
@@ -91,21 +101,43 @@ export default class OccasionsScreen extends Component {
                 }]);
     }
     update(appData) {
+        //sort occasions by date
+        appData.UserOccasions = UserOccasion.sortList(appData.UserOccasions);
+
         if (this.onUpdate) {
             this.onUpdate(appData);
         }
         this.setState({
             appData: appData,
-            //force a refresh
+            //forces a refresh
             occasionList: [...appData.UserOccasions]
         });
     }
+    getYearText(occ) {
+        const yearText = occ.getYearString(getToday(this.state.appData));
+        if (yearText) {
+            return <Text style={{
+                color: '#ffe',
+                fontSize: 10,
+                fontStyle: 'italic',
+                paddingTop: 2,
+                marginLeft: 4
+            }
+            }>
+                {yearText}
+            </Text>;
+        }
+        else {
+            return null;
+        }
+    }
     render() {
+        OccasionsScreen.doUpdate = this.update;
         return (
             <View style={GeneralStyles.container}>
                 <View style={{ flexDirection: 'row', flex: 1 }}>
                     <SideMenu
-                        onUpdate={this.onUpdate}
+                        onUpdate={OccasionsScreen.doUpdate}
                         appData={this.state.appData}
                         navigator={this.props.navigation}
                         hideOccasions={true}
@@ -122,7 +154,7 @@ export default class OccasionsScreen extends Component {
                                         onPress={() => this.editOccasion(occasion)}>
                                         <View style={{
                                             flexDirection: 'row',
-                                            alignItems: 'flex-start',
+                                            alignItems: 'center',
                                             padding: 5,
                                             borderRadius: 5,
                                             margin: 4,
@@ -162,6 +194,24 @@ export default class OccasionsScreen extends Component {
                                         <Text style={GeneralStyles.inItemLinkText}> Go to Date</Text>
                                     </View>
                                 </TouchableHighlight>
+                                {occasion.occasionType !== UserOccasionTypes.OneTime &&
+                                    <TouchableHighlight
+                                        underlayColor='#66a'
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.navigate('Home', {
+                                            currDate: occasion.getNextInstance(),
+                                            appData: this.state.appData
+                                        })}>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Icon
+                                                name='near-me'
+                                                color='#66a'
+                                                size={18}
+                                                containerStyle={GeneralStyles.inItemLinkIcon} />
+                                            <Text style={GeneralStyles.inItemLinkText}> Next Occurence</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                }
                                 <TouchableHighlight
                                     underlayColor='#788778'
                                     style={{ flex: 1 }}

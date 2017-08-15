@@ -24,20 +24,85 @@ class UserOccasion {
     toString() {
         switch (this.occasionType) {
             case UserOccasionTypes.OneTime:
-                return 'One time event on ' + this.jdate.toString(true) + '  (' +
-                    Utils.toStringDate(this.sdate, true) + ')';
+                return 'One time event on ' + this.jdate.toString() + ' - ' +
+                    Utils.toStringDate(this.sdate, true, true);
             case UserOccasionTypes.HebrewDateRecurringYearly:
-                return 'Yearly event on the ' + Utils.toSuffixed(this.jdate.Day) +
+                return this.jdate.toString() + '  (' +
+                    this.sdate.toLocaleDateString() + ').\n' +
+                    'Yearly event on the ' + Utils.toSuffixed(this.jdate.Day) +
                     ' day of ' + Utils.jMonthsEng[this.jdate.Month];
             case UserOccasionTypes.HebrewDateRecurringMonthly:
-                return 'Monthly event on the ' + Utils.toSuffixed(this.jdate.Day)
+                return this.jdate.toString() + '  (' +
+                    this.sdate.toLocaleDateString() + ').\n' +
+                    'Monthly event on the ' + Utils.toSuffixed(this.jdate.Day)
                     + ' day of each Jewish month';
             case UserOccasionTypes.SecularDateRecurringYearly:
-                return 'Yearly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
+                return Utils.toStringDate(this.sdate, false) + '  (' +
+                    this.jdate.toShortString(false) + ').\n' +
+                    'Yearly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
                     ' day of ' + Utils.sMonthsEng[this.sdate.getMonth()];
             case UserOccasionTypes.SecularDateRecurringMonthly:
-                return 'Monthly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
+                return Utils.toStringDate(this.sdate, false) + '  (' +
+                    this.jdate.toShortString(false) + ').\n' +
+                    'Monthly event on the ' + Utils.toSuffixed(this.sdate.getDate()) +
                     ' day of each Secular month';
+        }
+    }
+    getYearString(date) {
+        if (!date) {
+            return '';
+        }
+        else if (this.occasionType === UserOccasionTypes.HebrewDateRecurringYearly) {
+            const jdate = ((date instanceof jDate) ? date : new jDate(date));
+            if (jdate.Year > this.jdate.Year) {
+                const isAfterDate = (jdate.Month > this.jdate.Month) ||
+                    (jdate.Month === this.jdate.Month &&
+                        jdate.Day > this.jdate.Day);
+                return `${Utils.toSuffixed((jdate.Year - this.jdate.Year) -
+                    (isAfterDate ? 0 : 1))} year`;
+            }
+        }
+        else if (this.occasionType === UserOccasionTypes.SecularDateRecurringYearly) {
+            const sdate = ((date instanceof Date) ? date : date.getDate());
+            if (sdate.getFullYear() > this.sdate.getFullYear()) {
+                const isAfterDate = (sdate.getMonth() > this.sdate.getMonth()) ||
+                    (sdate.getMonth() === this.sdate.getMonth() &&
+                        sdate.getDate() > this.sdate.getDate());
+                return `${Utils.toSuffixed((sdate.getFullYear() - this.sdate.getFullYear()) -
+                    (isAfterDate ? 0 : 1))} year`;
+            }
+        }
+        return '';
+    }
+    getNextInstance() {
+        const nowSd = new Date(),
+            nowJd = new jDate(nowSd);
+        let jd, sd;
+        switch (this.occasionType) {
+            case UserOccasionTypes.HebrewDateRecurringYearly:
+                jd = new jDate(nowJd.Year, this.jdate.Month, this.jdate.Day);
+                while (jd.getDate() < nowSd) {
+                    jd = jd.addYears(1);
+                }
+                return jd;
+            case UserOccasionTypes.HebrewDateRecurringMonthly:
+                jd = new jDate(nowJd.Year, nowJd.Month, this.jdate.Day);
+                while (jd.getDate() < nowSd) {
+                    jd = jd.addMonths(1);
+                }
+                return jd;
+            case UserOccasionTypes.SecularDateRecurringYearly:
+                sd = new Date(nowSd.getFullYear(), this.sdate.getMonth(), this.sdate.getDate() + 1);
+                while (sd < nowSd) {
+                    sd.setFullYear(sd.getFullYear() + 1);
+                }
+                return new jDate(sd);
+            case UserOccasionTypes.SecularDateRecurringMonthly:
+                sd = new Date(nowSd.getFullYear(), nowSd.getMonth(), this.sdate.getDate() + 1);
+                while (sd < nowSd) {
+                    sd.setMonth(sd.getMonth() + 1);
+                }
+                return new jDate(sd);
         }
     }
     isSameOccasion(occasion) {
@@ -86,6 +151,14 @@ class UserOccasion {
     }
     get hasId() {
         return !!this.occasionId;
+    }
+    /**
+     * Sorts a list of UserOccasions chronologically
+     * @param {[UserOccasion]} occasionList
+     */
+    static sortList(occasionList) {
+        return occasionList.sort((a, b) =>
+            a.dateAbs - b.dateAbs);
     }
     static getOccasionsForDate(jdate, allOccasions) {
         return allOccasions.filter(o => {

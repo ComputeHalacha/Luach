@@ -202,7 +202,7 @@ export default class SingleDayDisplay extends Component {
                                     <View>
                                         <Text>{'Sunrise: ' + sunrise}</Text>
                                         <Text>{'Sunset: ' + sunset}</Text>
-                                        <Text style={{ fontSize: 10, fontWeight:'bold' }}>More...</Text>
+                                        <Text style={{ fontSize: 10, fontWeight: 'bold' }}>More...</Text>
                                     </View>
                                 </TouchableWithoutFeedback>
                             </View>
@@ -235,8 +235,11 @@ export default class SingleDayDisplay extends Component {
                     </View>
                     <OccasionsComponent
                         list={occasions}
-                        edit={this.editOccasion} />
-                    {isDayOff && <DayOffComponent dayOfWeek={jdate.dayOfWeek} />}
+                        edit={this.editOccasion}
+                        date={jdate} />
+                    {isDayOff &&
+                        <DayOffComponent dayOfWeek={jdate.dayOfWeek} />
+                    }
                 </View>
                 <View style={styles.menuView}>
                     <TouchableWithoutFeedback onPress={this.newEntry} style={{ flex: 1 }}>
@@ -278,6 +281,18 @@ export default class SingleDayDisplay extends Component {
     }
 }
 
+function getYearText(occ, date) {
+    const yearText = occ.getYearString(date);
+    if (yearText) {
+        return <Text style={styles.occasionYearText}>
+            {yearText}
+        </Text>;
+    }
+    else {
+        return null;
+    }
+}
+
 function EntriesComponent(props) {
     return (props.list.length > 0 &&
         <View style={styles.additionsViews}>
@@ -295,7 +310,8 @@ function OccasionsComponent(props) {
                 <TouchableOpacity key={i} onPress={() => props.edit(o)}>
                     <View style={[styles.occasionBadge, { backgroundColor: o.color }]}>
                         <Icon size={14} color='#ffe' name='event' />
-                        <Text style={styles.occasionText} key={i}>{o.title}</Text>
+                        <Text style={styles.occasionText}>{o.title}</Text>
+                        {getYearText(o, props.date)}
                     </View>
                 </TouchableOpacity>)
             }
@@ -511,16 +527,22 @@ const styles = StyleSheet.create({
     },
     occasionBadge: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         padding: 5,
         borderRadius: 5,
         marginBottom: 4
     },
     occasionText: {
         color: '#ffe',
-        paddingLeft: 2,
         fontWeight: 'bold',
         fontSize: 12,
+        marginLeft: 4
+    },
+    occasionYearText: {
+        color: '#ffe',
+        fontSize: 10,
+        fontStyle: 'italic',
+        paddingTop: 2,
         marginLeft: 4
     },
     hefsekText: {
