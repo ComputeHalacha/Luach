@@ -156,7 +156,7 @@ export default class DataUtils {
     }
     static async GetAllUserOccasions() {
         let list = [];
-        await DataUtils._executeSql('SELECT * from occasions')
+        await DataUtils._executeSql('SELECT * from occasions ORDER BY dateAbs')
             .then(results => {
                 list = results.list.map(o => new UserOccasion(o.title,
                     o.type,
