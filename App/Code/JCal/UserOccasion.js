@@ -54,25 +54,29 @@ class UserOccasion {
         }
         else if (this.occasionType === UserOccasionTypes.HebrewDateRecurringYearly) {
             const jdate = ((date instanceof jDate) ? date : new jDate(date));
-            if (jdate.Year > this.jdate.Year) {
-                const isAfterDate = (jdate.Month > this.jdate.Month) ||
-                    (jdate.Month === this.jdate.Month &&
-                        jdate.Day > this.jdate.Day);
-                return `${Utils.toSuffixed((jdate.Year - this.jdate.Year) -
-                    (isAfterDate ? 0 : 1))} year`;
+            if (jdate.Year > this.jdate.Year && jdate.Month === this.jdate.Month &&
+                jdate.Day === this.jdate.Day) {
+                return `${Utils.toSuffixed(jdate.Year - this.jdate.Year)} year`;
             }
         }
         else if (this.occasionType === UserOccasionTypes.SecularDateRecurringYearly) {
             const sdate = ((date instanceof Date) ? date : date.getDate());
-            if (sdate.getFullYear() > this.sdate.getFullYear()) {
-                const isAfterDate = (sdate.getMonth() > this.sdate.getMonth()) ||
-                    (sdate.getMonth() === this.sdate.getMonth() &&
-                        sdate.getDate() > this.sdate.getDate());
-                return `${Utils.toSuffixed((sdate.getFullYear() - this.sdate.getFullYear()) -
-                    (isAfterDate ? 0 : 1))} year`;
+            if (sdate.getFullYear() > this.sdate.getFullYear() && sdate.getMonth() === this.sdate.getMonth() &&
+                sdate.getDate() === this.sdate.getDate()) {
+                return `${Utils.toSuffixed(sdate.getFullYear() - this.sdate.getFullYear())} year`;
             }
         }
         return '';
+    }
+    getCurrentYear() {
+        const jdate = this.getPreviousInstance();
+        if (this.occasionType === UserOccasionTypes.HebrewDateRecurringYearly) {
+            return jdate.Year - this.jdate.Year;
+        }
+        else if (this.occasionType === UserOccasionTypes.SecularDateRecurringYearly) {
+            const sdate = jdate.getDate();
+            return sdate.getFullYear() - this.sdate.getFullYear();
+        }
     }
     getNextInstance() {
         const nowSd = new Date(),
@@ -101,6 +105,37 @@ class UserOccasion {
                 sd = new Date(nowSd.getFullYear(), nowSd.getMonth(), this.sdate.getDate() + 1);
                 while (sd < nowSd) {
                     sd.setMonth(sd.getMonth() + 1);
+                }
+                return new jDate(sd);
+        }
+    }
+    getPreviousInstance() {
+        const nowSd = new Date(),
+            nowJd = new jDate(nowSd);
+        let jd, sd;
+        switch (this.occasionType) {
+            case UserOccasionTypes.HebrewDateRecurringYearly:
+                jd = new jDate(nowJd.Year, this.jdate.Month, this.jdate.Day);
+                while (jd.getDate() > nowSd) {
+                    jd = jd.addYears(-1);
+                }
+                return jd;
+            case UserOccasionTypes.HebrewDateRecurringMonthly:
+                jd = new jDate(nowJd.Year, nowJd.Month, this.jdate.Day);
+                while (jd.getDate() > nowSd) {
+                    jd = jd.addMonths(-1);
+                }
+                return jd;
+            case UserOccasionTypes.SecularDateRecurringYearly:
+                sd = new Date(nowSd.getFullYear(), this.sdate.getMonth(), this.sdate.getDate() + 1);
+                while (sd > nowSd) {
+                    sd.setFullYear(sd.getFullYear() - 1);
+                }
+                return new jDate(sd);
+            case UserOccasionTypes.SecularDateRecurringMonthly:
+                sd = new Date(nowSd.getFullYear(), nowSd.getMonth(), this.sdate.getDate() + 1);
+                while (sd > nowSd) {
+                    sd.setMonth(sd.getMonth() - 1);
                 }
                 return new jDate(sd);
         }

@@ -154,6 +154,7 @@ export default class EntryScreen extends Component {
                             data={entryList}
                             nightDay={entry => entry.nightDay}
                             title={entry => entry.toLongString()}
+                            keyExtractor={(item, index) => item.entryId || index.toString()}
                             emptyListText='There are no Entries in the list'
                             secondSection={entry => {
                                 const hasKavuahs = this.state.appData.KavuahList.some(k =>
