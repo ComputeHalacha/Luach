@@ -1,11 +1,10 @@
 import React from 'react';
 import { ScrollView, View, Text, TextInput, Button, Picker } from 'react-native';
-import { NavigationActions } from 'react-navigation';
 import RNFS from 'react-native-fs';
+import Mailer from 'react-native-mail';
 import SideMenu from '../Components/SideMenu';
 import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
-import { UserOccasionTypes } from '../../Code/JCal/UserOccasion';
 import { GeneralStyles } from '../styles';
 
 const exportPath = RNFS.DocumentDirectoryPath + '/exported';
@@ -24,7 +23,9 @@ export default class ExportData extends React.Component {
         };
         this.setDataSet = this.setDataSet.bind(this);
         this.doExport = this.doExport.bind(this);
+        this.doEmail = this.doEmail.bind(this);
         this.getCsvText = this.getCsvText.bind(this);
+        this.getHtmlText = this.getHtmlText.bind(this);
     }
     getFileName(dataSet) {
         return `${dataSet}-${(new Date()).toLocaleString().replace(/[\/,: ]/gi, '-')}.csv`;
@@ -65,27 +66,141 @@ export default class ExportData extends React.Component {
         }
         return csv;
     }
-    doExport() {
-        RNFS.exists(exportPath).then(exists => {
+    getHtmlText() {
+        let counter = 0,
+            html = `<html><head></head>
+                        <body style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
+                            <img src="http://compute.co.il/luach/app/Images/Feature.png" />
+                            <h1 style="color:#77b;">
+                                Data Export from Luach -
+                                ${this.state.dataSet} -
+                                ${(new Date()).toLocaleDateString()}
+                            </h1>
+                            <table cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#77b;">`;
+        switch (this.state.dataSet) {
+            case 'Entries':
+                html += '<tr style="background-color:#e1e1ff;"> \
+                            <td style="background-color:#77b;">&nbsp;</td> \
+                            <td>Date</td> \
+                            <td>Onah</td> \
+                            <td>Haflaga</td> \
+                            <td>IgnoreForFlaggedDates</td> \
+                            <td>IgnoreForKavuahs</td> \
+                            <td>Comments</td> \
+                        </tr>';
+                for (let entry of this.appData.EntryList.list) {
+                    counter++;
+                    html += `<tr>
+                                 <td><b>${counter.toString()}</b></td>
+                                 <td>${entry.date.toString()}</td>
+                                 <td>${(entry.nightDay === NightDay.Night ? 'Night' : 'Day')}</td>
+                                 <td>${entry.haflaga.toString()}</td>
+                                 <td>${(entry.ignoreForFlaggedDates ? 'Yes' : 'No')}</td>
+                                 <td>${(entry.ignoreForKavuah ? 'Yes' : 'No')}</td>
+                                 <td>${entry.comments}</td> \
+                            </tr>`;
+                }
+                break;
+            case 'Events':
+                html += '<tr style="background-color:#e1e1ff;"> \
+                            <td style="background-color:#77b;">&nbsp;</td> \
+                            <td>Title</td> \
+                            <td>Jewish Date</td> \
+                            <td>Secular Date</td> \
+                            <td>Description</td> \
+                            <td>Comments</td>\
+                        </tr>';
+                for (let occ of this.appData.UserOccasions) {
+                    counter++;
+                    html += `<tr>
+                                <td><b>${counter.toString()}</b></td>
+                                <td style="background-color:${occ.color};color:#fff;">${occ.title}</td>
+                                <td>${occ.jdate.toShortString(false)}</td>
+                                <td>${occ.sdate.toLocaleDateString()}</td>
+                                <td>${occ.toString(true)}</td>
+                                <td>${occ.comments}</td>
+                            </tr>`;
+                }
+                break;
+            case 'Kavuahs':
+                html += '<tr style="background-color:#e1e1ff;"> \
+                            <td style="background-color:#77b;">&nbsp;</td> \
+                            <td>Description</td> \
+                            <td>Setting Entry</td> \
+                            <td>Cancels Onah Beinunis</td> \
+                            <td>Active</td> \
+                            <td>Ignored</td> \
+                        </tr>';
+                for (let kavuah of this.appData.KavuahList) {
+                    counter++;
+                    html += `<tr>
+                                <td><b>${counter.toString()}</b></td>
+                                <td>${kavuah.toString()}</td>
+                                <td>${kavuah.settingEntry.toLongString()}</td>
+                                <td>${(kavuah.cancelsOnahBeinunis ? 'Yes' : 'No')}</td>
+                                <td>${(kavuah.active ? 'Yes' : 'No')}</td>
+                                <td>${(kavuah.ignore ? 'Yes' : 'No')}</td>
+                            </tr>`;
+                }
+                break;
+        }
+        html += '</table></body></html>';
+        return html;
+    }
+    async doExport(silent) {
+        let filePath;
+        await RNFS.exists(exportPath).then(exists => {
             if (!exists) {
                 RNFS.mkdir(exportPath).then(() => {
-                    this.doExport();
-                    return;
+                    return this.doExport();
                 });
-                return;
+            }
+            else {
+                filePath = `${exportPath}/${this.state.fileName}`;
+
+                const csv = this.getCsvText();
+                log(csv);
+                RNFS.writeFile(filePath, csv)
+                    .then(() => {
+                        if (!silent) {
+                            popUpMessage(`The file ${this.state.fileName} has been successfully created.`,
+                                'Export ' + this.state.dataSet);
+                        }
+                    })
+                    .catch(err => {
+                        warn('Error trying to create ' + this.state.fileName);
+                        error(err);
+                    });
             }
         });
-        const csv = this.getCsvText();
-        log(csv);
-        RNFS.writeFile(`${exportPath}/${this.state.fileName}`, csv)
-            .then(() => {
-                popUpMessage(`The file ${this.state.fileName} has been successfully created.`,
-                    'Export ' + this.state.dataSet);
-            })
-            .catch(err => {
-                warn('Error trying to create ' + this.state.fileName);
-                error(err);
-            });
+
+        return filePath;
+    }
+    async doEmail() {
+        await this.doExport(true).then(filePath => {
+            if (filePath) {
+                const subject = 'Luach Export Data - ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
+                    html = this.getHtmlText();
+                log(html);
+                Mailer.mail({
+                    subject: subject,
+                    recipients: [],
+                    ccRecipients: [],
+                    bccRecipients: [],
+                    body: html,
+                    isHTML: true,
+                    attachment: {
+                        path: filePath,
+                        type: 'csv',
+                        name: this.state.fileName
+                    }
+                }, error => {
+                    if (error) {
+                        popUpMessage('We are very sorry, but the email could not be sent.');
+                    }
+                });
+            }
+        });
     }
     render() {
         return <View style={GeneralStyles.container}>
@@ -120,7 +235,14 @@ export default class ExportData extends React.Component {
                         <Button
                             title='Export Data'
                             onPress={this.doExport}
-                            accessibilityLabel='Export Data'
+                            accessibilityLabel='Create CSV File'
+                            color={buttonColor} />
+                    </View>
+                    <View style={GeneralStyles.btnAddNew}>
+                        <Button
+                            title='Attach to Email'
+                            onPress={this.doEmail}
+                            accessibilityLabel='Attach to Email'
                             color={buttonColor} />
                     </View>
                 </ScrollView>
