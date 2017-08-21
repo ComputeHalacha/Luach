@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, TextInput, Button, Picker } from 'react-native';
+import { ScrollView, View, Text, TextInput, Button, Picker, Platform } from 'react-native';
 import RNFS from 'react-native-fs';
 import Mailer from 'react-native-mail';
 import SideMenu from '../Components/SideMenu';
@@ -7,7 +7,8 @@ import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralU
 import { NightDay } from '../../Code/Chashavshavon/Onah';
 import { GeneralStyles } from '../styles';
 
-const exportPath = RNFS.DocumentDirectoryPath + '/exported';
+const exportPath = Platform.OS === 'android' ?
+    RNFS.ExternalDirectoryPath : RNFS.DocumentDirectoryPath;
 
 export default class ExportData extends React.Component {
     static navigationOptions = {
@@ -68,19 +69,19 @@ export default class ExportData extends React.Component {
     }
     getHtmlText() {
         let counter = 0,
-            html = `<html><head></head>
-                        <body style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
-                            <img src="http://compute.co.il/luach/app/Images/Feature.png" />
-                            <h1 style="color:#77b;">
-                                Data Export from Luach -
-                                ${this.state.dataSet} -
-                                ${(new Date()).toLocaleDateString()}
+            html = `<div style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
+                            <h1 style="color:#7777bb;">
+                                <font color="#7777bb">
+                                    Data Export from Luach -
+                                    ${this.state.dataSet} -
+                                    ${(new Date()).toLocaleDateString()}
+                                </font>
                             </h1>
-                            <table cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#77b;">`;
+                            <table width="100%" cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#7777bb;">`;
         switch (this.state.dataSet) {
             case 'Entries':
                 html += '<tr style="background-color:#e1e1ff;"> \
-                            <td style="background-color:#77b;">&nbsp;</td> \
+                            <td style="background-color:#7777bb;">&nbsp;</td> \
                             <td>Date</td> \
                             <td>Onah</td> \
                             <td>Haflaga</td> \
@@ -103,7 +104,7 @@ export default class ExportData extends React.Component {
                 break;
             case 'Events':
                 html += '<tr style="background-color:#e1e1ff;"> \
-                            <td style="background-color:#77b;">&nbsp;</td> \
+                            <td style="background-color:#7777bb;">&nbsp;</td> \
                             <td>Title</td> \
                             <td>Jewish Date</td> \
                             <td>Secular Date</td> \
@@ -124,7 +125,7 @@ export default class ExportData extends React.Component {
                 break;
             case 'Kavuahs':
                 html += '<tr style="background-color:#e1e1ff;"> \
-                            <td style="background-color:#77b;">&nbsp;</td> \
+                            <td style="background-color:#7777bb;">&nbsp;</td> \
                             <td>Description</td> \
                             <td>Setting Entry</td> \
                             <td>Cancels Onah Beinunis</td> \
@@ -144,35 +145,26 @@ export default class ExportData extends React.Component {
                 }
                 break;
         }
-        html += '</table></body></html>';
+        html += '</table></div>';
         return html;
     }
     async doExport(silent) {
         let filePath;
-        await RNFS.exists(exportPath).then(exists => {
-            if (!exists) {
-                RNFS.mkdir(exportPath).then(() => {
-                    return this.doExport();
-                });
-            }
-            else {
-                filePath = `${exportPath}/${this.state.fileName}`;
 
-                const csv = this.getCsvText();
-                log(csv);
-                RNFS.writeFile(filePath, csv)
-                    .then(() => {
-                        if (!silent) {
-                            popUpMessage(`The file ${this.state.fileName} has been successfully created.`,
-                                'Export ' + this.state.dataSet);
-                        }
-                    })
-                    .catch(err => {
-                        warn('Error trying to create ' + this.state.fileName);
-                        error(err);
-                    });
-            }
-        });
+        filePath = `${exportPath}/${this.state.fileName}`;
+        const csv = this.getCsvText();
+        log(csv);
+        await RNFS.writeFile(filePath, csv)
+            .then(() => {
+                if (!silent) {
+                    popUpMessage(`The file ${this.state.fileName} has been successfully created.`,
+                        'Export ' + this.state.dataSet);
+                }
+            })
+            .catch(err => {
+                warn('Error trying to create ' + this.state.fileName);
+                error(err);
+            });
 
         return filePath;
     }
