@@ -238,7 +238,7 @@ export default class SingleDayDisplay extends Component {
                         edit={this.editOccasion}
                         date={jdate} />
                     {isDayOff &&
-                        <DayOffComponent dayOfWeek={jdate.dayOfWeek} />
+                        <DayOffComponent dayOfWeek={jdate.DayOfWeek} />
                     }
                 </View>
                 <View style={styles.menuView}>
