@@ -146,7 +146,7 @@ export default class ExportData extends React.Component {
     async doExport(silent) {
         let filePath;
 
-        filePath = `${exportPath} /${this.state.fileName}`;
+        filePath = `${exportPath}/${this.state.fileName}`;
         const csv = this.getCsvText();
         log(csv);
         await RNFS.writeFile(filePath, csv)
