@@ -7,8 +7,9 @@ import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralU
 import { NightDay } from '../../Code/Chashavshavon/Onah';
 import { GeneralStyles } from '../styles';
 
-const exportPath = Platform.OS === 'android' ?
-    RNFS.ExternalDirectoryPath : RNFS.DocumentDirectoryPath;
+const isAndroid = Platform.OS === 'android',
+    exportPath = isAndroid ?
+        RNFS.ExternalDirectoryPath : RNFS.DocumentDirectoryPath;
 
 export default class ExportData extends React.Component {
     static navigationOptions = {
@@ -77,71 +78,65 @@ export default class ExportData extends React.Component {
                                     ${(new Date()).toLocaleDateString()}
                                 </font>
                             </h1>
-                            <table width="100%" cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#7777bb;">`;
+                            <table width="100%" cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#7777bb;style="min-width:550px;">`;
         switch (this.state.dataSet) {
             case 'Entries':
-                html += '<tr style="background-color:#e1e1ff;"> \
-                            <td style="background-color:#7777bb;">&nbsp;</td> \
-                            <td>Date</td> \
-                            <td>Onah</td> \
-                            <td>Haflaga</td> \
-                            <td>IgnoreForFlaggedDates</td> \
-                            <td>IgnoreForKavuahs</td> \
-                            <td>Comments</td> \
-                        </tr>';
+                html += tr('style="background-color:#e1e1ff;">',
+                    td('&nbsp;', 'style="background-color:#7777bb;"') +
+                    td('Date') +
+                    td('Onah') +
+                    td('Haflaga') +
+                    td('IgnoreForFlaggedDates') +
+                    td('IgnoreForKavuahs') +
+                    td('Comments'));
                 for (let entry of this.appData.EntryList.list) {
                     counter++;
-                    html += `<tr>
-                                 <td><b>${counter.toString()}</b></td>
-                                 <td>${entry.date.toString()}</td>
-                                 <td>${(entry.nightDay === NightDay.Night ? 'Night' : 'Day')}</td>
-                                 <td>${entry.haflaga.toString()}</td>
-                                 <td>${(entry.ignoreForFlaggedDates ? 'Yes' : 'No')}</td>
-                                 <td>${(entry.ignoreForKavuah ? 'Yes' : 'No')}</td>
-                                 <td>${entry.comments}</td> \
-                            </tr>`;
+                    html += tr('',
+                        td(`<b>${counter.toString()}</b>`) +
+                        td(entry.date.toString()) +
+                        td(entry.nightDay === NightDay.Night ? 'Night' : 'Day') +
+                        td(entry.haflaga.toString()) +
+                        td(entry.ignoreForFlaggedDates ? 'Yes' : 'No') +
+                        td(entry.ignoreForKavuah ? 'Yes' : 'No') +
+                        td(entry.comments));
                 }
                 break;
             case 'Events':
-                html += '<tr style="background-color:#e1e1ff;"> \
-                            <td style="background-color:#7777bb;">&nbsp;</td> \
-                            <td>Title</td> \
-                            <td>Jewish Date</td> \
-                            <td>Secular Date</td> \
-                            <td>Description</td> \
-                            <td>Comments</td>\
-                        </tr>';
+                html += tr('style="background-color:#e1e1ff;"',
+                    td('&nbsp;', 'style="background-color:#7777bb;"') +
+                    td('Title') +
+                    td('Jewish Date') +
+                    td('Secular Date') +
+                    td('Description') +
+                    td('Comments'));
                 for (let occ of this.appData.UserOccasions) {
                     counter++;
-                    html += `<tr>
-                                <td><b>${counter.toString()}</b></td>
-                                <td style="background-color:${occ.color};color:#fff;">${occ.title}</td>
-                                <td>${occ.jdate.toShortString(false)}</td>
-                                <td>${occ.sdate.toLocaleDateString()}</td>
-                                <td>${occ.toString(true)}</td>
-                                <td>${occ.comments}</td>
-                            </tr>`;
+                    html += tr('',
+                        td(`<b>${counter.toString()}</b>`) +
+                        td(occ.title, `background-color:${occ.color};color:#fff;`) +
+                        td(occ.jdate.toShortString(false)) +
+                        td(occ.sdate.toLocaleDateString()) +
+                        td(occ.toString(true)) +
+                        td(occ.comments));
                 }
                 break;
             case 'Kavuahs':
-                html += '<tr style="background-color:#e1e1ff;"> \
-                            <td style="background-color:#7777bb;">&nbsp;</td> \
-                            <td>Description</td> \
-                            <td>Setting Entry</td> \
-                            <td>Cancels Onah Beinunis</td> \
-                            <td>Active</td> \
-                            <td>Ignored</td> \
-                        </tr>';
+                html += tr('style="background-color:#e1e1ff;"',
+                    td('&nbsp;', 'style="background-color:#7777bb;"') +
+                    td('Description') +
+                    td('Setting Entry') +
+                    td('Cancels Onah Beinunis') +
+                    td('Active') +
+                    td('Ignored'));
                 for (let kavuah of this.appData.KavuahList) {
                     counter++;
-                    html += `<tr>
-                                <td><b>${counter.toString()}</b></td>
-                                <td>${kavuah.toString()}</td>
-                                <td>${kavuah.settingEntry.toLongString()}</td>
-                                <td>${(kavuah.cancelsOnahBeinunis ? 'Yes' : 'No')}</td>
-                                <td>${(kavuah.active ? 'Yes' : 'No')}</td>
-                                <td>${(kavuah.ignore ? 'Yes' : 'No')}</td>
-                            </tr>`;
+                    html += tr('',
+                        td(`<b>${counter.toString()}</b>`) +
+                        td(kavuah.toString()) +
+                        td(kavuah.settingEntry.toLongString()) +
+                        td(kavuah.cancelsOnahBeinunis ? 'Yes' : 'No') +
+                        td(kavuah.active ? 'Yes' : 'No') +
+                        td(kavuah.ignore ? 'Yes' : 'No'));
                 }
                 break;
         }
@@ -151,7 +146,7 @@ export default class ExportData extends React.Component {
     async doExport(silent) {
         let filePath;
 
-        filePath = `${exportPath}/${this.state.fileName}`;
+        filePath = `${exportPath} /${this.state.fileName}`;
         const csv = this.getCsvText();
         log(csv);
         await RNFS.writeFile(filePath, csv)
@@ -240,5 +235,23 @@ export default class ExportData extends React.Component {
                 </ScrollView>
             </View>
         </View>;
+    }
+}
+
+function tr(attributes, inner) {
+    if (isAndroid) {
+        return `<div${attributes ? ' ' + attributes : ''}>${inner}</div>`;
+    }
+    else {
+        return `<tr${attributes ? ' ' + attributes : ''}>${inner}</tr>`;
+    }
+}
+
+function td(inner, attributes) {
+    if (isAndroid) {
+        return `${inner || '&nbsp;'}&nbsp;|&nbsp;`;
+    }
+    else {
+        return `<td${attributes ? ' ' + attributes : ''}>${inner || '&nbsp;'}</td>`;
     }
 }
