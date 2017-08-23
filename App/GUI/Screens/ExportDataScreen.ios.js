@@ -35,10 +35,11 @@ export default class ExportData extends React.Component {
         let csv = '';
         switch (this.state.dataSet) {
             case 'Entries':
-                csv = '"Date","Onah","Haflaga","IgnoreForFlaggedDates","IgnoreForKavuahs","Comments"\r\n';
+                csv = '"Date","Onah","Haflaga","Ignore For Flagged Dates","Ignore For Kavuahs","Comments"\r\n';
                 for (let entry of this.appData.EntryList.list) {
                     csv += `"${entry.date.toString()}","${(entry.nightDay === NightDay.Night ?
-                        'Night' : 'Day')}","${entry.haflaga.toString()}","${yon(entry.ignoreForFlaggedDates)
+                        'Night' : 'Day')}","${entry.haflaga ? entry.haflaga.toString() : ' - '
+                        }","${yon(entry.ignoreForFlaggedDates)
                         }","${yon(entry.ignoreForKavuah)}","${entry.comments}"\r\n`;
                 }
                 break;
@@ -79,17 +80,15 @@ export default class ExportData extends React.Component {
     }
     getHtmlText() {
         let counter = 0,
-            html = `<html><head>Luach - Export Data</head>
+            html = `<html><head><title>Luach - Export Data</title></head>
                     <body style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
                         <img src="http://compute.co.il/luach/app/Images/Feature.png" />
-                            <h1 style="color:#7777bb;">
-                                <font color="#7777bb">
-                                    Data Export from Luach -
-                                    ${this.state.dataSet} -
-                                    ${(new Date()).toLocaleDateString()}
-                                </font>
-                            </h1>
-                            <table width="100%" cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#7777bb;">`;
+                        <br />
+                        <h1 style="color:#7777bb;">
+                            ${this.state.dataSet} -
+                            ${(new Date()).toLocaleDateString()}
+                        </h1>
+                        <table width="100%" cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#7777bb;">`;
         switch (this.state.dataSet) {
             case 'Entries':
                 html += '<tr style="background-color:#e1e1ff;"> \
@@ -195,7 +194,7 @@ export default class ExportData extends React.Component {
     }
     async doEmail() {
         await this.doExport().then(filePath => {
-            const subject = 'Luach Export Data - ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
+            const subject = 'Luach - Export ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
                 html = this.getHtmlText();
             log(html);
             Mailer.mail({
