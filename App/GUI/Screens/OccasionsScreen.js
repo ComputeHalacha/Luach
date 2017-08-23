@@ -22,25 +22,32 @@ export default class OccasionsScreen extends Component {
         const { appData } = navigation.state.params;
         return {
             title: 'Events / Occasions',
-            headerRight: <TouchableHighlight onPress={() =>
-                navigation.navigate('NewOccasion', {
-                    appData: appData,
-                    onUpdate: OccasionsScreen.doUpdate,
-                    jdate: getToday(appData)
-                })}>
-                <View style={{ alignItems: 'center' }}>
-                    <Icon
-                        size={9}
-                        reverse
-                        name='add'
-                        color='#484' />
-                    <Text style={{
-                        fontSize: 9,
-                        color: '#262',
-                        paddingRight: 4
-                    }}>New Event</Text>
-                </View>
-            </TouchableHighlight>
+            headerRight: <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                <TouchableHighlight
+                    onPress={() =>
+                        navigation.navigate('ExportData', { appData, dataSet: 'Events' })}>
+                    <View style={{ marginRight: 10, alignItems: 'center' }}>
+                        <Icon name='import-export'
+                            color='#aca'
+                            size={25} />
+                        <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
+                    </View>
+                </TouchableHighlight>
+                <TouchableHighlight
+                    onPress={() =>
+                        navigation.navigate('NewOccasion', {
+                            appData: appData,
+                            onUpdate: OccasionsScreen.doUpdate,
+                            jdate: getToday(appData)
+                        })}>
+                    <View style={{ marginRight: 3 }}>
+                        <Icon name='add'
+                            color='#aac'
+                            size={25} />
+                        <Text style={{ fontSize: 10, color: '#aac' }}>New Event</Text>
+                    </View>
+                </TouchableHighlight>
+            </View>
         };
     };
     constructor(props) {
