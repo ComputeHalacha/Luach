@@ -359,12 +359,12 @@ class Kavuah {
     static getDilugHaflagahKavuah(fourEntries) {
         // Caculate Dilug Haflaga Kavuahs
         const list = [],
-            //We check the three entries if their interval "Dilug"s are the same.
+            //We check the entries if their interval "Dilug"s are the same.
             haflagaDiff1 = fourEntries[3].haflaga - fourEntries[2].haflaga,
             haflagaDiff2 = fourEntries[2].haflaga - fourEntries[1].haflaga;
 
         //If the "Dilug" is 0 it may be a regular Kavuah of Haflagah but not a Dilug one
-        if (haflagaDiff1 > 0 && haflagaDiff1 === haflagaDiff2) {
+        if (haflagaDiff1 !== 0 && haflagaDiff1 === haflagaDiff2) {
             list.push({
                 kavuah: new Kavuah(KavuahTypes.DilugHaflaga,
                     fourEntries[3],
