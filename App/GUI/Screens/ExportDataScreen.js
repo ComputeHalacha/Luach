@@ -45,25 +45,58 @@ export default class ExportData extends React.Component {
                 csv = '"Date","Onah","Haflaga","IgnoreForFlaggedDates","IgnoreForKavuahs","Comments"\r\n';
                 for (let entry of this.appData.EntryList.list) {
                     csv += `"${entry.date.toString()}","${(entry.nightDay === NightDay.Night ?
-                        'Night' : 'Day')}","${entry.haflaga.toString()}","${(entry.ignoreForFlaggedDates ?
-                            'Yes' : 'No')}","${(entry.ignoreForKavuah ?
-                                'Yes' : 'No')}","${entry.comments}"\r\n`;
+                        'Night' : 'Day')}","${entry.haflaga.toString()}","${yon(entry.ignoreForFlaggedDates)
+                        }","${yon(entry.ignoreForKavuah)}","${entry.comments}"\r\n`;
                 }
                 break;
             case 'Events':
                 csv = '"Jewish Date","Secular Date","Description","Comments","Color"\r\n';
                 for (let occ of this.appData.UserOccasions) {
-                    csv += `"${occ.jdate.toShortString(false)}","${occ.sdate.toLocaleDateString()}","${occ.toString(true)}","${occ.comments}","${occ.color}"\r\n`;
+                    csv += `"${occ.jdate.toShortString(false)}","${occ.sdate.toLocaleDateString()
+                        }","${occ.toString(true)}","${occ.comments}","${occ.color}"\r\n`;
                 }
                 break;
             case 'Kavuahs':
                 csv = '"Description","Setting Entry","Cancels Onah Beinunis","Active","Ignored"\r\n';
                 for (let kavuah of this.appData.KavuahList) {
-                    csv += `"${kavuah.toString()}","${kavuah.settingEntry.toLongString()}","${(kavuah.cancelsOnahBeinunis ?
-                        'Yes' : 'No')}","${(kavuah.active ?
-                            'Yes' : 'No')}","${(kavuah.ignore ?
-                                'Yes' : 'No')}"\r\n`;
+                    csv += `"${kavuah.toString()}","${kavuah.settingEntry.toLongString()
+                        }","${yon(kavuah.cancelsOnahBeinunis)}","${yon(kavuah.active)}","${yon(kavuah.ignore)}"\r\n`;
                 }
+                break;
+            case 'Settings':
+                var settings = this.appData.Settings;
+                /*
+                                settings.location;
+                                settings.showOhrZeruah;
+                                settings.onahBeinunis24Hours;
+                                settings.keepThirtyOne;
+                                settings.keepLongerHaflagah;
+                                settings.cheshbonKavuahByCheshbon;
+                                settings.haflagaOfOnahs;
+                                settings.kavuahDiffOnahs;
+                                settings.numberMonthsAheadToWarn;
+                                settings.calcKavuahsOnNewEntry;
+                                settings.showEntryFlagOnHome;
+                                settings.showProbFlagOnHome;
+                                settings.navigateBySecularDate;
+                                settings.showIgnoredKavuahs;
+                                settings.noProbsAfterEntry;
+                                settings.hideHelp;
+                                settings.requirePIN;
+                */
+                csv = '"Location","Ohr Zeruah","Onah Beinunis 24 Hours","Day Thirty One", \
+                    "Shorter Haflagah - No Cancel","Dilug Yom Hachodesh Kavuahs Another Month", \
+                    "Haflaga Of Onahs","Haflaga of Diff Onahs","Months Ahead To Warn","Calc Kavuahs New Entry", \
+                    "Show Entries On Main Screen","Show Flags On Main Screen","Calendar Displays Current", \
+                    "Show Ignored Kavuahs","No Flags Right After Entry","Hide Help","Require PIN"\r\n'+
+                    `"${settings.location.Name}","${yon(settings.showOhrZeruah)}"` +
+                    `,"${yon(settings.onahBeinunis24Hours)}","${yon(settings.keepLongerHaflagah)}"` +
+                    `,"${yon(settings.cheshbonKavuahByCheshbon)}","${yon(settings.haflagaOfOnahs)}"` +
+                    `,"${yon(settings.kavuahDiffOnahs)}","${settings.numberMonthsAheadToWarn.toString()}"` +
+                    `,"${yon(settings.calcKavuahsOnNewEntry)}","${yon(settings.showEntryFlagOnHome)}"` +
+                    `,"${yon(settings.showProbFlagOnHome)}","${settings.navigateBySecularDate ? 'Secular' : 'Jewish'} Date"` +
+                    `,"${yon(settings.showIgnoredKavuahs)}","${yon(settings.noProbsAfterEntry)}"` +
+                    `,"${yon(settings.hideHelp)}","${yon(settings.requirePIN)}"\r\n`;
                 break;
         }
         return csv;
@@ -96,8 +129,8 @@ export default class ExportData extends React.Component {
                         td(entry.date.toString()) +
                         td(entry.nightDay === NightDay.Night ? 'Night' : 'Day') +
                         td(entry.haflaga.toString()) +
-                        td(entry.ignoreForFlaggedDates ? 'Yes' : 'No') +
-                        td(entry.ignoreForKavuah ? 'Yes' : 'No') +
+                        td(yon(entry.ignoreForFlaggedDates)) +
+                        td(yon(entry.ignoreForKavuah)) +
                         td(entry.comments));
                 }
                 break;
@@ -134,10 +167,32 @@ export default class ExportData extends React.Component {
                         td(`<b>${counter.toString()}</b>`) +
                         td(kavuah.toString()) +
                         td(kavuah.settingEntry.toLongString()) +
-                        td(kavuah.cancelsOnahBeinunis ? 'Yes' : 'No') +
-                        td(kavuah.active ? 'Yes' : 'No') +
-                        td(kavuah.ignore ? 'Yes' : 'No'));
+                        td(yon(kavuah.cancelsOnahBeinunis)) +
+                        td(yon(kavuah.active)) +
+                        td(yon(kavuah.ignore)));
                 }
+                break;
+            case 'Settings':
+                var settings = this.appData.Settings;
+                html += '<tr><td>' +
+                    `<p><b>Location</b><br />${settings.location}<hr /></p>` +
+                    `<p><b>Flag previous onah (The "Ohr Zaruah")</b><br />${yon(settings.showOhrZeruah)}<hr /></p>` +
+                    `<p><b>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours</b><br />${yon(settings.onahBeinunis24Hours)}<hr /></p>` +
+                    `<p><b>Keep day Thirty One for Onah Beinonis</b><br />${yon(settings.keepThirtyOne)}<hr /></p>` +
+                    `<p><b>Haflaga is only cancelled by a longer one</b><br />${yon(settings.keepLongerHaflagah)}<hr /></p>` +
+                    `<p><b>Continue incrementing Dilug Yom Hachodesh Kavuahs into another month</b><br />${yon(settings.cheshbonKavuahByCheshbon)}<hr /></p>` +
+                    `<p><b>Calculate Haflagas by counting Onahs</b><br />${yon(settings.haflagaOfOnahs)}<hr /></p>` +
+                    `<p><b>Flag Kavuahs even if not all the same Onah</b><br />${yon(settings.kavuahDiffOnahs)}<hr /></p>` +
+                    `<p><b>Number of Months ahead to warn</b><br />${settings.numberMonthsAheadToWarn.toString()}<hr /></p>` +
+                    `<p><b>Automatically Calculate Kavuahs upon addition of an Entry</b><br />${yon(settings.calcKavuahsOnNewEntry)}<hr /></p>` +
+                    `<p><b>Show Entry, Hefsek Tahara and Mikva information</b><br />${yon(settings.showEntryFlagOnHome)}<hr /></p>` +
+                    `<p><b>Show flags for problem dates on Main Screen</b><br />${yon(settings.showProbFlagOnHome)}<hr /></p>` +
+                    `<p><b>Calendar displays current</b><br />${settings.navigateBySecularDate ? 'Secular' : 'Jewish'} Date<hr /></p>` +
+                    `<p><b>Show explicitly ignored Kavuahs in the Kavuah list</b><br />${yon(settings.showIgnoredKavuahs)}<hr /></p>` +
+                    `<p><b>Don't show Flagged dates for a week after Entry</b><br />${yon(settings.noProbsAfterEntry)}<hr /></p>` +
+                    `<p><b>Hide Help Button</b><br />${yon(settings.hideHelp)}<hr /></p>` +
+                    `<p><b>Require PIN to open application?</b><br />${yon(settings.requirePIN)}<hr /></p>` +
+                    '</td></tr>';
                 break;
         }
         html += '</table></div>';
@@ -207,6 +262,7 @@ export default class ExportData extends React.Component {
                             <Picker.Item label='Entries' value='Entries' />
                             <Picker.Item label='Events' value='Events' />
                             <Picker.Item label='Kavuahs' value='Kavuahs' />
+                            <Picker.Item label='Settings' value='Settings' />
                         </Picker>
                     </View>
                     <View style={GeneralStyles.formRow}>
@@ -217,13 +273,6 @@ export default class ExportData extends React.Component {
                             onEndEditing={event =>
                                 this.setState({ fileName: event.nativeEvent.text.replace(/[\/,: ]/gi, '-') })}
                             defaultValue={this.state.fileName} />
-                    </View>
-                    <View style={GeneralStyles.btnAddNew}>
-                        <Button
-                            title='Export Data'
-                            onPress={this.doExport}
-                            accessibilityLabel='Create CSV File'
-                            color={buttonColor} />
                     </View>
                     <View style={GeneralStyles.btnAddNew}>
                         <Button
@@ -254,4 +303,7 @@ function td(inner, attributes) {
     else {
         return `<td${attributes ? ' ' + attributes : ''}>${inner || '&nbsp;'}</td>`;
     }
+}
+function yon(bool) {
+    return bool ? 'Yes' : 'No';
 }
