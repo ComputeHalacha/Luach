@@ -16,8 +16,11 @@ export default class ExportData extends React.Component {
     constructor(props) {
         super(props);
         this.navigator = this.props.navigation;
-        this.appData = this.navigator.state.params.appData;
-        this.state = { dataSet: 'Entries' };
+
+        const {appData, dataSet} = this.navigator.state.params;
+
+        this.appData = appData;
+        this.state = { dataSet: (dataSet || 'Entries') };
         this.getFileName = this.getFileName.bind(this);
         this.doExport = this.doExport.bind(this);
         this.doEmail = this.doEmail.bind(this);

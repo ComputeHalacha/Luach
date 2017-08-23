@@ -10,8 +10,22 @@ import { warn, error, popUpMessage } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class EntryScreen extends Component {
-    static navigationOptions = {
-        title: 'List of Entries'
+    static navigationOptions = ({ navigation }) => {
+        const { appData } = navigation.state.params;
+        return {
+            title: 'List of Entries',
+            headerRight:
+            <TouchableHighlight
+                onPress={() =>
+                    navigation.navigate('ExportData', { appData, dataSet: 'Entries' })}>
+                <View style={{ marginRight: 10 }}>
+                    <Icon name='import-export'
+                        color='#aca'
+                        size={25} />
+                    <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
+                </View>
+            </TouchableHighlight>
+        };
     };
     constructor(props) {
         super(props);

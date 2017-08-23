@@ -15,7 +15,7 @@ export default class SettingsScreen extends Component {
             <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                 <TouchableHighlight
                     onPress={() =>
-                        navigation.navigate('ExportData', { appData })}>
+                        navigation.navigate('ExportData', { appData, dataSet: 'Settings' })}>
                     <View style={{ marginRight: 10 }}>
                         <Icon name='import-export'
                             color='#aca'
