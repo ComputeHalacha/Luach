@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, TextInput, Button, Picker, Platform } from 'react-native';
+import { ScrollView, View, Text, Button, Picker } from 'react-native';
 import RNFS from 'react-native-fs';
 import Mailer from 'react-native-mail';
 import SideMenu from '../Components/SideMenu';
@@ -7,9 +7,7 @@ import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralU
 import { NightDay } from '../../Code/Chashavshavon/Onah';
 import { GeneralStyles } from '../styles';
 
-const isAndroid = Platform.OS === 'android',
-    exportPath = isAndroid ?
-        RNFS.ExternalDirectoryPath : RNFS.DocumentDirectoryPath;
+const exportPath = RNFS.DocumentDirectoryPath;
 
 export default class ExportData extends React.Component {
     static navigationOptions = {
@@ -19,24 +17,15 @@ export default class ExportData extends React.Component {
         super(props);
         this.navigator = this.props.navigation;
         this.appData = this.navigator.state.params.appData;
-        this.state = {
-            fileName: this.getFileName('Entries'),
-            dataSet: 'Entries'
-        };
-        this.setDataSet = this.setDataSet.bind(this);
+        this.state = { dataSet: 'Entries' };
+        this.getFileName = this.getFileName.bind(this);
         this.doExport = this.doExport.bind(this);
         this.doEmail = this.doEmail.bind(this);
         this.getCsvText = this.getCsvText.bind(this);
         this.getHtmlText = this.getHtmlText.bind(this);
     }
-    getFileName(dataSet) {
-        return `${dataSet}-${(new Date()).toLocaleString().replace(/[\/,: ]/gi, '-')}.csv`;
-    }
-    setDataSet(dataSet) {
-        this.setState({
-            fileName: this.getFileName(dataSet),
-            dataSet: dataSet
-        });
+    getFileName() {
+        return `${this.state.dataSet}-${(new Date()).toLocaleString().replace(/[\/,: ]/gi, '-')}.csv`;
     }
     getCsvText() {
         let csv = '';
@@ -103,7 +92,9 @@ export default class ExportData extends React.Component {
     }
     getHtmlText() {
         let counter = 0,
-            html = `<div style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
+            html = `<html><head>Luach - Export Data</head>
+                    <body style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
+                        <img src="http://compute.co.il/luach/app/Images/Feature.png" />
                             <h1 style="color:#7777bb;">
                                 <font color="#7777bb">
                                     Data Export from Luach -
@@ -111,71 +102,77 @@ export default class ExportData extends React.Component {
                                     ${(new Date()).toLocaleDateString()}
                                 </font>
                             </h1>
-                            <table width="100%" cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#7777bb;style="min-width:550px;">`;
+                            <table width="100%" cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#7777bb;">`;
         switch (this.state.dataSet) {
             case 'Entries':
-                html += tr('style="background-color:#e1e1ff;">',
-                    td('&nbsp;', 'style="background-color:#7777bb;"') +
-                    td('Date') +
-                    td('Onah') +
-                    td('Haflaga') +
-                    td('IgnoreForFlaggedDates') +
-                    td('IgnoreForKavuahs') +
-                    td('Comments'));
+                html += '<tr style="background-color:#e1e1ff;"> \
+                            <td style="background-color:#7777bb;">&nbsp;</td> \
+                            <td>Date</td> \
+                            <td>Onah</td> \
+                            <td>Haflaga</td> \
+                            <td>IgnoreForFlaggedDates</td> \
+                            <td>IgnoreForKavuahs</td> \
+                            <td>Comments</td> \
+                        </tr>';
                 for (let entry of this.appData.EntryList.list) {
                     counter++;
-                    html += tr('',
-                        td(`<b>${counter.toString()}</b>`) +
-                        td(entry.date.toString()) +
-                        td(entry.nightDay === NightDay.Night ? 'Night' : 'Day') +
-                        td(entry.haflaga.toString()) +
-                        td(yon(entry.ignoreForFlaggedDates)) +
-                        td(yon(entry.ignoreForKavuah)) +
-                        td(entry.comments));
+                    html += `<tr>
+                                 <td><b>${counter.toString()}</b></td>
+                                 <td>${entry.date.toString()}</td>
+                                 <td>${(entry.nightDay === NightDay.Night ? 'Night' : 'Day')}</td>
+                                 <td>${entry.haflaga.toString()}</td>
+                                 <td>${yon(entry.ignoreForFlaggedDates)}</td>
+                                 <td>${yon(entry.ignoreForKavuah)}</td>
+                                 <td>${entry.comments}</td> \
+                            </tr>`;
                 }
                 break;
             case 'Events':
-                html += tr('style="background-color:#e1e1ff;"',
-                    td('&nbsp;', 'style="background-color:#7777bb;"') +
-                    td('Title') +
-                    td('Jewish Date') +
-                    td('Secular Date') +
-                    td('Description') +
-                    td('Comments'));
+                html += '<tr style="background-color:#e1e1ff;"> \
+                            <td style="background-color:#7777bb;">&nbsp;</td> \
+                            <td>Title</td> \
+                            <td>Jewish Date</td> \
+                            <td>Secular Date</td> \
+                            <td>Description</td> \
+                            <td>Comments</td>\
+                        </tr>';
                 for (let occ of this.appData.UserOccasions) {
                     counter++;
-                    html += tr('',
-                        td(`<b>${counter.toString()}</b>`) +
-                        td(occ.title, `background-color:${occ.color};color:#fff;`) +
-                        td(occ.jdate.toShortString(false)) +
-                        td(occ.sdate.toLocaleDateString()) +
-                        td(occ.toString(true)) +
-                        td(occ.comments));
+                    html += `<tr>
+                                <td><b>${counter.toString()}</b></td>
+                                <td style="background-color:${occ.color};color:#fff;">${occ.title}</td>
+                                <td>${occ.jdate.toShortString(false)}</td>
+                                <td>${occ.sdate.toLocaleDateString()}</td>
+                                <td>${occ.toString(true)}</td>
+                                <td>${occ.comments}</td>
+                            </tr>`;
                 }
                 break;
             case 'Kavuahs':
-                html += tr('style="background-color:#e1e1ff;"',
-                    td('&nbsp;', 'style="background-color:#7777bb;"') +
-                    td('Description') +
-                    td('Setting Entry') +
-                    td('Cancels Onah Beinunis') +
-                    td('Active') +
-                    td('Ignored'));
+                html += '<tr style="background-color:#e1e1ff;"> \
+                            <td style="background-color:#7777bb;">&nbsp;</td> \
+                            <td>Description</td> \
+                            <td>Setting Entry</td> \
+                            <td>Cancels Onah Beinunis</td> \
+                            <td>Active</td> \
+                            <td>Ignored</td> \
+                        </tr>';
                 for (let kavuah of this.appData.KavuahList) {
                     counter++;
-                    html += tr('',
-                        td(`<b>${counter.toString()}</b>`) +
-                        td(kavuah.toString()) +
-                        td(kavuah.settingEntry.toLongString()) +
-                        td(yon(kavuah.cancelsOnahBeinunis)) +
-                        td(yon(kavuah.active)) +
-                        td(yon(kavuah.ignore)));
+                    html += `<tr>
+                                <td><b>${counter.toString()}</b></td>
+                                <td>${kavuah.toString()}</td>
+                                <td>${kavuah.settingEntry.toLongString()}</td>
+                                <td>${yon(kavuah.cancelsOnahBeinunis)}</td>
+                                <td>${yon(kavuah.active)}</td>
+                                <td>${yon(kavuah.ignore)}</td>
+                            </tr>`;
                 }
                 break;
             case 'Settings':
                 var settings = this.appData.Settings;
                 html += '<tr><td>' +
-                    `<p><b>Location</b><br />${settings.location}<hr /></p>` +
+                    `<p><b>Location</b><br />${settings.location.Name}<hr /></p>` +
                     `<p><b>Flag previous onah (The "Ohr Zaruah")</b><br />${yon(settings.showOhrZeruah)}<hr /></p>` +
                     `<p><b>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours</b><br />${yon(settings.onahBeinunis24Hours)}<hr /></p>` +
                     `<p><b>Keep day Thirty One for Onah Beinonis</b><br />${yon(settings.keepThirtyOne)}<hr /></p>` +
@@ -195,53 +192,42 @@ export default class ExportData extends React.Component {
                     '</td></tr>';
                 break;
         }
-        html += '</table></div>';
+        html += '</table></body></html>';
         return html;
     }
-    async doExport(silent) {
-        let filePath;
-
-        filePath = `${exportPath}/${this.state.fileName}`;
-        const csv = this.getCsvText();
+    async doExport() {
+        const filePath = `${exportPath}/${this.getFileName()}`,
+            csv = this.getCsvText();
         log(csv);
         await RNFS.writeFile(filePath, csv)
-            .then(() => {
-                if (!silent) {
-                    popUpMessage(`The file ${this.state.fileName} has been successfully created.`,
-                        'Export ' + this.state.dataSet);
-                }
-            })
             .catch(err => {
                 warn('Error trying to create ' + this.state.fileName);
                 error(err);
             });
-
         return filePath;
     }
     async doEmail() {
-        await this.doExport(true).then(filePath => {
-            if (filePath) {
-                const subject = 'Luach Export Data - ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
-                    html = this.getHtmlText();
-                log(html);
-                Mailer.mail({
-                    subject: subject,
-                    recipients: [],
-                    ccRecipients: [],
-                    bccRecipients: [],
-                    body: html,
-                    isHTML: true,
-                    attachment: {
-                        path: filePath,
-                        type: 'csv',
-                        name: this.state.fileName
-                    }
-                }, error => {
-                    if (error) {
-                        popUpMessage('We are very sorry, but the email could not be sent.');
-                    }
-                });
-            }
+        await this.doExport().then(filePath => {
+            const subject = 'Luach Export Data - ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
+                html = this.getHtmlText();
+            log(html);
+            Mailer.mail({
+                subject: subject,
+                recipients: [],
+                ccRecipients: [],
+                bccRecipients: [],
+                body: html,
+                isHTML: true,
+                attachment: {
+                    path: filePath,
+                    type: 'csv',
+                    name: this.getFileName()
+                }
+            }, error => {
+                if (error) {
+                    popUpMessage('We are very sorry, but the email could not be sent.');
+                }
+            });
         });
     }
     render() {
@@ -258,7 +244,7 @@ export default class ExportData extends React.Component {
                         <Text style={GeneralStyles.label}>Data to Export</Text>
                         <Picker style={GeneralStyles.picker}
                             selectedValue={this.state.dataSet}
-                            onValueChange={value => this.setDataSet(value)}>
+                            onValueChange={value => this.setState({ dataSet: value })}>
                             <Picker.Item label='Entries' value='Entries' />
                             <Picker.Item label='Events' value='Events' />
                             <Picker.Item label='Kavuahs' value='Kavuahs' />
@@ -266,19 +252,24 @@ export default class ExportData extends React.Component {
                         </Picker>
                     </View>
                     <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>File Name</Text>
-                        <TextInput style={GeneralStyles.textInput}
-                            autoFocus
-                            placeholder='File Name'
-                            onEndEditing={event =>
-                                this.setState({ fileName: event.nativeEvent.text.replace(/[\/,: ]/gi, '-') })}
-                            defaultValue={this.state.fileName} />
+                        <Text>
+                            When you press on "Expprt to Email" below, the email app will open
+                            in "compose" mode, with an email containing all of your {this.state.dataSet}.
+                            {'\n\n'}
+                            In addition, a spreadsheet with all of your {this.state.dataSet} data will be attached to the email.
+                            {'\n\n'}
+                            It is advisable to send this email to yourself and to keep it as a  backup of your data.
+                            {'\n\n'}
+                            NOTE: It is not (yet) possible to IMPORT data into Luach.
+                            {'\n'}
+                            If you need to restore your data, it will need to be done manually.
+                        </Text>
                     </View>
                     <View style={GeneralStyles.btnAddNew}>
                         <Button
-                            title='Attach to Email'
+                            title='Export to Email'
                             onPress={this.doEmail}
-                            accessibilityLabel='Attach to Email'
+                            accessibilityLabel='Export to Email'
                             color={buttonColor} />
                     </View>
                 </ScrollView>
@@ -287,23 +278,6 @@ export default class ExportData extends React.Component {
     }
 }
 
-function tr(attributes, inner) {
-    if (isAndroid) {
-        return `<div${attributes ? ' ' + attributes : ''}>${inner}</div>`;
-    }
-    else {
-        return `<tr${attributes ? ' ' + attributes : ''}>${inner}</tr>`;
-    }
-}
-
-function td(inner, attributes) {
-    if (isAndroid) {
-        return `${inner || '&nbsp;'}&nbsp;|&nbsp;`;
-    }
-    else {
-        return `<td${attributes ? ' ' + attributes : ''}>${inner || '&nbsp;'}</td>`;
-    }
-}
 function yon(bool) {
     return bool ? 'Yes' : 'No';
 }
