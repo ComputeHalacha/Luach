@@ -1,7 +1,8 @@
 import React from 'react';
-import { ScrollView, View, Text, Button, Picker } from 'react-native';
+import { ScrollView, View, Text, Button } from 'react-native';
 import RNFS from 'react-native-fs';
 import Mailer from 'react-native-mail';
+import { Select, Option } from 'react-native-chooser';
 import SideMenu from '../Components/SideMenu';
 import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
@@ -228,18 +229,39 @@ export default class ExportData extends React.Component {
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Data to Export</Text>
-                        <Picker style={GeneralStyles.picker}
-                            selectedValue={this.state.dataSet}
-                            onValueChange={value => this.setState({ dataSet: value })}>
-                            <Picker.Item label='Entries' value='Entries' />
-                            <Picker.Item label='Events' value='Events' />
-                            <Picker.Item label='Kavuahs' value='Kavuahs' />
-                            <Picker.Item label='Settings' value='Settings' />
-                        </Picker>
+                        <Select
+                            onSelect={value => this.setState({ dataSet: value })}
+                            defaultText={this.state.dataSet}
+                            style={GeneralStyles.select}
+                            indicator='down'
+                            transparent={true}
+                            backdropStyle={GeneralStyles.optionListBackdrop}
+                            optionListStyle={GeneralStyles.optionListStyle}>
+                            <Option value='Entries'>
+                                Entries
+                        </Option>
+                            <Option value='Events'>
+                                Events
+                        </Option>
+                            <Option value='Kavuahs'>
+                                Kavuahs
+                        </Option>
+                            <Option value='Settings'>
+                                Settings
+                        </Option>
+                        </Select>
                     </View>
-                    <View style={GeneralStyles.formRow}>
+                    <View style={{
+                        padding: 10,
+                        backgroundColor: '#f1f1ff',
+                        borderRadius: 6,
+                        margin: 10,
+                        fontSize: 9,
+                        borderWidth: 1,
+                        borderColor: '#88b'
+                    }}>
                         <Text>
-                            When you press on "Expprt to Email" below, the email app will open
+                            When you press on "Export to Email" below, the email app will open
                             in "compose" mode, with an email containing all of your {this.state.dataSet}.
                             {'\n\n'}
                             In addition, a spreadsheet with all of your {this.state.dataSet} data will be attached to the email.
