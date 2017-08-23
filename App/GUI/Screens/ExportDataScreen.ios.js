@@ -17,7 +17,7 @@ export default class ExportData extends React.Component {
         super(props);
         this.navigator = this.props.navigation;
 
-        const {appData, dataSet} = this.navigator.state.params;
+        const { appData, dataSet } = this.navigator.state.params;
 
         this.appData = appData;
         this.state = { dataSet: (dataSet || 'Entries') };
@@ -56,40 +56,23 @@ export default class ExportData extends React.Component {
                 }
                 break;
             case 'Settings':
-                var settings = this.appData.Settings;
-                /*
-                                settings.location;
-                                settings.showOhrZeruah;
-                                settings.onahBeinunis24Hours;
-                                settings.keepThirtyOne;
-                                settings.keepLongerHaflagah;
-                                settings.cheshbonKavuahByCheshbon;
-                                settings.haflagaOfOnahs;
-                                settings.kavuahDiffOnahs;
-                                settings.numberMonthsAheadToWarn;
-                                settings.calcKavuahsOnNewEntry;
-                                settings.showEntryFlagOnHome;
-                                settings.showProbFlagOnHome;
-                                settings.navigateBySecularDate;
-                                settings.showIgnoredKavuahs;
-                                settings.noProbsAfterEntry;
-                                settings.hideHelp;
-                                settings.requirePIN;
-                */
-                csv = '"Location","Ohr Zeruah","Onah Beinunis 24 Hours","Day Thirty One", \
-                    "Shorter Haflagah - No Cancel","Dilug Yom Hachodesh Kavuahs Another Month", \
-                    "Haflaga Of Onahs","Haflaga of Diff Onahs","Months Ahead To Warn","Calc Kavuahs New Entry", \
-                    "Show Entries On Main Screen","Show Flags On Main Screen","Calendar Displays Current", \
-                    "Show Ignored Kavuahs","No Flags Right After Entry","Hide Help","Require PIN"\r\n'+
-                    `"${settings.location.Name}","${yon(settings.showOhrZeruah)}"` +
-                    `,"${yon(settings.onahBeinunis24Hours)}","${yon(settings.keepLongerHaflagah)}"` +
-                    `,"${yon(settings.cheshbonKavuahByCheshbon)}","${yon(settings.haflagaOfOnahs)}"` +
-                    `,"${yon(settings.kavuahDiffOnahs)}","${settings.numberMonthsAheadToWarn.toString()}"` +
-                    `,"${yon(settings.calcKavuahsOnNewEntry)}","${yon(settings.showEntryFlagOnHome)}"` +
-                    `,"${yon(settings.showProbFlagOnHome)}","${settings.navigateBySecularDate ? 'Secular' : 'Jewish'} Date"` +
-                    `,"${yon(settings.showIgnoredKavuahs)}","${yon(settings.noProbsAfterEntry)}"` +
-                    `,"${yon(settings.hideHelp)}","${yon(settings.requirePIN)}"\r\n`;
-                break;
+                {
+                    const settings = this.appData.Settings;
+                    csv = '"Location","Ohr Zeruah","Onah Beinunis 24 Hours","Day Thirty One",' +
+                        '"Shorter Haflagah - No Cancel","Dilug Yom Hachodesh Kavuahs Another Month",' +
+                        '"Haflaga Of Onahs","Haflaga of Diff Onahs","Months Ahead To Warn","Calc Kavuahs New Entry",' +
+                        '"Show Entries On Main Screen","Show Flags On Main Screen","Calendar Displays Current",' +
+                        '"Show Ignored Kavuahs","No Flags Right After Entry","Hide Help","Require PIN"\r\n' +
+                        `"${settings.location.Name}","${yon(settings.showOhrZeruah)}"` +
+                        `,"${yon(settings.onahBeinunis24Hours)}","${yon(settings.keepThirtyOne)}","${yon(settings.keepLongerHaflagah)}"` +
+                        `,"${yon(settings.cheshbonKavuahByCheshbon)}","${yon(settings.haflagaOfOnahs)}"` +
+                        `,"${yon(settings.kavuahDiffOnahs)}","${settings.numberMonthsAheadToWarn.toString()}"` +
+                        `,"${yon(settings.calcKavuahsOnNewEntry)}","${yon(settings.showEntryFlagOnHome)}"` +
+                        `,"${yon(settings.showProbFlagOnHome)}","${settings.navigateBySecularDate ? 'Secular' : 'Jewish'} Date"` +
+                        `,"${yon(settings.showIgnoredKavuahs)}","${yon(settings.noProbsAfterEntry)}"` +
+                        `,"${yon(settings.hideHelp)}","${yon(settings.requirePIN)}"\r\n`;
+                    break;
+                }
         }
         return csv;
     }
