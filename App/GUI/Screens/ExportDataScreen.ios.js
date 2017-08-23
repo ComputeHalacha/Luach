@@ -1,7 +1,8 @@
 import React from 'react';
-import { ScrollView, View, Text, Button, Picker } from 'react-native';
+import { ScrollView, View, Text, Button } from 'react-native';
 import RNFS from 'react-native-fs';
 import Mailer from 'react-native-mail';
+import { Select, Option } from 'react-native-chooser';
 import SideMenu from '../Components/SideMenu';
 import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
@@ -34,10 +35,11 @@ export default class ExportData extends React.Component {
         let csv = '';
         switch (this.state.dataSet) {
             case 'Entries':
-                csv = '"Date","Onah","Haflaga","IgnoreForFlaggedDates","IgnoreForKavuahs","Comments"\r\n';
+                csv = '"Date","Onah","Haflaga","Ignore For Flagged Dates","Ignore For Kavuahs","Comments"\r\n';
                 for (let entry of this.appData.EntryList.list) {
                     csv += `"${entry.date.toString()}","${(entry.nightDay === NightDay.Night ?
-                        'Night' : 'Day')}","${entry.haflaga.toString()}","${yon(entry.ignoreForFlaggedDates)
+                        'Night' : 'Day')}","${entry.haflaga ? entry.haflaga.toString() : ' - '
+                        }","${yon(entry.ignoreForFlaggedDates)
                         }","${yon(entry.ignoreForKavuah)}","${entry.comments}"\r\n`;
                 }
                 break;
@@ -78,17 +80,15 @@ export default class ExportData extends React.Component {
     }
     getHtmlText() {
         let counter = 0,
-            html = `<html><head>Luach - Export Data</head>
+            html = `<html><head><title>Luach - Export Data</title></head>
                     <body style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
                         <img src="http://compute.co.il/luach/app/Images/Feature.png" />
-                            <h1 style="color:#7777bb;">
-                                <font color="#7777bb">
-                                    Data Export from Luach -
-                                    ${this.state.dataSet} -
-                                    ${(new Date()).toLocaleDateString()}
-                                </font>
-                            </h1>
-                            <table width="100%" cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#7777bb;">`;
+                        <br />
+                        <h1 style="color:#7777bb;">
+                            ${this.state.dataSet} -
+                            ${(new Date()).toLocaleDateString()}
+                        </h1>
+                        <table width="100%" cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#7777bb;">`;
         switch (this.state.dataSet) {
             case 'Entries':
                 html += '<tr style="background-color:#e1e1ff;"> \
@@ -194,7 +194,7 @@ export default class ExportData extends React.Component {
     }
     async doEmail() {
         await this.doExport().then(filePath => {
-            const subject = 'Luach Export Data - ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
+            const subject = 'Luach - Export ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
                 html = this.getHtmlText();
             log(html);
             Mailer.mail({
@@ -228,18 +228,39 @@ export default class ExportData extends React.Component {
                 <ScrollView style={{ flex: 1 }}>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Data to Export</Text>
-                        <Picker style={GeneralStyles.picker}
-                            selectedValue={this.state.dataSet}
-                            onValueChange={value => this.setState({ dataSet: value })}>
-                            <Picker.Item label='Entries' value='Entries' />
-                            <Picker.Item label='Events' value='Events' />
-                            <Picker.Item label='Kavuahs' value='Kavuahs' />
-                            <Picker.Item label='Settings' value='Settings' />
-                        </Picker>
+                        <Select
+                            onSelect={value => this.setState({ dataSet: value })}
+                            defaultText={this.state.dataSet}
+                            style={GeneralStyles.select}
+                            indicator='down'
+                            transparent={true}
+                            backdropStyle={GeneralStyles.optionListBackdrop}
+                            optionListStyle={GeneralStyles.optionListStyle}>
+                            <Option value='Entries'>
+                                Entries
+                        </Option>
+                            <Option value='Events'>
+                                Events
+                        </Option>
+                            <Option value='Kavuahs'>
+                                Kavuahs
+                        </Option>
+                            <Option value='Settings'>
+                                Settings
+                        </Option>
+                        </Select>
                     </View>
-                    <View style={GeneralStyles.formRow}>
+                    <View style={{
+                        padding: 10,
+                        backgroundColor: '#f1f1ff',
+                        borderRadius: 6,
+                        margin: 10,
+                        fontSize: 9,
+                        borderWidth: 1,
+                        borderColor: '#88b'
+                    }}>
                         <Text>
-                            When you press on "Expprt to Email" below, the email app will open
+                            When you press on "Export to Email" below, the email app will open
                             in "compose" mode, with an email containing all of your {this.state.dataSet}.
                             {'\n\n'}
                             In addition, a spreadsheet with all of your {this.state.dataSet} data will be attached to the email.
