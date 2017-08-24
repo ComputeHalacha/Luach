@@ -6,7 +6,7 @@ import jDate from '../../Code/JCal/jDate';
 import { range } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
-export default class OnahChooser extends React.Component {
+export default class OnahChooser extends React.PureComponent {
 
     constructor(props) {
         super(props);

@@ -49,7 +49,7 @@ export default class SideMenu extends React.PureComponent {
                     {(this.props.isDataLoading &&
                         <View style={styles.menuView}>
                             <View style={styles.loadingIndicator}>
-                                <ActivityIndicator color='#888' />
+                                <ActivityIndicator color='#a96' />
                             </View>
                             <Text style={styles.menuText}>Loading</Text>
                         </View>)
@@ -222,10 +222,9 @@ const styles = StyleSheet.create({
     loadingIndicator: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#eee',
+        backgroundColor: '#fed',
         borderRadius: 50,
-        borderWidth: 1,
-        borderColor: '#888'
-
+        borderWidth:1,
+        borderColor:'#a96'
     }
 });
