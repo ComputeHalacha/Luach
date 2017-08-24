@@ -9,9 +9,21 @@ import { GeneralStyles } from '../styles';
 
 export default class FlaggedDatesScreen extends Component {
     static navigationOptions = ({ navigation }) => {
+        const { appData } = navigation.state.params;
         return {
             title: navigation.state.params.jdate ?
-                'Flagged Dates' : 'All Upcoming Flagged Dates'
+            'Flagged Dates' : 'Upcoming Flagged Dates',
+            headerRight:
+            <TouchableHighlight
+                onPress={() =>
+                    navigation.navigate('ExportData', { appData, dataSet: 'Flagged Dates' })}>
+                <View style={{ marginRight: 10 }}>
+                    <Icon name='import-export'
+                        color='#aca'
+                        size={25} />
+                    <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
+                </View>
+            </TouchableHighlight>
         };
     };
     constructor(props) {

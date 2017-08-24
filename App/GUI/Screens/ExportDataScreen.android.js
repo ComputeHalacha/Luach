@@ -75,6 +75,14 @@ export default class ExportData extends React.Component {
                         `,"${yon(settings.hideHelp)}","${yon(settings.requirePIN)}"\r\n`;
                     break;
                 }
+            case 'Flagged Dates':
+                csv = '"Jewish Date","Secular Date","Onah","Description"\r\n';
+                for (let probOnah of this.appData.ProblemOnahs) {
+                    csv += `"${probOnah.jdate.toString()}","${probOnah.jdate.getDate().toLocaleDateString()
+                        }","${probOnah.nightDay === NightDay.Night ? 'Night' : 'Day'
+                        }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
+                }
+                break;
         }
         return csv;
     }
@@ -133,6 +141,12 @@ export default class ExportData extends React.Component {
                     `<p><b>Hide Help Button</b><br />${yon(settings.hideHelp)}<hr /></p>` +
                     `<p><b>Require PIN to open application?</b><br />${yon(settings.requirePIN)}<hr /></p>` +
                     '<hr />';
+                break;
+            case 'Flagged Dates':
+                for (let probOnah of this.appData.ProblemOnahs) {
+                    counter++;
+                    html += `<p>${counter.toString()}. ${probOnah.toString().replace(/\n/g, '<br />&nbsp;&nbsp;')}</p><hr />`;
+                }
                 break;
         }
         html += '</div>';
@@ -193,6 +207,7 @@ export default class ExportData extends React.Component {
                             <Picker.Item label='Events' value='Events' />
                             <Picker.Item label='Kavuahs' value='Kavuahs' />
                             <Picker.Item label='Settings' value='Settings' />
+                            <Picker.Item label='Flagged Dates' value='Flagged Dates' />
                         </Picker>
                     </View>
                     <View style={{

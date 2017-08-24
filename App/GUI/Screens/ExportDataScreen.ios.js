@@ -77,6 +77,14 @@ export default class ExportData extends React.Component {
                         `,"${yon(settings.hideHelp)}","${yon(settings.requirePIN)}"\r\n`;
                     break;
                 }
+            case 'Flagged Dates':
+                csv = '"Jewish Date","Secular Date","Onah","Description"\r\n';
+                for (let probOnah of this.appData.ProblemOnahs) {
+                    csv += `"${probOnah.jdate.toString()}","${probOnah.jdate.getDate().toLocaleDateString()
+                        }","${probOnah.nightDay === NightDay.Night ? 'Night' : 'Day'
+                        }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
+                }
+                break;
         }
         return csv;
     }
@@ -158,26 +166,45 @@ export default class ExportData extends React.Component {
                 }
                 break;
             case 'Settings':
-                var settings = this.appData.Settings;
-                html += '<tr><td>' +
-                    `<p><b>Location</b><br />${settings.location.Name}<hr /></p>` +
-                    `<p><b>Flag previous onah (The "Ohr Zaruah")</b><br />${yon(settings.showOhrZeruah)}<hr /></p>` +
-                    `<p><b>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours</b><br />${yon(settings.onahBeinunis24Hours)}<hr /></p>` +
-                    `<p><b>Keep day Thirty One for Onah Beinonis</b><br />${yon(settings.keepThirtyOne)}<hr /></p>` +
-                    `<p><b>Haflaga is only cancelled by a longer one</b><br />${yon(settings.keepLongerHaflagah)}<hr /></p>` +
-                    `<p><b>Continue incrementing Dilug Yom Hachodesh Kavuahs into another month</b><br />${yon(settings.cheshbonKavuahByCheshbon)}<hr /></p>` +
-                    `<p><b>Calculate Haflagas by counting Onahs</b><br />${yon(settings.haflagaOfOnahs)}<hr /></p>` +
-                    `<p><b>Flag Kavuahs even if not all the same Onah</b><br />${yon(settings.kavuahDiffOnahs)}<hr /></p>` +
-                    `<p><b>Number of Months ahead to warn</b><br />${settings.numberMonthsAheadToWarn.toString()}<hr /></p>` +
-                    `<p><b>Automatically Calculate Kavuahs upon addition of an Entry</b><br />${yon(settings.calcKavuahsOnNewEntry)}<hr /></p>` +
-                    `<p><b>Show Entry, Hefsek Tahara and Mikva information</b><br />${yon(settings.showEntryFlagOnHome)}<hr /></p>` +
-                    `<p><b>Show flags for problem dates on Main Screen</b><br />${yon(settings.showProbFlagOnHome)}<hr /></p>` +
-                    `<p><b>Calendar displays current</b><br />${settings.navigateBySecularDate ? 'Secular' : 'Jewish'} Date<hr /></p>` +
-                    `<p><b>Show explicitly ignored Kavuahs in the Kavuah list</b><br />${yon(settings.showIgnoredKavuahs)}<hr /></p>` +
-                    `<p><b>Don't show Flagged dates for a week after Entry</b><br />${yon(settings.noProbsAfterEntry)}<hr /></p>` +
-                    `<p><b>Hide Help Button</b><br />${yon(settings.hideHelp)}<hr /></p>` +
-                    `<p><b>Require PIN to open application?</b><br />${yon(settings.requirePIN)}<hr /></p>` +
-                    '</td></tr>';
+                {
+                    const settings = this.appData.Settings;
+                    html += '<tr><td>' +
+                        `<p><b>Location</b><br />${settings.location.Name}<hr /></p>` +
+                        `<p><b>Flag previous onah (The "Ohr Zaruah")</b><br />${yon(settings.showOhrZeruah)}<hr /></p>` +
+                        `<p><b>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours</b><br />${yon(settings.onahBeinunis24Hours)}<hr /></p>` +
+                        `<p><b>Keep day Thirty One for Onah Beinonis</b><br />${yon(settings.keepThirtyOne)}<hr /></p>` +
+                        `<p><b>Haflaga is only cancelled by a longer one</b><br />${yon(settings.keepLongerHaflagah)}<hr /></p>` +
+                        `<p><b>Continue incrementing Dilug Yom Hachodesh Kavuahs into another month</b><br />${yon(settings.cheshbonKavuahByCheshbon)}<hr /></p>` +
+                        `<p><b>Calculate Haflagas by counting Onahs</b><br />${yon(settings.haflagaOfOnahs)}<hr /></p>` +
+                        `<p><b>Flag Kavuahs even if not all the same Onah</b><br />${yon(settings.kavuahDiffOnahs)}<hr /></p>` +
+                        `<p><b>Number of Months ahead to warn</b><br />${settings.numberMonthsAheadToWarn.toString()}<hr /></p>` +
+                        `<p><b>Automatically Calculate Kavuahs upon addition of an Entry</b><br />${yon(settings.calcKavuahsOnNewEntry)}<hr /></p>` +
+                        `<p><b>Show Entry, Hefsek Tahara and Mikva information</b><br />${yon(settings.showEntryFlagOnHome)}<hr /></p>` +
+                        `<p><b>Show flags for problem dates on Main Screen</b><br />${yon(settings.showProbFlagOnHome)}<hr /></p>` +
+                        `<p><b>Calendar displays current</b><br />${settings.navigateBySecularDate ? 'Secular' : 'Jewish'} Date<hr /></p>` +
+                        `<p><b>Show explicitly ignored Kavuahs in the Kavuah list</b><br />${yon(settings.showIgnoredKavuahs)}<hr /></p>` +
+                        `<p><b>Don't show Flagged dates for a week after Entry</b><br />${yon(settings.noProbsAfterEntry)}<hr /></p>` +
+                        `<p><b>Hide Help Button</b><br />${yon(settings.hideHelp)}<hr /></p>` +
+                        `<p><b>Require PIN to open application?</b><br />${yon(settings.requirePIN)}<hr /></p>` +
+                        '</td></tr>';
+                    break;
+                }
+            case 'Flagged Dates':
+                html += '<tr style="background-color:#e1e1ff;"> \
+                        <td style="background-color:#7777bb;">&nbsp;</td> \
+                        <td>Date</td> \
+                        <td>Onah</td> \
+                        <td>Description</td> \
+                    </tr>';
+                for (let probOnah of this.appData.ProblemOnahs) {
+                    counter++;
+                    html += `<tr>
+                                <td><b>${counter.toString()}</b></td>
+                                <td>${probOnah.jdate.toString()}<br />${Utils.toStringDate(probOnah.jdate.getDate(), true, true)}</td>
+                                <td>${probOnah.nightDay === NightDay.Night ? 'Night' : 'Day'}</td>
+                                <td><ul>${probOnah.flagsList.map(f => '<li>' + f + '</li>').join('')}</ul></td>
+                            </tr>`;
+                }
                 break;
         }
         html += '</table></body></html>';
@@ -240,16 +267,19 @@ export default class ExportData extends React.Component {
                             optionListStyle={GeneralStyles.optionListStyle}>
                             <Option value='Entries'>
                                 Entries
-                        </Option>
+                            </Option>
                             <Option value='Events'>
                                 Events
-                        </Option>
+                            </Option>
                             <Option value='Kavuahs'>
                                 Kavuahs
-                        </Option>
+                            </Option>
                             <Option value='Settings'>
                                 Settings
-                        </Option>
+                            </Option>
+                            <Option value='Flagged Dates'>
+                                Flagged Dates
+                            </Option>
                         </Select>
                     </View>
                     <View style={{
