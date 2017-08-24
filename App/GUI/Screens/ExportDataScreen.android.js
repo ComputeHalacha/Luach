@@ -220,12 +220,12 @@ export default class ExportData extends React.Component {
                         borderColor: '#88b'
                     }}>
                         <Text>
-                            When you click the button below, your default email client will open up
+                            When you press the "Export to Email" button below, your default email client will open up
                             in "compose" mode, with an email containing all of your {this.state.dataSet}.
                             {'\n\n'}
-                            In addition, a spreadsheet with all of your {this.state.dataSet} data will be attached to the email.
+                            A spreadsheet with all of your {this.state.dataSet} data will also be attached to the email.
                             {'\n\n'}
-                            It is advisable to send the email to yourself and to keep it as a  backup of your data.
+                            It is advisable to send the email to yourself and to keep it as a backup of your data.
                             {'\n\n'}
                             NOTE: It is not (yet) possible to IMPORT data into Luach.
                             {'\n'}
