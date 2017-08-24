@@ -51,7 +51,7 @@ export default class FlaggedDatesGenerator {
         return ProblemOnah.sortProbList(this.probOnahs);
     }
     _findOnahBeinunisProblemOnahs(entry, cancelKavuah) {
-        //Yom Hachodesh
+        //Yom Hachodesh ***************************************************************
         const nextMonth = entry.date.addMonths(1),
             //If Yom Hachodesh was 30 and this month only has 29 days,
             //the 29th and the 1st should both be flagged.
@@ -89,6 +89,7 @@ export default class FlaggedDatesGenerator {
             }
         }
         //Day Thirty ***************************************************************
+        //we only need to add 29 days as the entry date is day one
         const dayThirty = entry.date.addDays(29);
         if (!isAfterKavuahStart(dayThirty, entry.nightDay, cancelKavuah)) {
             const thirty = new ProblemFlag(
@@ -288,7 +289,7 @@ export default class FlaggedDatesGenerator {
         }
     }
     _addOhrZarua(prob, entry) {
-        //If the user wants to see keep the Ohr Zarua  - the previous onah
+        //If the user wants to keep the Ohr Zarua  - the previous onah
         if (this.settings.showOhrZeruah) {
             const ohrZarua = prob.onah.previous;
             this._addProblem(new ProblemFlag(

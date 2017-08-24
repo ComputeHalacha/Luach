@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppState, FlatList, View, Platform } from 'react-native';
+import { AppState, FlatList, View, Platform, ActivityIndicator } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SingleDayDisplay from '../Components/SingleDayDisplay';
 import Login from '../Components/Login';
@@ -90,6 +90,9 @@ export default class HomeScreen extends React.Component {
         }
     }
     componentWillUpdate(nextProps, nextState) {
+        /**
+         * We will try to prevent re-rendering if the data was not changed.
+         */
         const prevAppData = this.state.appData,
             newAppData = nextState.appData;
 
@@ -148,7 +151,8 @@ export default class HomeScreen extends React.Component {
         log(`AppState Change: currentState: "${AppState.currentState}", nextState: "${nextAppState}"`);
 
         const appData = this.state.appData;
-        //If we are going into background mode
+        //If the require PIN setting is on and we are going into background mode,
+        //we want to display the login modal upon re-awakening.
         if (nextAppState === 'background' &&
             appData &&
             appData.Settings &&
@@ -158,10 +162,6 @@ export default class HomeScreen extends React.Component {
             this.setState({ showLogin: true });
         }
     }
-    /**
-    * Recalculates current data for the state AppData object.
-    * This should be done after updating settings, occasions, entries or kavuahs.
-    */
     updateAppData(appData) {
         let { currDate, daysList, today } = this.state;
         const lastRegularEntry = appData.EntryList.lastRegularEntry(),
@@ -191,14 +191,19 @@ export default class HomeScreen extends React.Component {
             systemDate: new Date()
         });
     }
+    /**
+     * This function is called the when the app first initially loads
+     */
     _initialShowing() {
         const today = new jDate();
+        //Make sure that the local database schema is up to date.
         AppData.upgradeDatabase();
 
+        //We start with an empty appData object just to get the render started immediately.
         const appData = new AppData(),
             daysList = this.getDaysList(today);
 
-        //As we will be going to the database which takes some time, we set initial values for the state.
+        //As we will be going to the database which takes some time, we set initial default values for the state.
         this.state = {
             daysList: daysList,
             appData: appData,
@@ -208,7 +213,7 @@ export default class HomeScreen extends React.Component {
             refreshing: false
         };
 
-        //Get the data from the database
+        //Now that the GUI is showing, we get the real data from the database
         AppData.getAppData().then(ad => {
             if (!ad.Settings.requirePIN) {
                 this.setFlash();
@@ -220,6 +225,7 @@ export default class HomeScreen extends React.Component {
                 today = getTodayJdate(ad),
                 daysList = Utils.isSameJdate(today, this.state.daysList[0]) ?
                     this.state.daysList : this.getDaysList(today);
+            //We now will re-render the screen with the real data.
             this.setState({
                 appData: ad,
                 daysList: daysList,
@@ -235,6 +241,12 @@ export default class HomeScreen extends React.Component {
             });
         });
     }
+    /**
+     * When returning to this main screen from another screen, we don't need to go to the database.
+     * The global appData object is returned to us in params.appData.
+     * The params.currDate contains the jdate that we should show on the top of the screen.
+     * @param {{appData:AppData,currDate:jDate}} params
+     */
     _navigatedShowing(params) {
         //As this screen was navigated to from another screen, we will use the original appData.
         //We also allow another screen to naviate to any date by supplying a currDate property in the navigate props.
@@ -243,7 +255,7 @@ export default class HomeScreen extends React.Component {
             currDate = params.currDate || today,
             lastRegularEntry = appData.EntryList.lastRegularEntry(),
             lastEntry = appData.EntryList.lastEntry();
-        //We don't need to use setState here as this function is only called from the constructor.
+        //We don't need to use setState here as this function is only ever called before the initial render from the constructor.
         this.state = {
             appData: appData,
             daysList: this.getDaysList(currDate),
@@ -257,6 +269,9 @@ export default class HomeScreen extends React.Component {
             lastEntry: lastEntry
         };
     }
+    /**
+     * Show the "flash" warning banner on the bottom of the screen for 2.5 seconds.
+     */
     setFlash() {
         if (this.state.showFlash) {
             this.flashTimeout = setTimeout(() =>
@@ -357,12 +372,13 @@ export default class HomeScreen extends React.Component {
                     <Login onLoggedIn={this.onLoggedIn} pin={this.state.appData.Settings.PIN} />)
                     ||
                     <View style={{ flex: 1 }}>
+                        <Wait show={(!this.state.loadingDone)} />
                         <View style={{ flexDirection: 'row', flex: 1 }}>
                             <SideMenu
                                 onUpdate={this.updateAppData}
                                 appData={this.state.appData}
                                 navigator={this.props.navigation}
-                                currDate={this.state.today}
+                                currDate={this.state.currDate}
                                 isDataLoading={!this.state.loadingDone}
                                 onGoToday={this.goToday}
                                 onGoPrevious={this.prevDay}
@@ -385,5 +401,27 @@ export default class HomeScreen extends React.Component {
                     </View>
                 }
             </View>);
+    }
+}
+function Wait(props) {
+    if (props.show) {
+        return <View style={{
+            position: 'absolute',
+            top: '18%',
+            left: '50%',
+            zIndex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#fff',
+            borderRadius: 50,
+            borderWidth: 1,
+            borderColor: '#88c'
+
+        }}>
+            <ActivityIndicator size='large' color='#88c' />
+        </View>;
+    }
+    else {
+        return null;
     }
 }
