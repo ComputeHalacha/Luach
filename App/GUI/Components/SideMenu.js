@@ -1,5 +1,5 @@
 import React from 'react';
-import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight } from 'react-native';
+import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight, ActivityIndicator } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { getScreenHeight, goHomeToday, getTodayJdate } from '../../Code/GeneralUtils';
 
@@ -46,13 +46,22 @@ export default class SideMenu extends React.PureComponent {
                     onPress={this.props.onGoToday ||
                         (() => goHomeToday(this.props.navigator, this.props.appData))}
                     style={styles.sideButton}>
-                    <View style={styles.menuView}>
-                        <Image
-                            style={{ width: 25, height: 25 }}
-                            resizeMode='stretch'
-                            source={require('../Images/logo.png')} />
-                        <Text style={styles.menuText}>Today</Text>
-                    </View>
+                    {(this.props.isDataLoading &&
+                        <View style={styles.menuView}>
+                            <View style={styles.loadingIndicator}>
+                                <ActivityIndicator color='#888' />
+                            </View>
+                            <Text style={styles.menuText}>Loading</Text>
+                        </View>)
+                        ||
+                        <View style={styles.menuView}>
+                            <Image
+                                style={{ width: 25, height: 25 }}
+                                resizeMode='stretch'
+                                source={require('../Images/logo.png')} />
+                            <Text style={styles.menuText}>Today</Text>
+                        </View>
+                    }
                 </TouchableHighlight>
             }
             {this.props.onGoPrevious &&
@@ -175,7 +184,6 @@ export default class SideMenu extends React.PureComponent {
         </View>;
     }
 }
-
 const styles = StyleSheet.create({
     mainView: {
         minWidth: 50,
@@ -210,5 +218,14 @@ const styles = StyleSheet.create({
     menuIcon: {
         fontSize: 20,
         color: '#eee'
+    },
+    loadingIndicator: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#eee',
+        borderRadius: 50,
+        borderWidth: 1,
+        borderColor: '#888'
+
     }
 });

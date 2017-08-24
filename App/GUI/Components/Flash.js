@@ -4,11 +4,14 @@ import { isSmallScreen } from '../../Code/GeneralUtils';
 
 export default function Flash() {
     return <View style={{
+        position: 'absolute',
+        zIndex: 1,
         backgroundColor: '#eef',
         borderTopWidth: 2,
         borderColor: '#99a',
-        padding: 15,
-        flex: 0
+        padding: 10,
+        width: '100%',
+        bottom: 0
     }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Image

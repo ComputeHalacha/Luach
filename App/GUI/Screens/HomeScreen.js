@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppState, FlatList, View, Platform, ActivityIndicator } from 'react-native';
+import { AppState, FlatList, View, Platform } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SingleDayDisplay from '../Components/SingleDayDisplay';
 import Login from '../Components/Login';
@@ -270,13 +270,13 @@ export default class HomeScreen extends React.Component {
         };
     }
     /**
-     * Show the "flash" warning banner on the bottom of the screen for 2.5 seconds.
+     * Show the "flash" warning banner on the bottom of the screen for 1.5 second.
      */
     setFlash() {
         if (this.state.showFlash) {
             this.flashTimeout = setTimeout(() =>
                 this.setState({ showFlash: false })
-                , 2500);
+                , 1500);
         }
     }
     onLoggedIn() {
@@ -372,7 +372,6 @@ export default class HomeScreen extends React.Component {
                     <Login onLoggedIn={this.onLoggedIn} pin={this.state.appData.Settings.PIN} />)
                     ||
                     <View style={{ flex: 1 }}>
-                        <Wait show={(!this.state.loadingDone)} />
                         <View style={{ flexDirection: 'row', flex: 1 }}>
                             <SideMenu
                                 onUpdate={this.updateAppData}
@@ -401,27 +400,5 @@ export default class HomeScreen extends React.Component {
                     </View>
                 }
             </View>);
-    }
-}
-function Wait(props) {
-    if (props.show) {
-        return <View style={{
-            position: 'absolute',
-            top: '18%',
-            left: '50%',
-            zIndex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#fff',
-            borderRadius: 50,
-            borderWidth: 1,
-            borderColor: '#88c'
-
-        }}>
-            <ActivityIndicator size='large' color='#88c' />
-        </View>;
-    }
-    else {
-        return null;
     }
 }
