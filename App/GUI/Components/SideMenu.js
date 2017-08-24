@@ -1,5 +1,5 @@
 import React from 'react';
-import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight, ActivityIndicator } from 'react-native';
+import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight, ActivityIndicator, Platform } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { getScreenHeight, goHomeToday, getTodayJdate } from '../../Code/GeneralUtils';
 
@@ -219,12 +219,16 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#eee'
     },
-    loadingIndicator: {
+    loadingIndicator: Platform.OS === 'android' ? {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#fed',
         borderRadius: 50,
-        borderWidth:1,
-        borderColor:'#a96'
-    }
+        borderWidth: 1,
+        borderColor: '#a96'
+    } : {
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: 6
+        }
 });
