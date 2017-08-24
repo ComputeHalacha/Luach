@@ -34,10 +34,12 @@ export default class ExportData extends React.Component {
         let csv = '';
         switch (this.state.dataSet) {
             case 'Entries':
-                csv = '"Date","Onah","Haflaga","IgnoreForFlaggedDates","IgnoreForKavuahs","Comments"\r\n';
+                csv = '"Jewish Date","Secular Date",Onah","Haflaga","Ignore For Flagged Dates","Ignore For Kavuahs","Comments"\r\n';
                 for (let entry of this.appData.EntryList.list) {
-                    csv += `"${entry.date.toString()}","${(entry.nightDay === NightDay.Night ?
-                        'Night' : 'Day')}","${entry.haflaga.toString()}","${yon(entry.ignoreForFlaggedDates)
+                    csv += `"${entry.date.toString()}","${yon(entry.date.getDate().toLocaleDateString())
+                        }","${(entry.nightDay === NightDay.Night ?
+                            'Night' : 'Day')}","${entry.haflaga ? entry.haflaga.toString() : ' - '
+                        }","${yon(entry.ignoreForFlaggedDates)
                         }","${yon(entry.ignoreForKavuah)}","${entry.comments}"\r\n`;
                 }
                 break;

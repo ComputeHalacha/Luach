@@ -6,6 +6,7 @@ import { Select, Option } from 'react-native-chooser';
 import SideMenu from '../Components/SideMenu';
 import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
+import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
 const exportPath = RNFS.DocumentDirectoryPath;
@@ -35,10 +36,11 @@ export default class ExportData extends React.Component {
         let csv = '';
         switch (this.state.dataSet) {
             case 'Entries':
-                csv = '"Date","Onah","Haflaga","Ignore For Flagged Dates","Ignore For Kavuahs","Comments"\r\n';
+                csv = '"Jewish Date","Secular Date",Onah","Haflaga","Ignore For Flagged Dates","Ignore For Kavuahs","Comments"\r\n';
                 for (let entry of this.appData.EntryList.list) {
-                    csv += `"${entry.date.toString()}","${(entry.nightDay === NightDay.Night ?
-                        'Night' : 'Day')}","${entry.haflaga ? entry.haflaga.toString() : ' - '
+                    csv += `"${entry.date.toString()}","${yon(entry.date.getDate().toLocaleDateString())
+                        }","${(entry.nightDay === NightDay.Night ?
+                            'Night' : 'Day')}","${entry.haflaga ? entry.haflaga.toString() : ' - '
                         }","${yon(entry.ignoreForFlaggedDates)
                         }","${yon(entry.ignoreForKavuah)}","${entry.comments}"\r\n`;
                 }
@@ -104,7 +106,7 @@ export default class ExportData extends React.Component {
                     counter++;
                     html += `<tr>
                                  <td><b>${counter.toString()}</b></td>
-                                 <td>${entry.date.toString()}</td>
+                                 <td>${entry.date.toString()}<br />${Utils.toStringDate(entry.date.getDate(), true, true)}</td>
                                  <td>${(entry.nightDay === NightDay.Night ? 'Night' : 'Day')}</td>
                                  <td>${entry.haflaga.toString()}</td>
                                  <td>${yon(entry.ignoreForFlaggedDates)}</td>

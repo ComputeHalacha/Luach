@@ -1,8 +1,7 @@
 import React from 'react';
 import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { getScreenHeight, goHomeToday } from '../../Code/GeneralUtils';
-import jDate from '../../Code/JCal/jDate';
+import { getScreenHeight, goHomeToday, getTodayJdate } from '../../Code/GeneralUtils';
 
 /**
  * PROPS ******
@@ -35,7 +34,7 @@ export default class SideMenu extends React.PureComponent {
         };
     }
     render() {
-        const jdate = this.props.currDate || new jDate(),
+        const jdate = this.props.currDate || getTodayJdate(this.props.appData),
             params = {
                 appData: this.props.appData,
                 onUpdate: this.props.onUpdate

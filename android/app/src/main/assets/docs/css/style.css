@@ -1,7 +1,7 @@
 ﻿@font-face { font-family: 'Material Icons'; font-style: normal; font-weight: 400; src: local('Material Icons'), local('MaterialIcons-Regular'), url(../../fonts/MaterialIcons-Regular.woff2) format('woff2'), url(../../fonts/MaterialIcons-Regular.woff) format('woff'), url(../../fonts/MaterialIcons.ttf) format('truetype'); }
 @font-face { font-family: 'Octicons'; font-style: normal; font-weight: 400; src: local('Octicons'), url('../../fonts/Octicons.ttf') format('truetype'); }
 
-body { font-size: 14px; margin: 0; padding: 0; }
+body { font-size: 14px; margin: 0; padding: 0 0 50px 0; }
 img { border: 0; }
 blockquote, p, div, blockquote p { font-size: 14px; font-weight: normal; }
 .divCaption { margin: 0 0 5px 0; background-color: #f1f1ff; }

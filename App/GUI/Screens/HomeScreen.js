@@ -25,7 +25,7 @@ export default class HomeScreen extends React.Component {
                         navigation.navigate('MonthView',
                             {
                                 appData: ad,
-                                jdate: new jDate()
+                                jdate: getTodayJdate(ad)
                             }))} />
             });
 
@@ -362,7 +362,7 @@ export default class HomeScreen extends React.Component {
                                 onUpdate={this.updateAppData}
                                 appData={this.state.appData}
                                 navigator={this.props.navigation}
-                                currDate={this.state.currDate}
+                                currDate={this.state.today}
                                 isDataLoading={!this.state.loadingDone}
                                 onGoToday={this.goToday}
                                 onGoPrevious={this.prevDay}
