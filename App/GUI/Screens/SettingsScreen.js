@@ -118,7 +118,7 @@ export default class SettingsScreen extends Component {
                                     onUpdate: this.saveAndUpdate,
                                     appData: this.state.appData
                                 })}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={GeneralStyles.centeredRow}>
                                     <Icon name='edit-location' color='#484' size={35} />
                                     <Text>
                                         {location.Name}

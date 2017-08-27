@@ -134,33 +134,25 @@ export default class EntryScreen extends Component {
                     <ScrollView style={{ flex: 1 }}>
                         <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
                             <TouchableHighlight onPress={this.newEntry}>
-                                <View style={{ alignItems: 'center' }}>
+                                <View style={GeneralStyles.center}>
                                     <Icon
                                         size={9}
                                         reverse
                                         name='add'
                                         color='#484'
                                     />
-                                    <Text style={{
-                                        fontSize: 9,
-                                        color: '#262',
-                                        fontStyle: 'italic'
-                                    }}>New Entry</Text>
+                                    <Text style={styles.newEntryText}>New Entry</Text>
                                 </View>
                             </TouchableHighlight>
                             <TouchableHighlight onPress={this.findKavuahs}>
-                                <View style={{ alignItems: 'center' }}>
+                                <View style={GeneralStyles.center}>
                                     <Icon
                                         size={9}
                                         reverse
                                         name='search'
                                         color='#669'
                                     />
-                                    <Text style={{
-                                        fontSize: 9,
-                                        color: '#669',
-                                        fontStyle: 'italic'
-                                    }}>Calculate Possible Kavuahs</Text>
+                                    <Text style={styles.calcKavuahText}>Calculate Possible Kavuahs</Text>
                                 </View>
                             </TouchableHighlight>
                         </View>
@@ -174,14 +166,21 @@ export default class EntryScreen extends Component {
                                     <Text>{entry.toLongString()}</Text>
                                     {kavuahs.length > 0 &&
                                         <View style={{ margin: 7 }}>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <View style={GeneralStyles.centeredRow}>
                                                 <Icon name='device-hub' color='#800' size={13} />
-                                                <Text style={{ color: '#800', fontSize: 10, marginLeft: 3 }}>
-                                                    Kavuah pattern established
+                                                <Text style={styles.hasKavuahDec}>
+                                                    This Entry established a Kavuah pattern
                                                 </Text>
                                             </View>
                                             {kavuahs.map((k, i) =>
-                                                <Text key={i} style={{ fontSize: 10 }}>{'' + k.toString(true)}</Text>
+                                                <View key={i} style={GeneralStyles.centeredRow}>
+                                                    <Text style={styles.kavuahChevron}>
+                                                        ►
+                                                    </Text>
+                                                    <Text style={styles.kavuahText}>
+                                                        {k.toString()}
+                                                    </Text>
+                                                </View>
                                             )}
                                         </View>
                                     }
@@ -197,7 +196,7 @@ export default class EntryScreen extends Component {
                                         underlayColor='#696'
                                         style={{ flex: 1 }}
                                         onPress={() => this.navigate('Home', { currDate: entry.date, appData: this.state.appData })}>
-                                        <View style={{ alignItems: 'center' }}>
+                                        <View style={GeneralStyles.center}>
                                             <Icon
                                                 name='event-note'
                                                 color='#585'
@@ -215,7 +214,7 @@ export default class EntryScreen extends Component {
                                                 appData: this.state.appData,
                                                 onUpdate: this.update
                                             })}>
-                                            <View style={{ alignItems: 'center' }}>
+                                            <View style={GeneralStyles.center}>
                                                 <Icon
                                                     name='edit'
                                                     color='#99a999'
@@ -229,7 +228,7 @@ export default class EntryScreen extends Component {
                                         onPress={() => this.newKavuah(entry)}
                                         underlayColor='#aaf'
                                         style={{ flex: 1 }}>
-                                        <View style={{ alignItems: 'center' }}>
+                                        <View style={GeneralStyles.center}>
                                             <Icon
                                                 name='device-hub'
                                                 color='#aaf'
@@ -242,7 +241,7 @@ export default class EntryScreen extends Component {
                                         underlayColor='#faa'
                                         style={{ flex: 1 }}
                                         onPress={() => this.deleteEntry(entry)}>
-                                        <View style={{ alignItems: 'center' }}>
+                                        <View style={GeneralStyles.center}>
                                             <Icon
                                                 name='delete-forever'
                                                 color='#faa'
@@ -259,3 +258,30 @@ export default class EntryScreen extends Component {
             </View>);
     }
 }
+const styles = StyleSheet.create({
+    newEntryText: {
+        fontSize: 9,
+        color: '#262',
+        fontStyle: 'italic'
+    },
+    calcKavuahText: {
+        fontSize: 9,
+        color: '#669',
+        fontStyle: 'italic'
+    },
+    hasKavuahDec: {
+        color: '#800',
+        fontSize: 10,
+        marginLeft: 3
+    },
+    kavuahChevron: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        marginLeft: 16,
+        marginRight: 4
+    },
+    kavuahText: {
+        fontSize: 10,
+        fontWeight: 'bold'
+    }
+});

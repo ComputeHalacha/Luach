@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View, Image } from 'react-native';
 import { isSmallScreen } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default function Flash() {
     return <View style={{
@@ -13,7 +14,7 @@ export default function Flash() {
         width: '100%',
         bottom: 0
     }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={GeneralStyles.centeredRow}>
             <Image
                 style={{ width: 20, height: 20, marginRight: 5 }}
                 resizeMode='stretch'

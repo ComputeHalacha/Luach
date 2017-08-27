@@ -206,7 +206,7 @@ export default class OccasionsScreen extends Component {
                                         currDate: occasion.jdate,
                                         appData: this.state.appData
                                     })}>
-                                    <View style={{ alignItems: 'center' }}>
+                                    <View style={GeneralStyles.center}>
                                         <Icon
                                             name='event-note'
                                             color='#696'
@@ -223,7 +223,7 @@ export default class OccasionsScreen extends Component {
                                             currDate: occasion.getNextInstance(),
                                             appData: this.state.appData
                                         })}>
-                                        <View style={{ alignItems: 'center' }}>
+                                        <View style={GeneralStyles.center}>
                                             <Icon
                                                 name='near-me'
                                                 color='#66a'
@@ -237,7 +237,7 @@ export default class OccasionsScreen extends Component {
                                     underlayColor='#788778'
                                     style={{ flex: 1 }}
                                     onPress={() => this.editOccasion(occasion)}>
-                                    <View style={{ alignItems: 'center' }}>
+                                    <View style={GeneralStyles.center}>
                                         <Icon
                                             name='edit'
                                             color='#99a999'
@@ -250,7 +250,7 @@ export default class OccasionsScreen extends Component {
                                     underlayColor='#faa'
                                     style={{ flex: 1 }}
                                     onPress={() => this.deleteOccasion(occasion)}>
-                                    <View style={{ alignItems: 'center' }}>
+                                    <View style={GeneralStyles.center}>
                                         <Icon
                                             name='delete-forever'
                                             color='#faa'

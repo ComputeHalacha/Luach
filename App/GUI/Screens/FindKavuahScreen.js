@@ -128,7 +128,7 @@ export default class FindKavuahScreen extends Component {
                     helpTitle='Kavuahs' />
                 <ScrollView style={{ flex: 1 }}>
                     {(pk &&
-                        <View style={{ alignItems: 'center' }}>
+                        <View style={GeneralStyles.center}>
                             <Icon name='device-hub'
                                 size={70}
                                 color='#f00' />
@@ -149,7 +149,7 @@ export default class FindKavuahScreen extends Component {
                                     underlayColor='#aaf'
                                     style={{ flex: 1 }}
                                     onPress={() => this.addKavuah(pk)}>
-                                    <View style={{ alignItems: 'center' }}>
+                                    <View style={GeneralStyles.center}>
                                         <Icon
                                             reverse
                                             name='add'
@@ -162,7 +162,7 @@ export default class FindKavuahScreen extends Component {
                                     underlayColor='#aaa'
                                     style={{ flex: 1 }}
                                     onPress={() => this.removePossibleKavuah(pk)}>
-                                    <View style={{ alignItems: 'center' }}>
+                                    <View style={GeneralStyles.center}>
                                         <Icon
                                             reverse
                                             name='delete-forever'
@@ -175,7 +175,7 @@ export default class FindKavuahScreen extends Component {
                                     underlayColor='#faa'
                                     style={{ flex: 1 }}
                                     onPress={() => this.ignorePossibleKavuah(pk)}>
-                                    <View style={{ alignItems: 'center' }}>
+                                    <View style={GeneralStyles.center}>
                                         <Icon
                                             reverse
                                             name='delete-forever'

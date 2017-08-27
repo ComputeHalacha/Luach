@@ -35,7 +35,7 @@ class Kavuah {
         this.ignore = !!ignore;
         this.kavuahId = kavuahId;
     }
-    toString(noDayTime) {
+    toString() {
         let txt = '';
         if (!this.active) {
             txt = '[INACTIVE] ';
@@ -43,7 +43,7 @@ class Kavuah {
         if (this.ignore) {
             txt = '[IGNORED] ';
         }
-        txt += noDayTime ? 'Type ' : (this.settingEntry.nightDay === NightDay.Night ? 'Night-time ' : 'Day-time ');
+        txt += (this.settingEntry.nightDay === NightDay.Night ? 'Night-time ' : 'Day-time ');
         switch (this.kavuahType) {
             case KavuahTypes.Haflagah:
                 txt += `every ${this.specialNumber.toString()} days`;
