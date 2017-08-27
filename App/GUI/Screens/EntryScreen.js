@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, View, Alert, TouchableHighlight } from 'react-native';
+import { ScrollView, Text, View, Alert, TouchableHighlight, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
 import CustomList from '../Components/CustomList';
