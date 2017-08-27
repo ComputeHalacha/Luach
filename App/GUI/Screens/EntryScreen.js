@@ -167,7 +167,26 @@ export default class EntryScreen extends Component {
                         <CustomList
                             data={entryList}
                             nightDay={entry => entry.nightDay}
-                            title={entry => entry.toLongString()}
+                            title={entry => {
+                                const kavuahs = this.state.appData.KavuahList.filter(k =>
+                                    (!k.ignore) && k.settingEntry.isSameEntry(entry));
+                                return <View>
+                                    <Text>{entry.toLongString()}</Text>
+                                    {kavuahs.length > 0 &&
+                                        <View style={{ margin: 7 }}>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <Icon name='device-hub' color='#800' size={13} />
+                                                <Text style={{ color: '#800', fontSize: 10, marginLeft: 3 }}>
+                                                    Kavuah pattern established
+                                                </Text>
+                                            </View>
+                                            {kavuahs.map((k, i) =>
+                                                <Text key={i} style={{ fontSize: 10 }}>{'' + k.toString(true)}</Text>
+                                            )}
+                                        </View>
+                                    }
+                                </View>;
+                            }}
                             keyExtractor={(item, index) => item.entryId || index.toString()}
                             emptyListText='There are no Entries in the list'
                             secondSection={entry => {
