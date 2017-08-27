@@ -8,7 +8,7 @@ const darkColors = ['#b96', '#9b6', '#96b', '#f00', '#090', '#00f', '#707', '#77
     componentWidth = Math.trunc(getScreenWidth() * 0.9),
     tileWidth = Math.trunc(componentWidth / 3.0) - 3;
 
-export default class ColorChooser extends React.Component {
+export default class ColorChooser extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = { modalVisible: false };

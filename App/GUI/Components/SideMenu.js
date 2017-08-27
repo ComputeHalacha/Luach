@@ -1,8 +1,7 @@
 import React from 'react';
-import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight } from 'react-native';
+import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight, ActivityIndicator, Platform } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { getScreenHeight, goHomeToday } from '../../Code/GeneralUtils';
-import jDate from '../../Code/JCal/jDate';
+import { getScreenHeight, goHomeToday, getTodayJdate } from '../../Code/GeneralUtils';
 
 /**
  * PROPS ******
@@ -35,7 +34,7 @@ export default class SideMenu extends React.PureComponent {
         };
     }
     render() {
-        const jdate = this.props.currDate || new jDate(),
+        const jdate = this.props.currDate || getTodayJdate(this.props.appData),
             params = {
                 appData: this.props.appData,
                 onUpdate: this.props.onUpdate
@@ -47,13 +46,22 @@ export default class SideMenu extends React.PureComponent {
                     onPress={this.props.onGoToday ||
                         (() => goHomeToday(this.props.navigator, this.props.appData))}
                     style={styles.sideButton}>
-                    <View style={styles.menuView}>
-                        <Image
-                            style={{ width: 25, height: 25 }}
-                            resizeMode='stretch'
-                            source={require('../Images/logo.png')} />
-                        <Text style={styles.menuText}>Today</Text>
-                    </View>
+                    {(this.props.isDataLoading &&
+                        <View style={styles.menuView}>
+                            <View style={styles.loadingIndicator}>
+                                <ActivityIndicator color='#a96' />
+                            </View>
+                            <Text style={styles.menuText}>Loading</Text>
+                        </View>)
+                        ||
+                        <View style={styles.menuView}>
+                            <Image
+                                style={{ width: 25, height: 25 }}
+                                resizeMode='stretch'
+                                source={require('../Images/logo.png')} />
+                            <Text style={styles.menuText}>Today</Text>
+                        </View>
+                    }
                 </TouchableHighlight>
             }
             {this.props.onGoPrevious &&
@@ -176,7 +184,6 @@ export default class SideMenu extends React.PureComponent {
         </View>;
     }
 }
-
 const styles = StyleSheet.create({
     mainView: {
         minWidth: 50,
@@ -211,5 +218,17 @@ const styles = StyleSheet.create({
     menuIcon: {
         fontSize: 20,
         color: '#eee'
-    }
+    },
+    loadingIndicator: Platform.OS === 'android' ? {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fed',
+        borderRadius: 50,
+        borderWidth: 1,
+        borderColor: '#a96'
+    } : {
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: 6
+        }
 });

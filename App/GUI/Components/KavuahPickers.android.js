@@ -4,7 +4,7 @@ import { Kavuah, KavuahTypes } from '../../Code/Chashavshavon/Kavuah';
 import { range } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
-export default class KavuahPickers extends React.Component {
+export default class KavuahPickers extends React.PureComponent {
     constructor(props) {
         super(props);
     }

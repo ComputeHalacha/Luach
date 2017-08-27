@@ -5,6 +5,13 @@ const GeneralStyles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff'
     },
+    center: {
+        alignItems: 'center'
+    },
+    centeredRow: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
     headerView: {
         backgroundColor: '#99e',
         padding: 5,

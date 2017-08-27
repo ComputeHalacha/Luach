@@ -1,16 +1,20 @@
 import React from 'react';
 import { Text, View, Image } from 'react-native';
 import { isSmallScreen } from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
 
 export default function Flash() {
     return <View style={{
+        position: 'absolute',
+        zIndex: 1,
         backgroundColor: '#eef',
         borderTopWidth: 2,
         borderColor: '#99a',
-        padding: 15,
-        flex: 0
+        padding: 10,
+        width: '100%',
+        bottom: 0
     }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={GeneralStyles.centeredRow}>
             <Image
                 style={{ width: 20, height: 20, marginRight: 5 }}
                 resizeMode='stretch'

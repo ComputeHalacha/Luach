@@ -34,10 +34,12 @@ export default class ExportData extends React.Component {
         let csv = '';
         switch (this.state.dataSet) {
             case 'Entries':
-                csv = '"Date","Onah","Haflaga","IgnoreForFlaggedDates","IgnoreForKavuahs","Comments"\r\n';
+                csv = '"Jewish Date","Secular Date",Onah","Haflaga","Ignore For Flagged Dates","Ignore For Kavuahs","Comments"\r\n';
                 for (let entry of this.appData.EntryList.list) {
-                    csv += `"${entry.date.toString()}","${(entry.nightDay === NightDay.Night ?
-                        'Night' : 'Day')}","${entry.haflaga.toString()}","${yon(entry.ignoreForFlaggedDates)
+                    csv += `"${entry.date.toString()}","${yon(entry.date.getDate().toLocaleDateString())
+                        }","${(entry.nightDay === NightDay.Night ?
+                            'Night' : 'Day')}","${entry.haflaga ? entry.haflaga.toString() : ' - '
+                        }","${yon(entry.ignoreForFlaggedDates)
                         }","${yon(entry.ignoreForKavuah)}","${entry.comments}"\r\n`;
                 }
                 break;
@@ -73,6 +75,14 @@ export default class ExportData extends React.Component {
                         `,"${yon(settings.hideHelp)}","${yon(settings.requirePIN)}"\r\n`;
                     break;
                 }
+            case 'Flagged Dates':
+                csv = '"Jewish Date","Secular Date","Onah","Description"\r\n';
+                for (let probOnah of this.appData.ProblemOnahs) {
+                    csv += `"${probOnah.jdate.toString()}","${probOnah.jdate.getDate().toLocaleDateString()
+                        }","${probOnah.nightDay === NightDay.Night ? 'Night' : 'Day'
+                        }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
+                }
+                break;
         }
         return csv;
     }
@@ -131,6 +141,12 @@ export default class ExportData extends React.Component {
                     `<p><b>Hide Help Button</b><br />${yon(settings.hideHelp)}<hr /></p>` +
                     `<p><b>Require PIN to open application?</b><br />${yon(settings.requirePIN)}<hr /></p>` +
                     '<hr />';
+                break;
+            case 'Flagged Dates':
+                for (let probOnah of this.appData.ProblemOnahs) {
+                    counter++;
+                    html += `<p>${counter.toString()}. ${probOnah.toString().replace(/\n/g, '<br />&nbsp;&nbsp;')}</p><hr />`;
+                }
                 break;
         }
         html += '</div>';
@@ -191,6 +207,7 @@ export default class ExportData extends React.Component {
                             <Picker.Item label='Events' value='Events' />
                             <Picker.Item label='Kavuahs' value='Kavuahs' />
                             <Picker.Item label='Settings' value='Settings' />
+                            <Picker.Item label='Flagged Dates' value='Flagged Dates' />
                         </Picker>
                     </View>
                     <View style={{
@@ -203,12 +220,12 @@ export default class ExportData extends React.Component {
                         borderColor: '#88b'
                     }}>
                         <Text>
-                            When you click the button below, your default email client will open up
+                            When you press the "Export to Email" button below, your default email client will open up
                             in "compose" mode, with an email containing all of your {this.state.dataSet}.
                             {'\n\n'}
-                            In addition, a spreadsheet with all of your {this.state.dataSet} data will be attached to the email.
+                            A spreadsheet with all of your {this.state.dataSet} data will also be attached to the email.
                             {'\n\n'}
-                            It is advisable to send the email to yourself and to keep it as a  backup of your data.
+                            It is advisable to send the email to yourself and to keep it as a backup of your data.
                             {'\n\n'}
                             NOTE: It is not (yet) possible to IMPORT data into Luach.
                             {'\n'}

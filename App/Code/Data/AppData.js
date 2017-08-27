@@ -30,6 +30,10 @@ const addedFields = [
     { table: 'occasions', name: 'color', type: 'VARCHAR (25)', allowNull: true },
 ];
 
+/**
+ * An single object that contains all the application data.
+ * Ideally, there should only be a single global instance of this class.
+ */
 export default class AppData {
     /**
      * @param {Settings} settings
@@ -37,7 +41,7 @@ export default class AppData {
      * @param {EntryList} entryList
      * @param {[Kavuah]} kavuahList
      * @param {[ProblemOnah]} problemOnahs
-     * * @param {[TaharaEvent]} taharaEvents
+     * @param {[TaharaEvent]} taharaEvents
      */
     constructor(settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents) {
         this.Settings = settings || new Settings({});
@@ -47,6 +51,9 @@ export default class AppData {
         this.ProblemOnahs = problemOnahs || [];
         this.TaharaEvents = taharaEvents || [];
     }
+    /**
+     *  Calculates all the Entry Haflagas and Flagged Dates for this appData instance.
+     */
     updateProbs() {
         this.EntryList.calulateHaflagas();
         let probs = [];
@@ -55,6 +62,10 @@ export default class AppData {
         }
         this.ProblemOnahs = probs;
     }
+    /**
+     * Returns the global appData object.
+     * The first time this function is called, the global object is filled with the data from the local database file.
+     */
     static async getAppData() {
         if (!global.GlobalAppData) {
             await AppData.fromDatabase().then(ad => {
@@ -64,11 +75,9 @@ export default class AppData {
         }
         return global.GlobalAppData;
     }
-    static setAppData(ad) {
-        global.GlobalAppData = ad;
-    }
     /**
-     *
+     * Adds or removes the given item to the appropriate list in the global appData object.
+     * The Entry Haflagas and Flagged Dates are then recalculated for the global appData object.
      * @param {Entry | Kavuah} item
      * @param {Boolean} remove
      */
@@ -124,6 +133,9 @@ export default class AppData {
                 });
         }
     }
+    /**
+     * Returns an appData instance containing all the user data from the local database file.
+     */
     static async fromDatabase() {
         let settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents;
         await DataUtils.SettingsFromDatabase()

@@ -206,7 +206,7 @@ export default class KavuahScreen extends Component {
                         <ScrollView style={{ flex: 1 }}>
                             <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
                                 <TouchableHighlight onPress={this.newKavuah}>
-                                    <View style={{ alignItems: 'center' }}>
+                                    <View style={GeneralStyles.center}>
                                         <Icon
                                             size={9}
                                             reverse
@@ -220,7 +220,7 @@ export default class KavuahScreen extends Component {
                                     </View>
                                 </TouchableHighlight>
                                 <TouchableHighlight onPress={this.findKavuahs}>
-                                    <View style={{ alignItems: 'center' }}>
+                                    <View style={GeneralStyles.center}>
                                         <Icon
                                             size={9}
                                             reverse
@@ -277,7 +277,7 @@ export default class KavuahScreen extends Component {
                                         underlayColor='#faa'
                                         style={{ flex: 1, }}
                                         onPress={() => this.deleteKavuah(kavuah)}>
-                                        <View style={{ alignItems: 'center' }}>
+                                        <View style={GeneralStyles.center}>
                                             <Icon
                                                 name='delete-forever'
                                                 color='#faa'
