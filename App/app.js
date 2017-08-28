@@ -16,9 +16,6 @@ import MontheViewScreen from './GUI/Screens/MonthViewScreen';
 import BrowserScreen from './GUI/Screens/BrowserScreen';
 import ExportDataScreen from './GUI/Screens/ExportDataScreen';
 
-//If not in __DEV__  turn off the built-in logger
-const navOptions = __DEV__ ? undefined : { onNavigationStateChange: null };
-
 AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
     Home: { screen: HomeScreen },
     Settings: { screen: SettingsScreen },
@@ -35,4 +32,9 @@ AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
     MonthView: { screen: MontheViewScreen },
     Browser: { screen: BrowserScreen },
     ExportData: { screen: ExportDataScreen }
-}, navOptions));
+},
+    {
+        initialRouteName: 'Home',
+        //If not in __DEV__  turn off the built-in logger
+        onNavigationStateChange: (__DEV__ ? undefined : null)
+    }));

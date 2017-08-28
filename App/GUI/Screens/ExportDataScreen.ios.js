@@ -222,27 +222,26 @@ export default class ExportData extends React.Component {
         return filePath;
     }
     async doEmail() {
-        await this.doExport().then(filePath => {
-            const subject = 'Luach - Export ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
-                html = this.getHtmlText();
-            log(html);
-            Mailer.mail({
-                subject: subject,
-                recipients: [],
-                ccRecipients: [],
-                bccRecipients: [],
-                body: html,
-                isHTML: true,
-                attachment: {
-                    path: filePath,
-                    type: 'csv',
-                    name: this.getFileName()
-                }
-            }, error => {
-                if (error) {
-                    popUpMessage('We are very sorry, but the email could not be sent.');
-                }
-            });
+        const filePath = await this.doExport(),
+            subject = 'Luach - Export ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
+            html = this.getHtmlText();
+        log(html);
+        Mailer.mail({
+            subject: subject,
+            recipients: [],
+            ccRecipients: [],
+            bccRecipients: [],
+            body: html,
+            isHTML: true,
+            attachment: {
+                path: filePath,
+                type: 'csv',
+                name: this.getFileName()
+            }
+        }, error => {
+            if (error) {
+                popUpMessage('We are very sorry, but the email could not be sent.');
+            }
         });
     }
     render() {

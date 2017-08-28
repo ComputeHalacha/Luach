@@ -3,7 +3,7 @@ import Settings from '../Settings';
 import Entry from '../Chashavshavon/Entry';
 import { Kavuah } from '../Chashavshavon/Kavuah';
 import EntryList from '../Chashavshavon/EntryList';
-import { log, error, warn } from '../GeneralUtils';
+import { error, warn } from '../GeneralUtils';
 
 /**
  * List of fields that have been added after the initial app launch.
@@ -68,10 +68,7 @@ export default class AppData {
      */
     static async getAppData() {
         if (!global.GlobalAppData) {
-            await AppData.fromDatabase().then(ad => {
-                global.GlobalAppData = ad;
-                log(ad);
-            });
+            global.GlobalAppData = await AppData.fromDatabase();
         }
         return global.GlobalAppData;
     }
@@ -138,44 +135,34 @@ export default class AppData {
      */
     static async fromDatabase() {
         let settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents;
-        await DataUtils.SettingsFromDatabase()
-            .then(s => settings = s)
+        settings = await DataUtils.SettingsFromDatabase()
             .catch(err => {
                 warn('Error running SettingsFromDatabase.');
                 error(err);
             });
-        await DataUtils.GetAllUserOccasions()
-            .then(ol => {
-                occasions = ol;
-            })
+        occasions = await DataUtils.GetAllUserOccasions()
             .catch(err => {
                 warn('Error running GetAllUserOccasions.');
                 error(err);
             });
-        await DataUtils.EntryListFromDatabase()
-            .then(e => entryList = e)
+        entryList = await DataUtils.EntryListFromDatabase()
             .catch(err => {
                 warn('Error running EntryListFromDatabase.');
                 error(err);
             });
-        await DataUtils.GetAllKavuahs(entryList)
-            .then(k => {
-                kavuahList = k;
-                //After getting all the data, the problem onahs are set.
-                problemOnahs = entryList.getProblemOnahs(kavuahList, settings);
-            })
+        kavuahList = await DataUtils.GetAllKavuahs(entryList)
             .catch(err => {
                 warn('Error running GetAllKavuahs.');
                 error(err);
             });
-        await DataUtils.GetAllTaharaEvents()
-            .then(te => {
-                taharaEvents = te;
-            })
+        taharaEvents = await DataUtils.GetAllTaharaEvents()
             .catch(err => {
                 warn('Error running GetAllTaharaEvents.');
                 error(err);
             });
+
+        //After getting all the data, the problem onahs are set.
+        problemOnahs = entryList.getProblemOnahs(kavuahList, settings);
 
         return new AppData(settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents);
     }
