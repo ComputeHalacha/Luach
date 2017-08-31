@@ -112,14 +112,68 @@
             If you have reason to believe that the current Entry should not be registered as a regular period but you do not fully understand
             these advanced options, leave them alone for now and consult your Rabbi.
         </p>
-        <h3>"Out of Pattern" Entries</h3>
+        <h3>Entry Patterns</h3>
         <p>
-            If there is a <a href="Kavuahs.html">Kavuah</a> that is active and that is set to <a href="Kavuahs.html" #CancelOnahBeinonis">Cancel Onah Beinonis</a>,
-            whenever an Entry is added or edited, Luach checks to assure that the new Entry is not "Out of Pattern".
-            <br />
-            If the new Entry does not match the pattern set by the Kavuah, Luach will ask if you wish to remove the
-            <a href="Kavuahs.html" #CancelOnahBeinonis">Cancel Onah Beinonis</a> property for that Kavuah.
+            Whenever an Entry is added or changed, Luach looks over the list of Entries
+            to check for one of the following.
         </p>
+        <div class="divList">
+            <strong>Vesset Kavuah</strong>
+            <blockquote>
+                A <a href="Kavuahs.html"><em>Vesset Kavuah</em></a> is a Halachic term describing when a women has multiple periods in a recurring pattern.
+                <br />
+                When a women has a set pattern, it is expected that periods will continue to occur in this pattern. This is until the pattern
+                has been proven to have "broken".
+                <br />
+                Kavuah setting and breaking is a very complex <em>Halachic</em> issue and should aways be accompanied with Rabbinic guidance.
+                <br />
+                There are many ways that recurring periods can be considered to have occurred in a pattern.
+                <br />
+                Luach automatically calculates and suggests possible Kavuhas whenever an Entry is added or updated.
+                <br />
+                If a possible Kavuah is found, Luach will show <a href="Kavuahs.html#possible"><em>The Possible Kavuah Screen</em></a>.
+                <br />
+                See  the <a href="Kavuahs.html">Kavuah documentation page</a> for more details about Kavuahs.
+            </blockquote>
+            <strong>"Broken" Kavuah Pattern</strong>
+            <blockquote>
+                The same way that a pattern of Entries sets a <a href="Kavuahs.html">Kavuah</a>, a set of Entries that does not match the Kavuah can "break" the Kavuah
+                pattern.
+                <br />
+                If there was a <a href="Kavuahs.html">Kavuah</a> pattern set previously and is still <a href="Kavuahs.html#Active">Active</a>,
+                Luach will check to see if this Entry has "broken" that Kavuahs pattern.
+                <br />
+                If there is a <a href="Kavuahs.html">Kavuah</a> found that Luach thinks may have been broken by
+                this Entry, you will be asked if you want to set that <a href="Kavuahs.html">Kavuah</a> to <em>not active</em>.
+                <br />
+                A <a href="Kavuahs.html">Kavuah</a> that is not active does not set any <a href="FlaggedDates.html">Flagged Dates</a>.
+                <br />
+                Once again, <a href="Kavuahs.html">Kavuah</a> setting and breaking is a very complex <em>Halachic</em> issue and should aways be accompanied with Rabbinic guidance.
+            </blockquote>
+            <strong>"Re-awakened" Kavuah Pattern</strong>
+            <blockquote>
+                For many <a href="Kavuahs.html">Kavuah</a> types, even if the <a href="Kavuahs.html">Kavuah</a>
+                pattern was "broken" by a set of Entries that were out of pattern,
+                they can be <em>reawakened</em> again with a single Entry that
+                matches the original pattern.
+                <br />
+                So, whenever an Entry is added or changed, Luach will check to see if this Entry matches the
+                pattern for any inactive Kavuahs.
+                <br />
+                If one is found, Luach will ask if you wish to set this <a href="Kavuahs.html">Kavuah</a> to
+                <a href="Kavuahs.html#Active">Active</a>.
+                <br />
+                Once again, <a href="Kavuahs.html">Kavuah</a> setting and breaking is a very complex <em>Halachic</em> issue and should aways be accompanied with Rabbinic guidance.
+            </blockquote>
+            <strong>"Out of Pattern" for a "Canceling" Kavuah</strong>
+            <blockquote>
+                If there is a <a href="Kavuahs.html">Kavuah</a> that is active and that is set to <a href="Kavuahs.html#CancelOnahBeinonis">Cancel Onah Beinonis</a>,
+                whenever an Entry is added or edited, Luach checks to assure that the new Entry is not "Out of Pattern".
+                <br />
+                If the new Entry does not match the pattern set by the Kavuah, Luach will ask if you wish to remove the
+                <a href="Kavuahs.html#CancelOnahBeinonis">Cancel Onah Beinonis</a> property for that Kavuah.
+            </blockquote>
+        </div>
         <h3>The Entry List Screen</h3><a href="EntryListScreen">&nbsp;</a>
         <p>The list of Entries that have been added can be viewed from the Entries List Screen.</p>
         <p>
