@@ -98,7 +98,7 @@ export default class NewEntry extends React.Component {
             appData.EntryList = entryList;
             popUpMessage(`The entry for ${entry.toString()} has been successfully added.`,
                 'Add Entry');
-            this.checkIfOutOfPattern(entry);
+            this.checkKavuahPatterns(entry);
             if (this.onUpdate) {
                 this.onUpdate(appData);
             }
@@ -150,7 +150,7 @@ export default class NewEntry extends React.Component {
             }
             popUpMessage(`The entry for ${entry.toString()} has been successfully saved.`,
                 'Change Entry');
-            this.checkIfOutOfPattern(entry);
+            this.checkKavuahPatterns(entry);
             if (appData.Settings.calcKavuahsOnNewEntry) {
                 const possList = Kavuah.getPossibleNewKavuahs(
                     appData.EntryList.realEntrysList,
@@ -226,19 +226,77 @@ export default class NewEntry extends React.Component {
                 }]);
     }
     /**
-     * If a newly added or edited Entry is out of pattern for a strong Kavuah,
-     * we will suggest to set the Kavuah to not Cancel Onah Beinonis.
+     * Checks the Kavuah list for pattern changes.
+     * If this Entry "breaks" an active Kavuah, or "wakes up" an inactive Kavuah, or is out of pattern for a cancelling Kavuah,
+     * we will suggest to edit the Kavuah accordingly.
      * @param {Entry} entry
      */
-    checkIfOutOfPattern(entry) {
+    async checkKavuahPatterns(entry) {
+        //We only need to deal with "real" periods.
+        if (entry.ignoreForFlaggedDates || entry.ignoreForKavuah) {
+            return;
+        }
         const appData = this.state.appData,
             kavuahList = appData.KavuahList,
-            entryList = appData.EntryList,
-            outOfPatternKavuah = Kavuah.isOutOfPattern(entry, kavuahList, entryList);
+            entries = appData.EntryList.realEntrysList,
+            //find an active Kavuah that this Entry breaks its pattern by being the 3rd Entry that is out-of-pattern.
+            brokenKavuah = Kavuah.findBrokenPattern(entry, kavuahList, entries),
+            //find an inactive Kavuah that this Entry is "in pattern" with.
+            reawakenedKavuah = Kavuah.findReawakenedPattern(entry, kavuahList, entries),
+            //find a Kavuah that cancels onah beinonis that this entry is out of pattern with.
+            outOfPatternKavuah = (!brokenKavuah) && Kavuah.findOutOfPattern(entry, kavuahList, entries);
 
+        if (brokenKavuah) {
+            Alert.alert('Kavuah Pattern Broken',
+                `This Entry is the third Entry in a row that is not in the Kavuah pattern of "${brokenKavuah.toString()}".` +
+                '\nDo you wish to set this Kavuah to inactive?',
+                [
+                    //Button 1
+                    { text: 'No', onPress: () => { return; } },
+                    //Button 2
+                    {
+                        text: 'Yes', onPress: () => {
+                            brokenKavuah.active = false;
+                            DataUtils.KavuahToDatabase(brokenKavuah)
+                                .then(() => {
+                                    if (this.onUpdate) {
+                                        this.onUpdate(appData);
+                                    }
+                                })
+                                .catch(err => {
+                                    warn('Error trying to deactivate a broken pattern kavuah on the database.');
+                                    error(err);
+                                });
+                        }
+                    }]);
+        }
+        if (reawakenedKavuah) {
+            Alert.alert('Inactive Kavuah Pattern Matched',
+                `This Entry seems to match the inactive Kavuah pattern of "${reawakenedKavuah.toString(true)}".` +
+                '\nDo you wish to set this Kavuah to active?',
+                [
+                    //Button 1
+                    { text: 'No', onPress: () => { return; } },
+                    //Button 2
+                    {
+                        text: 'Yes', onPress: () => {
+                            reawakenedKavuah.active = true;
+                            DataUtils.KavuahToDatabase(reawakenedKavuah)
+                                .then(() => {
+                                    if (this.onUpdate) {
+                                        this.onUpdate(appData);
+                                    }
+                                })
+                                .catch(err => {
+                                    warn('Error trying to activate an in-pattern-kavuah on the database.');
+                                    error(err);
+                                });
+                        }
+                    }]);
+        }
         if (outOfPatternKavuah) {
             Alert.alert('Kavuah Pattern Break',
-                `The entry of "${entry.toString()}" does not seem to match the Kavuah pattern of "${outOfPatternKavuah.toString()}".` +
+                `This Entry does not seem to match the Kavuah pattern of "${outOfPatternKavuah.toString()}".` +
                 '\nDo you wish to set this Kavuah to NOT Cancel Onah Beinonis?',
                 [
                     //Button 1
@@ -254,7 +312,7 @@ export default class NewEntry extends React.Component {
                                     }
                                 })
                                 .catch(err => {
-                                    warn('Error trying to add entry to the database.');
+                                    warn('Error trying to set a Kavuah to cancelsOnahBeinunis = false on the database.');
                                     error(err);
                                 });
                         }
