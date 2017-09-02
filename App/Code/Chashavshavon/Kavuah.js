@@ -35,9 +35,9 @@ class Kavuah {
         this.ignore = !!ignore;
         this.kavuahId = kavuahId;
     }
-    toString() {
+    toString(hideActive) {
         let txt = '';
-        if (!this.active) {
+        if (!hideActive && !this.active) {
             txt = '[INACTIVE] ';
         }
         if (this.ignore) {
@@ -95,6 +95,43 @@ class Kavuah {
         return this.kavuahType === kavuah.kavuahType &&
             this.settingEntry.onah.isSameOnah(kavuah.settingEntry.onah) &&
             this.specialNumber === kavuah.specialNumber;
+    }
+    /**
+     * Returns true if the given Entry matches the current Kavuah pattern.
+     * @param {Entry} entry The Entry to test.
+     * @param {[Entry]} entries The entire list of Entries. This is needed for some Kavuah types.
+     */
+    isEntryInPattern(entry, entries) {
+        if (entry.nightDay !== this.settingEntry.nightDay) {
+            return false;
+        }
+        //Each Kavuah type has its own pattern
+        switch (this.kavuahType) {
+            case KavuahTypes.Haflagah:
+                return entry.haflaga === this.specialNumber;
+            case KavuahTypes.DayOfMonth:
+                return entry.day === this.specialNumber;
+            case KavuahTypes.DayOfWeek:
+                return entry.haflaga === this.specialNumber &&
+                    entry.dayOfWeek === this.settingEntry.dayOfWeek;
+            case KavuahTypes.Sirug:
+                {
+                    const previous = entries[entries.indexOf(entry) - 1];
+                    return previous &&
+                        entry.day === this.settingEntry.day &&
+                        previous.date.diffMonths(entry.date) === this.specialNumber;
+                }
+            case KavuahTypes.DilugHaflaga:
+                {
+                    const previous = entries[entries.indexOf(entry) - 1];
+                    return previous &&
+                        entry.haflaga === (previous.haflaga + this.specialNumber);
+                }
+            case KavuahTypes.DilugDayOfMonth:
+                return entries.some(e =>
+                    //See if there was an Entry registered one theoretical iteration back.
+                    Utils.isSameJdate(e.date, entry.date.addDays(entry.day - this.specialNumber)));
+        }
     }
     get hasId() {
         return !!this.kavuahId;
@@ -375,68 +412,60 @@ class Kavuah {
         return list;
     }
     /**
+    * Searches for an active Kavuah in the given list that the given entry breaks its pattern by being the 3rd one that is out-of-pattern.
+    * Only active kavuahs that were set before this Entry occurred are considered.
+    * @param {Entry} entry
+    * @param {[Kavuah]} kavuahList
+    * @param {[Entry]} entries An array of Entries that is sorted chronologically.  Used to get the previous Entry.
+    */
+    static findBrokenPattern(entry, kavuahList, entries) {
+        const index = entries.indexOf(entry);
+        if (index < 2) {
+            return;
+        }
+        const lastThree = entries.slice(index - 2, index + 1);
+        for (let kavuah of kavuahList.filter(k =>
+            k.active &&
+            (!k.ignore) &&
+            k.settingEntry.date.Abs < entry.date.Abs)) {
+            if (!(lastThree.some(e => kavuah.isEntryInPattern(e, entries)))) {
+                return kavuah;
+            }
+        }
+    }
+    /**
      * Searches for a Kavuah in the given list that the given entry is out of pattern with.
      * The only kavuahs considered are active ones that cancel onah beinonis
      * and that were set before this Entry occurred.
-     * The entryList is used to get the previous Entry.
-     * It is assumed that the entryList was sorted chronologically.
      * @param {Entry} entry
      * @param {[Kavuah]} kavuahList
-     * @param {EntryList} entryList
+     * @param {[Entry]} entries An array of Entries that is sorted chronologically.  Used to get the previous Entry.
      */
-    static isOutOfPattern(entry, kavuahList, entryList) {
-        const eList = entryList.list,
-            index = eList.indexOf(entry),
-            previous = index > 0 && eList[index - 1];
+    static findOutOfPattern(entry, kavuahList, entries) {
         for (let kavuah of kavuahList.filter(k =>
             k.cancelsOnahBeinunis &&
             k.active &&
             (!k.ignore) &&
             k.settingEntry.date.Abs < entry.date.Abs)) {
-
-            //If the Night/Day is different, the entry is definitely out of pattern
-            if (entry.nightDay !== kavuah.settingEntry.nightDay) {
+            if (!kavuah.isEntryInPattern(entry, entries)) {
                 return kavuah;
             }
-            //Otherwise, each Kavuah type has thier own pattern
-            switch (kavuah.kavuahType) {
-                case KavuahTypes.Haflagah:
-                    if (entry.haflaga !== kavuah.specialNumber) {
-                        return kavuah;
-                    }
-                    break;
-                case KavuahTypes.DayOfMonth:
-                    if (entry.day !== kavuah.specialNumber) {
-                        return kavuah;
-                    }
-                    break;
-                case KavuahTypes.DayOfWeek:
-                    //TODO Not sure how to do this, as these types allow Entries in between...
-                    if (entry.haflaga !== kavuah.specialNumber ||
-                        entry.dayOfWeek !== kavuah.settingEntry.dayOfWeek) {
-                        return kavuah;
-                    }
-                    break;
-                case KavuahTypes.Sirug:
-                    if (entry.day !== kavuah.settingEntry.day ||
-                        previous.date.diffMonths(entry.date) !== kavuah.specialNumber) {
-                        return kavuah;
-                    }
-                    break;
-                case KavuahTypes.DilugHaflaga:
-                    if (previous &&
-                        entry.haflaga !== (previous.haflaga + kavuah.specialNumber)) {
-                        return kavuah;
-                    }
-                    break;
-                case KavuahTypes.DilugDayOfMonth:
-                    //TODO Don't know how to do this, these types allow Entries in between...
-                    if (previous &&
-                        (previous.day + kavuah.specialNumber < 31) &&
-                        (entry.day !== (previous.day + kavuah.specialNumber))) {
-                        return kavuah;
-                    }
-                    break;
+        }
+    }
+    /**
+   * Searches for an inactive Kavuah in the given list that the given entry is "in pattern" with.
+   * The only kavuahs considered are those that were set before this Entry occurred.
+   * @param {Entry} entry
+   * @param {[Kavuah]} kavuahList
+   * @param {[Entry]} entries An array of Entries that is sorted chronologically.  Used to get the previous Entry.
+   */
+    static findReawakenedPattern(entry, kavuahList, entries) {
+        for (let kavuah of kavuahList.filter(k =>
+            (!k.active) &&
+            (!k.ignore) &&
+            k.settingEntry.date.Abs < entry.date.Abs)) {
+            if (kavuah.isEntryInPattern(entry, entries)) {
+                return kavuah;
             }
         }
     }

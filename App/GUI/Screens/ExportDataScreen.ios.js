@@ -222,8 +222,8 @@ export default class ExportData extends React.Component {
         return filePath;
     }
     async doEmail() {
-        await this.doExport().then(filePath => {
-            const subject = 'Luach - Export ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
+        const filePath = await this.doExport(),
+            subject = 'Luach - Export ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
                 html = this.getHtmlText();
             log(html);
             Mailer.mail({
@@ -243,7 +243,6 @@ export default class ExportData extends React.Component {
                     popUpMessage('We are very sorry, but the email could not be sent.');
                 }
             });
-        });
     }
     render() {
         return <View style={GeneralStyles.container}>
