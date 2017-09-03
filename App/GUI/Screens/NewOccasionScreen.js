@@ -69,10 +69,10 @@ export default class NewOccasion extends React.Component {
         let { appData, onUpdate, jdate, occasion } = navigation.state.params;
         this.onUpdate = onUpdate;
         this.dispatch = navigation.dispatch;
+        this.appData = appData;
         if (occasion) {
             this.occasion = occasion;
             this.state = {
-                appData: appData,
                 jdate: occasion.jdate,
                 occasionType: occasion.occasionType,
                 title: occasion.title,
@@ -84,7 +84,6 @@ export default class NewOccasion extends React.Component {
         }
         else {
             this.state = {
-                appData: appData,
                 jdate: jdate,
                 occasionType: UserOccasionTypes.OneTime,
                 title: '',
@@ -105,7 +104,7 @@ export default class NewOccasion extends React.Component {
                 'Add occasion');
             return;
         }
-        const ad = this.state.appData,
+        const ad = this.appData,
             occasion = new UserOccasion(
                 this.state.title,
                 this.state.occasionType,
@@ -113,7 +112,6 @@ export default class NewOccasion extends React.Component {
                 this.state.color,
                 this.state.comments);
         ad.UserOccasions.push(occasion);
-        this.setState({ appData: ad });
         DataUtils.UserOccasionToDatabase(occasion).then(() => {
             if (this.onUpdate) {
                 this.onUpdate(ad);
@@ -145,7 +143,7 @@ export default class NewOccasion extends React.Component {
         DataUtils.UserOccasionToDatabase(occasion).then(() => {
             popUpMessage(`The occasion ${occasion.title} has been successfully saved.`,
                 'Edit occasion');
-            this.onUpdate(this.state.appData);
+            this.onUpdate(this.appData);
             this.dispatch(NavigationActions.back());
         }).catch(err => {
             warn('Error trying to add save the changes to User Occasion in the database.');
@@ -213,9 +211,9 @@ export default class NewOccasion extends React.Component {
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
                     onUpdate={this.onUpdate}
-                    appData={this.state.appData}
+                    appData={this.appData}
                     navigator={this.props.navigation}
-                    currDate={this.props.jdate}
+                    currDate={this.state.jdate}
                     helpUrl='Events.html'
                     helpTitle='Events' />
                 <ScrollView style={{ flex: 1 }}>

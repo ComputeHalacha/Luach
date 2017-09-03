@@ -4,7 +4,7 @@ import CustomList from '../Components/CustomList';
 import SideMenu from '../Components/SideMenu';
 import { GeneralStyles } from '../styles';
 
-export default class DateDetailsScreen extends React.Component {
+export default class DateDetailsScreen extends React.PureComponent {
     static navigationOptions = ({ navigation }) => ({
         title: 'Zmanim for ' + navigation.state.params.appData.Settings.location.Name
     });

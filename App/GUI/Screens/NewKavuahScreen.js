@@ -5,7 +5,6 @@ import SideMenu from '../Components/SideMenu';
 import KavuahPickers from '../Components/KavuahPickers';
 import { KavuahTypes, Kavuah } from '../../Code/Chashavshavon/Kavuah';
 import DataUtils from '../../Code/Data/DataUtils';
-import AppData from '../../Code/Data/AppData';
 import { popUpMessage, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
@@ -22,6 +21,7 @@ export default class NewKavuah extends React.Component {
         //We work with a (time descending) list of cloned entries
         //to prevent the "real" entries from becoming immutable
         this.listOfEntries = appData.EntryList.descending.map(e => e.clone());
+        this.appData = appData;
         if (settingEntry) {
             settingEntry = this.listOfEntries.find(e => e.isSameEntry(settingEntry));
         }
@@ -30,7 +30,6 @@ export default class NewKavuah extends React.Component {
         }
 
         this.state = {
-            appData: appData,
             settingEntry: settingEntry,
             kavuahType: KavuahTypes.Haflagah,
             specialNumber: settingEntry && settingEntry.haflaga,
@@ -62,14 +61,12 @@ export default class NewKavuah extends React.Component {
             doAdd = () =>
                 DataUtils.KavuahToDatabase(kavuah)
                     .then(() => {
-                        AppData.getAppData().then(appData => {
-                            popUpMessage(`The Kavuah for ${kavuah.toString()} has been successfully added.`,
-                                'Add Kavuah');
-                            if (this.onUpdate) {
-                                this.onUpdate(appData);
-                            }
-                            this.dispatch(NavigationActions.back());
-                        });
+                        popUpMessage(`The Kavuah for ${kavuah.toString()} has been successfully added.`,
+                            'Add Kavuah');
+                        if (this.onUpdate) {
+                            this.onUpdate(this.appData);
+                        }
+                        this.dispatch(NavigationActions.back());
                     })
                     .catch(err => {
                         warn('Error trying to insert kavuah into the database.');
@@ -114,7 +111,7 @@ export default class NewKavuah extends React.Component {
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
                     onUpdate={this.onUpdate}
-                    appData={this.state.appData}
+                    appData={this.appData}
                     navigator={this.props.navigation}
                     helpUrl='Kavuahs.html'
                     helpTitle='Kavuahs' />

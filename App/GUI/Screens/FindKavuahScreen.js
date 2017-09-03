@@ -22,18 +22,17 @@ export default class FindKavuahScreen extends Component {
 
         this.onUpdate = onUpdate;
         this.listSupplied = !!possibleKavuahList;
+        this.appData = appData;
         this.state = {
-            appData: appData,
             possibleKavuahList: possibleKavuahList || []
         };
 
-        this.update = this.update.bind(this);
         this.addKavuah = this.addKavuah.bind(this);
         this.removePossibleKavuah = this.removePossibleKavuah.bind(this);
         this.ignorePossibleKavuah = this.ignorePossibleKavuah.bind(this);
     }
     componentWillMount() {
-        const appData = this.state.appData;
+        const appData = this.appData;
         if (appData && !this.listSupplied) {
             const possList = Kavuah.getPossibleNewKavuahs(
                 appData.EntryList.realEntrysList,
@@ -54,7 +53,7 @@ export default class FindKavuahScreen extends Component {
         }
     }
     addKavuah(pk) {
-        const appData = this.state.appData,
+        const appData = this.appData,
             kList = appData.KavuahList,
             //If the found Kavuah is already in the list, we will update it rather than insert it.
             kavuah = kList.find(k => k.isMatchingKavuah(pk.kavuah)) || pk.kavuah;
@@ -69,12 +68,12 @@ export default class FindKavuahScreen extends Component {
             appData.KavuahList = kList;
             popUpMessage(`The Kavuah ${kavuah.toString()} has been added to the list`);
             //Now that it's been added to the database, it is no longer a "possible"" Kavuah.
-            this.update(appData);
+            this.onUpdate(appData);
             this.removePossibleKavuah(pk);
         });
     }
     ignorePossibleKavuah(pk) {
-        const appData = this.state.appData,
+        const appData = this.appData,
             kList = appData.KavuahList,
             foundInList = kList.find(k => k.isMatchingKavuah(pk.kavuah)),
             kavuah = foundInList || pk.kavuah;
@@ -88,7 +87,7 @@ export default class FindKavuahScreen extends Component {
             }
             appData.KavuahList = kList;
             //Now that it's been added to the database, it is no longer a "possible"" Kavuah.
-            this.update(appData);
+            this.onUpdate(appData);
             this.removePossibleKavuah(pk);
         });
     }
@@ -98,21 +97,13 @@ export default class FindKavuahScreen extends Component {
         if (index > -1) {
             list.splice(index, 1);
             if (list.length === 0) {
-                this.navigate('Kavuahs', { onUpdate: this.onUpdate, appData: this.state.appData });
+                this.navigate('Kavuahs', { onUpdate: this.onUpdate, appData: this.appData });
             }
             else {
                 this.setState({
                     possibleKavuahList: list
                 });
             }
-        }
-    }
-    update(appData) {
-        if (appData) {
-            this.setState({ appData: appData });
-        }
-        if (this.onUpdate) {
-            this.onUpdate(appData);
         }
     }
     render() {
@@ -122,7 +113,7 @@ export default class FindKavuahScreen extends Component {
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
                     onUpdate={this.onUpdate}
-                    appData={this.state.appData}
+                    appData={this.appData}
                     navigator={this.props.navigation}
                     helpUrl='Kavuahs.html'
                     helpTitle='Kavuahs' />

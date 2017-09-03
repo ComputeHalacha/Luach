@@ -46,8 +46,8 @@ export default class SettingsScreen extends Component {
         this.navigate = this.props.navigation.navigate;
         const { appData, onUpdate } = this.props.navigation.state.params;
         this.onUpdate = onUpdate;
+        this.appData  = appData;
         this.state = {
-            appData: appData,
             enteredPin: appData.Settings.PIN
         };
         this.update = this.update.bind(this);
@@ -56,13 +56,12 @@ export default class SettingsScreen extends Component {
     }
     saveAndUpdate(appData) {
         appData.Settings.save();
-        this.setState({ appData: appData });
         if (this.onUpdate) {
             this.onUpdate(appData);
         }
     }
     update(name, value) {
-        const appData = this.state.appData,
+        const appData = this.appData,
             sets = appData.Settings;
         sets[name] = value;
         this.saveAndUpdate(appData);
@@ -70,7 +69,7 @@ export default class SettingsScreen extends Component {
     changePIN(pin) {
         const validPin = /^\d{4}$/.test(pin);
         if (validPin) {
-            const appData = this.state.appData;
+            const appData = this.appData;
             appData.Settings.PIN = pin;
             this.saveAndUpdate(appData);
         }
@@ -78,7 +77,7 @@ export default class SettingsScreen extends Component {
     }
     render() {
         const nums = range(1, 24),
-            sets = this.state.appData && this.state.appData.Settings,
+            sets = this.appData && this.appData.Settings,
             location = sets && sets.location || Location.getLakewood(),
             showOhrZeruah = setDefault(sets && sets.showOhrZeruah, true),
             keepThirtyOne = setDefault(sets && sets.keepThirtyOne, true),
@@ -102,7 +101,7 @@ export default class SettingsScreen extends Component {
                 <View style={{ flexDirection: 'row', flex: 1 }}>
                     <SideMenu
                         onUpdate={this.onUpdate}
-                        appData={this.state.appData}
+                        appData={this.appData}
                         navigator={this.props.navigation}
                         hideSettings={true}
                         helpUrl='Settings.html'
@@ -116,7 +115,7 @@ export default class SettingsScreen extends Component {
                             <TouchableHighlight underlayColor='#9f9' onPress={() =>
                                 this.navigate('FindLocation', {
                                     onUpdate: this.saveAndUpdate,
-                                    appData: this.state.appData
+                                    appData: this.appData
                                 })}>
                                 <View style={GeneralStyles.centeredRow}>
                                     <Icon name='edit-location' color='#484' size={35} />
