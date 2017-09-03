@@ -75,7 +75,8 @@ class UserOccasion {
         }
         else if (this.occasionType === UserOccasionTypes.SecularDateRecurringYearly) {
             const sdate = ((date instanceof Date) ? date : date.getDate());
-            if (sdate.getFullYear() > this.sdate.getFullYear() && sdate.getMonth() === this.sdate.getMonth() &&
+            if (sdate.getFullYear() > this.sdate.getFullYear() &&
+                sdate.getMonth() === this.sdate.getMonth() &&
                 sdate.getDate() === this.sdate.getDate()) {
                 return `${Utils.toSuffixed(sdate.getFullYear() - this.sdate.getFullYear())} year`;
             }

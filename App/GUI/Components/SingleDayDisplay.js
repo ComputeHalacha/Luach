@@ -136,15 +136,19 @@ export default class SingleDayDisplay extends Component {
         const { appData, jdate, isToday, systemDate } = this.props,
             location = appData.Settings.location,
             flag = appData.Settings.showProbFlagOnHome &&
-                appData.ProblemOnahs.some(po => Utils.isSameJdate(po.jdate, jdate)),
+                appData.ProblemOnahs.some(po =>
+                    Utils.isSameJdate(po.jdate, jdate)),
             occasions = (appData.UserOccasions.length > 0 ?
                 UserOccasion.getOccasionsForDate(jdate, appData.UserOccasions) : []),
             entries = (appData.Settings.showEntryFlagOnHome ?
-                appData.EntryList.list.filter(e => Utils.isSameJdate(e.date, jdate)) : []),
+                appData.EntryList.list.filter(e =>
+                    Utils.isSameJdate(e.date, jdate)) : []),
             taharaEvents = (appData.Settings.showEntryFlagOnHome ?
-                appData.TaharaEvents.filter(te => Utils.isSameJdate(te.jdate, jdate)) : []),
+                appData.TaharaEvents.filter(te =>
+                    Utils.isSameJdate(te.jdate, jdate)) : []),
             sdate = (isToday && systemDate) ? systemDate : jdate.getDate(),
-            isDayOff = isToday && systemDate && (systemDate.getDate() !== jdate.getDate().getDate()),
+            isDayOff = isToday && systemDate &&
+                (systemDate.getDate() !== jdate.getDate().getDate()),
             todayText = isToday && <Text style={styles.todayText}>
                 {`TODAY${isDayOff ? '*' : ''}`}</Text>,
             isSpecialDay = jdate.DayOfWeek === 6 || jdate.getMajorHoliday(location.Israel),
@@ -153,7 +157,8 @@ export default class SingleDayDisplay extends Component {
                 this.props.isHefeskDay && !taharaEvents.some(te =>
                     te.taharaEventType === TaharaEventType.Hefsek)),
             dailyInfos = jdate.getHolidays(location.Israel),
-            dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
+            dailyInfoText = dailyInfos.length > 0 &&
+                <Text>{dailyInfos.join('\n')}</Text>,
             suntimes = Zmanim.getSunTimes(jdate, location, true),
             sunrise = suntimes && suntimes.sunrise ?
                 Utils.getTimeString(suntimes.sunrise) : 'Sun does not rise',
@@ -161,7 +166,8 @@ export default class SingleDayDisplay extends Component {
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
             candleLighting = jdate.hasCandleLighting() &&
                 <Text>{'Candle-lighting: ' +
-                    Utils.getTimeString(Zmanim.getCandleLightingFromSunTimes(suntimes, location))}</Text>,
+                    Utils.getTimeString(Zmanim.getCandleLightingFromSunTimes(suntimes, location))}
+                </Text>,
             eiruvTavshilin = jdate.hasEiruvTavshilin(location.Israel) &&
                 <Text style={{ fontWeight: 'bold' }}>Eiruv Tavshilin</Text>,
             backgroundColor = entries && entries.length > 0 ? '#fee' :
@@ -170,9 +176,12 @@ export default class SingleDayDisplay extends Component {
                         (isToday ? '#e2e2f0' :
                             (isSpecialDay ? '#eef' : '#fff')))),
             menuIconSize = (isLargeScreen() ? 20 : 15),
-            hasHefsek = taharaEvents.some(te => te.taharaEventType === TaharaEventType.Hefsek),
-            hasShailah = taharaEvents.some(te => te.taharaEventType === TaharaEventType.Shailah),
-            hasMikvah = taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah);
+            hasHefsek = taharaEvents.some(te =>
+                te.taharaEventType === TaharaEventType.Hefsek),
+            hasShailah = taharaEvents.some(te =>
+                te.taharaEventType === TaharaEventType.Shailah),
+            hasMikvah = taharaEvents.some(te =>
+                te.taharaEventType === TaharaEventType.Mikvah);
         return (
             <View style={[styles.container, { backgroundColor: backgroundColor }]}>
                 <View>

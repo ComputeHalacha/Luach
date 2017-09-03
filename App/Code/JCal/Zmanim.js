@@ -29,7 +29,8 @@ export default class Zmanim {
             xmRise = 0, xmSet = 0, xlRise = 0, xlSet = 0, aRise = 0, aSet = 0, ahrRise = 0, ahrSet = 0,
             hRise = 0, hSet = 0, tRise = 0, tSet = 0, utRise = 0, utSet = 0, earthRadius = 6356900,
             zenithAtElevation = Zmanim.degToDec(zeninthDeg, zenithMin) +
-                Zmanim.radToDeg(Math.acos(earthRadius / (earthRadius + (considerElevation ? (location.Elevation || 0) : 0))));
+                Zmanim.radToDeg(Math.acos(earthRadius / (earthRadius +
+                    (considerElevation ? (location.Elevation || 0) : 0))));
 
         zeninthDeg = Math.floor(zenithAtElevation);
         zenithMin = (zenithAtElevation - Math.floor(zenithAtElevation)) * 60;

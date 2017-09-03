@@ -67,7 +67,8 @@ export default class jDate {
                 this.fromAbs(jDate.absSd(d));
             }
             else {
-                throw new Error('jDate constructor: The given string "' + arg + '" cannot be parsed into a Date');
+                throw new Error('jDate constructor: The given string "' + arg +
+                    '" cannot be parsed into a Date');
             }
         }
         else if (isNumber(arg)) {

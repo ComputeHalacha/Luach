@@ -80,7 +80,9 @@ Sedra.getDayOnOrBefore = function (day_of_week, date) {
 Sedra.getSedraOrder = function (year, israel) {
     //If the last call is within the same year as this one, we reuse the data.
     //If memory is an issue, remove these next few lines
-    if (Sedra.lastCalculatedYear != null && Sedra.lastCalculatedYear.year === year && Sedra.lastCalculatedYear.israel === israel) {
+    if (Sedra.lastCalculatedYear != null &&
+        Sedra.lastCalculatedYear.year === year &&
+        Sedra.lastCalculatedYear.israel === israel) {
         return Sedra.lastCalculatedYear;
     }
 
