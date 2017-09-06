@@ -7,7 +7,7 @@ import JDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
-export default class FlaggedDatesScreen extends React.PureComponent {
+export default class FlaggedDatesScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const { appData } = navigation.state.params;
         return {
