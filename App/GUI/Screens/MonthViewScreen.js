@@ -10,7 +10,7 @@ import { NightDay } from '../../Code/Chashavshavon/Onah';
 import { TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
 import { GeneralStyles } from '../styles';
 
-export default class MonthViewScreen extends React.Component {
+export default class MonthViewScreen extends React.PureComponent {
     static navigationOptions = () => ({
         title: 'Full Month View'
     });

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../../Code/JCal/Utils';
@@ -21,7 +21,7 @@ import DataUtils from '../../Code/Data/DataUtils';
  *   dayOfSeven
  *   isHefeskDay - is today the 5th day after the last entry?
  */
-export default class SingleDayDisplay extends Component {
+export default class SingleDayDisplay extends React.PureComponent {
     constructor(props) {
         super(props);
         this.navigator = props.navigator;
