@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } fr
 import { Icon } from 'react-native-elements';
 import Utils from '../../Code/JCal/Utils';
 import Zmanim from '../../Code/JCal/Zmanim';
-import { log, popUpMessage, isLargeScreen } from '../../Code/GeneralUtils';
+import { popUpMessage, isLargeScreen } from '../../Code/GeneralUtils';
 import { UserOccasion } from '../../Code/JCal/UserOccasion';
 import { TaharaEvent, TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
 import DataUtils from '../../Code/Data/DataUtils';
@@ -33,51 +33,6 @@ export default class SingleDayDisplay extends React.PureComponent {
         this.showProblems = this.showProblems.bind(this);
         this.changeLocation = this.changeLocation.bind(this);
         this.toggleTaharaEvent = this.toggleTaharaEvent.bind(this);
-    }
-    componentWillUpdate(nextProps) {
-        const prevAppData = this.props.appData,
-            newAppData = nextProps.appData;
-        if (!(prevAppData || newAppData)) {
-            log('Refreshed Single Day:( - either new appdata or old appdata was nuthin`');
-            return true;
-        }
-        if (!prevAppData.Settings.isSameSettings(newAppData.Settings)) {
-            log('Refreshed Single Day:( - Settings were not the same');
-            return true;
-        }
-        if (prevAppData.UserOccasions.length !== newAppData.UserOccasions.length) {
-            log('Refreshed Single Day:( - User Occasions list were not the same length');
-            return true;
-        }
-        if (!prevAppData.UserOccasions.every(uo =>
-            newAppData.UserOccasions.some(uon => uon.isSameOccasion(uo)))) {
-            log('Refreshed Single Day:( - Occasions were not all the same');
-            return true;
-        }
-        if (prevAppData.EntryList.list.length !== newAppData.EntryList.list.length) {
-            log('Refreshed Single Day:( - Entries list were not the same length');
-            return true;
-        }
-        if (!prevAppData.EntryList.list.every(e =>
-            newAppData.EntryList.list.some(en => en.isSameEntry(e)))) {
-            log('Refreshed Single Day:( - Entries were not all the same');
-            return true;
-        }
-        if (prevAppData.ProblemOnahs.length !== newAppData.ProblemOnahs.length) {
-            log('Refreshed Single Day:( - Probs list were not the same length');
-            return true;
-        }
-        if (!prevAppData.ProblemOnahs.every(po =>
-            newAppData.ProblemOnahs.some(pon => pon.isSameProb(po)))) {
-            log('Refreshed Single Day:( - Probs were not all the same');
-            return true;
-        }
-        if (prevAppData.TaharaEvents.length !== newAppData.TaharaEvents.length) {
-            log('Refreshed Single Day:( - Tahara Events list were not the same length');
-            return true;
-        }
-        log('Single Day Refresh Prevented');
-        return false;
     }
     newEntry() {
         this.navigator.navigate('NewEntry', this.props);
