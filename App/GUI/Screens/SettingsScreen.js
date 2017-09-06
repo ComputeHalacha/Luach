@@ -45,64 +45,63 @@ export default class SettingsScreen extends Component {
         super(props);
         this.navigate = this.props.navigation.navigate;
         const { appData, onUpdate } = this.props.navigation.state.params;
-        this.onUpdate = onUpdate;
+        this.appData = appData;
+        this.update = ad => {
+            ad = ad || this.appData;
+            this.setState({ settings: ad.Settings });
+            if (onUpdate) {
+                onUpdate(ad);
+            }
+        };
         this.state = {
-            appData: appData,
+            settings: appData.Settings,
+            //The enteredPin is instead of settings.PIN in case the entered PIN is invalid.
+            //We still want to display it, but not to change the setting.
             enteredPin: appData.Settings.PIN
         };
-        this.update = this.update.bind(this);
-        this.saveAndUpdate = this.saveAndUpdate.bind(this);
+        this.changeSetting = this.changeSetting.bind(this);
         this.changePIN = this.changePIN.bind(this);
     }
-    saveAndUpdate(appData) {
-        appData.Settings.save();
-        this.setState({ appData: appData });
-        if (this.onUpdate) {
-            this.onUpdate(appData);
-        }
-    }
-    update(name, value) {
-        const appData = this.state.appData,
-            sets = appData.Settings;
-        sets[name] = value;
-        this.saveAndUpdate(appData);
+    changeSetting(name, value) {
+        const settings = this.state.settings;
+        settings[name] = value;
+        settings.save();
+        this.update();
     }
     changePIN(pin) {
         const validPin = /^\d{4}$/.test(pin);
         if (validPin) {
-            const appData = this.state.appData;
-            appData.Settings.PIN = pin;
-            this.saveAndUpdate(appData);
+            this.changeSetting('PIN', pin);
         }
         this.setState({ invalidPin: !validPin, enteredPin: pin });
     }
     render() {
         const nums = range(1, 24),
-            sets = this.state.appData && this.state.appData.Settings,
-            location = sets && sets.location || Location.getLakewood(),
-            showOhrZeruah = setDefault(sets && sets.showOhrZeruah, true),
-            keepThirtyOne = setDefault(sets && sets.keepThirtyOne, true),
-            onahBeinunis24Hours = sets && sets.onahBeinunis24Hours,
-            numberMonthsAheadToWarn = (sets && sets.numberMonthsAheadToWarn) || 12,
-            keepLongerHaflagah = setDefault(sets && sets.keepLongerHaflagah, true),
-            cheshbonKavuahByCheshbon = setDefault(sets && sets.cheshbonKavuahByCheshbon, true),
-            haflagaOfOnahs = sets && sets.haflagaOfOnahs,
-            kavuahDiffOnahs = sets && sets.kavuahDiffOnahs,
-            calcKavuahsOnNewEntry = setDefault(sets && sets.calcKavuahsOnNewEntry, true),
-            showProbFlagOnHome = setDefault(sets && sets.showProbFlagOnHome, true),
-            showEntryFlagOnHome = setDefault(sets && sets.showEntryFlagOnHome, true),
-            navigateBySecularDate = sets && sets.navigateBySecularDate,
-            showIgnoredKavuahs = sets && sets.showIgnoredKavuahs,
-            noProbsAfterEntry = setDefault(sets && sets.noProbsAfterEntry, true),
-            hideHelp = sets && sets.hideHelp,
-            requirePIN = setDefault(sets && sets.requirePIN, true);
+            settings = this.state.settings,
+            location = settings.location || Location.getLakewood(),
+            showOhrZeruah = setDefault(settings.showOhrZeruah, true),
+            keepThirtyOne = setDefault(settings.keepThirtyOne, true),
+            onahBeinunis24Hours = settings.onahBeinunis24Hours,
+            numberMonthsAheadToWarn = (settings.numberMonthsAheadToWarn) || 12,
+            keepLongerHaflagah = setDefault(settings.keepLongerHaflagah, true),
+            cheshbonKavuahByCheshbon = setDefault(settings.cheshbonKavuahByCheshbon, true),
+            haflagaOfOnahs = settings.haflagaOfOnahs,
+            kavuahDiffOnahs = settings.kavuahDiffOnahs,
+            calcKavuahsOnNewEntry = setDefault(settings.calcKavuahsOnNewEntry, true),
+            showProbFlagOnHome = setDefault(settings.showProbFlagOnHome, true),
+            showEntryFlagOnHome = setDefault(settings.showEntryFlagOnHome, true),
+            navigateBySecularDate = settings.navigateBySecularDate,
+            showIgnoredKavuahs = settings.showIgnoredKavuahs,
+            noProbsAfterEntry = setDefault(settings.noProbsAfterEntry, true),
+            hideHelp = settings.hideHelp,
+            requirePIN = setDefault(settings.requirePIN, true);
 
         return (
             <View style={GeneralStyles.container}>
                 <View style={{ flexDirection: 'row', flex: 1 }}>
                     <SideMenu
-                        onUpdate={this.onUpdate}
-                        appData={this.state.appData}
+                        onUpdate={this.update}
+                        appData={this.appData}
                         navigator={this.props.navigation}
                         hideSettings={true}
                         helpUrl='Settings.html'
@@ -115,8 +114,8 @@ export default class SettingsScreen extends Component {
                             <Text style={GeneralStyles.label}>Choose your location</Text>
                             <TouchableHighlight underlayColor='#9f9' onPress={() =>
                                 this.navigate('FindLocation', {
-                                    onUpdate: this.saveAndUpdate,
-                                    appData: this.state.appData
+                                    onUpdate: this.update,
+                                    appData: this.appData
                                 })}>
                                 <View style={GeneralStyles.centeredRow}>
                                     <Icon name='edit-location' color='#484' size={35} />
@@ -129,43 +128,43 @@ export default class SettingsScreen extends Component {
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Flag previous onah (The "Ohr Zaruah")</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('showOhrZeruah', value)}
+                                onValueChange={value => this.changeSetting('showOhrZeruah', value)}
                                 value={!!showOhrZeruah} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('onahBeinunis24Hours', value)}
+                                onValueChange={value => this.changeSetting('onahBeinunis24Hours', value)}
                                 value={!!onahBeinunis24Hours} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Keep day Thirty One for Onah Beinonis</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('keepThirtyOne', value)}
+                                onValueChange={value => this.changeSetting('keepThirtyOne', value)}
                                 value={!!keepThirtyOne} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Haflaga is only cancelled by a longer one</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('keepLongerHaflagah', value)}
+                                onValueChange={value => this.changeSetting('keepLongerHaflagah', value)}
                                 value={!!keepLongerHaflagah} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Continue incrementing Dilug Yom Hachodesh Kavuahs into another month</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('cheshbonKavuahByCheshbon', value)}
+                                onValueChange={value => this.changeSetting('cheshbonKavuahByCheshbon', value)}
                                 value={!!cheshbonKavuahByCheshbon} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Calculate Haflagas by counting Onahs</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('haflagaOfOnahs', value)}
+                                onValueChange={value => this.changeSetting('haflagaOfOnahs', value)}
                                 value={!!haflagaOfOnahs} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Flag Kavuahs even if not all the same Onah</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('kavuahDiffOnahs', value)}
+                                onValueChange={value => this.changeSetting('kavuahDiffOnahs', value)}
                                 value={!!kavuahDiffOnahs} />
                         </View>
                         <View style={GeneralStyles.headerView}>
@@ -175,7 +174,7 @@ export default class SettingsScreen extends Component {
                             <Text style={GeneralStyles.label}>Number of Months ahead to warn</Text>
                             <Picker style={GeneralStyles.picker}
                                 selectedValue={numberMonthsAheadToWarn}
-                                onValueChange={value => this.update('numberMonthsAheadToWarn', value)}>
+                                onValueChange={value => this.changeSetting('numberMonthsAheadToWarn', value)}>
                                 {nums.map((n, i) => {
                                     return (<Picker.Item label={n.toString()} value={n} key={i} />);
                                 })}
@@ -184,19 +183,19 @@ export default class SettingsScreen extends Component {
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Automatically Calculate Kavuahs upon addition of an Entry</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('calcKavuahsOnNewEntry', value)}
+                                onValueChange={value => this.changeSetting('calcKavuahsOnNewEntry', value)}
                                 value={!!calcKavuahsOnNewEntry} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Show Entry, Hefsek Tahara and Mikva information?</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('showEntryFlagOnHome', value)}
+                                onValueChange={value => this.changeSetting('showEntryFlagOnHome', value)}
                                 value={!!showEntryFlagOnHome} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Show flags for problem dates on Main Screen?</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('showProbFlagOnHome', value)}
+                                onValueChange={value => this.changeSetting('showProbFlagOnHome', value)}
                                 value={!!showProbFlagOnHome} />
                         </View>
                         <View style={GeneralStyles.formRow}>
@@ -204,7 +203,7 @@ export default class SettingsScreen extends Component {
                             <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 15 }}>
                                 <Text>Jewish Date</Text>
                                 <Switch style={GeneralStyles.switch}
-                                    onValueChange={value => this.update('navigateBySecularDate', value)}
+                                    onValueChange={value => this.changeSetting('navigateBySecularDate', value)}
                                     value={!!navigateBySecularDate} />
                                 <Text>Secular Date</Text>
                             </View>
@@ -217,25 +216,25 @@ export default class SettingsScreen extends Component {
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Show explicitly ignored Kavuahs in the Kavuah list</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('showIgnoredKavuahs', value)}
+                                onValueChange={value => this.changeSetting('showIgnoredKavuahs', value)}
                                 value={!!showIgnoredKavuahs} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Don't show Flagged dates for a week after Entry</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('noProbsAfterEntry', value)}
+                                onValueChange={value => this.changeSetting('noProbsAfterEntry', value)}
                                 value={!!noProbsAfterEntry} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Hide Help Button</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('hideHelp', value)}
+                                onValueChange={value => this.changeSetting('hideHelp', value)}
                                 value={!!hideHelp} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Require PIN to open application?</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.update('requirePIN', value)}
+                                onValueChange={value => this.changeSetting('requirePIN', value)}
                                 value={!!requirePIN} />
                         </View>
                         <View style={GeneralStyles.formRow}>

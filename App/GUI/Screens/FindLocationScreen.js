@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { ScrollView, View, Text, Image, TextInput, TouchableHighlight, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
@@ -8,7 +8,7 @@ import DataUtils from '../../Code/Data/DataUtils';
 import Settings from '../../Code/Settings';
 import { GeneralStyles } from '../styles';
 
-export default class FindLocation extends Component {
+export default class FindLocation extends React.PureComponent {
     static navigationOptions = {
         title: 'Find Location',
     };

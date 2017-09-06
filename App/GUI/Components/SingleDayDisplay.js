@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Utils from '../../Code/JCal/Utils';
 import Zmanim from '../../Code/JCal/Zmanim';
-import { log, popUpMessage, isLargeScreen } from '../../Code/GeneralUtils';
+import { popUpMessage, isLargeScreen } from '../../Code/GeneralUtils';
 import { UserOccasion } from '../../Code/JCal/UserOccasion';
 import { TaharaEvent, TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
 import DataUtils from '../../Code/Data/DataUtils';
@@ -21,7 +21,7 @@ import DataUtils from '../../Code/Data/DataUtils';
  *   dayOfSeven
  *   isHefeskDay - is today the 5th day after the last entry?
  */
-export default class SingleDayDisplay extends Component {
+export default class SingleDayDisplay extends React.PureComponent {
     constructor(props) {
         super(props);
         this.navigator = props.navigator;
@@ -33,51 +33,6 @@ export default class SingleDayDisplay extends Component {
         this.showProblems = this.showProblems.bind(this);
         this.changeLocation = this.changeLocation.bind(this);
         this.toggleTaharaEvent = this.toggleTaharaEvent.bind(this);
-    }
-    componentWillUpdate(nextProps) {
-        const prevAppData = this.props.appData,
-            newAppData = nextProps.appData;
-        if (!(prevAppData || newAppData)) {
-            log('Refreshed Single Day:( - either new appdata or old appdata was nuthin`');
-            return true;
-        }
-        if (!prevAppData.Settings.isSameSettings(newAppData.Settings)) {
-            log('Refreshed Single Day:( - Settings were not the same');
-            return true;
-        }
-        if (prevAppData.UserOccasions.length !== newAppData.UserOccasions.length) {
-            log('Refreshed Single Day:( - User Occasions list were not the same length');
-            return true;
-        }
-        if (!prevAppData.UserOccasions.every(uo =>
-            newAppData.UserOccasions.some(uon => uon.isSameOccasion(uo)))) {
-            log('Refreshed Single Day:( - Occasions were not all the same');
-            return true;
-        }
-        if (prevAppData.EntryList.list.length !== newAppData.EntryList.list.length) {
-            log('Refreshed Single Day:( - Entries list were not the same length');
-            return true;
-        }
-        if (!prevAppData.EntryList.list.every(e =>
-            newAppData.EntryList.list.some(en => en.isSameEntry(e)))) {
-            log('Refreshed Single Day:( - Entries were not all the same');
-            return true;
-        }
-        if (prevAppData.ProblemOnahs.length !== newAppData.ProblemOnahs.length) {
-            log('Refreshed Single Day:( - Probs list were not the same length');
-            return true;
-        }
-        if (!prevAppData.ProblemOnahs.every(po =>
-            newAppData.ProblemOnahs.some(pon => pon.isSameProb(po)))) {
-            log('Refreshed Single Day:( - Probs were not all the same');
-            return true;
-        }
-        if (prevAppData.TaharaEvents.length !== newAppData.TaharaEvents.length) {
-            log('Refreshed Single Day:( - Tahara Events list were not the same length');
-            return true;
-        }
-        log('Single Day Refresh Prevented');
-        return false;
     }
     newEntry() {
         this.navigator.navigate('NewEntry', this.props);
@@ -136,15 +91,19 @@ export default class SingleDayDisplay extends Component {
         const { appData, jdate, isToday, systemDate } = this.props,
             location = appData.Settings.location,
             flag = appData.Settings.showProbFlagOnHome &&
-                appData.ProblemOnahs.some(po => Utils.isSameJdate(po.jdate, jdate)),
+                appData.ProblemOnahs.some(po =>
+                    Utils.isSameJdate(po.jdate, jdate)),
             occasions = (appData.UserOccasions.length > 0 ?
                 UserOccasion.getOccasionsForDate(jdate, appData.UserOccasions) : []),
             entries = (appData.Settings.showEntryFlagOnHome ?
-                appData.EntryList.list.filter(e => Utils.isSameJdate(e.date, jdate)) : []),
+                appData.EntryList.list.filter(e =>
+                    Utils.isSameJdate(e.date, jdate)) : []),
             taharaEvents = (appData.Settings.showEntryFlagOnHome ?
-                appData.TaharaEvents.filter(te => Utils.isSameJdate(te.jdate, jdate)) : []),
+                appData.TaharaEvents.filter(te =>
+                    Utils.isSameJdate(te.jdate, jdate)) : []),
             sdate = (isToday && systemDate) ? systemDate : jdate.getDate(),
-            isDayOff = isToday && systemDate && (systemDate.getDate() !== jdate.getDate().getDate()),
+            isDayOff = isToday && systemDate &&
+                (systemDate.getDate() !== jdate.getDate().getDate()),
             todayText = isToday && <Text style={styles.todayText}>
                 {`TODAY${isDayOff ? '*' : ''}`}</Text>,
             isSpecialDay = jdate.DayOfWeek === 6 || jdate.getMajorHoliday(location.Israel),
@@ -153,7 +112,8 @@ export default class SingleDayDisplay extends Component {
                 this.props.isHefeskDay && !taharaEvents.some(te =>
                     te.taharaEventType === TaharaEventType.Hefsek)),
             dailyInfos = jdate.getHolidays(location.Israel),
-            dailyInfoText = dailyInfos.length > 0 && <Text>{dailyInfos.join('\n')}</Text>,
+            dailyInfoText = dailyInfos.length > 0 &&
+                <Text>{dailyInfos.join('\n')}</Text>,
             suntimes = Zmanim.getSunTimes(jdate, location, true),
             sunrise = suntimes && suntimes.sunrise ?
                 Utils.getTimeString(suntimes.sunrise) : 'Sun does not rise',
@@ -161,7 +121,8 @@ export default class SingleDayDisplay extends Component {
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
             candleLighting = jdate.hasCandleLighting() &&
                 <Text>{'Candle-lighting: ' +
-                    Utils.getTimeString(Zmanim.getCandleLightingFromSunTimes(suntimes, location))}</Text>,
+                    Utils.getTimeString(Zmanim.getCandleLightingFromSunTimes(suntimes, location))}
+                </Text>,
             eiruvTavshilin = jdate.hasEiruvTavshilin(location.Israel) &&
                 <Text style={{ fontWeight: 'bold' }}>Eiruv Tavshilin</Text>,
             backgroundColor = entries && entries.length > 0 ? '#fee' :
@@ -170,9 +131,12 @@ export default class SingleDayDisplay extends Component {
                         (isToday ? '#e2e2f0' :
                             (isSpecialDay ? '#eef' : '#fff')))),
             menuIconSize = (isLargeScreen() ? 20 : 15),
-            hasHefsek = taharaEvents.some(te => te.taharaEventType === TaharaEventType.Hefsek),
-            hasShailah = taharaEvents.some(te => te.taharaEventType === TaharaEventType.Shailah),
-            hasMikvah = taharaEvents.some(te => te.taharaEventType === TaharaEventType.Mikvah);
+            hasHefsek = taharaEvents.some(te =>
+                te.taharaEventType === TaharaEventType.Hefsek),
+            hasShailah = taharaEvents.some(te =>
+                te.taharaEventType === TaharaEventType.Shailah),
+            hasMikvah = taharaEvents.some(te =>
+                te.taharaEventType === TaharaEventType.Mikvah);
         return (
             <View style={[styles.container, { backgroundColor: backgroundColor }]}>
                 <View>

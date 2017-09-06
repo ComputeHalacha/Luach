@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { ScrollView, View, Text, TouchableHighlight } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
@@ -7,7 +7,7 @@ import JDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
-export default class FlaggedDatesScreen extends Component {
+export default class FlaggedDatesScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const { appData } = navigation.state.params;
         return {
@@ -72,8 +72,8 @@ export default class FlaggedDatesScreen extends Component {
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
                         navigator={this.props.navigation}
-                        onGoPrevious={!this.isToday && this.goPrev}
-                        onGoNext={!this.isToday && this.goNext}
+                        onGoPrevious={(!this.isToday) && this.goPrev}
+                        onGoNext={(!this.isToday) && this.goNext}
                         hideFlaggedDates={true}
                         helpUrl='FlaggedDates.html'
                         helpTitle='Flagged Dates' />

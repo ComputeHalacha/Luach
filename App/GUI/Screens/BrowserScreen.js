@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { View, WebView, BackHandler, Platform } from 'react-native';
 import SideMenu from '../Components/SideMenu';
 import { GeneralStyles } from '../styles';
 
-export default class BrowserScreen extends Component {
+export default class BrowserScreen extends PureComponent {
     static navigationOptions = ({ navigation }) => ({
         title: 'Documentation -  ' + navigation.state.params.title
     });

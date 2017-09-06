@@ -49,10 +49,10 @@ export default class NewEntry extends React.Component {
         this.navigate = navigation.navigate;
         this.dispatch = navigation.dispatch;
 
-        const { entry, appData, onUpdate } = navigation.state.params,
-            location = appData.Settings.location;
+        const { entry, appData, onUpdate } = navigation.state.params;
 
         this.onUpdate = onUpdate;
+        this.appData = appData;
 
         let jdate, isNight;
         if (entry) {
@@ -62,11 +62,10 @@ export default class NewEntry extends React.Component {
         }
         else {
             jdate = navigation.state.params.jdate;
-            isNight = Utils.isAfterSunset(new Date(), location);
+            isNight = Utils.isAfterSunset(new Date(), appData.Settings.location);
         }
 
         this.state = {
-            appData: appData,
             jdate: jdate,
             nightDay: isNight ? NightDay.Night : NightDay.Day,
             ignoreForFlaggedDates: entry && entry.ignoreForFlaggedDates,
@@ -80,7 +79,7 @@ export default class NewEntry extends React.Component {
         this.changeSDate = this.changeSDate.bind(this);
     }
     addEntry() {
-        const appData = this.state.appData,
+        const appData = this.appData,
             entryList = appData.EntryList,
             onah = new Onah(this.state.jdate, this.state.nightDay),
             entry = new Entry(
@@ -129,7 +128,7 @@ export default class NewEntry extends React.Component {
         });
     }
     updateEntry() {
-        const appData = this.state.appData,
+        const appData = this.appData,
             entryList = appData.EntryList,
             onah = new Onah(this.state.jdate, this.state.nightDay),
             entry = this.entry,
@@ -236,7 +235,7 @@ export default class NewEntry extends React.Component {
         if (entry.ignoreForFlaggedDates || entry.ignoreForKavuah) {
             return;
         }
-        const appData = this.state.appData,
+        const appData = this.appData,
             kavuahList = appData.KavuahList,
             entries = appData.EntryList.realEntrysList,
             //find an active Kavuah that this Entry breaks its pattern by being the 3rd Entry that is out-of-pattern.
@@ -325,7 +324,7 @@ export default class NewEntry extends React.Component {
     }
     render() {
         const sdate = this.state.jdate.getDate(),
-            location = this.state.appData.Settings.location,
+            location = this.appData.Settings.location,
             suntimes = this.state.jdate.getSunriseSunset(location),
             sunrise = suntimes && suntimes.sunrise ?
                 Utils.getTimeString(suntimes.sunrise) : 'Never',
@@ -335,7 +334,7 @@ export default class NewEntry extends React.Component {
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
                     onUpdate={this.onUpdate}
-                    appData={this.state.appData}
+                    appData={this.appData}
                     navigator={this.props.navigation}
                     currDate={this.state.jdate}
                     helpUrl='Entries.html'
