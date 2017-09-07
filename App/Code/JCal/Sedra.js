@@ -137,7 +137,7 @@ Sedra.getSedraOrder = function (year, israel) {
                 break;
 
             default:
-                throw new Error('improper sedra year type calculated.');
+                throw 'improper sedra year type calculated.';
         }
     }
     else  /* leap year */ {
