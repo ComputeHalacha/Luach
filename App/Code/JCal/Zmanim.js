@@ -2,26 +2,32 @@ import Utils from './Utils.js';
 import jDate from './jDate.js';
 import { isValidDate } from '../GeneralUtils';
 
-/* Computes the daily Zmanim for any single date at any location.
+/**
+ * Computes the daily Zmanim for any single date at any location.
  * The astronomical and mathematical calculations were directly adapted from the excellent
- * Jewish calendar calculation in C# Copyright © by Ulrich and Ziporah Greve (2005) */
+ * Jewish calendar calculation in C# Copyright © by Ulrich and Ziporah Greve (2005)
+ */
 export default class Zmanim {
-    //Gets sunrise and sunset time for given date.
-    //Accepts a javascript Date object, a string for creating a javascript date object or a jDate object.
-    //Returns { sunrise: { hour: 6, minute: 18 }, sunset: { hour: 19, minute: 41 } }
-    //Location object is required.
-    static getSunTimes(date, location, considerElevation) {
+    /**
+     * Gets sunrise and sunset time for given date and Location.
+     * Accepts a javascript Date object, a string for creating a javascript date object or a jDate object.
+     * Location object is required.
+     * @returns {{sunrise:{hour:Number, minute:Number},sunset:{hour:Number, minute:Number}}
+     * @param {Date | jDate} date A Javascript Date or Jewish Date for which to calculate the sun times.
+     * @param {Location} location Where on the globe to calculate the sun times for.
+     * @param {Boolean} considerElevation
+     */
+    static getSunTimes(date, location, considerElevation = true) {
         if (date instanceof jDate) {
             date = date.getDate();
         }
         else if (date instanceof String) {
             date = new Date(date);
         }
-        if ((!(date instanceof Date)) || !isValidDate(date)) {
-            throw new Error('Zmanim.getSunTimes: supplied date parameter cannot be converted to a Date');
+
+        if (!isValidDate(date)) {
+            throw 'Zmanim.getSunTimes: supplied date parameter cannot be converted to a Date';
         }
-        //undefined value defaults to true
-        considerElevation = considerElevation !== false;
 
         let sunrise, sunset, day = Zmanim.dayOfYear(date),
             zeninthDeg = 90, zenithMin = 50, lonHour = 0, longitude = 0, latitude = 0,
@@ -30,10 +36,10 @@ export default class Zmanim {
             hRise = 0, hSet = 0, tRise = 0, tSet = 0, utRise = 0, utSet = 0, earthRadius = 6356900,
             zenithAtElevation = Zmanim.degToDec(zeninthDeg, zenithMin) +
                 Zmanim.radToDeg(Math.acos(earthRadius / (earthRadius +
-                    (considerElevation ? (location.Elevation || 0) : 0))));
+                    (considerElevation ? location.Elevation : 0))));
 
         zeninthDeg = Math.floor(zenithAtElevation);
-        zenithMin = (zenithAtElevation - Math.floor(zenithAtElevation)) * 60;
+        zenithMin = (zenithAtElevation - zeninthDeg) * 60;
         cosZen = Math.cos(0.01745 * Zmanim.degToDec(zeninthDeg, zenithMin));
         longitude = location.Longitude;
         lonHour = longitude / 15;
@@ -144,26 +150,11 @@ export default class Zmanim {
         return Utils.addMinutes(sunTimes.sunset, -location.CandleLighting);
     }
 
-    static isSecularLeapYear(year) {
-        if (year % 400 == 0) {
-            return true;
-        }
-        if (year % 100 != 0) {
-            if (year % 4 == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     static dayOfYear(date) {
-        const monCount = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366];
-        if ((date.getMonth() + 1 > 2) && (Zmanim.isSecularLeapYear(date.getYear()))) {
-            return monCount[date.getMonth() + 1] + date.getDate() + 1;
-        }
-        else {
-            return monCount[date.getMonth() + 1] + date.getDate();
-        }
+        const month = date.getMonth(),
+            isLeap = () => Utils.isSecularLeapYear(date.getFullYear()),
+            yearDay = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+        return yearDay[month + 1] + date.getDate() + ((month > 1 && isLeap()) ? 1 : 0);
     }
 
     static degToDec(deg, min) {

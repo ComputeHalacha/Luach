@@ -5,6 +5,15 @@ import Utils from './JCal/Utils';
 
 export const buttonColor = (Platform.OS === 'android' ? '#99b' : null);
 
+export function popUpMessage(message, optionalTitle) {
+    if (Platform.OS === 'android') {
+        ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
+    }
+    else {
+        Alert.alert(optionalTitle, message);
+    }
+}
+
 /**Gets the current window width in points */
 export function getScreenWidth() {
     return Dimensions.get('window').width;
@@ -25,21 +34,18 @@ export function isLargeScreen() {
     return (getScreenWidth() * PixelRatio.get()) > 1390;
 }
 
-/** Returns true if thing is an instance of either a string primitive or String object.*/
+/** Returns true if "thing" is either a string primitive or String object.*/
 export function isString(thing) {
     return (typeof thing === 'string' || thing instanceof String);
 }
-
-/** Returns true if thing is an instance of either a number primitive or Number object.*/
+/** Returns true if "thing" is either a number primitive or a Number object.*/
 export function isNumber(thing) {
     return (typeof thing === 'number' || thing instanceof Number);
 }
-
-/** Checks a Date object if it represents a valid date or not.*/
-export function isValidDate(dt) {
-    return (!isNaN(dt.valueOf()));
+/** Returns true if "thing" is a Date object containing a valid date.*/
+export function isValidDate(thing) {
+    return (thing instanceof Date && !isNaN(thing.valueOf()));
 }
-
 /** Returns whether or not the given, array, string, or argument list contains the given item or substring.
  *
  * This function is awfully similar to Array.includes, but has the added plus of accepting any number or type of arguments.*/
@@ -51,13 +57,13 @@ export function has(o, ...arr) {
         return arr.includes(o);
     }
 }
-
-/** Returns the default value only if the param value is undefined, null or NaN.
- *
- * Otherwise, the original param value is returned.
+/** Returns the first value unless it is undefined, null or NaN.
  *
  * This is very useful for boolean, string and integer parameters
  * where we want to keep false, "" and 0 if they were supplied.
+ *
+ * Similar purpose to default parameters with the difference being that this function will return
+ * the second value if the first is NaN or null, while default params will give give you the NaN or the null.
  */
 export function setDefault(paramValue, defValue) {
     if (typeof paramValue === 'undefined' || paramValue === null || isNaN(paramValue)) {
@@ -67,20 +73,12 @@ export function setDefault(paramValue, defValue) {
         return paramValue;
     }
 }
-
-export function popUpMessage(message, optionalTitle) {
-    if (Platform.OS === 'android') {
-        ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
-    }
-    else {
-        Alert.alert(optionalTitle, message);
-    }
-}
-
 /**
  * Returns an array containing a range of integers.
- * @param {Number} [start] The number to start at. The start number is included in the results. If only one argument is supplied, start will be set to 1.
- * @param {Number} end The top end of the range. Unlike Pythons range function, The end number is included in the results.
+ * @param {Number} [start] The number to start at. The start number is included in the results.
+ * If only one argument is supplied, start will be set to 1.
+ * @param {Number} end The top end of the range.
+ * Unlike Pythons range function, The end number is included in the results.
  * @returns {[Number]}
  */
 export function range(start, end) {

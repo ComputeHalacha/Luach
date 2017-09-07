@@ -52,7 +52,7 @@ export default class jDate {
                 this.fromAbs(jDate.absSd(arg));
             }
             else {
-                throw new Error('jDate constructor: The given Date is not a valid javascript Date');
+                throw 'jDate constructor: The given Date is not a valid javascript Date';
             }
         }
         else if (Array.isArray(arg) && arg.length >= 3) {
@@ -67,8 +67,8 @@ export default class jDate {
                 this.fromAbs(jDate.absSd(d));
             }
             else {
-                throw new Error('jDate constructor: The given string "' + arg +
-                    '" cannot be parsed into a Date');
+                throw 'jDate constructor: The given string "' + arg +
+                    '" cannot be parsed into a Date';
             }
         }
         else if (isNumber(arg)) {
@@ -338,13 +338,13 @@ export default class jDate {
     /**Gets the candle lighting time for the current Jewish date for the given Location object.*/
     getCandleLighting(location) {
         if (!location) {
-            throw new Error('To get sunrise and sunset, the location needs to be supplied');
+            throw 'To get sunrise and sunset, the location needs to be supplied';
         }
         if (this.hasCandleLighting()) {
             return Zmanim.getCandleLighting(this, location);
         }
         else {
-            throw new Error('No candle lighting on ' + this.toString());
+            throw 'No candle lighting on ' + this.toString();
         }
     }
 
@@ -363,7 +363,7 @@ export default class jDate {
      * Return format: {sunrise: {hour: 6, minute: 18}, sunset: {hour: 19, minute: 41}}*/
     getSunriseSunset(location, ignoreElevation) {
         if (!location) {
-            throw new Error('To get sunrise and sunset, the location needs to be supplied');
+            throw 'To get sunrise and sunset, the location needs to be supplied';
         }
         return Zmanim.getSunTimes(this, location, !ignoreElevation);
     }
@@ -373,7 +373,7 @@ export default class jDate {
      *Return format: {hour: 11, minute: 48}*/
     getChatzos(location) {
         if (!location) {
-            throw new Error('To get Chatzos, the location needs to be supplied');
+            throw 'To get Chatzos, the location needs to be supplied';
         }
         return Zmanim.getChatzos(this, location);
     }
@@ -381,7 +381,7 @@ export default class jDate {
     /**Gets the length of a single Sha'a Zmanis in minutes for the current Jewish date at the given Location.*/
     getShaaZmanis(location, offset) {
         if (!location) {
-            throw new Error('To get the Shaa Zmanis, the location needs to be supplied');
+            throw 'To get the Shaa Zmanis, the location needs to be supplied';
         }
         return Zmanim.getShaaZmanis(this, location, offset);
     }

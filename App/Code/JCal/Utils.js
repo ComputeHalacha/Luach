@@ -20,11 +20,11 @@ export default class Utils {
      */
     static toJNum(number) {
         if (number < 1) {
-            throw new Error('Min value is 1');
+            throw 'Min value is 1';
         }
 
         if (number > 9999) {
-            throw new Error('Max value is 9999');
+            throw 'Max value is 9999';
         }
 
         let n = number,
@@ -105,6 +105,14 @@ export default class Utils {
             }
         }
         return t + suffix;
+    }
+
+    /**
+     * Returns if the given full secular year has a February 29th
+     * @param {Number} year
+     */
+    static isSecularLeapYear(year) {
+        return !(year % 400) || (!!(year % 100) && !(year % 4));
     }
 
     /**
