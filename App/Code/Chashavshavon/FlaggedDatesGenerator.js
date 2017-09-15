@@ -256,7 +256,8 @@ export default class FlaggedDatesGenerator {
                 //Add the correct number of dilug days
                 const addDilugDays = nextMonth.addDays(kavuah.specialNumber * i);
                 //If set to stop when we get to the beginning or end of the month
-                if ((this.settings.cheshbonKavuahByCheshbon && (addDilugDays.Month !== nextMonth.Month))
+                //dilugChodeshPastEnds means "Continue incrementing Dilug Yom Hachodesh Kavuahs into another month"
+                if (((!this.settings.dilugChodeshPastEnds) && (addDilugDays.Month !== nextMonth.Month))
                     ||
                     addDilugDays.Abs > this.stopWarningDateAbs) {
                     break;

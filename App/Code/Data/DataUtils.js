@@ -23,22 +23,27 @@ export default class DataUtils {
                     location = await DataUtils.LocationFromDatabase(dbSet.locationId);
                 settings = new Settings({
                     location: location,
-                    showOhrZeruah: dbSet.showOhrZeruah,
-                    keepThirtyOne: dbSet.keepThirtyOne,
-                    onahBeinunis24Hours: dbSet.onahBeinunis24Hours,
+                    showOhrZeruah: !!dbSet.showOhrZeruah,
+                    keepThirtyOne: !!dbSet.keepThirtyOne,
+                    onahBeinunis24Hours: !!dbSet.onahBeinunis24Hours,
                     numberMonthsAheadToWarn: dbSet.numberMonthsAheadToWarn,
-                    keepLongerHaflagah: dbSet.keepLongerHaflagah,
-                    cheshbonKavuahByCheshbon: dbSet.cheshbonKavuahByCheshbon,
-                    haflagaOfOnahs: dbSet.haflagaOfOnahs,
-                    kavuahDiffOnahs: dbSet.kavuahDiffOnahs,
-                    calcKavuahsOnNewEntry: dbSet.calcKavuahsOnNewEntry,
-                    showProbFlagOnHome: dbSet.showProbFlagOnHome,
-                    showEntryFlagOnHome: dbSet.showEntryFlagOnHome,
-                    navigateBySecularDate: dbSet.navigateBySecularDate,
-                    showIgnoredKavuahs: dbSet.showIgnoredKavuahs,
-                    noProbsAfterEntry: dbSet.noProbsAfterEntry,
-                    hideHelp: dbSet.hideHelp,
-                    requirePIN: dbSet.requirePIN,
+                    keepLongerHaflagah: !!dbSet.keepLongerHaflagah,
+                    //In the database, the dilugChodeshPastEnds value is stored
+                    //in a field misnamed "cheshbonKavuahByCheshbon".
+                    //A field that was no longer in use was appropriated for this value,
+                    //and we don't want to change the database schema itself
+                    //so as not to overwrite existing data.
+                    dilugChodeshPastEnds: !!dbSet.cheshbonKavuahByCheshbon,
+                    haflagaOfOnahs: !!dbSet.haflagaOfOnahs,
+                    kavuahDiffOnahs: !!dbSet.kavuahDiffOnahs,
+                    calcKavuahsOnNewEntry: !!dbSet.calcKavuahsOnNewEntry,
+                    showProbFlagOnHome: !!dbSet.showProbFlagOnHome,
+                    showEntryFlagOnHome: !!dbSet.showEntryFlagOnHome,
+                    navigateBySecularDate: !!dbSet.navigateBySecularDate,
+                    showIgnoredKavuahs: !!dbSet.showIgnoredKavuahs,
+                    noProbsAfterEntry: !!dbSet.noProbsAfterEntry,
+                    hideHelp: !!dbSet.hideHelp,
+                    requirePIN: !!dbSet.requirePIN,
                     PIN: dbSet.PIN
                 });
             })
@@ -76,7 +81,7 @@ export default class DataUtils {
                 settings.onahBeinunis24Hours,
                 settings.numberMonthsAheadToWarn,
                 settings.keepLongerHaflagah,
-                settings.cheshbonKavuahByCheshbon,
+                settings.dilugChodeshPastEnds,
                 settings.haflagaOfOnahs,
                 settings.kavuahDiffOnahs,
                 settings.calcKavuahsOnNewEntry,

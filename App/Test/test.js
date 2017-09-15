@@ -16,7 +16,7 @@ export function testFlaggedDates() {
         onahBeinunis24Hours: true,
         numberMonthsAheadToWarn: 12,
         keepLongerHaflagah: true,
-        cheshbonKavuahByCheshbon: false,
+        dilugChodeshPastEnds: false,
         haflagaOfOnahs: false,
         kavuahDiffOnahs: false,
         noProbsAfterEntry: false
