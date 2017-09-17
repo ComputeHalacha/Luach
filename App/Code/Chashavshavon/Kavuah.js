@@ -100,8 +100,9 @@ class Kavuah {
      * Returns true if the given Entry matches the current Kavuah pattern.
      * @param {Entry} entry The Entry to test.
      * @param {[Entry]} entries The entire list of Entries. This is needed for some Kavuah types.
+     * @param {Settings} settings
      */
-    isEntryInPattern(entry, entries) {
+    isEntryInPattern(entry, entries, settings) {
         if (entry.nightDay !== this.settingEntry.nightDay) {
             return false;
         }
@@ -128,9 +129,34 @@ class Kavuah {
                         entry.haflaga === (previous.haflaga + this.specialNumber);
                 }
             case KavuahTypes.DilugDayOfMonth:
-                return entries.some(e =>
-                    //See if there was an Entry registered one theoretical iteration back.
-                    Utils.isSameJdate(e.date, entry.date.addDays(entry.day - this.specialNumber)));
+                {
+                    //DilugDayOfMonth kavuahs go by theoretical entry - not from actual ones.
+                    //So from each month after the setting entry we subtract or add days
+                    //depending on the dilug number and number of months after the setting entry.
+                    //If we hit the entry date then we return true.
+                    //If we pass the entry date or slide into another month (and dilugChodeshPastEnds is false)
+                    //then we return false.
+                    let nextIteration = this.settingEntry.date;
+                    for (let i = 1; ; i++) {
+                        nextIteration = nextIteration.addMonths(1)
+                            .addDays(this.specialNumber * i);
+                        if (nextIteration.Abs > entry.date.Abs) {
+                            break;
+                        }
+                        //dilugChodeshPastEnds means continue incrementing Dilug Yom Hachodesh Kavuahs into another month.
+                        if ((!settings.dilugChodeshPastEnds) &&
+                            //If the current iterations Day is more than the setting entries Day
+                            //and the Dilug is a positive number, than we have slided into another month.
+                            //And vice versa.
+                            Math.sign(this.settingEntry.day - nextIteration.Day) === Math.sign(this.specialNumber)) {
+                            return false;
+                        }
+                        else if (Utils.isSameJdate(entry.date, nextIteration)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
         }
     }
     get hasId() {
@@ -413,22 +439,26 @@ class Kavuah {
     }
     /**
     * Searches for an active Kavuah in the given list that the given entry breaks its pattern by being the 3rd one that is out-of-pattern.
-    * Only active kavuahs that were set before this Entry occurred are considered.
+    * Only active kavuahs that were set before these Entries are considered.
     * @param {Entry} entry
     * @param {[Kavuah]} kavuahList
     * @param {[Entry]} entries An array of Entries that is sorted chronologically.  Used to get the previous Entry.
+    * @param {Settings} settings
     */
-    static findBrokenPattern(entry, kavuahList, entries) {
+    static findBrokenPattern(entry, kavuahList, entries, settings) {
         const index = entries.indexOf(entry);
         if (index < 2) {
             return;
         }
+        //TODO! - need special cheshbon Yom Hachodesh Kavuahs -
+        //If there weren't any in pattern for the last 3 months - rather han the last thre entries.
         const lastThree = entries.slice(index - 2, index + 1);
         for (let kavuah of kavuahList.filter(k =>
             k.active &&
             (!k.ignore) &&
-            k.settingEntry.date.Abs < entry.date.Abs)) {
-            if (!(lastThree.some(e => kavuah.isEntryInPattern(e, entries)))) {
+            lastThree.every(e => e.Abs > k.settingEntry.date.Abs))) {
+            if (
+                !(lastThree.some(e => kavuah.isEntryInPattern(e, entries, settings)))) {
                 return kavuah;
             }
         }
@@ -439,15 +469,17 @@ class Kavuah {
      * and that were set before this Entry occurred.
      * @param {Entry} entry
      * @param {[Kavuah]} kavuahList
-     * @param {[Entry]} entries An array of Entries that is sorted chronologically.  Used to get the previous Entry.
+     * @param {[Entry]} entries An array of Entries that is sorted chronologically.
+     * Used to get the previous Entry.
+     * * @param {Settings} settings
      */
-    static findOutOfPattern(entry, kavuahList, entries) {
+    static findOutOfPattern(entry, kavuahList, entries, settings) {
         for (let kavuah of kavuahList.filter(k =>
             k.cancelsOnahBeinunis &&
             k.active &&
             (!k.ignore) &&
             k.settingEntry.date.Abs < entry.date.Abs)) {
-            if (!kavuah.isEntryInPattern(entry, entries)) {
+            if (!kavuah.isEntryInPattern(entry, entries, settings)) {
                 return kavuah;
             }
         }
@@ -458,13 +490,14 @@ class Kavuah {
    * @param {Entry} entry
    * @param {[Kavuah]} kavuahList
    * @param {[Entry]} entries An array of Entries that is sorted chronologically.  Used to get the previous Entry.
+   * @param {Settings} settings
    */
-    static findReawakenedPattern(entry, kavuahList, entries) {
+    static findReawakenedPattern(entry, kavuahList, entries, settings) {
         for (let kavuah of kavuahList.filter(k =>
             (!k.active) &&
             (!k.ignore) &&
             k.settingEntry.date.Abs < entry.date.Abs)) {
-            if (kavuah.isEntryInPattern(entry, entries)) {
+            if (kavuah.isEntryInPattern(entry, entries, settings)) {
                 return kavuah;
             }
         }

@@ -239,11 +239,11 @@ export default class NewEntry extends React.Component {
             kavuahList = appData.KavuahList,
             entries = appData.EntryList.realEntrysList,
             //find an active Kavuah that this Entry breaks its pattern by being the 3rd Entry that is out-of-pattern.
-            brokenKavuah = Kavuah.findBrokenPattern(entry, kavuahList, entries),
+            brokenKavuah = Kavuah.findBrokenPattern(entry, kavuahList, entries, appData.Settings),
             //find an inactive Kavuah that this Entry is "in pattern" with.
-            reawakenedKavuah = Kavuah.findReawakenedPattern(entry, kavuahList, entries),
+            reawakenedKavuah = Kavuah.findReawakenedPattern(entry, kavuahList, entries, appData.Settings),
             //find a Kavuah that cancels onah beinonis that this entry is out of pattern with.
-            outOfPatternKavuah = (!brokenKavuah) && Kavuah.findOutOfPattern(entry, kavuahList, entries);
+            outOfPatternKavuah = (!brokenKavuah) && Kavuah.findOutOfPattern(entry, kavuahList, entries,appData.Settings);
 
         if (brokenKavuah) {
             Alert.alert('Kavuah Pattern Broken',
