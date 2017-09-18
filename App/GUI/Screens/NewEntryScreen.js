@@ -238,14 +238,14 @@ export default class NewEntry extends React.Component {
         const appData = this.appData,
             kavuahList = appData.KavuahList,
             entries = appData.EntryList.realEntrysList,
-            //find an active Kavuah that this Entry breaks its pattern by being the 3rd Entry that is out-of-pattern.
-            brokenKavuah = Kavuah.findBrokenPattern(entry, kavuahList, entries, appData.Settings),
-            //find an inactive Kavuah that this Entry is "in pattern" with.
-            reawakenedKavuah = Kavuah.findReawakenedPattern(entry, kavuahList, entries, appData.Settings),
-            //find a Kavuah that cancels onah beinonis that this entry is out of pattern with.
-            outOfPatternKavuah = (!brokenKavuah) && Kavuah.findOutOfPattern(entry, kavuahList, entries,appData.Settings);
+            //find any active Kavuahs that had their pattern "broken".
+            brokenKavuahs = Kavuah.findBrokenKavuahs(entry, kavuahList, entries, appData.Settings),
+            //find any inactive Kavuahs which this Entry is "in pattern" with.
+            reawakenedKavuahs = Kavuah.findReawakenedKavuahs(entry, kavuahList, entries, appData.Settings),
+            //find any Kavuahs that cancel onah beinonis which this entry is out of pattern with.
+            outOfPatternKavuahs = Kavuah.findOutOfPattern(entry, kavuahList, entries, appData.Settings);
 
-        if (brokenKavuah) {
+        for (let brokenKavuah of brokenKavuahs) {
             Alert.alert('Kavuah Pattern Broken',
                 `This Entry is the third Entry in a row that is not in the Kavuah pattern of "${brokenKavuah.toString()}".` +
                 '\nDo you wish to set this Kavuah to inactive?',
@@ -269,7 +269,7 @@ export default class NewEntry extends React.Component {
                         }
                     }]);
         }
-        if (reawakenedKavuah) {
+        for (let reawakenedKavuah of reawakenedKavuahs) {
             Alert.alert('Inactive Kavuah Pattern Matched',
                 `This Entry seems to match the inactive Kavuah pattern of "${reawakenedKavuah.toString(true)}".` +
                 '\nDo you wish to set this Kavuah to active?',
@@ -293,7 +293,7 @@ export default class NewEntry extends React.Component {
                         }
                     }]);
         }
-        if (outOfPatternKavuah) {
+        for (let outOfPatternKavuah of outOfPatternKavuahs) {
             Alert.alert('Kavuah Pattern Break',
                 `This Entry does not seem to match the Kavuah pattern of "${outOfPatternKavuah.toString()}".` +
                 '\nDo you wish to set this Kavuah to NOT Cancel Onah Beinonis?',

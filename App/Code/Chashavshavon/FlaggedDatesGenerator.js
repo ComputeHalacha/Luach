@@ -1,8 +1,7 @@
 import { NightDay } from './Onah';
-import { KavuahTypes } from './Kavuah';
+import { Kavuah, KavuahTypes } from './Kavuah';
 import { ProblemFlag, ProblemOnah } from './ProblemOnah';
 import jDate from '../JCal/jDate';
-import { has } from '../GeneralUtils';
 
 /**
  * This class is used to Generate Problem Onahs from
@@ -23,8 +22,8 @@ export default class FlaggedDatesGenerator {
         this.cancelKavuah = kavuahs.find(k =>
             k.active && k.cancelsOnahBeinunis);
         this.probOnahs = [];
-        this.stopWarningDateAbs = jDate.toJDate().addMonths(
-            this.settings.numberMonthsAheadToWarn).Abs;
+        this.stopWarningDate = jDate.toJDate().addMonths(
+            this.settings.numberMonthsAheadToWarn);
     }
     /**
      * Gets the list of Onahs that need to be observed.
@@ -221,55 +220,18 @@ export default class FlaggedDatesGenerator {
         }
     }
     _findIndependentKavuahProblemOnahs() {
-        //Kavuahs of Yom Hachodesh and Sirug
-        for (let kavuah of this.kavuahs.filter(k =>
-            has(k.kavuahType, KavuahTypes.DayOfMonth, KavuahTypes.DayOfMonthMaayanPasuach, KavuahTypes.Sirug))) {
-            let dt = kavuah.settingEntry.date.addMonths(
-                kavuah.kavuahType === KavuahTypes.Sirug ? kavuah.specialNumber : 1);
-            while (dt.Abs <= this.stopWarningDateAbs) {
-                const o = new ProblemFlag(dt, kavuah.settingEntry.nightDay,
+        //"Independent" Kavuahs which are cheshboned from the theoretical Entries
+        for (let kavuah of this.kavuahs.filter(k => k.isIndepedent)) {
+            for (let onah of Kavuah.getIndependentIterations(
+                kavuah,
+                this.stopWarningDate,
+                this.settings.dilugChodeshPastEnds)) {
+                const o = new ProblemFlag(
+                    onah.jdate,
+                    onah.nightDay,
                     'Kavuah for ' + kavuah.toString());
                 this._addProblem(o);
                 this._addOhrZarua(o);
-
-                dt = dt.addMonths(kavuah.kavuahType === KavuahTypes.Sirug ? kavuah.specialNumber : 1);
-            }
-        }
-        //Kavuahs of "Day of week" - cheshboned from the theoretical Entries
-        for (let kavuah of this.kavuahs.filter(k => k.kavuahType === KavuahTypes.DayOfWeek)) {
-            let dt = kavuah.settingEntry.date.addDays(kavuah.specialNumber);
-            while (dt.Abs <= this.stopWarningDateAbs) {
-                const o = new ProblemFlag(
-                    dt,
-                    kavuah.settingEntry.nightDay,
-                    'Kavuah for ' + kavuah.ToString());
-                this._addProblem(o);
-                this._addOhrZarua(o);
-
-                dt = dt.addDays(kavuah.specialNumber);
-            }
-        }
-        //Kavuahs of Yom Hachodesh of Dilug - these are cheshboned from the theoretical Entries
-        for (let kavuah of this.kavuahs.filter(k => k.kavuahType === KavuahTypes.DilugDayOfMonth)) {
-            let nextMonth = kavuah.settingEntry.date.addMonths(1);
-            for (let i = 1; ; i++) {
-                //Add the correct number of dilug days
-                const addDilugDays = nextMonth.addDays(kavuah.specialNumber * i);
-                //If set to stop when we get to the beginning or end of the month
-                //dilugChodeshPastEnds means "Continue incrementing Dilug Yom Hachodesh Kavuahs into another month"
-                if (((!this.settings.dilugChodeshPastEnds) && (addDilugDays.Month !== nextMonth.Month))
-                    ||
-                    addDilugDays.Abs > this.stopWarningDateAbs) {
-                    break;
-                }
-                const o = new ProblemFlag(
-                    addDilugDays,
-                    kavuah.settingEntry.nightDay,
-                    'Kavuah for ' + kavuah.toString());
-                this._addProblem(o);
-                this._addOhrZarua(o);
-
-                nextMonth = nextMonth.addMonths(1);
             }
         }
     }
