@@ -68,7 +68,7 @@ export default class jDate {
             }
             else {
                 throw 'jDate constructor: The given string "' + arg +
-                    '" cannot be parsed into a Date';
+                '" cannot be parsed into a Date';
             }
         }
         else if (isNumber(arg)) {
@@ -413,6 +413,7 @@ export default class jDate {
                 Zmanim.getShaaZmanisFromSunTimes(suntimesMishor),
             shaaZmanis90 = sunriseMishor && sunsetMishor &&
                 Zmanim.getShaaZmanisFromSunTimes(suntimesMishor, 90),
+            feet = (location.Elevation * 3.28084).toFixed(0).toString() + ' ft.',
             addItem = (title, value, important) => list.push({ title, value, important });
 
         addItem('Jewish Date', this.toString());
@@ -433,11 +434,18 @@ export default class jDate {
             Utils.getTimeString(mishorNeg90, false, true));
         addItem('Alos Hashachar - 72',
             Utils.getTimeString(Utils.addMinutes(sunriseMishor, -72), false, true));
-        addItem('Netz Hachama - Sunrise',
-            sunrise ? Utils.getTimeString(sunrise, false, true) : 'Sun does not rise', true);
-        if (Utils.totalMinutes(sunrise) !== Utils.totalMinutes(sunriseMishor)) {
-            addItem('Sunrise at sea level',
-                Utils.getTimeString(sunriseMishor, false, true));
+        if (!sunriseMishor) {
+            addItem('Netz Hachama - Sunrise', 'The sun does not rise', true);
+        }
+        else if (Utils.totalMinutes(sunrise) === Utils.totalMinutes(sunriseMishor)) {
+            addItem('Netz Hachama - Sunrise',
+                Utils.getTimeString(sunrise, false, true), true);
+        }
+        else {
+            addItem('Sunrise at ' + feet,
+                Utils.getTimeString(sunrise, false, true));
+            addItem('Netz Hachama (sea level)',
+                Utils.getTimeString(sunriseMishor, false, true), true);
         }
         addItem('Krias Shma - MG"A',
             Utils.getTimeString(Utils.addMinutes(mishorNeg90, Math.floor(shaaZmanis90 * 3))));
@@ -465,17 +473,16 @@ export default class jDate {
                 Utils.getTimeString(Utils.addMinutes(sunriseMishor, (shaaZmanis * 10.75))));
         }
         if (!sunset) {
-            addItem('Shkias Hachama - sunset', 'The sun does not set', true);
+            addItem('Shkias Hachama - Sunset', 'The sun does not set', true);
         }
         else {
             if (Utils.totalMinutes(sunset) === Utils.totalMinutes(sunsetMishor)) {
-                addItem('Shkias Hachama - sunset',
+                addItem('Shkias Hachama - Sunset',
                     Utils.getTimeString(sunset), true);
             }
             else {
                 addItem('Sunset at Sea Level', Utils.getTimeString(sunsetMishor));
-                addItem('Shkiah at ' + (location.Elevation * 3.28084).toString() + ' ft.',
-                    Utils.getTimeString(sunset), true);
+                addItem('Shkiah (at ' + feet + ')', Utils.getTimeString(sunset), true);
             }
             addItem('Nightfall 45',
                 Utils.getTimeString(Utils.addMinutes(sunset, 45)));

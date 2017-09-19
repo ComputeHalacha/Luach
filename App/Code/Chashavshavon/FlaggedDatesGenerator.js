@@ -183,8 +183,8 @@ export default class FlaggedDatesGenerator {
     _findEntryDependentKavuahProblemOnahs(entry) {
         //Kavuah Haflagah - with or without Maayan Pasuach
         for (let kavuah of this.kavuahs.filter(k =>
-            (k.kavuahType === KavuahTypes.Haflagah || k.kavuahType === KavuahTypes.HaflagaMaayanPasuach))) {
-            const haflagaDate = entry.date.addDays(kavuah.settingEntry.haflaga - 1),
+            ([KavuahTypes.Haflagah, KavuahTypes.HaflagaMaayanPasuach].includes(k.kavuahType)))) {
+            const haflagaDate = entry.date.addDays(kavuah.specialNumber - 1),
                 kavuahHaflaga = new ProblemFlag(
                     haflagaDate,
                     kavuah.settingEntry.nightDay,
@@ -222,16 +222,18 @@ export default class FlaggedDatesGenerator {
     _findIndependentKavuahProblemOnahs() {
         //"Independent" Kavuahs which are cheshboned from the theoretical Entries
         for (let kavuah of this.kavuahs.filter(k => k.isIndepedent)) {
-            for (let onah of Kavuah.getIndependentIterations(
+            const iters = Kavuah.getIndependentIterations(
                 kavuah,
                 this.stopWarningDate,
-                this.settings.dilugChodeshPastEnds)) {
-                const o = new ProblemFlag(
+                this.settings.dilugChodeshPastEnds);
+            console.log(iters);
+            for (let onah of iters) {
+                const problemFlag = new ProblemFlag(
                     onah.jdate,
                     onah.nightDay,
                     'Kavuah for ' + kavuah.toString());
-                this._addProblem(o);
-                this._addOhrZarua(o);
+                this._addProblem(problemFlag);
+                this._addOhrZarua(problemFlag);
             }
         }
     }

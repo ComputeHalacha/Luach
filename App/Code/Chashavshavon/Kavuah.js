@@ -186,33 +186,25 @@ class Kavuah {
      * @param {boolean} dilugChodeshPastEnds
      */
     static getIndependentIterations(kavuah, jdate, dilugChodeshPastEnds) {
-        const iterations = [];
-
+        let iterations = [];
         if (kavuah.isIndepedent) {
             if (kavuah.kavuahType === KavuahTypes.DayOfWeek) {
-                return kavuah.getDayOfWeekIterations(kavuah, jdate);
+                iterations = Kavuah.getDayOfWeekIterations(kavuah, jdate);
             }
-
-            let nextIteration = kavuah.settingEntry.date;
-            for (let i = 1; ; i++) {
-                nextIteration = nextIteration.addMonths(
-                    //Go to the next month. Sirug Kavuahs add more than one month
-                    (kavuah.kavuahType === KavuahTypes.Sirug ? kavuah.specialNumber : 1));
-                if (kavuah.kavuahType === KavuahTypes.DilugDayOfMonth) {
-                    nextIteration = nextIteration.addDays(kavuah.specialNumber * i);
-                    //dilugChodeshPastEnds means continue incrementing Dilug Yom Hachodesh Kavuahs into another month.
-                    if ((!dilugChodeshPastEnds) &&
-                        //If the current iterations Day is more than the setting entries Day
-                        //and the Dilug is a positive number, than we have slided into another month.
-                        //And vice versa.
-                        Math.sign(kavuah.settingEntry.day - nextIteration.Day) === Math.sign(kavuah.specialNumber)) {
-                        break;
-                    }
+            else if (kavuah.kavuahType === KavuahTypes.DilugDayOfMonth) {
+                iterations = Kavuah.getDilugDayOfMonthIterations(
+                    kavuah,
+                    jdate,
+                    dilugChodeshPastEnds);
+            }
+            else {
+                let nextIteration = kavuah.settingEntry.date;
+                while (nextIteration.Abs < jdate.Abs) {
+                    nextIteration = nextIteration.addMonths(
+                        //Go to the next month. Sirug Kavuahs add more than one month
+                        (kavuah.kavuahType === KavuahTypes.Sirug ? kavuah.specialNumber : 1));
+                    iterations.push(new Onah(nextIteration, kavuah.settingEntry.nightDay));
                 }
-                if (nextIteration.Abs > jdate.Abs || nextIteration.Abs <= kavuah.settingEntry.date.Abs) {
-                    break;
-                }
-                iterations.push(new Onah(nextIteration, kavuah.settingEntry.nightDay));
             }
         }
         return iterations;
@@ -229,6 +221,31 @@ class Kavuah {
             let nextIteration = kavuah.settingEntry.date;
             while (nextIteration.Abs < jdate.Abs) {
                 nextIteration = nextIteration.addDays(kavuah.specialNumber);
+                iterations.push(new Onah(nextIteration, kavuah.settingEntry.nightDay));
+            }
+        }
+        return iterations;
+    }
+    static getDilugDayOfMonthIterations(kavuah, jdate, dilugChodeshPastEnds) {
+        const iterations = [];
+
+        if (kavuah.kavuahType === KavuahTypes.DilugDayOfMonth) {
+            let nextMonth = kavuah.settingEntry.date;
+            for (let i = 1; ; i++) {
+                nextMonth = nextMonth.addMonths(1);
+                const nextIteration = nextMonth.addDays(kavuah.specialNumber * i);
+                if (nextIteration.Abs > jdate.Abs ||
+                    nextIteration.Abs <= kavuah.settingEntry.date.Abs) {
+                    break;
+                }
+                //dilugChodeshPastEnds means continue incrementing Dilug Yom Hachodesh Kavuahs into another month.
+                if ((!dilugChodeshPastEnds) &&
+                    //If the current iterations Day is more than the setting entries Day
+                    //and the Dilug is a positive number, than we have slided into another month.
+                    //And vice versa.
+                    Math.sign(kavuah.settingEntry.day - nextIteration.Day) === Math.sign(kavuah.specialNumber)) {
+                    break;
+                }
                 iterations.push(new Onah(nextIteration, kavuah.settingEntry.nightDay));
             }
         }
@@ -527,9 +544,10 @@ class Kavuah {
                 kavuah,
                 jdate,
                 settings.dilugChodeshPastEnds).slice(-3);
-            if (!last3Iters.some(o =>
-                entries.some(e => e.isSameOnah(o)))) {
-                brokens.push(Kavuah);
+            if (last3Iters.length === 3 &&
+                (!last3Iters.some(o =>
+                    entries.some(e => e.isSameOnah(o))))) {
+                brokens.push(kavuah);
             }
         }
         return brokens;
