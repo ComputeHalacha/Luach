@@ -395,7 +395,11 @@ export default class jDate {
     getDafyomiHeb() {
         return DafYomi.toStringHeb(this);
     }
-
+    /**
+     * Gets a list of the current date's daily information and zmanim
+     * @param {Location} location
+     * @returns {[{title:string, value:string, important:boolean}]}
+     */
     getAllDetails(location) {
         const list = [],
             sdate = this.getDate(),

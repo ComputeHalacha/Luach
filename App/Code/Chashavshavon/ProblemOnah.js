@@ -9,7 +9,7 @@ export class ProblemOnah extends Onah {
     /**
      * @param {jDate} jdate
      * @param {NightDay} nightDay
-     * * @param {[String]} flagsList
+     * @param {[String]} flagsList
      */
     constructor(jdate, nightDay, flagsList) {
         if (!jdate) {

@@ -30,6 +30,7 @@ export default class FlaggedDatesGenerator {
      * Problem Onahs are searched for from the date of each entry
      * until the number of months specified in the
      * Property Setting "numberMonthsAheadToWarn"
+     * @returns {[ProblemOnah]}
      */
     getProblemOnahs() {
         //Clean the list
@@ -226,7 +227,6 @@ export default class FlaggedDatesGenerator {
                 kavuah,
                 this.stopWarningDate,
                 this.settings.dilugChodeshPastEnds);
-            console.log(iters);
             for (let onah of iters) {
                 const problemFlag = new ProblemFlag(
                     onah.jdate,
@@ -273,12 +273,11 @@ export default class FlaggedDatesGenerator {
     }
     /**
      * Returns false if the noProbsAfterEntry setting is on and there was an Entry
-     * in the 7 days before the given onah.
+     * in the 7 days before the given flags onah.
      * Will also return false if the settingEntry is supplied, and keepLongerHaflagah is off,
      * and there was another entry between the settingEntry and the problem onah.
      * This is to prevent flagging haflaga type problems when there were other entries before the problem onah.
-     * @param {jDate} date
-     * @param {NightDay} nightDay
+     * @param {ProblemFlag} probFlag
      * @param {Entry} [settingEntry] if supplied and the keepLongerHaflagah is off and
      * there was another Entry between the settingEntry and the problem onah,
      * will cause this function to return false.
@@ -316,9 +315,9 @@ export default class FlaggedDatesGenerator {
   * @param {NightDay} nightDay
   * @param {Kavuah} cancelKavuah
   */
-function isAfterKavuahStart(date, nightDay, kavuah) {
-    if (kavuah) {
-        const settingEntry = kavuah.settingEntry;
+function isAfterKavuahStart(date, nightDay, cancelKavuah) {
+    if (cancelKavuah) {
+        const settingEntry = cancelKavuah.settingEntry;
         return settingEntry && (
             (date.Abs > settingEntry.date.Abs) ||
             (date.Abs === settingEntry.date.Abs && nightDay > settingEntry.nightDay));

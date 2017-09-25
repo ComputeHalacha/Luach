@@ -85,10 +85,16 @@ export default class ExportData extends React.Component {
                         }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
                 }
                 break;
+            case 'Zmanim_Today':
+
+                break;
+            case 'Zmanim_30':
+                break;
         }
         return csv;
     }
     getHtmlText() {
+        const settings = this.appData.Settings;
         let counter = 0,
             html = `<html><head><title>Luach - Export Data</title></head>
                     <body style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
@@ -167,7 +173,6 @@ export default class ExportData extends React.Component {
                 break;
             case 'Settings':
                 {
-                    const settings = this.appData.Settings;
                     html += '<tr><td>' +
                         `<p><b>Location</b><br />${settings.location.Name}<hr /></p>` +
                         `<p><b>Flag previous onah (The "Ohr Zaruah")</b><br />${yon(settings.showOhrZeruah)}<hr /></p>` +
@@ -206,6 +211,22 @@ export default class ExportData extends React.Component {
                             </tr>`;
                 }
                 break;
+            case 'Zmanim_Today':
+                {
+                    const today = Utils.nowAtLocation(settings.location),
+                        details = today.getAllDetails(settings.location);
+                    html += '<tr style="background-color:#e1e1ff;"><td colspan="2">' +
+                        '<b>Zmanim for ' + settings.location.Name +
+                        '</b></td></tr>';
+                    details.map(d => `<tr><td>${d.title}</td><td>${d.value}</td></tr>`).join('');
+                    break;
+                }
+            case 'Zmanim_30':
+                {
+                    const today = Utils.nowAtLocation(settings.location),
+                        details = today.getAllDetails(settings.location);
+                    break;
+                }
         }
         html += '</table></body></html>';
         return html;
@@ -278,6 +299,12 @@ export default class ExportData extends React.Component {
                             </Option>
                             <Option value='Flagged Dates'>
                                 Flagged Dates
+                            </Option>
+                            <Option value='Zmanim_Today'>
+                                Zmanim - Today
+                            </Option>
+                            <Option value='Zmanim_30'>
+                                Zmanim - 30 days
                             </Option>
                         </Select>
                     </View>

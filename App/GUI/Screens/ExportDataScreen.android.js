@@ -5,6 +5,7 @@ import Mailer from 'react-native-mail';
 import SideMenu from '../Components/SideMenu';
 import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
+import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
 const exportPath = RNFS.ExternalDirectoryPath;
@@ -31,6 +32,7 @@ export default class ExportData extends React.Component {
         return `${this.state.dataSet}-${(new Date()).toLocaleString().replace(/[\/,: ]/gi, '-')}.csv`;
     }
     getCsvText() {
+        const settings = this.appData.Settings;
         let csv = '';
         switch (this.state.dataSet) {
             case 'Entries':
@@ -59,7 +61,6 @@ export default class ExportData extends React.Component {
                 break;
             case 'Settings':
                 {
-                    const settings = this.appData.Settings;
                     csv = '"Location","Ohr Zeruah","Onah Beinunis 24 Hours","Day Thirty One",' +
                         '"Shorter Haflagah - No Cancel","Dilug Yom Hachodesh Kavuahs Another Month",' +
                         '"Haflaga Of Onahs","Haflaga of Diff Onahs","Months Ahead To Warn","Calc Kavuahs New Entry",' +
@@ -83,10 +84,31 @@ export default class ExportData extends React.Component {
                         }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
                 }
                 break;
+            case 'Zmanim Today':
+                {
+                    const today = Utils.nowAtLocation(settings.location),
+                        details = today.getAllDetails(settings.location);
+                    csv += `"Location",${details.map(d => '"' + d.title + '"').join(',')}` + '\r\n' +
+                        `"${settings.location.Name}",${details.map(d => '"' + d.value + '"').join(',')}`;
+                    break;
+                }
+            case 'Zmanim 30 Days':
+                {
+                    let currDate = Utils.nowAtLocation(settings.location),
+                        details;
+                    csv += `${details.map(d => '"' + d.title + '"').join(',')}` + '\r\n';
+                    for (let i = 0; i < 30; i++) {
+                        currDate = currDate.addDays(1);
+                        details = currDate.getAllDetails(settings.location);
+                        csv += details.map(d => '"' + d.value + '"').join(',') + '\r\n';
+                    }
+                    break;
+                }
         }
         return csv;
     }
     getHtmlText() {
+        const settings = this.appData.Settings;
         let counter = 0,
             html = `<div style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
                             <h1 style="color:#7777bb;">
@@ -122,7 +144,6 @@ export default class ExportData extends React.Component {
                 }
                 break;
             case 'Settings':
-                var settings = this.appData.Settings;
                 html += `<p><b>Location</b><br />${settings.location.Name}<hr /></p>` +
                     `<p><b>Flag previous onah (The "Ohr Zaruah")</b><br />${yon(settings.showOhrZeruah)}<hr /></p>` +
                     `<p><b>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours</b><br />${yon(settings.onahBeinunis24Hours)}<hr /></p>` +
@@ -148,6 +169,27 @@ export default class ExportData extends React.Component {
                     html += `<p>${counter.toString()}. ${probOnah.toString().replace(/\n/g, '<br />&nbsp;&nbsp;')}</p><hr />`;
                 }
                 break;
+            case 'Zmanim Today':
+                {
+                    const today = Utils.nowAtLocation(settings.location),
+                        details = today.getAllDetails(settings.location);
+                    html += `<p><b>Location</b><br />${settings.location.Name}<hr /></p>` +
+                        details.map(d => `<p><b>${d.title}</b><br />${d.value}</hr></p>`).join('') +
+                        '<hr />';
+                    break;
+                }
+            case 'Zmanim 30 Days':
+                {
+                    let currDate = Utils.nowAtLocation(settings.location),
+                        details;
+                        html += `${details.map(d => '"' + d.title + '"').join(',')}` + '\r\n';
+                    for (let i = 0; i < 30; i++) {
+                        currDate = currDate.addDays(1);
+                        details = currDate.getAllDetails(settings.location);
+                        html += details.map(d => '"' + d.value + '"').join(',') + '\r\n';
+                    }
+                    break;
+                }
         }
         html += '</div>';
         return html;
@@ -166,7 +208,10 @@ export default class ExportData extends React.Component {
     }
     async doEmail() {
         const filePath = await this.doExport(),
-            subject = 'Luach Export Data - ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
+            subject = 'Luach Export Data - ' +
+                this.state.dataSet +
+                ' - ' +
+                (new Date()).toLocaleDateString(),
             html = this.getHtmlText();
         log(html);
         Mailer.mail({
@@ -207,6 +252,8 @@ export default class ExportData extends React.Component {
                             <Picker.Item label='Kavuahs' value='Kavuahs' />
                             <Picker.Item label='Settings' value='Settings' />
                             <Picker.Item label='Flagged Dates' value='Flagged Dates' />
+                            <Picker.Item label="Zmanim - Today" value='Zmanim Today' />
+                            <Picker.Item label="Zmanim - 30 days" value='Zmanim 30 Days' />
                         </Picker>
                     </View>
                     <View style={{
