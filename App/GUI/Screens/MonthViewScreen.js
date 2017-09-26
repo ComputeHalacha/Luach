@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image,TouchableHighlight } from 'react-native';
 import { Icon, Grid, Row, Col } from 'react-native-elements';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { getScreenWidth, goHomeToday } from '../../Code/GeneralUtils';
@@ -11,9 +11,31 @@ import { TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
 import { GeneralStyles } from '../styles';
 
 export default class MonthViewScreen extends React.PureComponent {
-    static navigationOptions = () => ({
-        title: 'Full Month View'
-    });
+    static navigationOptions = ({ navigation }) => {
+        const { appData } = navigation.state.params;
+        return {
+            title: 'Zmanim for ' + navigation.state.params.appData.Settings.location.Name,
+            headerRight:
+            <TouchableHighlight
+                onPress={() =>
+                    navigation.navigate('ExportData',
+                        {
+                            appData,
+                            jdate: MonthViewScreen.jdate,
+                            dataSet: 'Zmanim - 30 Days'
+                        })}>
+                <View style={{ marginRight: 10 }}>
+                    <Icon name='import-export'
+                        color='#aca'
+                        size={25} />
+                    <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
+                </View>
+            </TouchableHighlight>
+        };
+    };
+
+    static jdate;
+
     constructor(props) {
         super(props);
 
@@ -179,6 +201,7 @@ export default class MonthViewScreen extends React.PureComponent {
     }
     render() {
         const weeks = this.state.month.getAllDays();
+        MonthViewScreen.jdate = Month.getFirstjDate(weeks);
         return <View style={GeneralStyles.container}>
             <View style={styles.headerView}>
                 <Text style={styles.headerText}>{Month.toString(weeks, this.state.month.isJdate)}</Text>

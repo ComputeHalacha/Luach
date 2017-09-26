@@ -22,6 +22,7 @@ export default class ExportData extends React.Component {
 
         this.appData = appData;
         this.jdate = jdate || Utils.nowAtLocation(this.appData.Settings.location);
+        this.sdate = this.jdate.getDate();
         this.state = { dataSet: (dataSet || 'Entries') };
         this.getFileName = this.getFileName.bind(this);
         this.doExport = this.doExport.bind(this);
@@ -30,7 +31,8 @@ export default class ExportData extends React.Component {
         this.getHtmlText = this.getHtmlText.bind(this);
     }
     getFileName() {
-        return `${this.state.dataSet}-${(new Date()).toLocaleString().replace(/[\/,: ]/gi, '-')}.csv`;
+        const dateString = this.sdate.toLocaleString().replace(/[\/,: ]/gi, '-');
+        return `${this.state.dataSet}-${dateString}.csv`;
     }
     getCsvText() {
         const settings = this.appData.Settings;
@@ -115,7 +117,7 @@ export default class ExportData extends React.Component {
                                 <font color="#7777bb">
                                     Data Export from Luach -
                                     ${this.state.dataSet} -
-                                    ${(new Date()).toLocaleDateString()}
+                                    ${this.sdate.toLocaleDateString()}
                                 </font>
                             </h1>
                             <hr />`;
@@ -182,7 +184,7 @@ export default class ExportData extends React.Component {
                     html += '<p>Please find attached a spreadsheet file with the Zmanim for <b>' +
                         settings.location.Name +
                         '</b> for the dates ' +
-                        Utils.toStringDate(this.jdate.getDate()) +
+                        Utils.toStringDate(this.sdate) +
                         ' to ' +
                         Utils.toStringDate(this.jdate.addDays(30).getDate()) +
                         '</p>';
@@ -209,7 +211,7 @@ export default class ExportData extends React.Component {
             subject = 'Luach Export Data - ' +
                 this.state.dataSet +
                 ' - ' +
-                (new Date()).toLocaleDateString(),
+                this.sdate.toLocaleDateString(),
             html = this.getHtmlText();
         log(html);
         Mailer.mail({

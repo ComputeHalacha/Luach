@@ -1,13 +1,36 @@
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View, TouchableHighlight } from 'react-native';
+import { Icon } from 'react-native-elements';
 import CustomList from '../Components/CustomList';
 import SideMenu from '../Components/SideMenu';
 import { GeneralStyles } from '../styles';
 
 export default class DateDetailsScreen extends React.PureComponent {
-    static navigationOptions = ({ navigation }) => ({
-        title: 'Zmanim for ' + navigation.state.params.appData.Settings.location.Name
-    });
+    static navigationOptions = ({ navigation }) => {
+        const { appData } = navigation.state.params;
+        return {
+            title: 'Zmanim for ' + navigation.state.params.appData.Settings.location.Name,
+            headerRight:
+            <TouchableHighlight
+                onPress={() =>
+                    navigation.navigate('ExportData',
+                        {
+                            appData,
+                            jdate: DateDetailsScreen.jdate,
+                            dataSet: 'Zmanim - ' +
+                            DateDetailsScreen.jdate.toShortString()
+                        })}>
+                <View style={{ marginRight: 10 }}>
+                    <Icon name='import-export'
+                        color='#aca'
+                        size={25} />
+                    <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
+                </View>
+            </TouchableHighlight>
+        };
+    };
+
+    static jdate;
 
     constructor(props) {
         super(props);
@@ -17,6 +40,7 @@ export default class DateDetailsScreen extends React.PureComponent {
         this.onUpdate = onUpdate;
         this.appData = appData;
         this.state = { jdate: jdate };
+        DateDetailsScreen.jdate = jdate;
         this.goPrev = this.goPrev.bind(this);
         this.goNext = this.goNext.bind(this);
     }
@@ -29,6 +53,8 @@ export default class DateDetailsScreen extends React.PureComponent {
         this.setState({ jdate: jdate.addDays(1) });
     }
     render() {
+        DateDetailsScreen.jdate = this.state.jdate;
+
         const list = this.state.jdate.getAllDetails(this.appData.Settings.location);
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
