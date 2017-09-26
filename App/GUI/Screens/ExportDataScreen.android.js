@@ -18,9 +18,10 @@ export default class ExportData extends React.Component {
         super(props);
         this.navigator = this.props.navigation;
 
-        const { appData, dataSet } = this.navigator.state.params;
+        const { appData, dataSet, jdate } = this.navigator.state.params;
 
         this.appData = appData;
+        this.jdate = jdate || Utils.nowAtLocation(this.appData.Settings.location);
         this.state = { dataSet: (dataSet || 'Entries') };
         this.getFileName = this.getFileName.bind(this);
         this.doExport = this.doExport.bind(this);
@@ -84,23 +85,22 @@ export default class ExportData extends React.Component {
                         }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
                 }
                 break;
-            case 'Zmanim Today':
+            case 'Zmanim - ' + this.jdate.toShortString():
                 {
-                    const today = Utils.nowAtLocation(settings.location),
-                        details = today.getAllDetails(settings.location);
+                    const details = this.jdate.getAllDetails(settings.location);
                     csv += `"Location",${details.map(d => '"' + d.title + '"').join(',')}` + '\r\n' +
                         `"${settings.location.Name}",${details.map(d => '"' + d.value + '"').join(',')}`;
                     break;
                 }
-            case 'Zmanim 30 Days':
+            case 'Zmanim - 30 Days':
                 {
-                    let currDate = Utils.nowAtLocation(settings.location),
-                        details;
-                    csv += `${details.map(d => '"' + d.title + '"').join(',')}` + '\r\n';
+                    let currDate = this.jdate,
+                        details = currDate.getAllDetailsList(settings.location);
+                    csv += `"Location: ${settings.location.Name}"\r\n${details.map(d => '"' + d.title + '"').join(',')}\r\n`;
                     for (let i = 0; i < 30; i++) {
-                        currDate = currDate.addDays(1);
-                        details = currDate.getAllDetails(settings.location);
                         csv += details.map(d => '"' + d.value + '"').join(',') + '\r\n';
+                        currDate = currDate.addDays(1);
+                        details = currDate.getAllDetailsList(settings.location);
                     }
                     break;
                 }
@@ -169,25 +169,23 @@ export default class ExportData extends React.Component {
                     html += `<p>${counter.toString()}. ${probOnah.toString().replace(/\n/g, '<br />&nbsp;&nbsp;')}</p><hr />`;
                 }
                 break;
-            case 'Zmanim Today':
+            case 'Zmanim - ' + this.jdate.toShortString():
                 {
-                    const today = Utils.nowAtLocation(settings.location),
-                        details = today.getAllDetails(settings.location);
+                    const details = this.jdate.getAllDetails(settings.location);
                     html += `<p><b>Location</b><br />${settings.location.Name}<hr /></p>` +
                         details.map(d => `<p><b>${d.title}</b><br />${d.value}</hr></p>`).join('') +
                         '<hr />';
                     break;
                 }
-            case 'Zmanim 30 Days':
+            case 'Zmanim - 30 Days':
                 {
-                    let currDate = Utils.nowAtLocation(settings.location),
-                        details;
-                        html += `${details.map(d => '"' + d.title + '"').join(',')}` + '\r\n';
-                    for (let i = 0; i < 30; i++) {
-                        currDate = currDate.addDays(1);
-                        details = currDate.getAllDetails(settings.location);
-                        html += details.map(d => '"' + d.value + '"').join(',') + '\r\n';
-                    }
+                    html += '<p>Please find attached a spreadsheet file with the Zmanim for <b>' +
+                        settings.location.Name +
+                        '</b> for the dates ' +
+                        Utils.toStringDate(this.jdate.getDate()) +
+                        ' to ' +
+                        Utils.toStringDate(this.jdate.addDays(30).getDate()) +
+                        '</p>';
                     break;
                 }
         }
@@ -233,6 +231,7 @@ export default class ExportData extends React.Component {
         });
     }
     render() {
+        const dateStr = 'Zmanim - ' + this.jdate.toShortString();
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
@@ -252,8 +251,8 @@ export default class ExportData extends React.Component {
                             <Picker.Item label='Kavuahs' value='Kavuahs' />
                             <Picker.Item label='Settings' value='Settings' />
                             <Picker.Item label='Flagged Dates' value='Flagged Dates' />
-                            <Picker.Item label="Zmanim - Today" value='Zmanim Today' />
-                            <Picker.Item label="Zmanim - 30 days" value='Zmanim 30 Days' />
+                            <Picker.Item label={dateStr} value={dateStr} />
+                            <Picker.Item label="Zmanim - 30 days" value='Zmanim - 30 Days' />
                         </Picker>
                     </View>
                     <View style={{
@@ -261,7 +260,6 @@ export default class ExportData extends React.Component {
                         backgroundColor: '#f1f1ff',
                         borderRadius: 6,
                         margin: 10,
-                        fontSize: 9,
                         borderWidth: 1,
                         borderColor: '#88b'
                     }}>

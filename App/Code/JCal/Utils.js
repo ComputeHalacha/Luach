@@ -306,6 +306,16 @@ export default class Utils {
         return new Date(now.setHours(now.getHours() + israelTimeOffset));
     }
     /**
+     * Adds the given number of days to the given javascript date and returns the new date
+     * @param {Date} sdate
+     * @param {Number} days
+     */
+    static addDaysToSdate(sdate, days) {
+        const dat = new Date(sdate.valueOf());
+        dat.setDate(dat.getDate() + days);
+        return dat;
+    }
+    /**
      * Compares two js dates to se if they both refer to the same day - time is ignored.
      * @param {Date} sdate1
      * @param {Date} sdate2
