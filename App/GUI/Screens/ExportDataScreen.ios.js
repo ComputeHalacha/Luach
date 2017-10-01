@@ -69,7 +69,7 @@ export default class ExportData extends React.Component {
                         '"Show Ignored Kavuahs","No Flags Right After Entry","Hide Help","Require PIN"\r\n' +
                         `"${settings.location.Name}","${yon(settings.showOhrZeruah)}"` +
                         `,"${yon(settings.onahBeinunis24Hours)}","${yon(settings.keepThirtyOne)}","${yon(settings.keepLongerHaflagah)}"` +
-                        `,"${yon(settings.cheshbonKavuahByCheshbon)}","${yon(settings.haflagaOfOnahs)}"` +
+                        `,"${yon(settings.dilugChodeshPastEnds)}","${yon(settings.haflagaOfOnahs)}"` +
                         `,"${yon(settings.kavuahDiffOnahs)}","${settings.numberMonthsAheadToWarn.toString()}"` +
                         `,"${yon(settings.calcKavuahsOnNewEntry)}","${yon(settings.showEntryFlagOnHome)}"` +
                         `,"${yon(settings.showProbFlagOnHome)}","${settings.navigateBySecularDate ? 'Secular' : 'Jewish'} Date"` +
@@ -85,10 +85,16 @@ export default class ExportData extends React.Component {
                         }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
                 }
                 break;
+            case 'Zmanim_Today':
+
+                break;
+            case 'Zmanim_30':
+                break;
         }
         return csv;
     }
     getHtmlText() {
+        const settings = this.appData.Settings;
         let counter = 0,
             html = `<html><head><title>Luach - Export Data</title></head>
                     <body style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
@@ -167,14 +173,13 @@ export default class ExportData extends React.Component {
                 break;
             case 'Settings':
                 {
-                    const settings = this.appData.Settings;
                     html += '<tr><td>' +
                         `<p><b>Location</b><br />${settings.location.Name}<hr /></p>` +
                         `<p><b>Flag previous onah (The "Ohr Zaruah")</b><br />${yon(settings.showOhrZeruah)}<hr /></p>` +
                         `<p><b>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours</b><br />${yon(settings.onahBeinunis24Hours)}<hr /></p>` +
                         `<p><b>Keep day Thirty One for Onah Beinonis</b><br />${yon(settings.keepThirtyOne)}<hr /></p>` +
                         `<p><b>Haflaga is only cancelled by a longer one</b><br />${yon(settings.keepLongerHaflagah)}<hr /></p>` +
-                        `<p><b>Continue incrementing Dilug Yom Hachodesh Kavuahs into another month</b><br />${yon(settings.cheshbonKavuahByCheshbon)}<hr /></p>` +
+                        `<p><b>Continue incrementing Dilug Yom Hachodesh Kavuahs into another month</b><br />${yon(settings.dilugChodeshPastEnds)}<hr /></p>` +
                         `<p><b>Calculate Haflagas by counting Onahs</b><br />${yon(settings.haflagaOfOnahs)}<hr /></p>` +
                         `<p><b>Flag Kavuahs even if not all the same Onah</b><br />${yon(settings.kavuahDiffOnahs)}<hr /></p>` +
                         `<p><b>Number of Months ahead to warn</b><br />${settings.numberMonthsAheadToWarn.toString()}<hr /></p>` +
@@ -206,6 +211,22 @@ export default class ExportData extends React.Component {
                             </tr>`;
                 }
                 break;
+            case 'Zmanim_Today':
+                {
+                    const today = Utils.nowAtLocation(settings.location),
+                        details = today.getAllDetails(settings.location);
+                    html += '<tr style="background-color:#e1e1ff;"><td colspan="2">' +
+                        '<b>Zmanim for ' + settings.location.Name +
+                        '</b></td></tr>';
+                    details.map(d => `<tr><td>${d.title}</td><td>${d.value}</td></tr>`).join('');
+                    break;
+        }
+            case 'Zmanim_30':
+                {
+                    const today = Utils.nowAtLocation(settings.location),
+                        details = today.getAllDetails(settings.location);
+                    break;
+                }
         }
         html += '</table></body></html>';
         return html;
@@ -278,6 +299,12 @@ export default class ExportData extends React.Component {
                             </Option>
                             <Option value='Flagged Dates'>
                                 Flagged Dates
+                            </Option>
+                            <Option value='Zmanim_Today'>
+                                Zmanim - Today
+                            </Option>
+                            <Option value='Zmanim_30'>
+                                Zmanim - 30 days
                             </Option>
                         </Select>
                     </View>

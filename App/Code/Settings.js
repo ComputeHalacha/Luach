@@ -14,10 +14,7 @@ export default class Settings {
          *  even if there was another Entry in middle
          *  Also causes to keep flagging any haflaga that was not surpassed afterwards. */
         this.keepLongerHaflagah = !!args.keepLongerHaflagah;
-        /** This following one is misnamed.
-         * It means keep flagging Kavuags of Dilug Yom Hachodesh
-         * even after they reach the beginning or the end of the month */
-        this.cheshbonKavuahByCheshbon = setDefault(args.cheshbonKavuahByCheshbon, true);
+        this.dilugChodeshPastEnds = setDefault(args.dilugChodeshPastEnds, true);
         this.haflagaOfOnahs = !!args.haflagaOfOnahs;
         this.kavuahDiffOnahs = !!args.kavuahDiffOnahs;
         this.calcKavuahsOnNewEntry = setDefault(args.calcKavuahsOnNewEntry, true);
@@ -46,7 +43,7 @@ export default class Settings {
             this.onahBeinunis24Hours === other.onahBeinunis24Hours &&
             this.numberMonthsAheadToWarn === other.numberMonthsAheadToWarn &&
             this.keepLongerHaflagah === other.keepLongerHaflagah &&
-            this.cheshbonKavuahByCheshbon === other.cheshbonKavuahByCheshbon &&
+            this.dilugChodeshPastEnds === other.dilugChodeshPastEnds &&
             this.haflagaOfOnahs === other.haflagaOfOnahs &&
             this.kavuahDiffOnahs === other.kavuahDiffOnahs &&
             this.calcKavuahsOnNewEntry === other.calcKavuahsOnNewEntry &&

@@ -114,9 +114,10 @@ export default class SingleDayDisplay extends React.PureComponent {
             dailyInfos = jdate.getHolidays(location.Israel),
             dailyInfoText = dailyInfos.length > 0 &&
                 <Text>{dailyInfos.join('\n')}</Text>,
+            suntimesMishor = Zmanim.getSunTimes(jdate, location, false),
             suntimes = Zmanim.getSunTimes(jdate, location, true),
-            sunrise = suntimes && suntimes.sunrise ?
-                Utils.getTimeString(suntimes.sunrise) : 'Sun does not rise',
+            sunrise = suntimesMishor && suntimesMishor.sunrise ?
+                Utils.getTimeString(suntimesMishor.sunrise) : 'Sun does not rise',
             sunset = suntimes && suntimes.sunset ?
                 Utils.getTimeString(suntimes.sunset) : 'Sun does not set',
             candleLighting = jdate.hasCandleLighting() &&

@@ -68,7 +68,7 @@ export default class jDate {
             }
             else {
                 throw 'jDate constructor: The given string "' + arg +
-                    '" cannot be parsed into a Date';
+                '" cannot be parsed into a Date';
             }
         }
         else if (isNumber(arg)) {
@@ -395,7 +395,11 @@ export default class jDate {
     getDafyomiHeb() {
         return DafYomi.toStringHeb(this);
     }
-
+    /**
+     * Gets a list of the current date's daily information and zmanim in a flowing list
+     * @param {Location} location
+     * @returns {[{title:string, value:string, important:boolean}]}
+     */
     getAllDetails(location) {
         const list = [],
             sdate = this.getDate(),
@@ -413,6 +417,7 @@ export default class jDate {
                 Zmanim.getShaaZmanisFromSunTimes(suntimesMishor),
             shaaZmanis90 = sunriseMishor && sunsetMishor &&
                 Zmanim.getShaaZmanisFromSunTimes(suntimesMishor, 90),
+            feet = (location.Elevation * 3.28084).toFixed(0).toString() + ' ft.',
             addItem = (title, value, important) => list.push({ title, value, important });
 
         addItem('Jewish Date', this.toString());
@@ -433,19 +438,26 @@ export default class jDate {
             Utils.getTimeString(mishorNeg90, false, true));
         addItem('Alos Hashachar - 72',
             Utils.getTimeString(Utils.addMinutes(sunriseMishor, -72), false, true));
-        addItem('Netz Hachama - Sunrise',
-            sunrise ? Utils.getTimeString(sunrise, false, true) : 'Sun does not rise', true);
-        if (Utils.totalMinutes(sunrise) !== Utils.totalMinutes(sunriseMishor)) {
-            addItem('Sunrise at sea level',
-                Utils.getTimeString(sunriseMishor, false, true));
+        if (!sunriseMishor) {
+            addItem('Netz Hachama - Sunrise', 'The sun does not rise', true);
         }
-        addItem('Krias Shma - MG"A',
+        else if (Utils.totalMinutes(sunrise) === Utils.totalMinutes(sunriseMishor)) {
+            addItem('Netz Hachama - Sunrise',
+                Utils.getTimeString(sunrise, false, true), true);
+        }
+        else {
+            addItem('Sunrise at ' + feet,
+                Utils.getTimeString(sunrise, false, true));
+            addItem('Netz Hachama (sea level)',
+                Utils.getTimeString(sunriseMishor, false, true), true);
+        }
+        addItem('Krias Shma - MG\'A',
             Utils.getTimeString(Utils.addMinutes(mishorNeg90, Math.floor(shaaZmanis90 * 3))));
-        addItem('Krias Shma - GR"A',
+        addItem('Krias Shma - GR\'A',
             Utils.getTimeString(Utils.addMinutes(sunriseMishor, Math.floor(shaaZmanis * 3))));
-        addItem('Zeman Tefillah - MG"A',
+        addItem('Zeman Tefillah - MG\'A',
             Utils.getTimeString(Utils.addMinutes(mishorNeg90, Math.floor(shaaZmanis90 * 4))));
-        addItem('Zeman Tefillah - GR"A',
+        addItem('Zeman Tefillah - GR\'A',
             Utils.getTimeString(Utils.addMinutes(sunriseMishor, Math.floor(shaaZmanis * 4))));
         if (this.Month === 1 && this.Day === 14) {
             const neg90 = Utils.addMinutes(sunrise, -90);
@@ -465,30 +477,149 @@ export default class jDate {
                 Utils.getTimeString(Utils.addMinutes(sunriseMishor, (shaaZmanis * 10.75))));
         }
         if (!sunset) {
-            addItem('Shkias Hachama - sunset', 'The sun does not set', true);
+            addItem('Shkias Hachama - Sunset', 'The sun does not set', true);
         }
         else {
             if (Utils.totalMinutes(sunset) === Utils.totalMinutes(sunsetMishor)) {
-                addItem('Shkias Hachama - sunset',
+                addItem('Shkias Hachama - Sunset',
                     Utils.getTimeString(sunset), true);
             }
             else {
                 addItem('Sunset at Sea Level', Utils.getTimeString(sunsetMishor));
-                addItem('Shkiah at ' + (location.Elevation * 3.28084).toString() + ' ft.',
-                    Utils.getTimeString(sunset), true);
+                addItem('Shkiah (at ' + feet + ')', Utils.getTimeString(sunset), true);
             }
             addItem('Nightfall 45',
                 Utils.getTimeString(Utils.addMinutes(sunset, 45)));
             addItem('Rabbeinu Tam',
                 Utils.getTimeString(Utils.addMinutes(sunset, 72)));
-            addItem('72 "Zmaniot"',
+            addItem('72 \'Zmaniot\'',
                 Utils.getTimeString(Utils.addMinutes(sunset, (shaaZmanis * 1.2))));
-            addItem('72 "Zmaniot MA"',
+            addItem('72 \'Zmaniot MA\'',
                 Utils.getTimeString(Utils.addMinutes(sunset, (shaaZmanis90 * 1.2))));
         }
         return list;
     }
+    /**
+     *  Gets a list of the current date's daily information and zmanim in a strict list - every date will return the same number of items.
+     * This is useful for putting the list into a csv file etc.
+     * The Daily Infos are all bunched totether in one item titled: "Daily Info"
+     * @param {Location} location
+     * @returns {[{title:string, value:string}]}
+     */
+    getAllDetailsList(location) {
+        const list = [],
+            sdate = this.getDate(),
+            dailyInfos = this.getHolidays(location.Israel),
+            { sunrise, sunset } = this.getSunriseSunset(location),
+            suntimesMishor = this.getSunriseSunset(location, true),
+            sunriseMishor = suntimesMishor.sunrise,
+            sunsetMishor = suntimesMishor.sunset,
+            candles = this.hasCandleLighting() &&
+                Zmanim.getCandleLightingFromSunTimes({ sunrise, sunset }, location),
+            mishorNeg90 = Utils.addMinutes(sunriseMishor, -90),
+            chatzos = sunriseMishor && sunsetMishor &&
+                Zmanim.getChatzosFromSuntimes(suntimesMishor),
+            shaaZmanis = sunriseMishor && sunsetMishor &&
+                Zmanim.getShaaZmanisFromSunTimes(suntimesMishor),
+            shaaZmanis90 = sunriseMishor && sunsetMishor &&
+                Zmanim.getShaaZmanisFromSunTimes(suntimesMishor, 90),
+            feet = (location.Elevation * 3.28084).toFixed(0).toString() + ' ft.',
+            addItem = (title, value) => {
+                const item = { title, value };
+                list.push(item);
+                return item;
+            };
 
+        addItem('Jewish Date', this.toString());
+        addItem('Secular Date', Utils.toStringDate(sdate, true));
+        const infos = addItem('Daily Info', '');
+        for (let h of dailyInfos) {
+            infos.value += h + ', ';
+        }
+        if (this.Month === 1 && this.Day === 14) {
+            const neg90 = Utils.addMinutes(sunrise, -90);
+            infos.value +=
+                'Stop eating Chometz: ' +
+                Utils.getTimeString(Utils.addMinutes(neg90, Math.floor(shaaZmanis90 * 4))) + ', ' +
+                'Burn Chometz before: ' +
+                Utils.getTimeString(Utils.addMinutes(neg90, Math.floor(shaaZmanis90 * 5))) + ', ';
+        }
+        if (this.hasEiruvTavshilin()) {
+            infos.value += 'Eiruv Tavshilin, ';
+        }
+        //Remove trailing comma
+        infos.value = infos.value.replace(/,\s*$/, '');
+        addItem('Candle Lighting', candles ? Utils.getTimeString(candles) : '');
+        addItem('Parsha of the week',
+            this.getSedra(location.Israel).map((s) => s.eng).join(' - '));
+        addItem('Daf Yomi', this.getDafYomi());
+        addItem('Alos Hashachar - 90',
+            Utils.getTimeString(mishorNeg90, false, true));
+        addItem('Alos Hashachar - 72',
+            Utils.getTimeString(Utils.addMinutes(sunriseMishor, -72), false, true));
+        if (!sunriseMishor) {
+            addItem('Netz Hachama - Sunrise', 'The sun does not rise');
+            addItem('Netz Hachama (sea level)', 'The sun does not rise');
+        }
+        else if (Utils.totalMinutes(sunrise) === Utils.totalMinutes(sunriseMishor)) {
+            addItem('Netz Hachama - Sunrise',
+                Utils.getTimeString(sunrise, false, true), true);
+            addItem('Netz Hachama (sea level)',
+                Utils.getTimeString(sunriseMishor, false, true), true);
+        }
+        else {
+            addItem('Sunrise at ' + feet,
+                Utils.getTimeString(sunrise, false, true));
+            addItem('Netz Hachama (sea level)',
+                Utils.getTimeString(sunriseMishor, false, true), true);
+        }
+        addItem('Krias Shma - MG\'A',
+            Utils.getTimeString(Utils.addMinutes(mishorNeg90, Math.floor(shaaZmanis90 * 3))));
+        addItem('Krias Shma - GR\'A',
+            Utils.getTimeString(Utils.addMinutes(sunriseMishor, Math.floor(shaaZmanis * 3))));
+        addItem('Zeman Tefillah - MG\'A',
+            Utils.getTimeString(Utils.addMinutes(mishorNeg90, Math.floor(shaaZmanis90 * 4))));
+        addItem('Zeman Tefillah - GR\'A',
+            Utils.getTimeString(Utils.addMinutes(sunriseMishor, Math.floor(shaaZmanis * 4))));
+        if (sunrise && sunset) {
+            addItem('Chatzos - Day & Night',
+                Utils.getTimeString(chatzos));
+            addItem('Mincha Gedolah',
+                Utils.getTimeString(Utils.addMinutes(chatzos, (shaaZmanis * 0.5))));
+            addItem('Mincha Ktanah',
+                Utils.getTimeString(Utils.addMinutes(sunriseMishor, (shaaZmanis * 9.5))));
+            addItem('Plag Hamincha',
+                Utils.getTimeString(Utils.addMinutes(sunriseMishor, (shaaZmanis * 10.75))));
+        }
+        else {
+            addItem('Chatzos - Day & Night', 'The sun does not rise');
+            addItem('Mincha Gedolah', 'The sun does not rise');
+            addItem('Mincha Ktanah', 'The sun does not rise');
+            addItem('Plag Hamincha', 'The sun does not rise');
+        }
+        if (!sunset) {
+            addItem('Shkias Hachama - Sunset', 'The sun does not set');
+            addItem('Sunset at Sea Level', 'The sun does not set');
+        }
+        else {
+            addItem('Sunset at Sea Level', Utils.getTimeString(sunsetMishor));
+            if (feet) {
+                addItem('Shkiah (at ' + feet + ')', Utils.getTimeString(sunset));
+            }
+            else {
+                addItem('Shkias Hachama - Sunset', Utils.getTimeString(sunset));
+            }
+            addItem('Nightfall 45',
+                Utils.getTimeString(Utils.addMinutes(sunset, 45)));
+            addItem('Rabbeinu Tam',
+                Utils.getTimeString(Utils.addMinutes(sunset, 72)));
+            addItem('72 \'Zmaniot\'',
+                Utils.getTimeString(Utils.addMinutes(sunset, (shaaZmanis * 1.2))));
+            addItem('72 \'Zmaniot MA\'',
+                Utils.getTimeString(Utils.addMinutes(sunset, (shaaZmanis90 * 1.2))));
+        }
+        return list;
+    }
 
     /**
     *  Converts its argument/s to a Jewish Date.
@@ -787,13 +918,13 @@ export default class jDate {
                 break;
             case 2: //Iyar
                 if (dayOfWeek === 1 && jDay > 2 && jDay < 12) {
-                    list.push(!hebrew ? 'Baha"b' : 'תענית שני קמא');
+                    list.push(!hebrew ? 'Bahab' : 'תענית שני קמא');
                 }
                 else if (dayOfWeek === 4 && jDay > 5 && jDay < 13) {
-                    list.push(!hebrew ? 'Baha"b' : 'תענית חמישי');
+                    list.push(!hebrew ? 'Bahab' : 'תענית חמישי');
                 }
                 else if (dayOfWeek === 1 && jDay > 9 && jDay < 17) {
-                    list.push(!hebrew ? 'Baha"b' : 'תענית שני בתרא');
+                    list.push(!hebrew ? 'Bahab' : 'תענית שני בתרא');
                 }
                 if (jDay === 14)
                     list.push(!hebrew ? 'Pesach Sheini' : 'פסח שני');
@@ -866,13 +997,13 @@ export default class jDate {
                 break;
             case 8: //Cheshvan
                 if (dayOfWeek === 1 && jDay > 2 && jDay < 12) {
-                    list.push(!hebrew ? 'Baha"b' : 'תענית שני קמא');
+                    list.push(!hebrew ? 'Bahab' : 'תענית שני קמא');
                 }
                 else if (dayOfWeek === 4 && jDay > 5 && jDay < 13) {
-                    list.push(!hebrew ? 'Baha"b' : 'תענית חמישי');
+                    list.push(!hebrew ? 'Bahab' : 'תענית חמישי');
                 }
                 else if (dayOfWeek === 1 && jDay > 9 && jDay < 17) {
-                    list.push(!hebrew ? 'Baha"b' : 'תענית שני בתרא');
+                    list.push(!hebrew ? 'Bahab' : 'תענית שני בתרא');
                 }
                 if (jDay === 7 && israel)
                     list.push(!hebrew ? 'V\'sain Tal U\'Matar' : 'ותן טל ומטר');

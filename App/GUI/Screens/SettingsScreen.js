@@ -84,7 +84,7 @@ export default class SettingsScreen extends Component {
             onahBeinunis24Hours = settings.onahBeinunis24Hours,
             numberMonthsAheadToWarn = (settings.numberMonthsAheadToWarn) || 12,
             keepLongerHaflagah = setDefault(settings.keepLongerHaflagah, true),
-            cheshbonKavuahByCheshbon = setDefault(settings.cheshbonKavuahByCheshbon, true),
+            dilugChodeshPastEnds = setDefault(settings.dilugChodeshPastEnds, true),
             haflagaOfOnahs = settings.haflagaOfOnahs,
             kavuahDiffOnahs = settings.kavuahDiffOnahs,
             calcKavuahsOnNewEntry = setDefault(settings.calcKavuahsOnNewEntry, true),
@@ -152,8 +152,8 @@ export default class SettingsScreen extends Component {
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Continue incrementing Dilug Yom Hachodesh Kavuahs into another month</Text>
                             <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('cheshbonKavuahByCheshbon', value)}
-                                value={!!cheshbonKavuahByCheshbon} />
+                                onValueChange={value => this.changeSetting('dilugChodeshPastEnds', value)}
+                                value={!!dilugChodeshPastEnds} />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Calculate Haflagas by counting Onahs</Text>

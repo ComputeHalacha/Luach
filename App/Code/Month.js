@@ -58,6 +58,11 @@ export default class Month {
         }
         return txt;
     }
+    static getFirstjDate(weeks) {
+        const firstWeek = weeks[0],
+            firstDay = firstWeek[firstWeek.findIndex(d => d)];
+        return firstDay.jdate;
+    }
     /**
      * Gets a 2 dimentional array for all the days in the month grouped by week.
      * Format is [weeks][days] where days are each an object:

@@ -5,6 +5,7 @@ import Mailer from 'react-native-mail';
 import SideMenu from '../Components/SideMenu';
 import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
+import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
 const exportPath = RNFS.ExternalDirectoryPath;
@@ -17,9 +18,11 @@ export default class ExportData extends React.Component {
         super(props);
         this.navigator = this.props.navigation;
 
-        const { appData, dataSet } = this.navigator.state.params;
+        const { appData, dataSet, jdate } = this.navigator.state.params;
 
         this.appData = appData;
+        this.jdate = jdate || Utils.nowAtLocation(this.appData.Settings.location);
+        this.sdate = this.jdate.getDate();
         this.state = { dataSet: (dataSet || 'Entries') };
         this.getFileName = this.getFileName.bind(this);
         this.doExport = this.doExport.bind(this);
@@ -28,9 +31,11 @@ export default class ExportData extends React.Component {
         this.getHtmlText = this.getHtmlText.bind(this);
     }
     getFileName() {
-        return `${this.state.dataSet}-${(new Date()).toLocaleString().replace(/[\/,: ]/gi, '-')}.csv`;
+        const dateString = this.sdate.toLocaleString().replace(/[\/,: ]/gi, '-');
+        return `${this.state.dataSet}-${dateString}.csv`;
     }
     getCsvText() {
+        const settings = this.appData.Settings;
         let csv = '';
         switch (this.state.dataSet) {
             case 'Entries':
@@ -59,7 +64,6 @@ export default class ExportData extends React.Component {
                 break;
             case 'Settings':
                 {
-                    const settings = this.appData.Settings;
                     csv = '"Location","Ohr Zeruah","Onah Beinunis 24 Hours","Day Thirty One",' +
                         '"Shorter Haflagah - No Cancel","Dilug Yom Hachodesh Kavuahs Another Month",' +
                         '"Haflaga Of Onahs","Haflaga of Diff Onahs","Months Ahead To Warn","Calc Kavuahs New Entry",' +
@@ -67,7 +71,7 @@ export default class ExportData extends React.Component {
                         '"Show Ignored Kavuahs","No Flags Right After Entry","Hide Help","Require PIN"\r\n' +
                         `"${settings.location.Name}","${yon(settings.showOhrZeruah)}"` +
                         `,"${yon(settings.onahBeinunis24Hours)}","${yon(settings.keepThirtyOne)}","${yon(settings.keepLongerHaflagah)}"` +
-                        `,"${yon(settings.cheshbonKavuahByCheshbon)}","${yon(settings.haflagaOfOnahs)}"` +
+                        `,"${yon(settings.dilugChodeshPastEnds)}","${yon(settings.haflagaOfOnahs)}"` +
                         `,"${yon(settings.kavuahDiffOnahs)}","${settings.numberMonthsAheadToWarn.toString()}"` +
                         `,"${yon(settings.calcKavuahsOnNewEntry)}","${yon(settings.showEntryFlagOnHome)}"` +
                         `,"${yon(settings.showProbFlagOnHome)}","${settings.navigateBySecularDate ? 'Secular' : 'Jewish'} Date"` +
@@ -83,17 +87,37 @@ export default class ExportData extends React.Component {
                         }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
                 }
                 break;
+            case 'Zmanim - ' + this.jdate.toShortString():
+                {
+                    const details = this.jdate.getAllDetails(settings.location);
+                    csv += `"Location",${details.map(d => '"' + d.title + '"').join(',')}` + '\r\n' +
+                        `"${settings.location.Name}",${details.map(d => '"' + d.value + '"').join(',')}`;
+                    break;
+        }
+            case 'Zmanim - 30 Days':
+                {
+                    let currDate = this.jdate,
+                        details = currDate.getAllDetailsList(settings.location);
+                    csv += `"Location: ${settings.location.Name}"\r\n${details.map(d => '"' + d.title + '"').join(',')}\r\n`;
+                    for (let i = 0; i < 30; i++) {
+                        csv += details.map(d => '"' + d.value + '"').join(',') + '\r\n';
+                        currDate = currDate.addDays(1);
+                        details = currDate.getAllDetailsList(settings.location);
+                    }
+                    break;
+                }
         }
         return csv;
     }
     getHtmlText() {
+        const settings = this.appData.Settings;
         let counter = 0,
             html = `<div style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
                             <h1 style="color:#7777bb;">
                                 <font color="#7777bb">
                                     Data Export from Luach -
                                     ${this.state.dataSet} -
-                                    ${(new Date()).toLocaleDateString()}
+                                    ${this.sdate.toLocaleDateString()}
                                 </font>
                             </h1>
                             <hr />`;
@@ -122,13 +146,12 @@ export default class ExportData extends React.Component {
                 }
                 break;
             case 'Settings':
-                var settings = this.appData.Settings;
                 html += `<p><b>Location</b><br />${settings.location.Name}<hr /></p>` +
                     `<p><b>Flag previous onah (The "Ohr Zaruah")</b><br />${yon(settings.showOhrZeruah)}<hr /></p>` +
                     `<p><b>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours</b><br />${yon(settings.onahBeinunis24Hours)}<hr /></p>` +
                     `<p><b>Keep day Thirty One for Onah Beinonis</b><br />${yon(settings.keepThirtyOne)}<hr /></p>` +
                     `<p><b>Haflaga is only cancelled by a longer one</b><br />${yon(settings.keepLongerHaflagah)}<hr /></p>` +
-                    `<p><b>Continue incrementing Dilug Yom Hachodesh Kavuahs into another month</b><br />${yon(settings.cheshbonKavuahByCheshbon)}<hr /></p>` +
+                    `<p><b>Continue incrementing Dilug Yom Hachodesh Kavuahs into another month</b><br />${yon(settings.dilugChodeshPastEnds)}<hr /></p>` +
                     `<p><b>Calculate Haflagas by counting Onahs</b><br />${yon(settings.haflagaOfOnahs)}<hr /></p>` +
                     `<p><b>Flag Kavuahs even if not all the same Onah</b><br />${yon(settings.kavuahDiffOnahs)}<hr /></p>` +
                     `<p><b>Number of Months ahead to warn</b><br />${settings.numberMonthsAheadToWarn.toString()}<hr /></p>` +
@@ -148,6 +171,25 @@ export default class ExportData extends React.Component {
                     html += `<p>${counter.toString()}. ${probOnah.toString().replace(/\n/g, '<br />&nbsp;&nbsp;')}</p><hr />`;
                 }
                 break;
+            case 'Zmanim - ' + this.jdate.toShortString():
+                {
+                    const details = this.jdate.getAllDetails(settings.location);
+                    html += `<p><b>Location</b><br />${settings.location.Name}<hr /></p>` +
+                        details.map(d => `<p><b>${d.title}</b><br />${d.value}</hr></p>`).join('') +
+                        '<hr />';
+                    break;
+        }
+            case 'Zmanim - 30 Days':
+                {
+                    html += '<p>Please find attached a spreadsheet file with the Zmanim for <b>' +
+                        settings.location.Name +
+                        '</b> for the dates ' +
+                        Utils.toStringDate(this.sdate) +
+                        ' to ' +
+                        Utils.toStringDate(this.jdate.addDays(30).getDate()) +
+                        '</p>';
+                    break;
+                }
         }
         html += '</div>';
         return html;
@@ -166,7 +208,10 @@ export default class ExportData extends React.Component {
     }
     async doEmail() {
         const filePath = await this.doExport(),
-            subject = 'Luach Export Data - ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
+            subject = 'Luach Export Data - ' +
+                this.state.dataSet +
+                ' - ' +
+                this.sdate.toLocaleDateString(),
             html = this.getHtmlText();
         log(html);
         Mailer.mail({
@@ -188,6 +233,7 @@ export default class ExportData extends React.Component {
         });
     }
     render() {
+        const dateStr = 'Zmanim - ' + this.jdate.toShortString();
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
@@ -207,6 +253,8 @@ export default class ExportData extends React.Component {
                             <Picker.Item label='Kavuahs' value='Kavuahs' />
                             <Picker.Item label='Settings' value='Settings' />
                             <Picker.Item label='Flagged Dates' value='Flagged Dates' />
+                            <Picker.Item label={dateStr} value={dateStr} />
+                            <Picker.Item label="Zmanim - 30 days" value='Zmanim - 30 Days' />
                         </Picker>
                     </View>
                     <View style={{
@@ -214,7 +262,6 @@ export default class ExportData extends React.Component {
                         backgroundColor: '#f1f1ff',
                         borderRadius: 6,
                         margin: 10,
-                        fontSize: 9,
                         borderWidth: 1,
                         borderColor: '#88b'
                     }}>
