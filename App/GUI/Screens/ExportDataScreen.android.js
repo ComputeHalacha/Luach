@@ -5,6 +5,7 @@ import Mailer from 'react-native-mail';
 import SideMenu from '../Components/SideMenu';
 import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
+import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
@@ -18,11 +19,13 @@ export default class ExportData extends React.Component {
         super(props);
         this.navigator = this.props.navigation;
 
-        const { appData, dataSet, jdate } = this.navigator.state.params;
+        const { appData, dataSet, jdate, sdate } = this.navigator.state.params;
 
         this.appData = appData;
         this.jdate = jdate || Utils.nowAtLocation(this.appData.Settings.location);
-        this.sdate = this.jdate.getDate();
+        this.sdate = sdate || this.jdate.getDate();
+        this.sdateString = Utils.sMonthsEng[this.sdate.getMonth()] + ' ' +
+            this.sdate.getFullYear().toString();
         this.state = { dataSet: (dataSet || 'Entries') };
         this.getFileName = this.getFileName.bind(this);
         this.doExport = this.doExport.bind(this);
@@ -94,12 +97,26 @@ export default class ExportData extends React.Component {
                         `"${settings.location.Name}",${details.map(d => '"' + d.value + '"').join(',')}`;
                     break;
                 }
-            case 'Zmanim - 30 Days':
+            case 'Zmanim - ' + this.jdate.monthName():
                 {
-                    let currDate = this.jdate,
+                    const month = this.jdate.Month;
+                    let currDate = new jDate(this.jdate.Year, month, 1),
                         details = currDate.getAllDetailsList(settings.location);
                     csv += `"Location: ${settings.location.Name}"\r\n${details.map(d => '"' + d.title + '"').join(',')}\r\n`;
-                    for (let i = 0; i < 30; i++) {
+                    while (currDate.Month === month) {
+                        csv += details.map(d => '"' + d.value + '"').join(',') + '\r\n';
+                        currDate = currDate.addDays(1);
+                        details = currDate.getAllDetailsList(settings.location);
+                    }
+                    break;
+                }
+            case 'Zmanim - ' + this.sdateString:
+                {
+                    const month = this.sdate.getMonth();
+                    let currDate = new jDate(new Date(this.sdate.getFullYear(), month, 1)),
+                        details = currDate.getAllDetailsList(settings.location);
+                    csv += `"Location: ${settings.location.Name}"\r\n${details.map(d => '"' + d.title + '"').join(',')}\r\n`;
+                    while (currDate.getDate().getMonth() === month) {
                         csv += details.map(d => '"' + d.value + '"').join(',') + '\r\n';
                         currDate = currDate.addDays(1);
                         details = currDate.getAllDetailsList(settings.location);
@@ -179,15 +196,22 @@ export default class ExportData extends React.Component {
                         '<hr />';
                     break;
                 }
-            case 'Zmanim - 30 Days':
+            case 'Zmanim - ' + this.jdate.monthName():
                 {
-                    html += '<p>Please find attached a spreadsheet file with the Zmanim for <b>' +
+                    html += '<p>Please find attached a spreadsheet file with the Zmanim \
+                    for the month of <b>' + this.jdate.monthName() +
+                        '</b> for <b>' +
                         settings.location.Name +
-                        '</b> for the dates ' +
-                        Utils.toStringDate(this.sdate) +
-                        ' to ' +
-                        Utils.toStringDate(this.jdate.addDays(30).getDate()) +
-                        '</p>';
+                        '</b></p>';
+                    break;
+                }
+            case 'Zmanim - ' + this.sdateString:
+                {
+                    html += '<p>Please find attached a spreadsheet file with the Zmanim \
+                    for the month of <b>' + this.sdateString +
+                        '</b> for <b>' +
+                        settings.location.Name +
+                        '</b></p>';
                     break;
                 }
         }
@@ -233,7 +257,10 @@ export default class ExportData extends React.Component {
         });
     }
     render() {
-        const dateStr = 'Zmanim - ' + this.jdate.toShortString();
+        const dateStr = 'Zmanim - ' + this.jdate.toShortString(),
+            jMonthStr = 'Zmanim - ' + this.jdate.monthName(),
+            sMonthStr = 'Zmanim - ' + this.sdateString;
+
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
@@ -254,7 +281,8 @@ export default class ExportData extends React.Component {
                             <Picker.Item label='Settings' value='Settings' />
                             <Picker.Item label='Flagged Dates' value='Flagged Dates' />
                             <Picker.Item label={dateStr} value={dateStr} />
-                            <Picker.Item label="Zmanim - 30 days" value='Zmanim - 30 Days' />
+                            <Picker.Item label={jMonthStr} value={jMonthStr} />
+                            <Picker.Item label={sMonthStr} value={sMonthStr} />
                         </Picker>
                     </View>
                     <View style={{

@@ -260,8 +260,7 @@ export default class jDate {
         return (hideDayOfWeek ? (dontCapitalize ? 't' : 'T') : Utils.dowEng[this.getDayOfWeek()] + ', t') +
             'he ' +
             Utils.toSuffixed(this.Day) + ' of ' +
-            Utils.jMonthsEng[this.Month] + ' ' +
-            this.Year.toString();
+            this.monthName();
     }
 
     /**
@@ -273,6 +272,16 @@ export default class jDate {
             Utils.jMonthsEng[this.Month] + ' ' +
             this.Day.toString()) + ', ' +
             this.Year.toString();
+    }
+
+    /**
+     * Returns the current Jewish date in the format "Nissan 5778"
+     * @param {bool} showYear - show the year number?
+     */
+    monthName(showYear = true) {
+        return Utils.jMonthsEng[this.Month] +
+            (showYear ?
+                (' ' + this.Year.toString()) : '');
     }
 
     /**Returns the current Jewish date in the format: יום חמישי כ"א כסלו תשע"ו.*/

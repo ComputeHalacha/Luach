@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image,TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, TouchableHighlight } from 'react-native';
 import { Icon, Grid, Row, Col } from 'react-native-elements';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { getScreenWidth, goHomeToday } from '../../Code/GeneralUtils';
@@ -22,7 +22,13 @@ export default class MonthViewScreen extends React.PureComponent {
                         {
                             appData,
                             jdate: MonthViewScreen.jdate,
-                            dataSet: 'Zmanim - 30 Days'
+                            sdate: MonthViewScreen.sdate,
+                            dataSet: 'Zmanim - ' +
+                            (MonthViewScreen.isJdate ?
+                                MonthViewScreen.jdate.monthName() :
+                                Utils.sMonthsEng[MonthViewScreen.sdate.getMonth()] + ' ' +
+                                MonthViewScreen.sdate.getFullYear().toString()
+                            )
                         })}>
                 <View style={{ marginRight: 10 }}>
                     <Icon name='import-export'
@@ -35,6 +41,8 @@ export default class MonthViewScreen extends React.PureComponent {
     };
 
     static jdate;
+    static sdate;
+    static isJdate;
 
     constructor(props) {
         super(props);
@@ -200,8 +208,11 @@ export default class MonthViewScreen extends React.PureComponent {
         </Col>);
     }
     render() {
-        const weeks = this.state.month.getAllDays();
-        MonthViewScreen.jdate = Month.getFirstjDate(weeks);
+        const weeks = this.state.month.getAllDays(),
+            firstDay = Month.getFirstDay(weeks);
+        MonthViewScreen.jdate = firstDay.jdate;
+        MonthViewScreen.sdate = firstDay.sdate;
+        MonthViewScreen.isJdate = this.state.month.isJdate;
         return <View style={GeneralStyles.container}>
             <View style={styles.headerView}>
                 <Text style={styles.headerText}>{Month.toString(weeks, this.state.month.isJdate)}</Text>
