@@ -32,8 +32,7 @@ export default class Month {
     }
     static toString(weeks, isJdate) {
         let txt = '',
-            firstWeek = weeks[0],
-            firstDay = firstWeek[firstWeek.findIndex(d => d)],
+            firstDay = Month.getFirstDay(weeks),
             firstJdate = firstDay.jdate,
             firstSdate = firstDay.sdate,
             lastWeek = weeks[weeks.length - 1],
@@ -58,10 +57,9 @@ export default class Month {
         }
         return txt;
     }
-    static getFirstjDate(weeks) {
-        const firstWeek = weeks[0],
-            firstDay = firstWeek[firstWeek.findIndex(d => d)];
-        return firstDay.jdate;
+    static getFirstDay(weeks) {
+        const firstWeek = weeks[0];
+        return firstWeek[firstWeek.findIndex(d => d)];
     }
     /**
      * Gets a 2 dimentional array for all the days in the month grouped by week.

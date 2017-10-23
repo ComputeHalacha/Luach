@@ -260,8 +260,7 @@ export default class jDate {
         return (hideDayOfWeek ? (dontCapitalize ? 't' : 'T') : Utils.dowEng[this.getDayOfWeek()] + ', t') +
             'he ' +
             Utils.toSuffixed(this.Day) + ' of ' +
-            Utils.jMonthsEng[this.Month] + ' ' +
-            this.Year.toString();
+            this.monthName();
     }
 
     /**
@@ -273,6 +272,16 @@ export default class jDate {
             Utils.jMonthsEng[this.Month] + ' ' +
             this.Day.toString()) + ', ' +
             this.Year.toString();
+    }
+
+    /**
+     * Returns the current Jewish date in the format "Nissan 5778"
+     * @param {bool} showYear - show the year number?
+     */
+    monthName(showYear = true) {
+        return Utils.jMonthsEng[this.Month] +
+            (showYear ?
+                (' ' + this.Year.toString()) : '');
     }
 
     /**Returns the current Jewish date in the format: יום חמישי כ"א כסלו תשע"ו.*/
@@ -917,13 +926,13 @@ export default class jDate {
                     list.push(!hebrew ? 'Last Day of Pesach' : 'אחרון של פסח');
                 break;
             case 2: //Iyar
-                if (dayOfWeek === 1 && jDay > 2 && jDay < 12) {
+                if (dayOfWeek === 1 && jDay > 3 && jDay < 13) {
                     list.push(!hebrew ? 'Bahab' : 'תענית שני קמא');
                 }
-                else if (dayOfWeek === 4 && jDay > 5 && jDay < 13) {
+                else if (dayOfWeek === 4 && jDay > 6 && jDay < 14) {
                     list.push(!hebrew ? 'Bahab' : 'תענית חמישי');
                 }
-                else if (dayOfWeek === 1 && jDay > 9 && jDay < 17) {
+                else if (dayOfWeek === 1 && jDay > 10 && jDay < 18) {
                     list.push(!hebrew ? 'Bahab' : 'תענית שני בתרא');
                 }
                 if (jDay === 14)
@@ -996,13 +1005,13 @@ export default class jDate {
                     list.push(!hebrew ? 'Simchas Torah' : 'שמחת תורה');
                 break;
             case 8: //Cheshvan
-                if (dayOfWeek === 1 && jDay > 2 && jDay < 12) {
+                if (dayOfWeek === 1 && jDay > 3 && jDay < 13) {
                     list.push(!hebrew ? 'Bahab' : 'תענית שני קמא');
                 }
-                else if (dayOfWeek === 4 && jDay > 5 && jDay < 13) {
+                else if (dayOfWeek === 4 && jDay > 6 && jDay < 14) {
                     list.push(!hebrew ? 'Bahab' : 'תענית חמישי');
                 }
-                else if (dayOfWeek === 1 && jDay > 9 && jDay < 17) {
+                else if (dayOfWeek === 1 && jDay > 10 && jDay < 18) {
                     list.push(!hebrew ? 'Bahab' : 'תענית שני בתרא');
                 }
                 if (jDay === 7 && israel)
