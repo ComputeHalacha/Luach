@@ -220,7 +220,7 @@ export default class ExportData extends React.Component {
                         '</b></td></tr>';
                     details.map(d => `<tr><td>${d.title}</td><td>${d.value}</td></tr>`).join('');
                     break;
-        }
+                }
             case 'Zmanim_30':
                 {
                     const today = Utils.nowAtLocation(settings.location),
@@ -245,25 +245,25 @@ export default class ExportData extends React.Component {
     async doEmail() {
         const filePath = await this.doExport(),
             subject = 'Luach - Export ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
-                html = this.getHtmlText();
-            log(html);
-            Mailer.mail({
-                subject: subject,
-                recipients: [],
-                ccRecipients: [],
-                bccRecipients: [],
-                body: html,
-                isHTML: true,
-                attachment: {
-                    path: filePath,
-                    type: 'csv',
-                    name: this.getFileName()
-                }
-            }, error => {
-                if (error) {
-                    popUpMessage('We are very sorry, but the email could not be sent.');
-                }
-            });
+            html = this.getHtmlText();
+        log(html);
+        Mailer.mail({
+            subject: subject,
+            recipients: [],
+            ccRecipients: [],
+            bccRecipients: [],
+            body: html,
+            isHTML: true,
+            attachment: {
+                path: filePath,
+                type: 'csv',
+                name: this.getFileName()
+            }
+        }, error => {
+            if (error) {
+                popUpMessage('We are very sorry, but the email could not be sent.');
+            }
+        });
     }
     render() {
         return <View style={GeneralStyles.container}>
