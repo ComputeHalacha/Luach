@@ -6,6 +6,7 @@ import { Select, Option } from 'react-native-chooser';
 import SideMenu from '../Components/SideMenu';
 import { popUpMessage, log, warn, error, buttonColor } from '../../Code/GeneralUtils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
+import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
@@ -19,9 +20,12 @@ export default class ExportData extends React.Component {
         super(props);
         this.navigator = this.props.navigation;
 
-        const { appData, dataSet } = this.navigator.state.params;
+        const { appData, dataSet, jdate, sdate } = this.navigator.state.params;
 
-        this.appData = appData;
+        this.appData = appData; this.jdate = jdate || Utils.nowAtLocation(this.appData.Settings.location);
+        this.sdate = sdate || this.jdate.getDate();
+        this.sdateString = Utils.sMonthsEng[this.sdate.getMonth()] + ' ' +
+            this.sdate.getFullYear().toString();
         this.state = { dataSet: (dataSet || 'Entries') };
         this.getFileName = this.getFileName.bind(this);
         this.doExport = this.doExport.bind(this);
@@ -30,9 +34,11 @@ export default class ExportData extends React.Component {
         this.getHtmlText = this.getHtmlText.bind(this);
     }
     getFileName() {
-        return `${this.state.dataSet}-${(new Date()).toLocaleString().replace(/[\/,: ]/gi, '-')}.csv`;
+        const dateString = this.sdate.toLocaleString().replace(/[\/,: ]/gi, '-');
+        return `${this.state.dataSet}-${dateString}.csv`;
     }
     getCsvText() {
+        const settings = this.appData.Settings;
         let csv = '';
         switch (this.state.dataSet) {
             case 'Entries':
@@ -85,11 +91,39 @@ export default class ExportData extends React.Component {
                         }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
                 }
                 break;
-            case 'Zmanim_Today':
-
-                break;
-            case 'Zmanim_30':
-                break;
+            case 'Zmanim - ' + this.jdate.toShortString():
+                {
+                    const details = this.jdate.getAllDetails(settings.location);
+                    csv += `"Location",${details.map(d => '"' + d.title + '"').join(',')}` + '\r\n' +
+                        `"${settings.location.Name}",${details.map(d => '"' + d.value + '"').join(',')}`;
+                    break;
+                }
+            case 'Zmanim - ' + this.jdate.monthName():
+                {
+                    const month = this.jdate.Month;
+                    let currDate = new jDate(this.jdate.Year, month, 1),
+                        details = currDate.getAllDetailsList(settings.location);
+                    csv += `"Location: ${settings.location.Name}"\r\n${details.map(d => '"' + d.title + '"').join(',')}\r\n`;
+                    while (currDate.Month === month) {
+                        csv += details.map(d => '"' + d.value + '"').join(',') + '\r\n';
+                        currDate = currDate.addDays(1);
+                        details = currDate.getAllDetailsList(settings.location);
+                    }
+                    break;
+                }
+            case 'Zmanim - ' + this.sdateString:
+                {
+                    const month = this.sdate.getMonth();
+                    let currDate = new jDate(new Date(this.sdate.getFullYear(), month, 1)),
+                        details = currDate.getAllDetailsList(settings.location);
+                    csv += `"Location: ${settings.location.Name}"\r\n${details.map(d => '"' + d.title + '"').join(',')}\r\n`;
+                    while (currDate.getDate().getMonth() === month) {
+                        csv += details.map(d => '"' + d.value + '"').join(',') + '\r\n';
+                        currDate = currDate.addDays(1);
+                        details = currDate.getAllDetailsList(settings.location);
+                    }
+                    break;
+                }
         }
         return csv;
     }
@@ -211,20 +245,31 @@ export default class ExportData extends React.Component {
                             </tr>`;
                 }
                 break;
-            case 'Zmanim_Today':
+            case 'Zmanim - ' + this.jdate.toShortString():
                 {
-                    const today = Utils.nowAtLocation(settings.location),
-                        details = today.getAllDetails(settings.location);
+                    const details = this.jdate.getAllDetails(settings.location);
                     html += '<tr style="background-color:#e1e1ff;"><td colspan="2">' +
                         '<b>Zmanim for ' + settings.location.Name +
                         '</b></td></tr>';
                     details.map(d => `<tr><td>${d.title}</td><td>${d.value}</td></tr>`).join('');
                     break;
                 }
-            case 'Zmanim_30':
+            case 'Zmanim - ' + this.jdate.monthName():
                 {
-                    const today = Utils.nowAtLocation(settings.location),
-                        details = today.getAllDetails(settings.location);
+                    html += '<tr><td><p>Please find attached a spreadsheet file with the Zmanim \
+                    for the month of <b>' + this.jdate.monthName() +
+                        '</b> for <b>' +
+                        settings.location.Name +
+                        '</b></p></tr></td>';
+                    break;
+                }
+            case 'Zmanim - ' + this.sdateString:
+                {
+                    html += '<tr><td><p>Please find attached a spreadsheet file with the Zmanim \
+                    for the month of <b>' + this.sdateString +
+                        '</b> for <b>' +
+                        settings.location.Name +
+                        '</b></p></tr></td>';
                     break;
                 }
         }
@@ -244,7 +289,10 @@ export default class ExportData extends React.Component {
     }
     async doEmail() {
         const filePath = await this.doExport(),
-            subject = 'Luach - Export ' + this.state.dataSet + ' - ' + (new Date()).toLocaleDateString(),
+            subject = 'Luach - Export Data - ' +
+                this.state.dataSet +
+                ' - ' +
+                this.sdate.toLocaleDateString(),
             html = this.getHtmlText();
         log(html);
         Mailer.mail({
@@ -266,6 +314,13 @@ export default class ExportData extends React.Component {
         });
     }
     render() {
+        const dateStr = 'Zmanim - ' + this.jdate.toShortString(),
+            jMonthStr = 'Zmanim - ' + this.jdate.monthName(),
+            sMonthStr = 'Zmanim - ' + this.sdateString,
+            dataDesc = (this.state.dataSet.startsWith('Zmanim') ?
+                ('the Zmanim for ' + this.state.dataSet.replace(/Zmanim -/, '')) :
+                ('all of your ' + this.state.dataSet + ' data'));
+
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
@@ -300,11 +355,14 @@ export default class ExportData extends React.Component {
                             <Option value='Flagged Dates'>
                                 Flagged Dates
                             </Option>
-                            <Option value='Zmanim_Today'>
-                                Zmanim - Today
+                            <Option value={dateStr}>
+                                {dateStr}
                             </Option>
-                            <Option value='Zmanim_30'>
-                                Zmanim - 30 days
+                            <Option value={jMonthStr}>
+                                {jMonthStr}
+                            </Option>
+                            <Option value={sMonthStr}>
+                                {sMonthStr}
                             </Option>
                         </Select>
                     </View>
@@ -319,15 +377,19 @@ export default class ExportData extends React.Component {
                     }}>
                         <Text>
                             When you press on "Export to Email" below, the email app will open
-                            in "compose" mode, with an email containing all of your {this.state.dataSet}.
+                            in "compose" mode, with an email containing {dataDesc}.
                             {'\n\n'}
-                            In addition, a spreadsheet with all of your {this.state.dataSet} data will be attached to the email.
-                            {'\n\n'}
-                            It is advisable to send this email to yourself and to keep it as a  backup of your data.
-                            {'\n\n'}
-                            NOTE: It is not (yet) possible to IMPORT data into Luach.
-                            {'\n'}
-                            If you need to restore your data, it will need to be done manually.
+                            In addition, a spreadsheet with {dataDesc} will be attached to the email.
+                            {(!this.state.dataSet.startsWith('Zmanim')) &&
+                                <Text>
+                                    {'\n\n'}
+                                    It is advisable to send this email to yourself and to keep it as a  backup of your data.
+                                    {'\n\n'}
+                                    NOTE: It is not (yet) possible to IMPORT data into Luach.
+                                    {'\n'}
+                                    If you need to restore your data, it will need to be done manually.
+                                </Text>
+                            }
                         </Text>
                     </View>
                     <View style={GeneralStyles.btnAddNew}>
