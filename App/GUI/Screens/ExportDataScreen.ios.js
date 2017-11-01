@@ -256,17 +256,19 @@ export default class ExportData extends React.Component {
                 }
             case 'Zmanim - ' + this.jdate.monthName():
                 {
-                    html += '<tr><td><p>Zmanim \
-                    for the month of <b>' + this.jdate.monthName() +
-                        '</b> for <b>' +
-                        settings.location.Name +
-                        '</b></p></td></tr>';
                     const month = this.jdate.Month;
                     let currDate = new jDate(this.jdate.Year, month, 1),
                         details = currDate.getAllDetailsList(settings.location);
-                    html += `<tr style="background-color:#e1e1ff;">
-                                ${details.map(d => '<td>' + d.title + '</td>').join('')}
-                            </tr>`;
+
+                    html += `<tr><td colspan="${details.length.toString()}">
+                            <p style="text-align:center;">
+                                Zmanim for the month of <b>${this.jdate.monthName()}</b>
+                                for <b>${settings.location.Name}</b>
+                            </p></td>
+                        </tr>
+                        <tr style="background-color:#e1e1ff;">
+                            ${details.map(d => '<td>' + d.title + '</td>').join('')}
+                        </tr>`;
                     while (currDate.Month === month) {
                         html += `<tr>
                                     ${details.map(d => '<td>' + d.value + '</td>').join('')}
@@ -278,17 +280,19 @@ export default class ExportData extends React.Component {
                 }
             case 'Zmanim - ' + this.sdateString:
                 {
-                    html += '<tr><td><p>Zmanim \
-                    for the month of <b>' + this.sdateString +
-                        '</b> for <b>' +
-                        settings.location.Name +
-                        '</b></p></td></tr>';
                     const month = this.sdate.getMonth();
                     let currDate = new jDate(new Date(this.sdate.getFullYear(), month, 1)),
                         details = currDate.getAllDetailsList(settings.location);
-                    html += `<tr style="background-color:#e1e1ff;">
-                                ${details.map(d => '<td>' + d.title + '</td>').join('')}
-                            </tr>`;
+
+                    html += `<tr><td colspan="${details.length.toString()}">
+                            <p style="text-align:center;">
+                                Zmanim for the month of <b>${this.sdateString}</b> for
+                                <b>${settings.location.Name}</b>
+                            </p></td>
+                        </tr>
+                        <tr style="background-color:#e1e1ff;">
+                            ${details.map(d => '<td>' + d.title + '</td>').join('')}
+                        </tr>`;
                     while (currDate.getDate().getMonth() === month) {
                         html += `<tr>
                                     ${details.map(d => '<td>' + d.value + '</td>').join('')}
