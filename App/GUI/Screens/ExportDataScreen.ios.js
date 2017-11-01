@@ -250,26 +250,52 @@ export default class ExportData extends React.Component {
                     const details = this.jdate.getAllDetails(settings.location);
                     html += '<tr style="background-color:#e1e1ff;"><td colspan="2">' +
                         '<b>Zmanim for ' + settings.location.Name +
-                        '</b></td></tr>';
-                    details.map(d => `<tr><td>${d.title}</td><td>${d.value}</td></tr>`).join('');
+                        '</b></td></tr>' +
+                        details.map(d => `<tr><td><b>${d.title}</b></td><td>${d.value}</td></tr>`).join('');
                     break;
                 }
             case 'Zmanim - ' + this.jdate.monthName():
                 {
-                    html += '<tr><td><p>Please find attached a spreadsheet file with the Zmanim \
+                    html += '<tr><td><p>Zmanim \
                     for the month of <b>' + this.jdate.monthName() +
                         '</b> for <b>' +
                         settings.location.Name +
-                        '</b></p></tr></td>';
+                        '</b></p></td></tr>';
+                    const month = this.jdate.Month;
+                    let currDate = new jDate(this.jdate.Year, month, 1),
+                        details = currDate.getAllDetailsList(settings.location);
+                    html += `<tr style="background-color:#e1e1ff;">
+                                ${details.map(d => '<td>' + d.title + '</td>').join('')}
+                            </tr>`;
+                    while (currDate.Month === month) {
+                        html += `<tr>
+                                    ${details.map(d => '<td>' + d.value + '</td>').join('')}
+                                </tr>`;
+                        currDate = currDate.addDays(1);
+                        details = currDate.getAllDetailsList(settings.location);
+                    }
                     break;
                 }
             case 'Zmanim - ' + this.sdateString:
                 {
-                    html += '<tr><td><p>Please find attached a spreadsheet file with the Zmanim \
+                    html += '<tr><td><p>Zmanim \
                     for the month of <b>' + this.sdateString +
                         '</b> for <b>' +
                         settings.location.Name +
-                        '</b></p></tr></td>';
+                        '</b></p></td></tr>';
+                    const month = this.sdate.getMonth();
+                    let currDate = new jDate(new Date(this.sdate.getFullYear(), month, 1)),
+                        details = currDate.getAllDetailsList(settings.location);
+                    html += `<tr style="background-color:#e1e1ff;">
+                                ${details.map(d => '<td>' + d.title + '</td>').join('')}
+                            </tr>`;
+                    while (currDate.getDate().getMonth() === month) {
+                        html += `<tr>
+                                    ${details.map(d => '<td>' + d.value + '</td>').join('')}
+                                </tr>`;
+                        currDate = currDate.addDays(1);
+                        details = currDate.getAllDetailsList(settings.location);
+                    }
                     break;
                 }
         }
