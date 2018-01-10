@@ -12,31 +12,30 @@ import { GeneralStyles } from '../styles';
 
 export default class MonthViewScreen extends React.PureComponent {
     static navigationOptions = ({ navigation }) => {
-        const { appData } = navigation.state.params;
+        const { appData } = navigation.state.params,
+            text = MonthViewScreen.isJdate ?
+                MonthViewScreen.jdate.monthName() :
+                Utils.sMonthsEng[MonthViewScreen.sdate.getMonth()] + ' ' +
+                MonthViewScreen.sdate.getFullYear().toString();
         return {
-            title: 'Zmanim for ' + navigation.state.params.appData.Settings.location.Name,
+            title: text,
             headerRight:
-            <TouchableHighlight
-                onPress={() =>
-                    navigation.navigate('ExportData',
-                        {
-                            appData,
-                            jdate: MonthViewScreen.jdate,
-                            sdate: MonthViewScreen.sdate,
-                            dataSet: 'Zmanim - ' +
-                            (MonthViewScreen.isJdate ?
-                                MonthViewScreen.jdate.monthName() :
-                                Utils.sMonthsEng[MonthViewScreen.sdate.getMonth()] + ' ' +
-                                MonthViewScreen.sdate.getFullYear().toString()
-                            )
-                        })}>
-                <View style={{ marginRight: 10 }}>
-                    <Icon name='import-export'
-                        color='#aca'
-                        size={25} />
-                    <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
-                </View>
-            </TouchableHighlight>
+                <TouchableHighlight
+                    onPress={() =>
+                        navigation.navigate('ExportData',
+                            {
+                                appData,
+                                jdate: MonthViewScreen.jdate,
+                                sdate: MonthViewScreen.sdate,
+                                dataSet: 'Zmanim - ' + text
+                            })}>
+                    <View style={{ marginRight: 10 }}>
+                        <Icon name='import-export'
+                            color='#aca'
+                            size={25} />
+                        <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
+                    </View>
+                </TouchableHighlight>
         };
     };
 

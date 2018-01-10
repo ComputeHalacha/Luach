@@ -733,23 +733,22 @@ export default class jDate {
 
     /**Number of days in the given Jewish Month. Nissan is 1 and Adar Sheini is 13.*/
     static daysJMonth(year, month) {
-        //Nissan, Sivan, Av, Tishrei and Shvat always have 30 days/
-        //Note, this first if is technichally unnessesary as the else below also returns 30,
-        //but we do it here to save unnessesary checks of the "else if".
-        if ([1, 3, 5, 7, 11].includes(month)) {
-            return 30;
-        }
-        //Iyyar, Tammuz, Ellul, Teves and Adar Sheini always have 29 days.
-        else if ([2, 4, 6, 10, 13].includes(month) ||
-            //Cheshvan and Kislev are sometimes 29 days and sometimes 30 days.
-            ((month === 8) && (!jDate.isLongCheshvan(year))) ||
-            ((month === 9) && jDate.isShortKislev(year)) ||
+        switch (month) {
+            //Nissan, Sivan, Av, Tishrei and Shvat always have 30 days
+            case 1: case 3: case 5: case 7: case 11:
+                return 30;
+            //Iyyar, Tammuz, Ellul, Teves and Adar Sheini always have 29 days.
+            case 2: case 4: case 6: case 10: case 13:
+                return 29;
+            //Cheshvan sometimes has 29 days and sometimes 30 days.
+            case 8:
+                return jDate.isLongCheshvan(year) ? 30 : 29;
+            //Kislev sometimes has 29 days and sometimes 30 days.
+            case 9:
+                return jDate.isShortKislev(year) ? 29 : 30;
             //Adar has 29 days unless it is Adar Rishon.
-            ((month === 12) && (!jDate.isJdLeapY(year)))) {
-            return 29;
-        }
-        else {
-            return 30;
+            case 12:
+                return jDate.isJdLeapY(year) ? 30 : 29;
         }
     }
 
