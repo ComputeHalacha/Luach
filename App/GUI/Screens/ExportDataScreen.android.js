@@ -259,7 +259,10 @@ export default class ExportData extends React.Component {
     render() {
         const dateStr = 'Zmanim - ' + this.jdate.toShortString(),
             jMonthStr = 'Zmanim - ' + this.jdate.monthName(),
-            sMonthStr = 'Zmanim - ' + this.sdateString;
+            sMonthStr = 'Zmanim - ' + this.sdateString,
+            dataDesc = (this.state.dataSet.startsWith('Zmanim') ?
+                ('the Zmanim for ' + this.state.dataSet.replace(/Zmanim -/, '')) :
+                ('all of your ' + this.state.dataSet + ' data'));
 
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -295,15 +298,19 @@ export default class ExportData extends React.Component {
                     }}>
                         <Text>
                             When you press the "Export to Email" button below, your default email client will open up
-                            in "compose" mode, with an email containing all of your {this.state.dataSet}.
+                            in "compose" mode, with an email containing {dataDesc}.
                             {'\n\n'}
-                            A spreadsheet with all of your {this.state.dataSet} data will also be attached to the email.
+                            A spreadsheet with {dataDesc} will also be attached to the email.
+                            {(!this.state.dataSet.startsWith('Zmanim')) &&
+                                <Text>
                             {'\n\n'}
                             It is advisable to send the email to yourself and to keep it as a backup of your data.
                             {'\n\n'}
                             NOTE: It is not (yet) possible to IMPORT data into Luach.
                             {'\n'}
                             If you need to restore your data, it will need to be done manually.
+                        </Text>
+                            }
                         </Text>
                     </View>
                     <View style={GeneralStyles.btnAddNew}>
