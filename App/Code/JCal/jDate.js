@@ -691,9 +691,7 @@ export default class jDate {
      * @param {Date} date
      */
     static absSd(date) {
-        const msPerDay = 86400000, //The number of milliseconds per each day
-            dateMs = date.valueOf() - (date.getTimezoneOffset() * 60000), //The number of ms since 1/1/1970.
-            numFullDays = Math.floor(dateMs / msPerDay), //The number of full days since 1/1/1970.
+        const numFullDays = Math.floor(date.valueOf() / 8.64e7), //The number of full days since 1/1/1970.
             startAbs = 719163; //The Absolute Date for the zero day of the js Date object - 1/1/1970.,
 
         return startAbs + numFullDays;

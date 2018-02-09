@@ -53,7 +53,7 @@ export default class HomeScreen extends React.Component {
         }
         //We are on the initial showing of the app. We will load the appData from the database.
         else {
-            this._initialShowing();
+            this.initialShowing();
         }
     }
     componentDidMount() {
@@ -194,7 +194,7 @@ export default class HomeScreen extends React.Component {
     /**
      * This function is called the when the app first initially loads
      */
-    _initialShowing() {
+    initialShowing() {
         const today = new jDate();
         //Make sure that the local database schema is up to date.
         AppData.upgradeDatabase();
