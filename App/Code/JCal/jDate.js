@@ -729,7 +729,13 @@ export default class jDate {
      * Gets a javascript date from an absolute date
      */
     static sdFromAbs(abs) {
-        const daysSinceStart = (abs - JS_START_DATE_ABS);
+        /* IMPORTANT NOTE ***************************************************************************
+            This does not work correctly on dev builds.
+            On dev builds use:
+            const daysSinceStart = (abs - JS_START_DATE_ABS);
+            I honestly do not know how or why a day is added without the + 1 on production builds.
+        ********************************************************************************************/
+        const daysSinceStart = (abs - JS_START_DATE_ABS) + 1;
         return new Date(daysSinceStart * MS_PER_DAY);
     }
 
