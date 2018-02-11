@@ -5,11 +5,13 @@ import Utils from './JCal/Utils';
 
 export const GLOBALS = Object.freeze({
     VERSION_NAME: '1.52',
+    IS_IOS: Platform.OS === 'ios',
+    IS_ANDROID: Platform.OS === 'android',
     BUTTON_COLOR: Platform.OS === 'android' ? '#99b' : null,
 });
 
 export function popUpMessage(message, optionalTitle) {
-    if (Platform.OS === 'android') {
+    if (GLOBALS.IS_ANDROID) {
         ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
     }
     else {

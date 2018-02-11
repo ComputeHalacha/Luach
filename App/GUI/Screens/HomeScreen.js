@@ -5,7 +5,7 @@ import SingleDayDisplay from '../Components/SingleDayDisplay';
 import Login from '../Components/Login';
 import Flash from '../Components/Flash';
 import SideMenu from '../Components/SideMenu';
-import { isLargeScreen, log, goHomeToday, getTodayJdate } from '../../Code/GeneralUtils';
+import { isLargeScreen, log, goHomeToday, getTodayJdate, GLOBALS } from '../../Code/GeneralUtils';
 import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import AppData from '../../Code/Data/AppData';
@@ -14,9 +14,8 @@ import { TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
 export default class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => (
         //Only IOS gets the header on the today screen.
-        Platform.OS === 'android' ?
-            { header: null } :
-            {
+        GLOBALS.IS_IOS
+            ? {
                 title: 'Luach',
                 headerRight: <Icon name='calendar'
                     type='octicon'
@@ -27,7 +26,8 @@ export default class HomeScreen extends React.Component {
                                 appData: ad,
                                 jdate: getTodayJdate(ad)
                             }))} />
-            });
+            }
+            : { header: null });
 
     constructor(props) {
         super(props);

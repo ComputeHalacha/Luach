@@ -1,7 +1,7 @@
 import React from 'react';
 import { Keyboard, StyleSheet, Image, Text, View, TouchableHighlight, ActivityIndicator, Platform } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { getScreenHeight, goHomeToday, getTodayJdate } from '../../Code/GeneralUtils';
+import { getScreenHeight, goHomeToday, getTodayJdate, GLOBALS } from '../../Code/GeneralUtils';
 
 /**
  * PROPS ******
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#eee'
     },
-    loadingIndicator: Platform.OS === 'android' ? {
+    loadingIndicator: GLOBALS.IS_ANDROID ? {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#fed',

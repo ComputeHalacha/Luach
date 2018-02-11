@@ -46,8 +46,9 @@ export default class BrowserScreen extends PureComponent {
                     <WebView style={{ flex: 1 }}
                         ref={webView => this.webView = webView}
                         source={{
-                            uri: (Platform.OS === 'android' ? 'file:///android_asset/' : '') +
-                                `docs/${this.url}?v=${GLOBALS.VERSION_NAME}`
+                            uri: GLOBALS.IS_ANDROID ?
+                                `file:///android_asset/docs/${this.url}?v=${GLOBALS.VERSION_NAME}` :
+                                'docs/${this.url}'
                         }}
                         mixedContentMode='always'
                         iosdataDetectorTypes={['all']}

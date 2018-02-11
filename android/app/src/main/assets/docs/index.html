@@ -93,7 +93,9 @@
     <script src="scripts/scripts.js"></script>
     <script>
         var qs = parseQuerystring();
-        document.getElementById('spnVersionName').innerHTML ='Version ' + qs.v;
+        if(qs && qs.v) {
+            document.getElementById('spnVersionName').innerHTML ='Version ' + qs.v;
+        }
     </script>
 </body>
 
