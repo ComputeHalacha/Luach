@@ -6,8 +6,9 @@ import Zmanim from './Zmanim.js';
 import DafYomi from './Dafyomi';
 
 /** Keeps a "repository" of years that have had their elapsed days previously calculated. Format: { year:5776, elapsed:2109283 } */
-const _yearCache = [];
-
+const _yearCache = [],
+    JS_START_DATE_ABS = 719163, //The absolute date for the first js date 1/1/1970
+    MS_PER_DAY = 8.64e7;
 /* ****************************************************************************************************************
  * Many of the date conversion algorithmsin the jDate class are based on the C code which was translated from Lisp
  * in "Calendrical Calculations" by Nachum Dershowitz and Edward M. Reingold
@@ -691,10 +692,8 @@ export default class jDate {
      * @param {Date} date
      */
     static absSd(date) {
-        const numFullDays = Math.floor(date.valueOf() / 8.64e7), //The number of full days since 1/1/1970.
-            startAbs = 719163; //The Absolute Date for the zero day of the js Date object - 1/1/1970.,
-
-        return startAbs + numFullDays;
+        const numFullDays = Math.floor(date.valueOf() / MS_PER_DAY); //The number of full days since 1/1/1970.
+        return JS_START_DATE_ABS + numFullDays;
     }
 
     /**Calculate the absolute date for the given Jewish Date.*/
@@ -728,11 +727,8 @@ export default class jDate {
      * Gets a javascript date from an absolute date
      */
     static sdFromAbs(abs) {
-        const startAbs = 719163, //The Absolute Date for the zero day of the js Date object - 1/1/1970.
-            daysFromStart = abs - startAbs, //The number of days since 1/1/1970
-            msPerDay = 86400000; //The number of milliseconds per day
-
-        return new Date(daysFromStart * msPerDay);
+        const daysSinceStart = (abs - JS_START_DATE_ABS);
+        return new Date(daysSinceStart * MS_PER_DAY);
     }
 
     /**Number of days in the given Jewish Month. Nissan is 1 and Adar Sheini is 13.*/
