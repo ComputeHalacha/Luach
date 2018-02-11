@@ -88,7 +88,8 @@ export default class SingleDayDisplay extends React.PureComponent {
         this.navigator.navigate('NewOccasion', { occasion, ...this.props });
     }
     render() {
-        const { appData, jdate, isToday, systemDate } = this.props,
+        const { appData, jdate, isToday } = this.props,
+            nowSdate = new Date(),
             location = appData.Settings.location,
             flag = appData.Settings.showProbFlagOnHome &&
                 appData.ProblemOnahs.some(po =>
@@ -101,9 +102,9 @@ export default class SingleDayDisplay extends React.PureComponent {
             taharaEvents = (appData.Settings.showEntryFlagOnHome ?
                 appData.TaharaEvents.filter(te =>
                     Utils.isSameJdate(te.jdate, jdate)) : []),
-            sdate = (isToday && systemDate) ? systemDate : jdate.getDate(),
-            isDayOff = isToday && systemDate &&
-                (systemDate.getDate() !== jdate.getDate().getDate()),
+            sdate = jdate.getDate(),
+            isDayOff = isToday && (nowSdate.getDate() !== sdate.getDate()),
+            currSdate = isDayOff ? nowSdate :sdate,
             todayText = isToday && <Text style={styles.todayText}>
                 {`TODAY${isDayOff ? '*' : ''}`}</Text>,
             isSpecialDay = jdate.DayOfWeek === 6 || jdate.getMajorHoliday(location.Israel),
@@ -143,7 +144,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                 <View>
                     <View style={styles.mainSectionView}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.dateNumEng}>{sdate.getDate().toString()}</Text>
+                            <Text style={styles.dateNumEng}>{currSdate.getDate().toString()}</Text>
                             {todayText}
                             <Text style={styles.dateNumHeb}>{Utils.toJNum(jdate.Day)}</Text>
                         </View>
@@ -152,7 +153,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                                 {jdate.toString()}</Text>
                             <Text>{'\n'}</Text>
                             <Text style={styles.dateEng}>
-                                {Utils.toStringDate(sdate, !isDayOff)}</Text>
+                                {Utils.toStringDate(currSdate, !isDayOff)}</Text>
                         </Text>
                         {dailyInfoText}
                         {candleLighting}
