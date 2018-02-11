@@ -727,7 +727,7 @@ export default class jDate {
      * Gets a javascript date from an absolute date
      */
     static sdFromAbs(abs) {
-        const daysSinceStart = (abs - JS_START_DATE_ABS);
+        const daysSinceStart = (abs - JS_START_DATE_ABS) + 1;
         return new Date(daysSinceStart * MS_PER_DAY);
     }
 

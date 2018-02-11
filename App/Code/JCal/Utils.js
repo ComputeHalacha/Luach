@@ -1,5 +1,6 @@
 import Zmanim from './Zmanim';
 import jDate from './jDate';
+import { log } from '../../Code/GeneralUtils';
 
 export default class Utils {
     static jMonthsEng = ['', 'Nissan', 'Iyar', 'Sivan', 'Tamuz', 'Av', 'Ellul', 'Tishrei', 'Cheshvan', 'Kislev', 'Teves', 'Shvat', 'Adar', 'Adar Sheini'];
@@ -347,9 +348,11 @@ export default class Utils {
      * @param {Location} location
      */
     static nowAtLocation(location) {
-        const now = new Date(),
-            isAfterSunset = Utils.isAfterSunset(now, location);
-        return new jDate(jDate.absSd(now) + (isAfterSunset ? 1 : 0));
+        const nowSdate = new Date(),
+            isAfterSunset = Utils.isAfterSunset(nowSdate, location),
+            //if isAfterSunset a day is added. (not currently sure why jDate(jDate.absSd(nowSdate) adds a day :())
+            nowJdate = new jDate(isAfterSunset ? jDate.absSd(nowSdate) : nowSdate);
+        return nowJdate;
     }
     /**
      * Converts the given complex number to an integer by removing the decimal part.
