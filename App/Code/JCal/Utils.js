@@ -351,8 +351,13 @@ export default class Utils {
         const nowSdate = new Date(),
             isAfterSunset = Utils.isAfterSunset(nowSdate, location),
             //if isAfterSunset a day is added.
-            nowJdate = new jDate(isAfterSunset ?
-                (jDate.absSd(nowSdate) + 1) : nowSdate);
+            /* IMPORTANT NOTE ***************************************************************************
+                This does not work correctly on dev builds.
+                On dev builds use:
+                nowJdate = new jDate(isAfterSunset ? (jDate.absSd(nowSdate) + 1) : nowSdate);
+                I honestly do not know how or why a day is added without the + 1 on production builds.
+            ********************************************************************************************/
+            nowJdate = new jDate(isAfterSunset ? jDate.absSd(nowSdate) : nowSdate);
         return nowJdate;
     }
     /**
