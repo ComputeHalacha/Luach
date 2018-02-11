@@ -11,7 +11,7 @@ import { UserOccasionTypes, UserOccasion } from '../../Code/JCal/UserOccasion';
 import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import DataUtils from '../../Code/Data/DataUtils';
-import { popUpMessage, warn, error, buttonColor } from '../../Code/GeneralUtils';
+import { popUpMessage, warn, error, GLOBALS } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class NewOccasion extends React.Component {
@@ -284,7 +284,7 @@ export default class NewOccasion extends React.Component {
                             onPress={this.occasion ? this.updateOccasion : this.addOccasion}
                             accessibilityLabel={this.occasion ?
                                 'Save Changes to this Event' : 'Add this new Event'}
-                            color={buttonColor} />
+                            color={GLOBALS.BUTTON_COLOR} />
                     </View>
                 </ScrollView>
             </View>

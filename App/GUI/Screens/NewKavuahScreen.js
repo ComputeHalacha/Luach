@@ -5,7 +5,7 @@ import SideMenu from '../Components/SideMenu';
 import KavuahPickers from '../Components/KavuahPickers';
 import { KavuahTypes, Kavuah } from '../../Code/Chashavshavon/Kavuah';
 import DataUtils from '../../Code/Data/DataUtils';
-import { popUpMessage, warn, error, buttonColor } from '../../Code/GeneralUtils';
+import { popUpMessage, warn, error, GLOBALS } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class NewKavuah extends React.Component {
@@ -150,7 +150,7 @@ export default class NewKavuah extends React.Component {
                             title='Add Kavuah'
                             onPress={this.addKavuah.bind(this)}
                             accessibilityLabel='Add this new Kavuah'
-                            color={buttonColor} />
+                            color={GLOBALS.BUTTON_COLOR} />
                     </View>
                 </ScrollView>
             </View>

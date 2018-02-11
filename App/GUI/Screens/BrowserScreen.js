@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { View, WebView, BackHandler, Platform } from 'react-native';
 import SideMenu from '../Components/SideMenu';
 import { GeneralStyles } from '../styles';
+import { GLOBALS } from '../../Code/GeneralUtils';
 
 export default class BrowserScreen extends PureComponent {
     static navigationOptions = ({ navigation }) => ({
@@ -46,7 +47,7 @@ export default class BrowserScreen extends PureComponent {
                         ref={webView => this.webView = webView}
                         source={{
                             uri: (Platform.OS === 'android' ? 'file:///android_asset/' : '') +
-                            'docs/' + this.url
+                                `docs/${this.url}?v=${GLOBALS.VERSION_NAME}`
                         }}
                         mixedContentMode='always'
                         iosdataDetectorTypes={['all']}
