@@ -730,12 +730,13 @@ export default class jDate {
      */
     static sdFromAbs(abs) {
         /* IMPORTANT NOTE ***************************************************************************
-            This does not work correctly on dev builds.
+            On production builds use:
+            const daysSinceStart = (abs - JS_START_DATE_ABS) + 1;
             On dev builds use:
             const daysSinceStart = (abs - JS_START_DATE_ABS);
-            I honestly do not know how or why a day is added without the + 1 on production builds.
+            I honestly do not know how or why a day is subtracted on production builds.
         ********************************************************************************************/
-        const daysSinceStart = (abs - JS_START_DATE_ABS) + 1;
+        const daysSinceStart = (abs - JS_START_DATE_ABS) + (__DEV__ ? 0 : 1);
         return new Date(daysSinceStart * MS_PER_DAY);
     }
 

@@ -352,12 +352,13 @@ export default class Utils {
             isAfterSunset = Utils.isAfterSunset(nowSdate, location),
             //if isAfterSunset a day is added.
             /* IMPORTANT NOTE ***************************************************************************
-                This does not work correctly on dev builds.
+                On production builds use
+                nowJdate = new jDate(isAfterSunset ? jDate.absSd(nowSdate) : nowSdate);
                 On dev builds use:
                 nowJdate = new jDate(isAfterSunset ? (jDate.absSd(nowSdate) + 1) : nowSdate);
                 I honestly do not know how or why a day is added without the + 1 on production builds.
             ********************************************************************************************/
-            nowJdate = new jDate(isAfterSunset ? jDate.absSd(nowSdate) : nowSdate);
+            nowJdate = new jDate(isAfterSunset ? jDate.absSd(nowSdate) + (__DEV__ ? 1 : 0) : nowSdate);
         return nowJdate;
     }
     /**
