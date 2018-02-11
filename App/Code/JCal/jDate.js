@@ -692,7 +692,9 @@ export default class jDate {
      * @param {Date} date
      */
     static absSd(date) {
-        const numFullDays = Math.floor(date.valueOf() / MS_PER_DAY); //The number of full days since 1/1/1970.
+        //The number of full days since 1/1/1970.
+        const numFullDays = Math.floor(date.valueOf() / MS_PER_DAY);
+        //Add that to the number of days from 1/1/0001 until 1/1/1970
         return JS_START_DATE_ABS + numFullDays;
     }
 
@@ -727,7 +729,7 @@ export default class jDate {
      * Gets a javascript date from an absolute date
      */
     static sdFromAbs(abs) {
-        const daysSinceStart = (abs - JS_START_DATE_ABS) + 1;
+        const daysSinceStart = (abs - JS_START_DATE_ABS);
         return new Date(daysSinceStart * MS_PER_DAY);
     }
 

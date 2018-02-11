@@ -350,8 +350,9 @@ export default class Utils {
     static nowAtLocation(location) {
         const nowSdate = new Date(),
             isAfterSunset = Utils.isAfterSunset(nowSdate, location),
-            //if isAfterSunset a day is added. (not currently sure why jDate(jDate.absSd(nowSdate) adds a day :())
-            nowJdate = new jDate(isAfterSunset ? jDate.absSd(nowSdate) : nowSdate);
+            //if isAfterSunset a day is added.
+            nowJdate = new jDate(isAfterSunset ?
+                (jDate.absSd(nowSdate) + 1) : nowSdate);
         return nowJdate;
     }
     /**
