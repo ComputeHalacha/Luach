@@ -12,7 +12,7 @@ import Utils from '../../Code/JCal/Utils';
 import jDate from '../../Code/JCal/jDate';
 import { NightDay, Onah } from '../../Code/Chashavshavon/Onah';
 import DataUtils from '../../Code/Data/DataUtils';
-import { warn, error, popUpMessage, buttonColor } from '../../Code/GeneralUtils';
+import { warn, error, popUpMessage, GLOBALS } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class NewEntry extends React.Component {
@@ -433,7 +433,7 @@ export default class NewEntry extends React.Component {
                                 onPress={this.entry ? this.updateEntry : this.addEntry}
                                 accessibilityLabel={this.entry ?
                                     'Save Changes to this Entry' : 'Add this new Entry'}
-                                color={buttonColor} />
+                                color={GLOBALS.BUTTON_COLOR} />
                         </View>
                     </View>
                 </ScrollView>

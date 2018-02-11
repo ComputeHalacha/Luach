@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, Image } from 'react-native';
-import { isSmallScreen } from '../../Code/GeneralUtils';
+import { isSmallScreen, GLOBALS } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default function Flash() {
@@ -14,16 +14,22 @@ export default function Flash() {
         width: '100%',
         bottom: 0
     }}>
-        <View style={GeneralStyles.centeredRow}>
-            <Image
-                style={{ width: 20, height: 20, marginRight: 5 }}
-                resizeMode='stretch'
-                source={require('../Images/logo.png')} />
+        <View style={{ flexDirection: 'row', justifyContent:'space-between' }}>
+            <View style={GeneralStyles.centeredRow}>
+                <Image
+                    style={{ width: 20, height: 20, marginRight: 5 }}
+                    resizeMode='stretch'
+                    source={require('../Images/logo.png')} />
+                <Text style={{
+                    fontSize: 25,
+                    color: '#909ACF',
+                    fontWeight: 'bold'
+                }}>Luach</Text>
+            </View>
             <Text style={{
-                fontSize: 25,
-                color: '#909ACF',
-                fontWeight: 'bold'
-            }}>Luach</Text>
+                fontSize: 11,
+                color: '#888'
+            }}>{`Version ${GLOBALS.VERSION_NAME}`}</Text>
         </View>
         <View style={{ flexDirection: isSmallScreen() ? 'row' : 'column' }}>
             <Text style={{

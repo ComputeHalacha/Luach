@@ -3,7 +3,10 @@ import { NavigationActions } from 'react-navigation';
 import jDate from './JCal/jDate';
 import Utils from './JCal/Utils';
 
-export const buttonColor = (Platform.OS === 'android' ? '#99b' : null);
+export const GLOBALS = Object.freeze({
+    VERSION_NAME: '1.52',
+    BUTTON_COLOR: Platform.OS === 'android' ? '#99b' : null,
+});
 
 export function popUpMessage(message, optionalTitle) {
     if (Platform.OS === 'android') {
