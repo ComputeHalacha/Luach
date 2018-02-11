@@ -12,11 +12,15 @@ import { GeneralStyles } from '../styles';
 
 export default class MonthViewScreen extends React.PureComponent {
     static navigationOptions = ({ navigation }) => {
-        const { appData } = navigation.state.params,
-            text = MonthViewScreen.isJdate ?
-                MonthViewScreen.jdate.monthName() :
-                Utils.sMonthsEng[MonthViewScreen.sdate.getMonth()] + ' ' +
-                MonthViewScreen.sdate.getFullYear().toString();
+        const { jdate, appData } = navigation.state.params,
+            jd = MonthViewScreen.jdate || jdate,
+            fjd = jd.addDays(-(jd.Day - 1)),
+            sd = (MonthViewScreen.sdate || jd.getDate()),
+            fsd = sd.setDate(-(sd.getDate() - 1)),
+            text = MonthViewScreen.isJdate !== false ?
+                fjd.monthName() :
+                Utils.sMonthsEng[fsd.getMonth()] + ' ' +
+                fsd.getFullYear().toString();
         return {
             title: text,
             headerRight:
@@ -39,10 +43,6 @@ export default class MonthViewScreen extends React.PureComponent {
         };
     };
 
-    static jdate;
-    static sdate;
-    static isJdate;
-
     constructor(props) {
         super(props);
 
@@ -54,6 +54,11 @@ export default class MonthViewScreen extends React.PureComponent {
         this.appData = appData;
         this.onUpdate = onUpdate;
         this.israel = this.appData.Settings.location.Israel;
+
+        MonthViewScreen.jdate = jdate;
+        MonthViewScreen.sdate = jdate.sdate;
+        MonthViewScreen.isJdate = appData.Settings.navigateBySecularDate !== false;
+
         this.state = {
             month: new Month(date, this.appData),
             today: today
