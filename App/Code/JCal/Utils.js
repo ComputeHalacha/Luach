@@ -348,18 +348,12 @@ export default class Utils {
      * @param {Location} location
      */
     static nowAtLocation(location) {
-        const nowSdate = new Date(),
-            isAfterSunset = Utils.isAfterSunset(nowSdate, location),
-            //if isAfterSunset a day is added.
-            /* IMPORTANT NOTE ***************************************************************************
-                On production builds use
-                nowJdate = new jDate(isAfterSunset ? jDate.absSd(nowSdate) : nowSdate);
-                On dev builds use:
-                nowJdate = new jDate(isAfterSunset ? (jDate.absSd(nowSdate) + 1) : nowSdate);
-                I honestly do not know how or why a day is added without the + 1 on production builds.
-            ********************************************************************************************/
-            nowJdate = new jDate(isAfterSunset ? jDate.absSd(nowSdate) + (__DEV__ ? 1 : 0) : nowSdate);
-        return nowJdate;
+        let sdate = new Date();
+        //if isAfterSunset a day is added.
+        if (Utils.isAfterSunset(sdate, location)) {
+            sdate = new Date(sdate.setDate(sdate.getDate() + 1));
+        }
+        return new jDate(sdate);
     }
     /**
      * Converts the given complex number to an integer by removing the decimal part.

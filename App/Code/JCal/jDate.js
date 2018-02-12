@@ -692,8 +692,13 @@ export default class jDate {
      * @param {Date} date
      */
     static absSd(date) {
+        const clonedDate = new Date(date.valueOf());
+
+        //Set clone to the number of milliseconds since 1/1/1970 until current system time
+        clonedDate.setMinutes(clonedDate.getMinutes() - clonedDate.getTimezoneOffset());
+
         //The number of full days since 1/1/1970.
-        const numFullDays = Math.floor(date.valueOf() / MS_PER_DAY);
+        const numFullDays = Math.floor(clonedDate.valueOf() / MS_PER_DAY);
         //Add that to the number of days from 1/1/0001 until 1/1/1970
         return JS_START_DATE_ABS + numFullDays;
     }
