@@ -193,12 +193,14 @@ export default class jDate {
         return new jDate(year, month, day);
     }
     addSecularMonths(months) {
-        const secDate = this.getDate();
-        return new jDate(new Date(secDate.setMonth(secDate.getMonth() + months)));
+        const secDate = new Date(this.getDate().valueOf());
+        secDate.setMonth(secDate.getMonth() + months)
+        return new jDate(secDate);
     }
     addSecularYears(years) {
-        const secDate = this.getDate();
-        return new jDate(new Date(secDate.setFullYear(secDate.getFullYear() + years)));
+        const secDate = new Date(this.getDate().valueOf());
+        secDate.setFullYear(secDate.getFullYear() + years)
+        return new jDate(secDate);
     }
     /**Gets the number of days separating this Jewish Date and the given one.
      *
@@ -734,14 +736,13 @@ export default class jDate {
      * Gets a javascript date from an absolute date
      */
     static sdFromAbs(abs) {
-        /* IMPORTANT NOTE ***************************************************************************
-            On production builds use:
-            const daysSinceStart = (abs - JS_START_DATE_ABS) + 1;
-            On dev builds use:
-            const daysSinceStart = (abs - JS_START_DATE_ABS);
-            I honestly do not know how or why a day is subtracted on production builds.
-        ********************************************************************************************/
-        const daysSinceStart = (abs - JS_START_DATE_ABS) + (__DEV__ ? 0 : 1);
+        //If the current offset is more than 0 this means that the current time zone is earlier than UTC.
+        //This means that the zero date of javascript (1/1/1970 0:00:00 UTC) wis a day earlier in the current time zone.
+        //So we will need to add another day to get the correct absolute date.
+        const offset = (new Date().getTimezoneOffset()) > 0 ? 1 : 0,
+            //The number of days since 1/1/1970 0:00:00 UTC until the given date
+            daysSinceStart = abs - JS_START_DATE_ABS + offset;
+            //Create a javascript date from the number of milliseconds since 1/1/1970 0:00:00 UTC
         return new Date(daysSinceStart * MS_PER_DAY);
     }
 

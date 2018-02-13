@@ -304,7 +304,8 @@ export default class Utils {
             //first determine the hour differential between this user and Israel time
             israelTimeOffset = 2 + -Utils.currUtcOffset();
         //This will give us the current correct date and time in Israel
-        return new Date(now.setHours(now.getHours() + israelTimeOffset));
+        now.setHours(now.getHours() + israelTimeOffset);
+        return now;
     }
     /**
      * Adds the given number of days to the given javascript date and returns the new date
@@ -351,7 +352,7 @@ export default class Utils {
         let sdate = new Date();
         //if isAfterSunset a day is added.
         if (Utils.isAfterSunset(sdate, location)) {
-            sdate = new Date(sdate.setDate(sdate.getDate() + 1));
+            sdate.setDate(sdate.getDate() + 1);
         }
         return new jDate(sdate);
     }

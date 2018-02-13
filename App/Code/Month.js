@@ -124,7 +124,7 @@ export default class Month {
     getAllDaysSdate() {
         const weeks = [Array(7).fill(null)],
             month = this.date.getMonth();
-        for (let sdate = new Date(this.date); sdate.getMonth() === month; sdate.setDate(sdate.getDate() + 1)) {
+        for (let sdate = new Date(this.date.valueOf()); sdate.getMonth() === month; sdate.setDate(sdate.getDate() + 1)) {
             const dow = sdate.getDay();
             weeks[weeks.length - 1][dow] = this.getSingleDay(new Date(sdate));
             if (dow === 6) {
