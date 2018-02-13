@@ -194,12 +194,12 @@ export default class jDate {
     }
     addSecularMonths(months) {
         const secDate = new Date(this.getDate().valueOf());
-        secDate.setMonth(secDate.getMonth() + months)
+        secDate.setMonth(secDate.getMonth() + months);
         return new jDate(secDate);
     }
     addSecularYears(years) {
         const secDate = new Date(this.getDate().valueOf());
-        secDate.setFullYear(secDate.getFullYear() + years)
+        secDate.setFullYear(secDate.getFullYear() + years);
         return new jDate(secDate);
     }
     /**Gets the number of days separating this Jewish Date and the given one.

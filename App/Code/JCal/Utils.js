@@ -1,6 +1,5 @@
 import Zmanim from './Zmanim';
 import jDate from './jDate';
-import { log } from '../../Code/GeneralUtils';
 
 export default class Utils {
     static jMonthsEng = ['', 'Nissan', 'Iyar', 'Sivan', 'Tamuz', 'Av', 'Ellul', 'Tishrei', 'Cheshvan', 'Kislev', 'Teves', 'Shvat', 'Adar', 'Adar Sheini'];
