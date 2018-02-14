@@ -694,7 +694,6 @@ export default class jDate {
      * @param {Date} date
      */
     static absSd(date) {
-
         //Get the correct number of milliseconds since 1/1/1970 00:00:00 UTC until current system time
         const ms = date.valueOf() - (date.getTimezoneOffset() * 60000),
             //The number of full days since 1/1/1970.
@@ -734,14 +733,22 @@ export default class jDate {
      * Gets a javascript date from an absolute date
      */
     static sdFromAbs(abs) {
-        //If the current offset is more than 0 this means that the current time zone is earlier than UTC.
-        //This means that the zero date of javascript (1/1/1970 0:00:00 UTC) wis a day earlier in the current time zone.
-        //So we will need to add another day to get the correct absolute date.
-        const offset = (new Date().getTimezoneOffset()) > 0 ? 1 : 0,
-            //The number of days since 1/1/1970 0:00:00 UTC until the given date
-            daysSinceStart = abs - JS_START_DATE_ABS + offset;
-        //Create a javascript date from the number of milliseconds since 1/1/1970 0:00:00 UTC
-        return new Date(daysSinceStart * MS_PER_DAY);
+        let date = new Date(),
+            offsetMinutes = undefined;
+        //The time zone offset changes when cahnging to DST and back
+        while (!offsetMinutes || offsetMinutes !== date.getTimezoneOffset()) {
+            offsetMinutes = date.getTimezoneOffset();
+            //If the current offset is more than 0 this means that the current time zone is earlier than UTC.
+            //This means that the zero date of javascript (1/1/1970 0:00:00 UTC) wis a day earlier in the current time zone.
+            //So we will need to add another day to get the correct absolute date.
+            const offsetDay = offsetMinutes > 0 ? 1 : 0,
+                //The number of days since 1/1/1970 0:00:00 UTC until the given date
+                daysSinceStart = abs - JS_START_DATE_ABS + offsetDay;
+            //Create a javascript date from the number of milliseconds since 1/1/1970 0:00:00 UTC
+            date = new Date(daysSinceStart * MS_PER_DAY);
+        }
+
+        return date;
     }
 
     /**Number of days in the given Jewish Month. Nissan is 1 and Adar Sheini is 13.*/
