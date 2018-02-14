@@ -38,7 +38,12 @@ export default class Login extends React.PureComponent {
                     <Text style={{ color: '#888', fontSize: 11, paddingBottom: 10 }}>{`Version ${GLOBALS.VERSION_NAME}`}</Text>
                     <Text>Please enter your 4 digit PIN</Text>
                     <TextInput
-                        style={{ width: 150, height: 75, fontSize: 25, textAlign: 'center' }}
+                        style={{
+                            width: 150,
+                            height: 75,
+                            fontSize: 25,
+                            textAlign: 'center',
+                            alignSelf: 'center' }}
                         keyboardType='numeric'
                         returnKeyType='next'
                         maxLength={4}
