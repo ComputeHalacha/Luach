@@ -7,8 +7,12 @@ import DafYomi from './Dafyomi';
 
 /** Keeps a "repository" of years that have had their elapsed days previously calculated. Format: { year:5776, elapsed:2109283 } */
 const _yearCache = [],
-    JS_START_DATE_ABS = 719163, //The absolute date for the first js date 1/1/1970
-    MS_PER_DAY = 8.64e7;
+    //The absolute date for the zero hour of all javascript date objects - 1/1/1970 0:00:00 UTC
+    JS_START_DATE_ABS = 719163,
+    //The number of milliseconds in everyday
+    MS_PER_DAY = 8.64e7,
+    //The time zone offset (in minutes) for 1/1/1970 0:00:00 UTC at the current users time zone
+    JS_START_OFFSET = new Date(0).getTimezoneOffset();
 /* ****************************************************************************************************************
  * Many of the date conversion algorithmsin the jDate class are based on the C code which was translated from Lisp
  * in "Calendrical Calculations" by Nachum Dershowitz and Edward M. Reingold
@@ -733,22 +737,15 @@ export default class jDate {
      * Gets a javascript date from an absolute date
      */
     static sdFromAbs(abs) {
-        let date = new Date(),
-            offsetMinutes = undefined;
-        //The time zone offset changes when cahnging to DST and back
-        while (!offsetMinutes || offsetMinutes !== date.getTimezoneOffset()) {
-            offsetMinutes = date.getTimezoneOffset();
-            //If the current offset is more than 0 this means that the current time zone is earlier than UTC.
-            //This means that the zero date of javascript (1/1/1970 0:00:00 UTC) wis a day earlier in the current time zone.
-            //So we will need to add another day to get the correct absolute date.
-            const offsetDay = offsetMinutes > 0 ? 1 : 0,
-                //The number of days since 1/1/1970 0:00:00 UTC until the given date
-                daysSinceStart = abs - JS_START_DATE_ABS + offsetDay;
-            //Create a javascript date from the number of milliseconds since 1/1/1970 0:00:00 UTC
-            date = new Date(daysSinceStart * MS_PER_DAY);
-        }
-
-        return date;
+        //The "zero hour" for Javascript is 1/1/1970 0:00:00 UTC.
+        //If the time zone offset was more than 0, the current time zone was earlier than UTC at the time.
+        //As the "zero hour" is at midnight, so if the current time was earlier than that, than it was during the previous date.
+        //So we will need to add another day to get the correct date.
+        const offset = JS_START_OFFSET > 0 ? 1 : 0,
+            //The number of days since the "zero hour" until the given date
+            daysSinceStart = abs - JS_START_DATE_ABS + offset;
+        //Create a javascript date from the number of milliseconds since the "zero hour"
+        return new Date(daysSinceStart * MS_PER_DAY);
     }
 
     /**Number of days in the given Jewish Month. Nissan is 1 and Adar Sheini is 13.*/
