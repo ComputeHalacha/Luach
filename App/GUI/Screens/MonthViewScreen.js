@@ -12,26 +12,18 @@ import { GeneralStyles } from '../styles';
 
 export default class MonthViewScreen extends React.PureComponent {
     static navigationOptions = ({ navigation }) => {
-        const { jdate, appData } = navigation.state.params,
-            jd = MonthViewScreen.jdate || jdate,
-            fjd = jd.addDays(-(jd.Day - 1)),
-            sd = (MonthViewScreen.sdate || jd.getDate()),
-            fsd = sd.setDate(-(sd.getDate() - 1)),
-            text = MonthViewScreen.isJdate !== false ?
-                fjd.monthName() :
-                Utils.sMonthsEng[fsd.getMonth()] + ' ' +
-                fsd.getFullYear().toString();
+        const { jdate, sdate, appData, title } = navigation.state.params;
         return {
-            title: text,
+            title: title,
             headerRight:
                 <TouchableHighlight
                     onPress={() =>
                         navigation.navigate('ExportData',
                             {
                                 appData,
-                                jdate: MonthViewScreen.jdate,
-                                sdate: MonthViewScreen.sdate,
-                                dataSet: 'Zmanim - ' + text
+                                jdate,
+                                sdate: sdate || jdate.sdate,
+                                dataSet: 'Zmanim - ' + title
                             })}>
                     <View style={{ marginRight: 10 }}>
                         <Icon name='import-export'
@@ -54,14 +46,11 @@ export default class MonthViewScreen extends React.PureComponent {
         this.appData = appData;
         this.onUpdate = onUpdate;
         this.israel = this.appData.Settings.location.Israel;
-
-        MonthViewScreen.jdate = jdate;
-        MonthViewScreen.sdate = jdate.sdate;
-        MonthViewScreen.isJdate = appData.Settings.navigateBySecularDate !== false;
-
+        const month = new Month(date, this.appData);
         this.state = {
-            month: new Month(date, this.appData),
-            today: today
+            month,
+            weeks: month.getAllDays(),
+            today
         };
 
         this.goPrevYear = this.goPrevYear.bind(this);
@@ -72,29 +61,46 @@ export default class MonthViewScreen extends React.PureComponent {
         this.goThisMonth = this.goThisMonth.bind(this);
         this.toggleMonthType = this.toggleMonthType.bind(this);
     }
+    componentDidMount() {
+        this.setNavProps();
+    }
     goPrevYear() {
-        const currMonth = this.state.month;
-        this.setState({ month: currMonth.prevYear });
+        const month = this.state.month.prevYear;
+        this.setState({
+            month,
+            weeks: month.getAllDays()
+        }, this.setNavProps);
     }
     goNextYear() {
-        const currMonth = this.state.month;
-        this.setState({ month: currMonth.nextYear });
+        const month = this.state.month.nextYear;
+        this.setState({
+            month,
+            weeks: month.getAllDays()
+        }, this.setNavProps);
     }
     goPrevMonth() {
-        const currMonth = this.state.month;
-        this.setState({ month: currMonth.prevMonth });
+        const month = this.state.month.prevMonth;
+        this.setState({
+            month,
+            weeks: month.getAllDays()
+        }, this.setNavProps);
     }
     goNextMonth() {
-        const currMonth = this.state.month;
-        this.setState({ month: currMonth.nextMonth });
+        const month = this.state.month.nextMonth;
+        this.setState({
+            month,
+            weeks: month.getAllDays()
+        }, this.setNavProps);
     }
     goToday() {
         goHomeToday(this.props.navigation, this.appData);
     }
     goThisMonth() {
+        const month = new Month(this.state.today, this.appData);
         this.setState({
-            month: new Month(this.state.today, this.appData)
-        });
+            month,
+            weeks: month.getAllDays()
+        }, this.setNavProps);
     }
     getFlag(nightDay) {
         return <View style={{
@@ -115,21 +121,25 @@ export default class MonthViewScreen extends React.PureComponent {
             if (sdate > 16) {
                 sdate = new Date(sdate.getFullYear(), sdate.getMonth() + 1, 1);
             }
+            const month = new Month(sdate, this.appData);
             this.setState({
-                month: new Month(sdate, this.appData),
+                month,
+                weeks: month.getAllDays(),
                 today: new jDate()
-            });
+            }, this.setNavProps);
         }
         else {
             //Change to Jewish date.
             //If the current time is after sunset, and we are Jewish Calendar based,
             //"today" will be the next day.
             const today = this.appData.Settings.navigateBySecularDate ?
-                new jDate() : Utils.nowAtLocation(this.appData.Settings.location);
+                new jDate() : Utils.nowAtLocation(this.appData.Settings.location),
+                month = new Month(new jDate(this.state.month.date), this.appData);
             this.setState({
-                month: new Month(new jDate(this.state.month.date), this.appData),
+                month,
+                weeks: month.getAllDays(),
                 today: today
-            });
+            }, this.setNavProps);
         }
     }
     getDayColumn(singleDay, index) {
@@ -211,12 +221,27 @@ export default class MonthViewScreen extends React.PureComponent {
             }
         </Col>);
     }
+    setNavProps() {
+        const firstDay = Month.getFirstDay(this.state.weeks),
+            jdate = firstDay.jdate,
+            sdate = firstDay.sdate,
+            isJdate = this.state.month.isJdate,
+            firstDayJd = jdate.addDays(-(jdate.Day - 1)),
+            sd = new Date((sdate || jdate.getDate()).valueOf());
+
+        sd.setDate(-(sd.getDate() - 1));
+
+        this.props.navigation.setParams({
+            jdate,
+            sdate,
+            appData: this.appData,
+            title: isJdate
+                ? firstDayJd.monthName()
+                : `${Utils.sMonthsEng[sd.getMonth()]} ${sd.getFullYear()}`
+        });
+    }
     render() {
-        const weeks = this.state.month.getAllDays(),
-            firstDay = Month.getFirstDay(weeks);
-        MonthViewScreen.jdate = firstDay.jdate;
-        MonthViewScreen.sdate = firstDay.sdate;
-        MonthViewScreen.isJdate = this.state.month.isJdate;
+        const weeks = this.state.weeks;
         return <View style={GeneralStyles.container}>
             <View style={styles.headerView}>
                 <Text style={styles.headerText}>{Month.toString(weeks, this.state.month.isJdate)}</Text>
