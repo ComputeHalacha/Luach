@@ -132,8 +132,9 @@ export default class MonthViewScreen extends React.PureComponent {
             //Change to Jewish date.
             //If the current time is after sunset, and we are Jewish Calendar based,
             //"today" will be the next day.
-            const today = this.appData.Settings.navigateBySecularDate ?
-                new jDate() : Utils.nowAtLocation(this.appData.Settings.location),
+            const today = this.appData.Settings.navigateBySecularDate
+                ? new jDate()
+                : Utils.nowAtLocation(this.appData.Settings.location),
                 month = new Month(new jDate(this.state.month.date), this.appData);
             this.setState({
                 month,
@@ -225,19 +226,15 @@ export default class MonthViewScreen extends React.PureComponent {
         const firstDay = Month.getFirstDay(this.state.weeks),
             jdate = firstDay.jdate,
             sdate = firstDay.sdate,
-            isJdate = this.state.month.isJdate,
-            firstDayJd = jdate.addDays(-(jdate.Day - 1)),
-            sd = new Date((sdate || jdate.getDate()).valueOf());
-
-        sd.setDate(-(sd.getDate() - 1));
+            title = this.state.month.isJdate
+                ? jdate.monthName()
+                : `${Utils.sMonthsEng[sdate.getMonth()]} ${sdate.getFullYear()}`;
 
         this.props.navigation.setParams({
             jdate,
             sdate,
             appData: this.appData,
-            title: isJdate
-                ? firstDayJd.monthName()
-                : `${Utils.sMonthsEng[sd.getMonth()]} ${sd.getFullYear()}`
+            title
         });
     }
     render() {

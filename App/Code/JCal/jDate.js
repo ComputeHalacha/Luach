@@ -742,7 +742,10 @@ export default class jDate {
         //As the "zero hour" is at midnight, so if the current time was earlier than that, than it was during the previous date.
         //So we will need to add another day to get the correct date.
         const offset = JS_START_OFFSET > 0 ? 1 : 0,
-            //The number of days since the "zero hour" until the given date
+            //Get the number of days from the "zero hour" until the given date.
+            //This is done by taking the given absolute date and removing the
+            //number of days from absolute date 0 until the js "zero hour" - keeping into
+            //account the previously calculated possible day offset.
             daysSinceStart = abs - JS_START_DATE_ABS + offset;
         //Create a javascript date from the number of milliseconds since the "zero hour"
         return new Date(daysSinceStart * MS_PER_DAY);
