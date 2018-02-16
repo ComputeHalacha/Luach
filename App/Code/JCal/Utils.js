@@ -333,6 +333,24 @@ export default class Utils {
         return jdate1 && jdate2 && jdate1.Abs && jdate2.Abs && jdate1.Abs === jdate2.Abs;
     }
     /**
+     * Compares two jDates to see if they both refer to the same Jewish Month.
+     * @param {jDate} jdate1
+     * @param {jDate} jdate2
+     */
+    static isSameJMonth(jdate1, jdate2) {
+        return jdate1.Month === jdate2.Month &&
+            jdate1.Year === jdate2.Year;
+    }
+    /**
+     * Compares two dates to se if they both refer to the same Secular Month.
+     * @param {Date} sdate1
+     * @param {Date} sdate2
+     */
+    static isSameSMonth(sdate1, sdate2) {
+        return sdate1.getMonth() === sdate2.getMonth() &&
+            sdate1.getFullYear() === sdate2.getFullYear();
+    }
+    /**
      * Determines if the time of the given Date() is after sunset at the given Location
      * @param {Date} sdate
      * @param {Location} location

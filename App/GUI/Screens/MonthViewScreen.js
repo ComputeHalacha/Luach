@@ -114,34 +114,45 @@ export default class MonthViewScreen extends React.PureComponent {
         </View>;
     }
     toggleMonthType() {
+        let date;
+        //Current: Jewish, toggling to Secular
         if (this.state.month.isJdate) {
-            //Change to secular
-            let sdate = this.state.month.date.getDate();
-            //If most of the Jewish Month is the next Secular month, we display the next month.
-            if (sdate > 16) {
-                sdate = new Date(sdate.getFullYear(), sdate.getMonth() + 1, 1);
+            //If the current Jewish date is being shown,
+            //change to the month of the current Secular date.
+            if (Utils.isSameJMonth(this.state.month.date, this.state.today)) {
+                date = this.state.today.getDate();
             }
-            const month = new Month(sdate, this.appData);
-            this.setState({
-                month,
-                weeks: month.getAllDays(),
-                today: new jDate()
-            }, this.setNavProps);
+            else {
+                //Get the secular date of the first day
+                //of the currently displayed Jewish month.
+                date = this.state.month.date.getDate();
+                //If most of the currently displayed Jewish Month
+                //was during the next Secular month...
+                if (date > 16) {
+                    //Display the next secular month instead.
+                    date = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+                }
+            }
         }
+        //Current: Secular, toggling to Jewish
         else {
-            //Change to Jewish date.
-            //If the current time is after sunset, and we are Jewish Calendar based,
-            //"today" will be the next day.
-            const today = this.appData.Settings.navigateBySecularDate
-                ? new jDate()
-                : Utils.nowAtLocation(this.appData.Settings.location),
-                month = new Month(new jDate(this.state.month.date), this.appData);
-            this.setState({
-                month,
-                weeks: month.getAllDays(),
-                today: today
-            }, this.setNavProps);
+            //If the current Secular date is being shown,
+            //change to the month of the current Jewish date.
+            if (Utils.isSameSMonth(this.state.month.date, this.state.today.getDate())) {
+                date = this.state.today;
+            }
+            else {
+                //Get the Jewish date of the first day
+                //of the currently displayed Secular month.
+                date = new jDate(this.state.month.date);
+            }
         }
+
+        const month = new Month(date, this.appData);
+        this.setState({
+            month,
+            weeks: month.getAllDays()
+        }, this.setNavProps);
     }
     getDayColumn(singleDay, index) {
         const colWidth = Utils.toInt(getScreenWidth() / 7),
