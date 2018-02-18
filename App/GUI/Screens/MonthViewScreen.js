@@ -96,7 +96,9 @@ export default class MonthViewScreen extends React.PureComponent {
         goHomeToday(this.props.navigation, this.appData);
     }
     goThisMonth() {
-        const month = new Month(this.state.today, this.appData);
+        const month = new Month(this.state.month.isJdate
+            ? this.state.today
+            : this.state.today.getDate(), this.appData);
         this.setState({
             month,
             weeks: month.getAllDays()
