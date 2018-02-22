@@ -19,7 +19,7 @@ export default class Location {
         if (typeof israel === 'undefined' || israel === null) {
             //If the user is within Israels general coordinates,
             //we feel pretty safe assuming they are in Israel.
-            //Where else on the map is the user (probablity of Jewishness: 99.99%)?
+            //Where else on the map is the user? (Note, the probablity of our users Jewishness: 99.99%)
             //Sinai, Lebanon, Syria, Jordan, in a submarine under the Mediterannian ...
             israel = (latitude > 29.45 && latitude < 33 && longitude < -34.23 && longitude > -35.9);
         }
