@@ -9,9 +9,24 @@ import Settings from '../../Code/Settings';
 import { GeneralStyles } from '../styles';
 
 export default class FindLocation extends React.PureComponent {
-    static navigationOptions = {
-        title: 'Find Location',
+    static navigationOptions = ({ navigation }) => {
+        const { appData } = navigation.state.params;
+        return {
+            title: 'Find Location',
+            headerRight:
+                <TouchableHighlight
+                    onPress={() =>
+                        navigation.navigate('NewLocation', { appData })}>
+                    <View style={{ marginRight: 10 }}>
+                        <Icon name='add'
+                            color='#aac'
+                            size={25} />
+                        <Text style={{ fontSize: 10, color: '#aac' }}>New Location</Text>
+                    </View>
+                </TouchableHighlight>
+        };
     };
+
     constructor(props) {
         super(props);
         const { appData, onUpdate } = this.props.navigation.state.params;
@@ -36,6 +51,15 @@ export default class FindLocation extends React.PureComponent {
             });
         }
         this.dispatch(NavigationActions.back());
+    }
+    edit(location) {
+        const appData = this.appData;
+        this.navigate('NewLocation',
+            {
+                appData,
+                location,
+                onUpdate: l => this.update(l)
+            });
     }
     findLocation(event) {
         const search = event.nativeEvent.text;
@@ -102,13 +126,15 @@ export default class FindLocation extends React.PureComponent {
                         <View>
                             <View style={GeneralStyles.headerView}>
                                 <Text style={GeneralStyles.headerText}>{`Found ${this.state.list.length.toString()} Locations...`}</Text>
+                                <Text>Press to select, press and hold to edit.</Text>
                             </View>
                             {this.state.list.map((location, index) =>
                                 <TouchableHighlight
                                     key={index}
                                     underlayColor='#afa'
                                     style={{ flex: 1 }}
-                                    onPress={() => this.update(location)}>
+                                    onPress={() => this.update(location)}
+                                    onLongPress={() => this.edit(location)}>
                                     <View style={styles.singleLocation}>
                                         <Icon
                                             name='forward'

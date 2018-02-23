@@ -15,6 +15,7 @@ import FindLocationScreen from './GUI/Screens/FindLocationScreen';
 import MontheViewScreen from './GUI/Screens/MonthViewScreen';
 import BrowserScreen from './GUI/Screens/BrowserScreen';
 import ExportDataScreen from './GUI/Screens/ExportDataScreen';
+import NewLocationScreen from './GUI/Screens/NewLocationScreen';
 
 AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
     Home: { screen: HomeScreen },
@@ -31,7 +32,8 @@ AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
     FindLocation: { screen: FindLocationScreen },
     MonthView: { screen: MontheViewScreen },
     Browser: { screen: BrowserScreen },
-    ExportData: { screen: ExportDataScreen }
+    ExportData: { screen: ExportDataScreen },
+    NewLocation: { screen: NewLocationScreen }
 },
     {
         initialRouteName: 'Home',
