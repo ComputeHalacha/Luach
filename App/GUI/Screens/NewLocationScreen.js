@@ -13,14 +13,14 @@ import { GeneralStyles } from '../styles';
 export default class NewLocation extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
-        const { location, appData, onUpdate } = navigation.state.params;
+        const { location, onUpdate } = navigation.state.params;
         return {
             title: location ? `Edit ${location.Name}` : 'New Location',
             headerRight: location &&
                 <TouchableOpacity onPress={() =>
-                    NewLocation.deleteLocation(location, appData, ad => {
+                    NewLocation.deleteLocation(location, () => {
                         if (onUpdate) {
-                            onUpdate(ad);
+                            onUpdate();
                         }
                         navigation.dispatch(NavigationActions.back());
                     })}>
@@ -84,19 +84,15 @@ export default class NewLocation extends React.Component {
         this.updateLocation = this.updateLocation.bind(this);
     }
     addLocation() {
-        const appData = this.appData,
-            locationList = appData.LocationList,
-            location = new Location(
-                this.state.name,
-                this.state.israel,
-                this.state.latitude,
-                this.state.longitude,
-                this.state.utcoffset,
-                this.state.elevation,
-                this.state.candles);
+        const location = new Location(
+            this.state.name,
+            this.state.israel,
+            this.state.latitude,
+            this.state.longitude,
+            this.state.utcoffset,
+            this.state.elevation,
+            this.state.candles);
         DataUtils.LocationToDatabase(location).then(() => {
-            locationList.push(location);
-            appData.LocationList = locationList;
             popUpMessage(`The location "${location.Name}" has been successfully added.`,
                 'Add Location');
             if (this.onUpdate) {
@@ -110,8 +106,7 @@ export default class NewLocation extends React.Component {
         });
     }
     updateLocation() {
-        const appData = this.appData,
-            location = this.location,
+        const location = this.location,
             origLocation = location.clone();
         location.Name = this.state.name;
         location.Israel = this.state.israel;
@@ -143,9 +138,9 @@ export default class NewLocation extends React.Component {
         });
     }
     /**
-     * Delete an Location from the database and from the given AppData, then run the onUpdate function with the altered AppData.
+     * Delete an Location from the database, then run the onUpdate function.
      * @param {Location} location
-     * @param {AppData} appData
+     * @param {AppData} appDatalocation
      * @param {Function} onUpdate
      */
     static deleteLocation(location, appData, onUpdate) {
@@ -157,12 +152,18 @@ export default class NewLocation extends React.Component {
                 //Button 2
                 {
                     text: 'OK', onPress: () => {
+                        const locationId = location.locationId;
                         DataUtils.DeleteLocation(location)
                             .then(() => {
+                                if (appData.Settings.location.locationId === locationId) {
+                                    appData.Settings.location = appData.Settings.location.Israel
+                                        ? Location.getJerusalem()
+                                        : Location.getLakewood();
+                                }
                                 popUpMessage(`The location "${location.Name}" has been successfully removed.`,
                                     'Remove location');
                                 if (onUpdate) {
-                                    onUpdate(appData);
+                                    onUpdate();
                                 }
                             })
                             .catch(err => {

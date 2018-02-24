@@ -58,11 +58,26 @@ export default class FindLocation extends React.PureComponent {
             {
                 appData,
                 location,
-                onUpdate: l => this.update(l)
+                onUpdate: (l) => {
+                    this.findLocation();
+                    const appData = this.appData;
+                    //In case the name or coordnates were changed.
+                    if (appData.Settings.location.locationId === l.locationId) {
+                        appData.Settings.location = location;
+                        if (this.onUpdate) {
+                            this.onUpdate(appData);
+                        }
+                    }
+                }
             });
     }
-    findLocation(event) {
-        const search = event.nativeEvent.text;
+    findLocation(search) {
+        if (search) {
+            this.searchText = search;
+        }
+        else {
+            search = this.searchText;
+        }
         if (search) {
             this.setState({ searching: true });
             DataUtils.SearchLocations(search).then(list =>
@@ -109,7 +124,7 @@ export default class FindLocation extends React.PureComponent {
                                 accessibilityLabel='Search for a location'
                                 autoCorrect={false}
                                 spellCheck={false}
-                                onEndEditing={value => this.findLocation(value)} />
+                                onEndEditing={event => this.findLocation(event.nativeEvent.text)} />
                             <Icon name='search' type="ionicons" color='#aac' />
                         </View>
                     </View>
@@ -126,23 +141,23 @@ export default class FindLocation extends React.PureComponent {
                         <View>
                             <View style={GeneralStyles.headerView}>
                                 <Text style={GeneralStyles.headerText}>{`Found ${this.state.list.length.toString()} Locations...`}</Text>
-                                <Text>Press to select, press and hold to edit.</Text>
                             </View>
                             {this.state.list.map((location, index) =>
-                                <TouchableHighlight
-                                    key={index}
-                                    underlayColor='#afa'
-                                    style={{ flex: 1 }}
-                                    onPress={() => this.update(location)}
-                                    onLongPress={() => this.edit(location)}>
-                                    <View style={styles.singleLocation}>
-                                        <Icon
-                                            name='forward'
-                                            color='#393'
-                                            size={15} />
-                                        <Text> {location.Name}</Text>
-                                    </View>
-                                </TouchableHighlight>)
+                                <View key={index} style={{ flex: 1, alignContent: 'column' }}>
+                                    <TouchableHighlight
+                                        underlayColor='#afa'
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.update(location)}>
+                                        <View style={styles.singleLocation}>
+                                            <Icon
+                                                name='forward'
+                                                color='#393'
+                                                size={15} />
+                                            <Text> {location.Name}</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                    <Icon name='pencil' color='#448' size={35} onPress={() => this.edit(location)} />
+                                </View>)
                             }
                         </View>
                     }
