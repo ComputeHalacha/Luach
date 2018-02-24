@@ -1,6 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, Button, Switch, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Select, Option } from 'react-native-chooser';
+import { ScrollView, View, Text, Button, Switch, TextInput, TouchableOpacity, Alert, Picker } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
@@ -53,12 +52,12 @@ export default class NewLocation extends React.Component {
         if (location) {
             this.location = location;
             name = location.Name;
-            israel = !!location.israel;
-            latitude = location.latitude;
-            longitude = location.longitude;
-            utcoffset = location.utcoffset;
-            elevation = location.elevation;
-            candles = location.candles;
+            israel = !!location.Israel;
+            latitude = location.Latitude;
+            longitude = location.Longitude;
+            utcoffset = location.Utcoffset;
+            elevation = location.Elevation;
+            candles = location.Candles;
         }
         else {
             name = 'New Location';
@@ -75,9 +74,9 @@ export default class NewLocation extends React.Component {
             israel,
             latitude,
             longitude,
-            utcoffset,
-            elevation,
-            candles
+            utcoffset: (israel ? 2 : utcoffset) || 0,
+            elevation: elevation || 0,
+            candles: candles || 18
         };
 
         this.addLocation = this.addLocation.bind(this);
@@ -191,13 +190,6 @@ export default class NewLocation extends React.Component {
                             placeholder='Location name'
                             maxLength={200} />
                     </View>
-                    <View style={{ padding: 10 }}>
-                        <Text style={{
-                            fontSize: 12,
-                            color: '#955'
-                        }}>
-                            You can choose by either Jewish or Secular Date</Text>
-                    </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Latitude</Text>
                         <CoordinatesChooser
@@ -226,20 +218,16 @@ export default class NewLocation extends React.Component {
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Time Zone offset</Text>
-                        <Select
-                            onSelect={seconds => this.setState({ seconds })}
-                            defaultText={this.state.seconds.toString()}
-                            style={GeneralStyles.select}
-                            indicator='down'
-                            transparent={true}
-                            backdropStyle={GeneralStyles.optionListBackdrop}
-                            optionListStyle={GeneralStyles.optionListStyle}>
+                        <Picker style={GeneralStyles.picker}
+                            onValueChange={utcoffset => this.setState({ utcoffset })}
+                            selectedValue={this.state.utcoffset}>
                             {range(-12, 12).map(i =>
-                                <Option value={i} key={i}>
-                                    {`GMT ${i >= 0 ? '+' : '-'} ${Math.abs(i)}`}
-                                </Option>
+                                <Picker.Item
+                                    value={i}
+                                    key={i}
+                                    label={`GMT ${i >= 0 ? '+' : '-'} ${Math.abs(i)}`} />
                             )}
-                        </Select>
+                        </Picker>
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Elevation</Text>
@@ -251,7 +239,7 @@ export default class NewLocation extends React.Component {
                                     });
                                 }
                             }}
-                            defaultValue={this.state.elevation}
+                            defaultValue={this.state.elevation.toString()}
                             placeholder='Enter elevation in feet'
                             keyboardType='numeric'
                             disableFullscreenUI={true}
@@ -259,20 +247,16 @@ export default class NewLocation extends React.Component {
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Candle Lighting</Text>
-                        <Select
-                            onSelect={candles => this.setState({ candles })}
-                            defaultText={this.state.candles.toString()}
-                            style={GeneralStyles.select}
-                            indicator='down'
-                            transparent={true}
-                            backdropStyle={GeneralStyles.optionListBackdrop}
-                            optionListStyle={GeneralStyles.optionListStyle}>
+                        <Picker style={GeneralStyles.picker}
+                            onValueChange={candles => this.setState({ candles })}
+                            selectedValue={`${this.state.candles} minutes before sunset`}                            >
                             {range(18, 60).map(i =>
-                                <Option value={i} key={i}>
-                                    {`${i} minutes before sunset`}
-                                </Option>
+                                <Picker.Item
+                                    value={i}
+                                    key={i}
+                                    label={`${i} minutes before sunset`} />
                             )}
-                        </Select>
+                        </Picker>
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <View style={GeneralStyles.btnAddNew}>

@@ -22,14 +22,11 @@ export class CoordinatesChooser extends React.PureComponent {
         this.minsSecsRange = range(0, 60);
 
         const { degrees, minutes, seconds } = this.degToCoords(this.props.value),
-            direction = Math.sign(this.props.value) === 1
+            direction = this.props.value >= 0
                 ? Direction.WestOrNorth
                 : Direction.EastOrSouth;
 
         this.state = { modalVisible: false, degrees, minutes, seconds, direction };
-
-
-        this.setCoordinates = this.setCoordinates.bind(this);
     }
     degToCoords(degreeDecimal) {
         const degrees = Math.floor(degreeDecimal);
@@ -50,8 +47,8 @@ export class CoordinatesChooser extends React.PureComponent {
     }
     getDirectionText() {
         return this.coordinatesType === CoordinatesType.Latitude
-            ? this.Direction === Direction.WestOrNorth ? 'North' : 'South'
-            : this.Direction === Direction.WestOrNorth ? 'West' : 'East';
+            ? (this.Direction === Direction.WestOrNorth ? 'North' : 'South')
+            : (this.Direction === Direction.WestOrNorth ? 'West' : 'East');
     }
     close() {
         this.props.setCoordinates(this.getCoordsDeg());
@@ -62,7 +59,7 @@ export class CoordinatesChooser extends React.PureComponent {
         return <View>
             <TouchableOpacity onPress={() => this.setState({ modalVisible: true })}>
                 <View style={GeneralStyles.textInput}>
-                    <Text>{this.getCoordsString()}}</Text>
+                    <Text>{this.getCoordsString()}</Text>
                 </View>
             </TouchableOpacity>
             <Modal

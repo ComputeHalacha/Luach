@@ -143,7 +143,7 @@ export default class FindLocation extends React.PureComponent {
                                 <Text style={GeneralStyles.headerText}>{`Found ${this.state.list.length.toString()} Locations...`}</Text>
                             </View>
                             {this.state.list.map((location, index) =>
-                                <View key={index} style={{ flex: 1, alignContent: 'column' }}>
+                                <View key={index} style={{ flex: 1, flexDirection: 'column' }}>
                                     <TouchableHighlight
                                         underlayColor='#afa'
                                         style={{ flex: 1 }}
@@ -156,7 +156,7 @@ export default class FindLocation extends React.PureComponent {
                                             <Text> {location.Name}</Text>
                                         </View>
                                     </TouchableHighlight>
-                                    <Icon name='pencil' color='#448' size={35} onPress={() => this.edit(location)} />
+                                    <Icon name='edit' onPress={() => this.edit(location)} />
                                 </View>)
                             }
                         </View>
@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#eee',
-        padding: 10
+        padding: 10,
+        width: '85%'
     },
 });
