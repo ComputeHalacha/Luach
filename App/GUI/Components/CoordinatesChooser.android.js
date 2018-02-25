@@ -7,9 +7,13 @@ export const CoordinatesType = Object.freeze({
     Longitude: 0,
     Latitude: 1
 }),
-    Direction = Object.freeze({
-        WestOrNorth: 1,
-        EastOrSouth: -1
+    DirectionLat = Object.freeze({
+        North: 1,
+        South: -1
+    }),
+    DirectionLon = Object.freeze({
+        West: 1,
+        East: -1
     });
 
 export class CoordinatesChooser extends React.PureComponent {
@@ -23,8 +27,12 @@ export class CoordinatesChooser extends React.PureComponent {
 
         const { degrees, minutes, seconds } = this.degToCoords(this.props.value),
             direction = this.props.value >= 0
-                ? Direction.WestOrNorth
-                : Direction.EastOrSouth;
+                ? (this.coordinatesType === CoordinatesType.Latitude
+                    ? DirectionLat.North
+                    : DirectionLon.West)
+                : (this.coordinatesType === CoordinatesType.Latitude
+                    ? DirectionLat.South
+                    : DirectionLon.East);
 
         this.state = { modalVisible: false, degrees, minutes, seconds, direction };
     }
@@ -43,12 +51,20 @@ export class CoordinatesChooser extends React.PureComponent {
             (degrees + (minutes * sixtieth) + (seconds * (sixtieth ** 2)));
     }
     getCoordsString() {
-        return `${this.state.degrees}° ${this.state.minutes}' ${this.state.seconds}" ${this.getDirectionText()}`;
+        return this.getCoordsDeg() +
+            ' [ ' + this.state.degrees.toString() + '° ' +
+            this.state.minutes.toString() + '\' ' +
+            this.state.seconds.toString() + '" ' +
+            this.getDirectionText() + ']';
     }
     getDirectionText() {
         return this.coordinatesType === CoordinatesType.Latitude
-            ? (this.Direction === Direction.WestOrNorth ? 'North' : 'South')
-            : (this.Direction === Direction.WestOrNorth ? 'West' : 'East');
+            ? (this.state.direction === DirectionLat.North
+                ? 'North'
+                : 'South')
+            : (this.state.direction === DirectionLon.West
+                ? 'West'
+                : 'East');
     }
     close() {
         this.props.setCoordinates(this.getCoordsDeg());
@@ -136,12 +152,16 @@ export class CoordinatesChooser extends React.PureComponent {
                                     label={this.coordinatesType === CoordinatesType.Latitude
                                         ? 'North'
                                         : 'West'}
-                                    value={Direction.WestOrNorth} />
+                                    value={this.coordinatesType === CoordinatesType.Latitude
+                                        ? DirectionLat.North
+                                        : DirectionLon.West} />
                                 <Picker.Item
                                     label={this.coordinatesType === CoordinatesType.Latitude
                                         ? 'South'
                                         : 'East'}
-                                    value={Direction.EastOrSouth} />
+                                    value={this.coordinatesType === CoordinatesType.Latitude
+                                        ? DirectionLat.South
+                                        : DirectionLon.East} />
                             </Picker>
                         </View>
                         <View style={{

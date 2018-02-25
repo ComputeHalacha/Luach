@@ -191,18 +191,18 @@ export default class NewLocation extends React.Component {
                             maxLength={200} />
                     </View>
                     <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Latitude</Text>
-                        <CoordinatesChooser
-                            coordinatesType={CoordinatesType.Latitude}
-                            value={this.state.latitude}
-                            setCoordinates={latitude => this.setState({ latitude })} />
-                    </View>
-                    <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Longitude</Text>
                         <CoordinatesChooser
                             coordinatesType={CoordinatesType.Longitude}
                             value={this.state.longitude}
                             setCoordinates={longitude => this.setState({ longitude })} />
+                    </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>Latitude</Text>
+                        <CoordinatesChooser
+                            coordinatesType={CoordinatesType.Latitude}
+                            value={this.state.latitude}
+                            setCoordinates={latitude => this.setState({ latitude })} />
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <Text style={GeneralStyles.label}>Is this location in Israel?</Text>
@@ -235,11 +235,15 @@ export default class NewLocation extends React.Component {
                             onEndEditing={event => {
                                 if (!isNaN(event.nativeEvent.text)) {
                                     this.setState({
-                                        elevation: parseInt(event.nativeEvent.text)
+                                        elevation: (parseInt(event.nativeEvent.text) * 3.28084).toFixed()
                                     });
                                 }
+                                else {
+                                    popUpMessage('Please enter a valid number');
+                                }
                             }}
-                            defaultValue={this.state.elevation.toString()}
+                            value={`${(this.state.elevation / 3.28084).toFixed(0)} feet`}
+                            defaultValue={`${(this.state.elevation / 3.28084).toFixed(0)} feet`}
                             placeholder='Enter elevation in feet'
                             keyboardType='numeric'
                             disableFullscreenUI={true}
