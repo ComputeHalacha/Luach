@@ -24,25 +24,25 @@ export class CoordinatesChooser extends React.PureComponent {
             ? range(0, 180)
             : range(0, 90);
         this.minsSecsRange = range(0, 60);
-
-        const { degrees, minutes, seconds } = this.degToCoords(this.props.value),
-            direction = this.props.value >= 0
+        this.state = {
+            modalVisible: false,
+            ...this.degToCoords(this.props.value)
+        };
+    }
+    degToCoords(degreeDecimal) {
+        const degrees = Math.abs(Math.floor(degreeDecimal));
+        let remainder = degreeDecimal - degrees;
+        const minutes = Math.floor((remainder * 100) * 0.6);
+        remainder -= (minutes / 100.0);
+        const seconds = Math.round((remainder * 100) * 0.6, 2),
+            direction = degreeDecimal >= 0
                 ? (this.coordinatesType === CoordinatesType.Latitude
                     ? DirectionLat.North
                     : DirectionLon.West)
                 : (this.coordinatesType === CoordinatesType.Latitude
                     ? DirectionLat.South
                     : DirectionLon.East);
-
-        this.state = { modalVisible: false, degrees, minutes, seconds, direction };
-    }
-    degToCoords(degreeDecimal) {
-        const degrees = Math.floor(degreeDecimal);
-        let remainder = degreeDecimal - degrees;
-        const minutes = Math.floor((remainder * 100) * 0.6);
-        remainder -= (minutes / 100.0);
-        const seconds = Math.round((remainder * 100) * 0.6, 2);
-        return { degrees, minutes, seconds };
+        return { degrees, minutes, seconds, direction };
     }
     getCoordsDeg() {
         const { degrees, minutes, seconds } = this.state,
@@ -51,11 +51,11 @@ export class CoordinatesChooser extends React.PureComponent {
             (degrees + (minutes * sixtieth) + (seconds * (sixtieth ** 2)));
     }
     getCoordsString() {
-        return this.getCoordsDeg() +
-            ' [ ' + this.state.degrees.toString() + '° ' +
+        return this.state.degrees.toString() + '° ' +
             this.state.minutes.toString() + '\' ' +
             this.state.seconds.toString() + '" ' +
-            this.getDirectionText() + ']';
+            this.getDirectionText() +
+            '  [' + this.getCoordsDeg().toFixed(2) + ']';
     }
     getDirectionText() {
         return this.coordinatesType === CoordinatesType.Latitude
@@ -113,56 +113,58 @@ export class CoordinatesChooser extends React.PureComponent {
                                     : 'Longitue'}`}
                             </Text>
                         </View>
-                        <View>
-                            <Text style={GeneralStyles.label}>Degrees</Text>
-                            <Picker style={GeneralStyles.picker}
-                                selectedValue={this.state.degrees}
-                                onValueChange={degrees => this.setState({ degrees })}>
-                                {this.degreesRange.map(d =>
-                                    <Picker.Item label={d.toString()} value={d} key={d} />
-                                )}
-                            </Picker>
-                        </View>
-                        <View>
-                            <Text style={GeneralStyles.label}>Minutes</Text>
-                            <Picker style={GeneralStyles.picker}
-                                selectedValue={this.state.minutes}
-                                onValueChange={minutes => this.setState({ minutes })}>
-                                {this.minsSecsRange.map(d =>
-                                    <Picker.Item label={d.toString()} value={d} key={d} />
-                                )}
-                            </Picker>
-                        </View>
-                        <View>
-                            <Text style={GeneralStyles.label}>Seconds</Text>
-                            <Picker style={GeneralStyles.picker}
-                                selectedValue={this.state.seconds}
-                                onValueChange={seconds => this.setState({ seconds })}>
-                                {this.minsSecsRange.map(d =>
-                                    <Picker.Item label={d.toString()} value={d} key={d} />
-                                )}
-                            </Picker>
-                        </View>
-                        <View>
-                            <Text style={GeneralStyles.label}>Direction</Text>
-                            <Picker style={GeneralStyles.picker}
-                                selectedValue={this.state.direction}
-                                onValueChange={direction => this.setState({ direction })}>
-                                <Picker.Item
-                                    label={this.coordinatesType === CoordinatesType.Latitude
-                                        ? 'North'
-                                        : 'West'}
-                                    value={this.coordinatesType === CoordinatesType.Latitude
-                                        ? DirectionLat.North
-                                        : DirectionLon.West} />
-                                <Picker.Item
-                                    label={this.coordinatesType === CoordinatesType.Latitude
-                                        ? 'South'
-                                        : 'East'}
-                                    value={this.coordinatesType === CoordinatesType.Latitude
-                                        ? DirectionLat.South
-                                        : DirectionLon.East} />
-                            </Picker>
+                        <View style={{ flexDirection: 'column' }}>
+                            <View style={{ width: '20%' }}>
+                                <Text style={GeneralStyles.label}>Degrees</Text>
+                                <Picker style={GeneralStyles.picker}
+                                    selectedValue={this.state.degrees}
+                                    onValueChange={degrees => this.setState({ degrees })}>
+                                    {this.degreesRange.map(d =>
+                                        <Picker.Item label={d.toString()} value={d} key={d} />
+                                    )}
+                                </Picker>
+                            </View>
+                            <View style={{ width: '20%' }}>
+                                <Text style={GeneralStyles.label}>Minutes</Text>
+                                <Picker style={GeneralStyles.picker}
+                                    selectedValue={this.state.minutes}
+                                    onValueChange={minutes => this.setState({ minutes })}>
+                                    {this.minsSecsRange.map(d =>
+                                        <Picker.Item label={d.toString()} value={d} key={d} />
+                                    )}
+                                </Picker>
+                            </View>
+                            <View style={{ width: '20%' }}>
+                                <Text style={GeneralStyles.label}>Seconds</Text>
+                                <Picker style={GeneralStyles.picker}
+                                    selectedValue={this.state.seconds}
+                                    onValueChange={seconds => this.setState({ seconds })}>
+                                    {this.minsSecsRange.map(d =>
+                                        <Picker.Item label={d.toString()} value={d} key={d} />
+                                    )}
+                                </Picker>
+                            </View>
+                            <View style={{ width: '40%' }}>
+                                <Text style={GeneralStyles.label}>Direction</Text>
+                                <Picker style={GeneralStyles.picker}
+                                    selectedValue={this.state.direction}
+                                    onValueChange={direction => this.setState({ direction })}>
+                                    <Picker.Item
+                                        label={this.coordinatesType === CoordinatesType.Latitude
+                                            ? 'North'
+                                            : 'West'}
+                                        value={this.coordinatesType === CoordinatesType.Latitude
+                                            ? DirectionLat.North
+                                            : DirectionLon.West} />
+                                    <Picker.Item
+                                        label={this.coordinatesType === CoordinatesType.Latitude
+                                            ? 'South'
+                                            : 'East'}
+                                        value={this.coordinatesType === CoordinatesType.Latitude
+                                            ? DirectionLat.South
+                                            : DirectionLon.East} />
+                                </Picker>
+                            </View>
                         </View>
                         <View style={{
                             alignItems: 'center',
