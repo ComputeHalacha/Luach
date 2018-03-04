@@ -30,18 +30,24 @@ export class CoordinatesChooser extends React.PureComponent {
         };
     }
     degToCoords(degreeDecimal) {
-        const degrees = Math.abs(Math.floor(degreeDecimal));
-        let remainder = degreeDecimal - degrees;
-        const minutes = Math.floor((remainder * 100) * 0.6);
-        remainder -= (minutes / 100.0);
-        const seconds = Math.round((remainder * 100) * 0.6, 2),
-            direction = degreeDecimal >= 0
-                ? (this.coordinatesType === CoordinatesType.Latitude
-                    ? DirectionLat.North
-                    : DirectionLon.West)
-                : (this.coordinatesType === CoordinatesType.Latitude
-                    ? DirectionLat.South
-                    : DirectionLon.East);
+        const deg = Math.abs(degreeDecimal);
+        let degrees = Math.floor(deg),
+            minutes = Math.floor((deg * 3600) / 60) % 60,
+            seconds = Math.round(deg * 3600 % 60);
+        if (seconds === 60) {
+            seconds = 0;
+        }
+        if (minutes === 60) {
+            minutes = 0;
+            degrees++;
+        }
+        const direction = degreeDecimal >= 0
+            ? (this.coordinatesType === CoordinatesType.Latitude
+                ? DirectionLat.North
+                : DirectionLon.West)
+            : (this.coordinatesType === CoordinatesType.Latitude
+                ? DirectionLat.South
+                : DirectionLon.East);
         return { degrees, minutes, seconds, direction };
     }
     getCoordsDeg() {
@@ -187,5 +193,5 @@ const localStyles = StyleSheet.create({
         padding: 5,
         fontSize: 10
     },
-    picker: { margin: 0, fontSize: 10 }
+    picker: { margin: 0 }
 });

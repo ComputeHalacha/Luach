@@ -55,7 +55,7 @@ export default class NewLocation extends React.Component {
             israel = !!location.Israel;
             latitude = location.Latitude;
             longitude = location.Longitude;
-            utcoffset = location.Utcoffset;
+            utcoffset = location.UTCOffset;
             elevation = location.Elevation;
             candles = location.Candles;
         }
