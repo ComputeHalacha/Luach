@@ -143,20 +143,21 @@ export default class FindLocation extends React.PureComponent {
                                 <Text style={GeneralStyles.headerText}>{`Found ${this.state.list.length.toString()} Locations...`}</Text>
                             </View>
                             {this.state.list.map((location, index) =>
-                                <View key={index} style={{ flex: 1, flexDirection: 'column' }}>
+                                <View key={index} style={{ flex: 1 }}>
                                     <TouchableHighlight
                                         underlayColor='#afa'
-                                        style={{ flex: 1 }}
                                         onPress={() => this.update(location)}>
                                         <View style={styles.singleLocation}>
-                                            <Icon
-                                                name='forward'
-                                                color='#393'
-                                                size={15} />
-                                            <Text> {location.Name}</Text>
+                                            <View style={{ flexDirection: 'row'}}>
+                                                <Icon
+                                                    name='forward'
+                                                    color='#393'
+                                                    size={15} />
+                                                <Text> {location.Name}</Text>
+                                            </View>
+                                            <Icon name='edit' color='#888' size={13} style={{ margin: 5 }} onPress={() => this.edit(location)} />
                                         </View>
                                     </TouchableHighlight>
-                                    <Icon name='edit' onPress={() => this.edit(location)} />
                                 </View>)
                             }
                         </View>
@@ -182,9 +183,9 @@ const styles = StyleSheet.create({
     singleLocation: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
         borderWidth: 1,
         borderColor: '#eee',
-        padding: 10,
-        width: '85%'
+        padding: 10
     },
 });

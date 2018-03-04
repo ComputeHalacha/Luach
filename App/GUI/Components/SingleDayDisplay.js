@@ -104,7 +104,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                     Utils.isSameJdate(te.jdate, jdate)) : []),
             sdate = jdate.getDate(),
             isDayOff = isToday && (nowSdate.getDate() !== sdate.getDate()),
-            currSdate = isDayOff ? nowSdate :sdate,
+            currSdate = isDayOff ? nowSdate : sdate,
             todayText = isToday && <Text style={styles.todayText}>
                 {`TODAY${isDayOff ? '*' : ''}`}</Text>,
             isSpecialDay = jdate.DayOfWeek === 6 || jdate.getMajorHoliday(location.Israel),

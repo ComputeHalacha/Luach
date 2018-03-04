@@ -12,33 +12,33 @@ export default class SettingsScreen extends Component {
         return {
             title: 'Settings',
             headerRight:
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                <TouchableHighlight
-                    onPress={() =>
-                        navigation.navigate('ExportData', { appData, dataSet: 'Settings' })}>
-                    <View style={{ marginRight: 10 }}>
-                        <Icon name='import-export'
-                            color='#aca'
-                            size={25} />
-                        <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
-                    </View>
-                </TouchableHighlight>
-                <TouchableHighlight
-                    onPress={() =>
-                        navigation.navigate('Browser', {
-                            appData,
-                            onUpdate,
-                            url: 'index.html',
-                            title: 'Help'
-                        })}>
-                    <View style={{ marginRight: 3 }}>
-                        <Icon name='help'
-                            color='#aac'
-                            size={25} />
-                        <Text style={{ fontSize: 10, color: '#aac' }}>Luach Help</Text>
-                    </View>
-                </TouchableHighlight>
-            </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                    <TouchableHighlight
+                        onPress={() =>
+                            navigation.navigate('ExportData', { appData, dataSet: 'Settings' })}>
+                        <View style={{ marginRight: 10 }}>
+                            <Icon name='import-export'
+                                color='#aca'
+                                size={25} />
+                            <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
+                        </View>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                        onPress={() =>
+                            navigation.navigate('Browser', {
+                                appData,
+                                onUpdate,
+                                url: 'index.html',
+                                title: 'Help'
+                            })}>
+                        <View style={{ marginRight: 3 }}>
+                            <Icon name='help'
+                                color='#aac'
+                                size={25} />
+                            <Text style={{ fontSize: 10, color: '#aac' }}>Luach Help</Text>
+                        </View>
+                    </TouchableHighlight>
+                </View>
         };
     };
     constructor(props) {
@@ -67,6 +67,20 @@ export default class SettingsScreen extends Component {
         settings[name] = value;
         settings.save();
         this.update();
+    }
+    editLocation() {
+        const appData = this.appData;
+        this.navigate('NewLocation',
+            {
+                appData,
+                location: appData.Settings.location,
+                onUpdate: (l) => {
+                    //In case the name or coordnates were changed.
+                    appData.Settings.location = l;
+                    this.update(appData);
+
+                }
+            });
     }
     changePIN(pin) {
         const validPin = /^\d{4}$/.test(pin);
@@ -112,18 +126,22 @@ export default class SettingsScreen extends Component {
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Choose your location</Text>
-                            <TouchableHighlight underlayColor='#9f9' onPress={() =>
-                                this.navigate('FindLocation', {
-                                    onUpdate: this.update,
-                                    appData: this.appData
-                                })}>
-                                <View style={GeneralStyles.centeredRow}>
-                                    <Icon name='edit-location' color='#484' size={35} />
-                                    <Text>
-                                        {location.Name}
-                                    </Text>
-                                </View>
-                            </TouchableHighlight>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems:'center' }}>
+                                <TouchableHighlight underlayColor='#9f9' onPress={() =>
+                                    this.navigate('FindLocation', {
+                                        onUpdate: this.update,
+                                        appData: this.appData
+                                    })}
+                                    style={{ flex: 1, backgroundColor:'#dfd' }}>
+                                    <View style={GeneralStyles.centeredRow}>
+                                        <Icon name='edit-location' color='#484' size={35} />
+                                        <Text>
+                                            {location.Name}
+                                        </Text>
+                                    </View>
+                                </TouchableHighlight>
+                                <Icon name='edit' color='#888' size={15} style={{ margin: 5 }} onPress={() => this.editLocation(location)} />
+                            </View>
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Flag previous onah (The "Ohr Zaruah")</Text>

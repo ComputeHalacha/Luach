@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Modal, Button, Picker } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, Button, Picker, StyleSheet } from 'react-native';
 import { range } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
@@ -53,9 +53,8 @@ export class CoordinatesChooser extends React.PureComponent {
     getCoordsString() {
         return this.state.degrees.toString() + '° ' +
             this.state.minutes.toString() + '\' ' +
-            this.state.seconds.toString() + '" ' +
-            this.getDirectionText() +
-            '  [' + this.getCoordsDeg().toFixed(2) + ']';
+            this.state.seconds.toString() + '"  ' +
+            this.getDirectionText();
     }
     getDirectionText() {
         return this.coordinatesType === CoordinatesType.Latitude
@@ -79,7 +78,6 @@ export class CoordinatesChooser extends React.PureComponent {
                 </View>
             </TouchableOpacity>
             <Modal
-                style={{ flex: 1 }}
                 transparent={true}
                 visible={this.state.modalVisible}
                 onRequestClose={() => this.close()}>
@@ -110,13 +108,14 @@ export class CoordinatesChooser extends React.PureComponent {
                             }}>
                                 {`Select ${this.coordinatesType === CoordinatesType.Latitude
                                     ? 'Latitude'
-                                    : 'Longitue'}`}
+                                    : 'Longitude'}`}
                             </Text>
                         </View>
-                        <View style={{ flexDirection: 'column' }}>
-                            <View style={{ width: '20%' }}>
-                                <Text style={GeneralStyles.label}>Degrees</Text>
-                                <Picker style={GeneralStyles.picker}
+                        <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+                            <View style={{ width: '24%' }}>
+                                <Text style={localStyles.label}>Degrees</Text>
+                                <Picker style={localStyles.picker}
+                                    textStyle={{ fontSize: 10 }}
                                     selectedValue={this.state.degrees}
                                     onValueChange={degrees => this.setState({ degrees })}>
                                     {this.degreesRange.map(d =>
@@ -124,9 +123,10 @@ export class CoordinatesChooser extends React.PureComponent {
                                     )}
                                 </Picker>
                             </View>
-                            <View style={{ width: '20%' }}>
-                                <Text style={GeneralStyles.label}>Minutes</Text>
-                                <Picker style={GeneralStyles.picker}
+                            <View style={{ width: '24%' }}>
+                                <Text style={localStyles.label}>Minutes</Text>
+                                <Picker style={localStyles.picker}
+                                    textStyle={{ fontSize: 10 }}
                                     selectedValue={this.state.minutes}
                                     onValueChange={minutes => this.setState({ minutes })}>
                                     {this.minsSecsRange.map(d =>
@@ -134,9 +134,10 @@ export class CoordinatesChooser extends React.PureComponent {
                                     )}
                                 </Picker>
                             </View>
-                            <View style={{ width: '20%' }}>
-                                <Text style={GeneralStyles.label}>Seconds</Text>
-                                <Picker style={GeneralStyles.picker}
+                            <View style={{ width: '24%' }}>
+                                <Text style={localStyles.label}>Seconds</Text>
+                                <Picker style={localStyles.picker}
+                                    textStyle={{ fontSize: 10 }}
                                     selectedValue={this.state.seconds}
                                     onValueChange={seconds => this.setState({ seconds })}>
                                     {this.minsSecsRange.map(d =>
@@ -144,9 +145,10 @@ export class CoordinatesChooser extends React.PureComponent {
                                     )}
                                 </Picker>
                             </View>
-                            <View style={{ width: '40%' }}>
-                                <Text style={GeneralStyles.label}>Direction</Text>
-                                <Picker style={GeneralStyles.picker}
+                            <View style={{ width: '28%' }}>
+                                <Text style={localStyles.label}>Direction</Text>
+                                <Picker style={localStyles.picker}
+                                    textStyle={{ fontSize: 10 }}
                                     selectedValue={this.state.direction}
                                     onValueChange={direction => this.setState({ direction })}>
                                     <Picker.Item
@@ -178,3 +180,12 @@ export class CoordinatesChooser extends React.PureComponent {
         </View>;
     }
 }
+const localStyles = StyleSheet.create({
+    label: {
+        margin: 0,
+        backgroundColor: '#d5d5e6',
+        padding: 5,
+        fontSize: 10
+    },
+    picker: { margin: 0, fontSize: 10 }
+});
