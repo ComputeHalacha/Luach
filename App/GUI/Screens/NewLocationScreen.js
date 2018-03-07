@@ -57,7 +57,7 @@ export default class NewLocation extends React.Component {
             longitude = location.Longitude;
             utcoffset = location.UTCOffset;
             elevation = location.Elevation;
-            candles = location.Candles;
+            candles = location.CandleLighting;
         }
         else {
             name = 'New Location';
@@ -116,11 +116,12 @@ export default class NewLocation extends React.Component {
         location.CandleLighting = this.state.candles;
 
         DataUtils.LocationToDatabase(location).then(() => {
+            popUpMessage(`The location ${location.Name} has been successfully saved.`,
+            'Change Location');
             if (this.onUpdate) {
                 this.onUpdate(location);
             }
-            popUpMessage(`The location ${location.Name} has been successfully saved.`,
-                'Change Location');
+            this.dispatch(NavigationActions.back());
         }
         ).catch(err => {
             popUpMessage('We are sorry, Luach is unable to save the changes to this location.\nPlease contact luach@compute.co.il.');
@@ -164,6 +165,7 @@ export default class NewLocation extends React.Component {
                                 if (onUpdate) {
                                     onUpdate();
                                 }
+                                this.dispatch(NavigationActions.back());
                             })
                             .catch(err => {
                                 warn('Error trying to delete an location from the database.');
@@ -217,10 +219,11 @@ export default class NewLocation extends React.Component {
                                 })} />
                     </View>
                     <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Time Zone offset</Text>
+                        <Text style={GeneralStyles.label}>Time zone offset</Text>
                         <Picker style={GeneralStyles.picker}
                             onValueChange={utcoffset => this.setState({ utcoffset })}
-                            selectedValue={this.state.utcoffset}>
+                            selectedValue={this.state.utcoffset}
+                            enabled={!this.state.israel}>
                             {range(-12, 12).map(i =>
                                 <Picker.Item
                                     value={i}
@@ -230,20 +233,27 @@ export default class NewLocation extends React.Component {
                         </Picker>
                     </View>
                     <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Elevation</Text>
+                        <Text style={GeneralStyles.label}>Elevation
+                        <Text style={{
+                                fontSize: 10,
+                                color: '#777'
+                            }}>{'    (if location is below sea level, enter 0)'}
+                            </Text>
+                        </Text>
                         <TextInput style={GeneralStyles.textInput}
                             onEndEditing={event => {
-                                if (!isNaN(event.nativeEvent.text)) {
+                                const val = parseInt(event.nativeEvent.text);
+                                if (!isNaN(val)) {
                                     this.setState({
-                                        elevation: (parseInt(event.nativeEvent.text) * 3.28084).toFixed()
+                                        elevation: (val && val > 0 ? (val / 3.28084) : 0)
                                     });
                                 }
                                 else {
                                     popUpMessage('Please enter a valid number');
                                 }
                             }}
-                            value={`${(this.state.elevation / 3.28084).toFixed(0)} feet`}
-                            defaultValue={`${(this.state.elevation / 3.28084).toFixed(0)} feet`}
+                            selectTextOnFocus
+                            defaultValue={`${(this.state.elevation * 3.28084).toFixed(0)} feet`}
                             placeholder='Enter elevation in feet'
                             keyboardType='numeric'
                             disableFullscreenUI={true}
@@ -253,12 +263,12 @@ export default class NewLocation extends React.Component {
                         <Text style={GeneralStyles.label}>Candle Lighting</Text>
                         <Picker style={GeneralStyles.picker}
                             onValueChange={candles => this.setState({ candles })}
-                            selectedValue={`${this.state.candles} minutes before sunset`}                            >
+                            selectedValue={this.state.candles}>
                             {range(18, 60).map(i =>
                                 <Picker.Item
                                     value={i}
                                     key={i}
-                                    label={`${i} minutes before sunset`} />
+                                    label={`${i.toString()} minutes before sunset`} />
                             )}
                         </Picker>
                     </View>

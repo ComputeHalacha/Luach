@@ -156,7 +156,7 @@ export default class DataUtils {
             location.UTCOffset,
             location.Elevation,
             location.CandleLighting];
-        if (location.hasId) {
+        if (location.hasId()) {
             await DataUtils._executeSql(`UPDATE locations SET
                     name=?,
                     israel=?,
@@ -200,7 +200,7 @@ export default class DataUtils {
      * @param {Location} location The location to remove from the database
      */
     static async DeleteLocation(location) {
-        if (!location.hasId) {
+        if (!location.hasId()) {
             throw 'Locations can only be deleted from the database if they have an id';
         }
         await DataUtils._executeSql('DELETE from locations where locationId=?', [location.locationId])
@@ -547,7 +547,7 @@ export default class DataUtils {
                         l.latitude,
                         l.longitude,
                         l.utcoffset,
-                        l.elevation,
+                        l.elevation && l.elevation > 0 ? l.elevation : 0,
                         l.candles,
                         l.locationId));
                 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, Image, TextInput, TouchableHighlight, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, Image, TextInput, TouchableHighlight, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import SideMenu from '../Components/SideMenu';
@@ -9,22 +9,8 @@ import Settings from '../../Code/Settings';
 import { GeneralStyles } from '../styles';
 
 export default class FindLocation extends React.PureComponent {
-    static navigationOptions = ({ navigation }) => {
-        const { appData } = navigation.state.params;
-        return {
-            title: 'Find Location',
-            headerRight:
-                <TouchableHighlight
-                    onPress={() =>
-                        navigation.navigate('NewLocation', { appData })}>
-                    <View style={{ marginRight: 10 }}>
-                        <Icon name='add'
-                            color='#aac'
-                            size={25} />
-                        <Text style={{ fontSize: 10, color: '#aac' }}>New Location</Text>
-                    </View>
-                </TouchableHighlight>
-        };
+    static navigationOptions = {
+        title: 'Change your Location'
     };
 
     constructor(props) {
@@ -91,90 +77,129 @@ export default class FindLocation extends React.PureComponent {
             popUpMessage('Please enter some text to search for...');
         }
     }
-    render() {
-        let message, color;
+    getMessage() {
         if (this.state.list === null) {
             //initial state of the screen
-            message = 'Your current location is ' + this.appData.Settings.location.Name;
-            color = '#77b';
+            return <View style={{ alignItems: 'center', marginBottom: '20%' }}>
+                <Text style={{ color: '#77b', fontSize: 16, marginTop: '5%' }}>
+                    Your current location is:
+                    </Text>
+                <TouchableOpacity onPress={() => this.edit(this.appData.Settings.location)}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={{ fontWeight: 'bold', color: '#55f' }}>
+                            {`${this.appData.Settings.location.Name}  `}
+                        </Text>
+                        <Icon name='edit' color='#888' size={13} />
+                    </View>
+                </TouchableOpacity>
+            </View>;
         }
         else if (this.state.list.length === 0) {
             //After a search with no results
-            message = 'There are no Locations in the list that match your search...';
-            color = '#b66';
+            return <Text style={[styles.messageText, { color: '#b66' }]}>
+                There are no Locations in the list that match your search...
+            </Text>;
         }
         else if (this.state.searching) {
             //During a search
-            message = 'Searching for locations...';
-            color = '#595';
+            return <Text style={[styles.messageText, { color: '#595' }]}>
+                Searching for locations...
+            </Text>;
         }
+    }
+
+    render() {
+        const message = this.getMessage();
+
         return <View style={GeneralStyles.container}>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <SideMenu
                     onUpdate={this.onUpdate}
                     appData={this.appData}
                     navigator={this.props.navigation} />
-                <ScrollView style={{ flex: 1 }}>
-                    <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Search Location List</Text>
-                        <View style={{ flexDirection: 'row' }}>
-                            <TextInput style={[GeneralStyles.textInput, { width: '85%' }]}
-                                autoFocus={true}
-                                placeholder='Enter search text...'
-                                accessibilityLabel='Search for a location'
-                                autoCorrect={false}
-                                spellCheck={false}
-                                onEndEditing={event => this.findLocation(event.nativeEvent.text)} />
-                            <Icon name='search' type="ionicons" color='#aac' />
-                        </View>
-                    </View>
-                    {(message &&
-                        <View style={styles.messageView}>
-                            <Text style={[styles.messageText, { color: color }]}>
-                                {message}</Text>
-                            <Image
-                                source={require('../Images/logo.png')}
-                                resizeMode='contain'
-                                style={styles.messageImage} />
-                        </View>)
-                        ||
-                        <View>
-                            <View style={GeneralStyles.headerView}>
-                                <Text style={GeneralStyles.headerText}>{`Found ${this.state.list.length.toString()} Locations...`}</Text>
+                <View style={{ flex: 1 }}>
+                    <ScrollView style={{ flex: 1 }}>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Search Location List</Text>
+                            <View style={{ flexDirection: 'row' }}>
+                                <TextInput style={[GeneralStyles.textInput, { width: '85%' }]}
+                                    autoFocus={true}
+                                    placeholder='Enter search text...'
+                                    accessibilityLabel='Search for a location'
+                                    autoCorrect={false}
+                                    spellCheck={false}
+                                    onEndEditing={event => this.findLocation(event.nativeEvent.text)} />
+                                <Icon name='search' type="ionicons" color='#aac' />
                             </View>
-                            {this.state.list.map((location, index) =>
-                                <View key={index} style={{ flex: 1 }}>
-                                    <TouchableHighlight
-                                        underlayColor='#afa'
-                                        onPress={() => this.update(location)}>
-                                        <View style={styles.singleLocation}>
-                                            <View style={{ flexDirection: 'row'}}>
-                                                <Icon
-                                                    name='forward'
-                                                    color='#393'
-                                                    size={15} />
-                                                <Text> {location.Name}</Text>
-                                            </View>
-                                            <Icon name='edit' color='#888' size={13} style={{ margin: 5 }} onPress={() => this.edit(location)} />
-                                        </View>
-                                    </TouchableHighlight>
-                                </View>)
-                            }
                         </View>
-                    }
-                </ScrollView>
+                        {(message &&
+                            <View style={styles.messageView}>
+                                {message}
+                                <Image
+                                    source={require('../Images/logo.png')}
+                                    resizeMode='contain'
+                                    style={styles.messageImage} />
+                            </View>)
+                            ||
+                            <View>
+                                <View style={GeneralStyles.headerView}>
+                                    <Text style={GeneralStyles.headerText}>{`Found ${this.state.list.length.toString()} Locations...`}</Text>
+                                </View>
+                                {this.state.list.map((location, index) =>
+                                    <View key={index} style={{ flex: 1 }}>
+                                        <TouchableHighlight
+                                            underlayColor='#afa'
+                                            onPress={() => this.update(location)}>
+                                            <View style={styles.singleLocation}>
+                                                <View style={{ flexDirection: 'row' }}>
+                                                    <Icon
+                                                        name='forward'
+                                                        color='#393'
+                                                        size={15} />
+                                                    <Text> {location.Name}</Text>
+                                                </View>
+                                                <Icon name='edit' color='#888' size={13} style={{ margin: 5 }} onPress={() => this.edit(location)} />
+                                            </View>
+                                        </TouchableHighlight>
+                                    </View>)
+                                }
+                            </View>
+                        }
+                    </ScrollView>
+                    <TouchableOpacity onPress={() =>
+                        this.navigate('NewLocation', { appData: this.appData })}>
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: '#eee'
+                        }}>
+                            <Icon
+                                size={11}
+                                reverse
+                                name='add'
+                                color='#585' />
+                            <Text style={{
+                                fontSize: 13,
+                                color: '#262'
+                            }}>Add a New Location</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>;
     }
 }
 const styles = StyleSheet.create({
     messageView: {
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent:'center'
     },
     messageText: {
         fontSize: 16,
+        marginTop: '5%',
         marginBottom: '20%',
-        marginLeft: '5%',
+        textAlign:'center'
     },
     messageImage: {
         width: 150,
