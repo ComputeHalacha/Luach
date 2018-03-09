@@ -89,8 +89,8 @@ android {
         applicationId "com.luachandroid"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 56
-        versionName "1.56"
+        versionCode 57
+        versionName "1.57"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
