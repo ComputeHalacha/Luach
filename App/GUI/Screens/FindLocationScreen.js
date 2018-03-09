@@ -22,40 +22,47 @@ export default class FindLocation extends React.PureComponent {
         this.navigate = this.props.navigation.navigate;
         this.state = {
             list: null,
-            searching: false
+            searching: false,
+            locationName: this.appData.Settings.location.Name
         };
         this.findLocation = this.findLocation.bind(this);
+        this.locationWasEdited = this.locationWasEdited.bind(this);
+        this.editSingleLocation = this.editSingleLocation.bind(this);
     }
-    update(location) {
+    async update(location) {
         const appData = this.appData;
         if (appData.Settings.location.locationId !== location.locationId) {
-            Settings.saveLocation(location).then(() => {
-                appData.Settings.location = location;
-                if (this.onUpdate) {
-                    this.onUpdate(appData);
-                }
-            });
+            await Settings.setCurrentLocation(location);
+            appData.Settings.location = location;
+            if (this.onUpdate) {
+                this.onUpdate(appData);
+            }
         }
         this.dispatch(NavigationActions.back());
     }
-    edit(location) {
-        const appData = this.appData;
-        this.navigate('NewLocation',
-            {
-                appData,
-                location,
-                onUpdate: (l) => {
-                    this.findLocation();
-                    const appData = this.appData;
-                    //In case the name or coordnates were changed.
-                    if (appData.Settings.location.locationId === l.locationId) {
-                        appData.Settings.location = location;
-                        if (this.onUpdate) {
-                            this.onUpdate(appData);
-                        }
-                    }
-                }
-            });
+    editSingleLocation(location) {
+        const { appData, locationWasEdited } = this;
+        this.navigate('NewLocation', { appData, location, onUpdate: locationWasEdited });
+    }
+    locationWasEdited(appData, location) {
+        this.setState({ locationName: appData.Settings.location.Name });
+        //If the changed/added location is being set as the current location
+        if (location.locationId === appData.Settings.location.locationId) {
+            if (this.onUpdate) {
+                this.onUpdate(appData);
+            }
+            this.dispatch(NavigationActions.back());
+        }
+        else {
+            if (this.searchText) {
+                //Refresh the search - the changed location may be in the results and may have had a name change
+                this.findLocation(this.searchText);
+            }
+            else {
+                //Show the edited location in the results
+                this.findLocation(location.name);
+            }
+        }
     }
     findLocation(search) {
         if (search) {
@@ -84,10 +91,10 @@ export default class FindLocation extends React.PureComponent {
                 <Text style={{ color: '#77b', fontSize: 16, marginTop: '5%' }}>
                     Your current location is:
                     </Text>
-                <TouchableOpacity onPress={() => this.edit(this.appData.Settings.location)}>
+                <TouchableOpacity onPress={() => this.editSingleLocation(this.appData.Settings.location)}>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={{ fontWeight: 'bold', color: '#55f' }}>
-                            {`${this.appData.Settings.location.Name}  `}
+                            {`${this.state.locationName}  `}
                         </Text>
                         <Icon name='edit' color='#888' size={13} />
                     </View>
@@ -158,7 +165,12 @@ export default class FindLocation extends React.PureComponent {
                                                         size={15} />
                                                     <Text> {location.Name}</Text>
                                                 </View>
-                                                <Icon name='edit' color='#888' size={13} style={{ margin: 5 }} onPress={() => this.edit(location)} />
+                                                <Icon
+                                                    name='edit'
+                                                    color='#888'
+                                                    size={13}
+                                                    style={{ margin: 5 }}
+                                                    onPress={() => this.editSingleLocation(location)} />
                                             </View>
                                         </TouchableHighlight>
                                     </View>)
@@ -167,7 +179,11 @@ export default class FindLocation extends React.PureComponent {
                         }
                     </ScrollView>
                     <TouchableOpacity onPress={() =>
-                        this.navigate('NewLocation', { appData: this.appData })}>
+                        this.navigate('NewLocation',
+                            {
+                                appData: this.appData,
+                                onUpdate: this.locationWasEdited
+                            })}>
                         <View style={{
                             flexDirection: 'row',
                             justifyContent: 'center',
@@ -193,13 +209,13 @@ export default class FindLocation extends React.PureComponent {
 const styles = StyleSheet.create({
     messageView: {
         alignItems: 'center',
-        justifyContent:'center'
+        justifyContent: 'center'
     },
     messageText: {
         fontSize: 16,
         marginTop: '5%',
         marginBottom: '20%',
-        textAlign:'center'
+        textAlign: 'center'
     },
     messageImage: {
         width: 150,

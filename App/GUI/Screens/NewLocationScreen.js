@@ -6,23 +6,59 @@ import SideMenu from '../Components/SideMenu';
 import { CoordinatesChooser, CoordinatesType } from '../Components/CoordinatesChooser';
 import Location from '../../Code/JCal/Location';
 import DataUtils from '../../Code/Data/DataUtils';
+import Settings from '../../Code/Settings';
 import { warn, error, popUpMessage, range, GLOBALS } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
+
+/**
+* Delete an Location from the database, then run the onUpdate function.
+* @param {Location} location
+* @param {AppData} appDatalocation
+* @param {Function} onUpdate
+* @param {Object} dispatch
+*/
+function deleteLocation(navigation) {
+    const { location, appData, onUpdate } = navigation.state.params;
+    Alert.alert(
+        'Confirm Location Removal',
+        'Are you sure that you want to completely remove this Location?',
+        [   //Button 1
+            { text: 'Cancel', onPress: () => { return; }, style: 'cancel' },
+            //Button 2
+            {
+                text: 'OK', onPress: () => {
+                    const locationId = location.locationId;
+                    DataUtils.DeleteLocation(location)
+                        .then(async () => {
+                            if (appData.Settings.location.locationId === locationId) {
+                                appData.Settings.location = appData.Settings.location.Israel
+                                    ? Location.getJerusalem()
+                                    : Location.getLakewood();
+                                await Settings.setCurrentLocation(appData.Settings.location);
+                            }
+                            popUpMessage(`The location "${location.Name}" has been successfully removed.`,
+                                'Remove location');
+                            if (onUpdate) {
+                                onUpdate(appData, location);
+                            }
+                            navigation.dispatch(NavigationActions.back());
+                        })
+                        .catch(err => {
+                            warn('Error trying to delete an location from the database.');
+                            error(err);
+                        });
+                }
+            }]);
+}
 
 export default class NewLocation extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
-        const { location, onUpdate } = navigation.state.params;
+        const { location } = navigation.state.params;
         return {
             title: location ? `Edit ${location.Name}` : 'New Location',
             headerRight: location &&
-                <TouchableOpacity onPress={() =>
-                    NewLocation.deleteLocation(location, () => {
-                        if (onUpdate) {
-                            onUpdate();
-                        }
-                        navigation.dispatch(NavigationActions.back());
-                    })}>
+                <TouchableOpacity onPress={() => deleteLocation(navigation)}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', marginRight: 5 }}>
                         <Icon name='delete-forever'
                             color='#a33'
@@ -76,13 +112,18 @@ export default class NewLocation extends React.Component {
             longitude,
             utcoffset: (israel ? 2 : utcoffset) || 0,
             elevation: elevation || 0,
-            candles: candles || 18
+            candles: candles || 18,
+            setToCurrent: true
         };
 
         this.addLocation = this.addLocation.bind(this);
         this.updateLocation = this.updateLocation.bind(this);
     }
-    addLocation() {
+    async addLocation() {
+        if (! await this.validateName()) {
+            return;
+        }
+
         const location = new Location(
             this.state.name,
             this.state.israel,
@@ -91,12 +132,16 @@ export default class NewLocation extends React.Component {
             this.state.utcoffset,
             this.state.elevation,
             this.state.candles);
-        DataUtils.LocationToDatabase(location).then(() => {
+        DataUtils.LocationToDatabase(location).then(async () => {
+            if (this.state.setToCurrent) {
+                await Settings.setCurrentLocation(location);
+                this.appData.Settings.location = location;
+            }
+            if (this.onUpdate) {
+                this.onUpdate(this.appData, location);
+            }
             popUpMessage(`The location "${location.Name}" has been successfully added.`,
                 'Add Location');
-            if (this.onUpdate) {
-                this.onUpdate(location);
-            }
             this.dispatch(NavigationActions.back());
         }
         ).catch(err => {
@@ -104,9 +149,14 @@ export default class NewLocation extends React.Component {
             error(err);
         });
     }
-    updateLocation() {
+    async updateLocation() {
+        if (! await this.validateName()) {
+            return;
+        }
+
         const location = this.location,
-            origLocation = location.clone();
+            origLocation = location.clone(),
+            currLocation = this.appData.Settings.location;
         location.Name = this.state.name;
         location.Israel = this.state.israel;
         location.Latitude = this.state.latitude;
@@ -115,11 +165,15 @@ export default class NewLocation extends React.Component {
         location.Elevation = this.state.elevation;
         location.CandleLighting = this.state.candles;
 
-        DataUtils.LocationToDatabase(location).then(() => {
+        DataUtils.LocationToDatabase(location).then(async () => {
             popUpMessage(`The location ${location.Name} has been successfully saved.`,
-            'Change Location');
+                'Change Location');
+            if (this.state.setToCurrent && this.appData.Settings.location.locationId !== location.locationId) {
+                this.appData.Settings.location = location;
+                await Settings.setCurrentLocation(location);
+            }
             if (this.onUpdate) {
-                this.onUpdate(location);
+                this.onUpdate(this.appData, location);
             }
             this.dispatch(NavigationActions.back());
         }
@@ -135,44 +189,24 @@ export default class NewLocation extends React.Component {
             location.UTCOffset = origLocation.UTCOffset;
             location.Elevation = origLocation.Elevation;
             location.CandleLighting = origLocation.CandleLighting;
+            this.appData.Settings.location = currLocation;
         });
     }
-    /**
-     * Delete an Location from the database, then run the onUpdate function.
-     * @param {Location} location
-     * @param {AppData} appDatalocation
-     * @param {Function} onUpdate
-     */
-    static deleteLocation(location, appData, onUpdate) {
-        Alert.alert(
-            'Confirm Location Removal',
-            'Are you sure that you want to completely remove this Location?',
-            [   //Button 1
-                { text: 'Cancel', onPress: () => { return; }, style: 'cancel' },
-                //Button 2
-                {
-                    text: 'OK', onPress: () => {
-                        const locationId = location.locationId;
-                        DataUtils.DeleteLocation(location)
-                            .then(() => {
-                                if (appData.Settings.location.locationId === locationId) {
-                                    appData.Settings.location = appData.Settings.location.Israel
-                                        ? Location.getJerusalem()
-                                        : Location.getLakewood();
-                                }
-                                popUpMessage(`The location "${location.Name}" has been successfully removed.`,
-                                    'Remove location');
-                                if (onUpdate) {
-                                    onUpdate();
-                                }
-                                this.dispatch(NavigationActions.back());
-                            })
-                            .catch(err => {
-                                warn('Error trying to delete an location from the database.');
-                                error(err);
-                            });
-                    }
-                }]);
+    async validateName() {
+        const newName = this.state.name;
+
+        if (this.location && newName === location.Name) {
+            //Same name - no reason to check
+            return true;
+        }
+        const existing = await DataUtils.SearchLocations(newName);
+        if (existing.find(l => l.Name === newName)) {
+            Alert.alert(
+                'Location already exists',
+                `The location name "${newName}" already exists in the list of locations.\nPlease choose another name for this location.`);
+            return false;
+        }
+        return true;
     }
     render() {
         return <View style={GeneralStyles.container}>
@@ -271,6 +305,12 @@ export default class NewLocation extends React.Component {
                                     label={`${i.toString()} minutes before sunset`} />
                             )}
                         </Picker>
+                    </View>
+                    <View style={GeneralStyles.formRow}>
+                        <Text style={GeneralStyles.label}>{`Set ${this.state.name} as your current location?`}</Text>
+                        <Switch style={GeneralStyles.switch}
+                            value={this.state.setToCurrent}
+                            onValueChange={setToCurrent => this.setState({ setToCurrent })} />
                     </View>
                     <View style={GeneralStyles.formRow}>
                         <View style={GeneralStyles.btnAddNew}>

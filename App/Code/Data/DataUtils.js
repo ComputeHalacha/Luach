@@ -100,7 +100,7 @@ export default class DataUtils {
                 error(err);
             });
     }
-    static async LocationSettingToDatabase(location) {
+    static async SetCurrentLocationOnDatabase(location) {
         await DataUtils._executeSql(`UPDATE settings SET
             locationId=?`, [location.locationId])
             .catch(err => {
@@ -134,7 +134,7 @@ export default class DataUtils {
     static async LocationFromDatabase(locationId) {
         let location = null;
         if (!locationId) {
-            throw 'LocationId parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
+            throw 'locationId parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
         }
         await DataUtils._queryLocations('locationId=?', [locationId]).then(ls => {
             if (ls.length > 0) {

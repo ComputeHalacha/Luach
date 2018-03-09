@@ -21,8 +21,8 @@ export class CoordinatesChooser extends React.PureComponent {
         super(props);
         this.coordinatesType = this.props.coordinatesType;
         this.degreesRange = this.coordinatesType === CoordinatesType.Latitude
-            ? range(0, 180)
-            : range(0, 90);
+            ? range(0, 90)
+            : range(0, 180);
         this.minsSecsRange = range(0, 60);
         this.state = {
             modalVisible: false,
@@ -191,7 +191,7 @@ const localStyles = StyleSheet.create({
         margin: 0,
         backgroundColor: '#d5d5e6',
         padding: 5,
-        fontSize: 10
+        fontSize: 12
     },
     picker: { margin: 0 }
 });

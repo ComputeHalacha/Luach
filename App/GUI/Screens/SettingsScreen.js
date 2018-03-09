@@ -69,17 +69,11 @@ export default class SettingsScreen extends Component {
         this.update();
     }
     editLocation() {
-        const appData = this.appData;
         this.navigate('NewLocation',
             {
-                appData,
-                location: appData.Settings.location,
-                onUpdate: (l) => {
-                    //In case the name or coordnates were changed.
-                    appData.Settings.location = l;
-                    this.update(appData);
-
-                }
+                appData: this.appData,
+                location: this.appData.Settings.location,
+                onUpdate: this.update
             });
     }
     changePIN(pin) {
@@ -126,13 +120,13 @@ export default class SettingsScreen extends Component {
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Choose your location</Text>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems:'center' }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <TouchableHighlight underlayColor='#9f9' onPress={() =>
                                     this.navigate('FindLocation', {
                                         onUpdate: this.update,
                                         appData: this.appData
                                     })}
-                                    style={{ flex: 1, backgroundColor:'#dfd' }}>
+                                    style={{ flex: 1, backgroundColor: '#dfd' }}>
                                     <View style={GeneralStyles.centeredRow}>
                                         <Icon name='edit-location' color='#484' size={35} />
                                         <Text>
