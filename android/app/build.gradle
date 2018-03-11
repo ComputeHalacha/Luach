@@ -106,10 +106,6 @@ android {
                 keyAlias MYAPP_RELEASE_KEY_ALIAS
                 keyPassword MYAPP_RELEASE_KEY_PASSWORD
             }
-            keyAlias 'compute_halacha_key'
-            keyPassword '611/-_-^0T2'
-            storeFile file('D:/Repos_git/LuachAndroid/android/app/compute-halacha.keystore')
-            storePassword '611/-_-^0T2'
         }
     }
     splits {
