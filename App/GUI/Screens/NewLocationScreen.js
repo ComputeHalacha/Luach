@@ -52,7 +52,6 @@ function deleteLocation(navigation) {
 }
 
 export default class NewLocation extends React.Component {
-
     static navigationOptions = ({ navigation }) => {
         const { location } = navigation.state.params;
         return {

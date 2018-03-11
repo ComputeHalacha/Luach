@@ -1,8 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, TouchableHighlight } from 'react-native';
-import { Icon, Grid, Row, Col } from 'react-native-elements';
+import { Icon } from 'react-native-elements';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { getScreenWidth, goHomeToday } from '../../Code/GeneralUtils';
+import {GridView, Row, Column} from '../Components/GridView';
 import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import Month from '../../Code/Month';
@@ -168,7 +169,7 @@ export default class MonthViewScreen extends React.PureComponent {
                 (singleDay.hasProbDay && '#ffa')),
             specialColorNight = singleDay && ((singleDay.hasEntryNight && '#fcc') ||
                 (singleDay.hasProbNight && '#eea'));
-        return (<Col size={colWidth} key={index}>
+        return (<Column size={colWidth} key={index}>
             {(jdate &&
                 <TouchableOpacity
                     style={styles.singleDay}
@@ -233,7 +234,7 @@ export default class MonthViewScreen extends React.PureComponent {
                 ||
                 <View style={styles.singleDayBlank}></View>
             }
-        </Col>);
+        </Column>);
     }
     setNavProps() {
         const firstDay = Month.getFirstDay(this.state.weeks),
@@ -266,29 +267,29 @@ export default class MonthViewScreen extends React.PureComponent {
                 onSwipeDown={this.goPrevYear}
                 onSwipeLeft={this.goNextMonth}
                 onSwipeRight={this.goPrevMonth}>
-                <Grid>
+                <GridView>
                     <Row containerStyle={{ height: 50 }}>
-                        <Col style={styles.dayHeadView}>
-                            <Text style={styles.dayHead}>Sun</Text></Col>
-                        <Col style={styles.dayHeadView}>
-                            <Text style={styles.dayHead}>Mon</Text></Col>
-                        <Col style={styles.dayHeadView}>
-                            <Text style={styles.dayHead}>Tue</Text></Col>
-                        <Col style={styles.dayHeadView}>
-                            <Text style={styles.dayHead}>Wed</Text></Col>
-                        <Col style={styles.dayHeadView}>
-                            <Text style={styles.dayHead}>Thu</Text></Col>
-                        <Col style={styles.dayHeadView}>
-                            <Text style={styles.dayHead}>Fri</Text></Col>
-                        <Col style={styles.dayHeadView}>
-                            <Text style={styles.dayHead}>Shb</Text></Col>
+                        <Column style={styles.dayHeadView}>
+                            <Text style={styles.dayHead}>Sun</Text></Column>
+                        <Column style={styles.dayHeadView}>
+                            <Text style={styles.dayHead}>Mon</Text></Column>
+                        <Column style={styles.dayHeadView}>
+                            <Text style={styles.dayHead}>Tue</Text></Column>
+                        <Column style={styles.dayHeadView}>
+                            <Text style={styles.dayHead}>Wed</Text></Column>
+                        <Column style={styles.dayHeadView}>
+                            <Text style={styles.dayHead}>Thu</Text></Column>
+                        <Column style={styles.dayHeadView}>
+                            <Text style={styles.dayHead}>Fri</Text></Column>
+                        <Column style={styles.dayHeadView}>
+                            <Text style={styles.dayHead}>Shb</Text></Column>
                     </Row>
                     {weeks.map((w, i) =>
                         <Row key={i}>
                             {w.map((d, di) => this.getDayColumn(d, di))}
                         </Row>
                     )}
-                </Grid>
+                </GridView>
             </GestureRecognizer>
             <View style={styles.footerBar}>
                 <TouchableOpacity onPress={this.goToday}>

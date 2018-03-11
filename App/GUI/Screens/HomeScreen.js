@@ -389,7 +389,7 @@ export default class HomeScreen extends React.Component {
                                 style={{ flex: 1 }}
                                 data={this.state.daysList}
                                 renderItem={this.renderItem}
-                                keyExtractor={item => this.state.daysList.indexOf(item)}
+                                keyExtractor={item => this.state.daysList.indexOf(item).toString()}
                                 onEndReached={this._addDaysToEnd}
                                 onRefresh={this.prevDay}
                                 refreshing={this.state.refreshing} />

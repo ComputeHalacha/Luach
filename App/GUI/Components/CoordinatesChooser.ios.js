@@ -54,7 +54,7 @@ export class CoordinatesChooser extends React.PureComponent {
         const { degrees, minutes, seconds } = this.state,
             sixtieth = 0.016666666666666666;
         return this.state.direction *
-            (degrees + (minutes * sixtieth) + (seconds * (sixtieth ** 2)));
+            (degrees + (minutes * sixtieth) + (seconds * Math.pow(sixtieth, 2)));
     }
     getCoordsString() {
         return this.state.degrees.toString() + '° ' +

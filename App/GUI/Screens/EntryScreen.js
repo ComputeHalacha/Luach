@@ -186,7 +186,7 @@ export default class EntryScreen extends Component {
                                     }
                                 </View>;
                             }}
-                            keyExtractor={(item, index) => item.entryId || index.toString()}
+                            keyExtractor={(item, index) => item.entryId.toString() || index.toString()}
                             emptyListText='There are no Entries in the list'
                             secondSection={entry => {
                                 const hasKavuahs = this.state.appData.KavuahList.some(k =>
