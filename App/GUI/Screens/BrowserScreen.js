@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, WebView, BackHandler, Platform } from 'react-native';
+import { View, WebView, BackHandler } from 'react-native';
 import SideMenu from '../Components/SideMenu';
 import { GeneralStyles } from '../styles';
 import { GLOBALS } from '../../Code/GeneralUtils';
@@ -48,7 +48,7 @@ export default class BrowserScreen extends PureComponent {
                         source={{
                             uri: GLOBALS.IS_ANDROID ?
                                 `file:///android_asset/docs/${this.url}?v=${GLOBALS.VERSION_NAME}` :
-                                'docs/${this.url}'
+                                `docs/${this.url}`
                         }}
                         mixedContentMode='always'
                         iosdataDetectorTypes={['all']}

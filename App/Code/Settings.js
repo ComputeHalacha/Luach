@@ -27,11 +27,12 @@ export default class Settings {
         this.requirePIN = !!args.requirePIN;
         this.PIN = setDefault(args.PIN, '1234');
     }
-    save() {
-        DataUtils.SettingsToDatabase(this);
+    async save() {
+        await DataUtils.SettingsToDatabase(this);
     }
-    static async saveLocation(location) {
-        await DataUtils.LocationSettingToDatabase(location);
+    static async setCurrentLocation(location) {
+        await DataUtils.SetCurrentLocationOnDatabase(location);
+        global.GlobalAppData.Settings.location = location;
     }
     isSameSettings(other) {
         if (!!this != !!other) {

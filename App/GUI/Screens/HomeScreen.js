@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppState, FlatList, View, Platform } from 'react-native';
+import { AppState, FlatList, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SingleDayDisplay from '../Components/SingleDayDisplay';
 import Login from '../Components/Login';
@@ -75,7 +75,7 @@ export default class HomeScreen extends React.Component {
                 this.setState({
                     today: nowJ,
                     systemDate: nowS,
-                    daysList: daysList
+                    daysList
                 });
             }
         }, 60000);
@@ -389,7 +389,7 @@ export default class HomeScreen extends React.Component {
                                 style={{ flex: 1 }}
                                 data={this.state.daysList}
                                 renderItem={this.renderItem}
-                                keyExtractor={item => this.state.daysList.indexOf(item)}
+                                keyExtractor={item => this.state.daysList.indexOf(item).toString()}
                                 onEndReached={this._addDaysToEnd}
                                 onRefresh={this.prevDay}
                                 refreshing={this.state.refreshing} />

@@ -19,7 +19,7 @@ export default class Location {
         if (typeof israel === 'undefined' || israel === null) {
             //If the user is within Israels general coordinates,
             //we feel pretty safe assuming they are in Israel.
-            //Where else on the map is the user (probablity of Jewishness: 99.99%)?
+            //Where else on the map is the user? (Note, the probablity of our users Jewishness: 99.99%)
             //Sinai, Lebanon, Syria, Jordan, in a submarine under the Mediterannian ...
             israel = (latitude > 29.45 && latitude < 33 && longitude < -34.23 && longitude > -35.9);
         }
@@ -45,6 +45,22 @@ export default class Location {
         this.locationId = locationId;
     }
 
+    hasId() {
+        return !!this.locationId;
+    }
+
+    clone() {
+        return new Location(
+            this.Name,
+            this.Israel,
+            this.Latitude,
+            this.Longitude,
+            this.UTCOffset,
+            this.Elevation,
+            this.CandleLighting,
+            this.locationId);
+    }
+
     static getCandles(location) {
         if (location.candleLighting) {
             return location.candleLighting;
@@ -53,7 +69,7 @@ export default class Location {
             return 18;
         }
         else {
-            const special = [{ names: ['jerusalem', 'yerush', 'petach', 'petah', 'petak'], min: 40 },
+            const special = [{ names: ['jerusalem', 'yerush', 'petach', 'petah', 'petak', 'beit shemesh'], min: 40 },
             { names: ['haifa', 'chaifa', 'be\'er sheva', 'beersheba'], min: 22 }],
                 loclc = location.Name.toLowerCase(),
                 city = special.find(sp => {

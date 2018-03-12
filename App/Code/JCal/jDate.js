@@ -7,8 +7,12 @@ import DafYomi from './Dafyomi';
 
 /** Keeps a "repository" of years that have had their elapsed days previously calculated. Format: { year:5776, elapsed:2109283 } */
 const _yearCache = [],
-    JS_START_DATE_ABS = 719163, //The absolute date for the first js date 1/1/1970
-    MS_PER_DAY = 8.64e7;
+    //The absolute date for the zero hour of all javascript date objects - 1/1/1970 0:00:00 UTC
+    JS_START_DATE_ABS = 719163,
+    //The number of milliseconds in everyday
+    MS_PER_DAY = 8.64e7,
+    //The time zone offset (in minutes) for 1/1/1970 0:00:00 UTC at the current users time zone
+    JS_START_OFFSET = new Date(0).getTimezoneOffset();
 /* ****************************************************************************************************************
  * Many of the date conversion algorithmsin the jDate class are based on the C code which was translated from Lisp
  * in "Calendrical Calculations" by Nachum Dershowitz and Edward M. Reingold
@@ -694,14 +698,11 @@ export default class jDate {
      * @param {Date} date
      */
     static absSd(date) {
-        const clonedDate = new Date(date.valueOf());
-
-        //Set clone to the number of milliseconds since 1/1/1970 until current system time
-        clonedDate.setMinutes(clonedDate.getMinutes() - clonedDate.getTimezoneOffset());
-
-        //The number of full days since 1/1/1970.
-        const numFullDays = Math.floor(clonedDate.valueOf() / MS_PER_DAY);
-        //Add that to the number of days from 1/1/0001 until 1/1/1970
+        //Get the correct number of milliseconds since 1/1/1970 00:00:00 UTC until current system time
+        const ms = date.valueOf() - (date.getTimezoneOffset() * 60000),
+            //The number of full days since 1/1/1970.
+            numFullDays = Math.floor(ms / MS_PER_DAY);
+        //Add that to the number of days from 1/1/0001 until 1/1/1970 00:00:00 UTC
         return JS_START_DATE_ABS + numFullDays;
     }
 
@@ -736,13 +737,17 @@ export default class jDate {
      * Gets a javascript date from an absolute date
      */
     static sdFromAbs(abs) {
-        //If the current offset is more than 0 this means that the current time zone is earlier than UTC.
-        //This means that the zero date of javascript (1/1/1970 0:00:00 UTC) wis a day earlier in the current time zone.
-        //So we will need to add another day to get the correct absolute date.
-        const offset = (new Date().getTimezoneOffset()) > 0 ? 1 : 0,
-            //The number of days since 1/1/1970 0:00:00 UTC until the given date
+        //The "zero hour" for Javascript is 1/1/1970 0:00:00 UTC.
+        //If the time zone offset was more than 0, the current time zone was earlier than UTC at the time.
+        //As the "zero hour" is at midnight, so if the current time was earlier than that, than it was during the previous date.
+        //So we will need to add another day to get the correct date.
+        const offset = JS_START_OFFSET > 0 ? 1 : 0,
+            //Get the number of days from the "zero hour" until the given date.
+            //This is done by taking the given absolute date and removing the
+            //number of days from absolute date 0 until the js "zero hour" - keeping into
+            //account the previously calculated possible day offset.
             daysSinceStart = abs - JS_START_DATE_ABS + offset;
-            //Create a javascript date from the number of milliseconds since 1/1/1970 0:00:00 UTC
+        //Create a javascript date from the number of milliseconds since the "zero hour"
         return new Date(daysSinceStart * MS_PER_DAY);
     }
 

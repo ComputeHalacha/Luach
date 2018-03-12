@@ -100,7 +100,7 @@ export default class DataUtils {
                 error(err);
             });
     }
-    static async LocationSettingToDatabase(location) {
+    static async SetCurrentLocationOnDatabase(location) {
         await DataUtils._executeSql(`UPDATE settings SET
             locationId=?`, [location.locationId])
             .catch(err => {
@@ -134,7 +134,7 @@ export default class DataUtils {
     static async LocationFromDatabase(locationId) {
         let location = null;
         if (!locationId) {
-            throw 'LocationId parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
+            throw 'locationId parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
         }
         await DataUtils._queryLocations('locationId=?', [locationId]).then(ls => {
             if (ls.length > 0) {
@@ -142,6 +142,72 @@ export default class DataUtils {
             }
         });
         return location;
+    }
+    /**
+     * Add a Location to the list in the database
+     * @param {Location} location The location to add
+     */
+    static async LocationToDatabase(location) {
+        const params = [
+            location.Name,
+            location.Israel,
+            location.Latitude,
+            location.Longitude,
+            location.UTCOffset,
+            location.Elevation,
+            location.CandleLighting];
+        if (location.hasId()) {
+            await DataUtils._executeSql(`UPDATE locations SET
+                    name=?,
+                    israel=?,
+                    latitude=?,
+                    longitude=?,
+                    utcoffset=?,
+                    elevation=?,
+                    candles=?
+                WHERE locationId=?`,
+                [...params, location.locationId])
+                .then(() => {
+                    log(`Updated Location Id ${location.locationId.toString()}`);
+                })
+                .catch(err => {
+                    warn(`Error trying to update Location Id ${location.locationId.toString()} to the database.`);
+                    error(err);
+                });
+        }
+        else {
+            await DataUtils._executeSql(`INSERT INTO locations (
+                        name,
+                        israel,
+                        latitude,
+                        longitude,
+                        utcoffset,
+                        elevation,
+                        candles)
+                    VALUES (?,?,?,?,?,?,?)`,
+                params)
+                .then(results => {
+                    location.locationId = results.id;
+                })
+                .catch(err => {
+                    warn('Error trying to insert location into the database.');
+                    error(err);
+                });
+        }
+    }
+    /**
+     * Deletes a Location from the locations table
+     * @param {Location} location The location to remove from the database
+     */
+    static async DeleteLocation(location) {
+        if (!location.hasId()) {
+            throw 'Locations can only be deleted from the database if they have an id';
+        }
+        await DataUtils._executeSql('DELETE from locations where locationId=?', [location.locationId])
+            .catch(err => {
+                warn(`Error trying to delete location id ${location.locationId} from the database`);
+                error(err);
+            });
     }
     /** Returns a list of Location objects that match the search query with all the locations in the database.*/
     static async GetAllLocations() {
@@ -227,7 +293,6 @@ export default class DataUtils {
                 error(err);
             });
     }
-
     /**
      * Gets all Kavuahs from the database.
      * @param {Entry|[Entry]} entries An EntryList instance or an Array of entries where the settingEntry can be found
@@ -482,7 +547,7 @@ export default class DataUtils {
                         l.latitude,
                         l.longitude,
                         l.utcoffset,
-                        l.elevation,
+                        l.elevation && l.elevation > 0 ? l.elevation : 0,
                         l.candles,
                         l.locationId));
                 }
@@ -530,7 +595,7 @@ export default class DataUtils {
     }
     static _closeDatabase(db) {
         if (db) {
-            db.close().then(status => {
+            db.close().then(() => {
                 log('130 -  Database is now CLOSED');
             }).catch(err => {
                 warn('131 - error closing database');

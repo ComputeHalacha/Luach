@@ -247,7 +247,7 @@ export default class KavuahScreen extends Component {
                                 title={kavuah => kavuah.toLongString()}
                                 iconName='device-hub'
                                 iconColor={kavuah => kavuah.active ? '#99f' : '#ddd'}
-                                keyExtractor={(item, index) => item.kavuahId || index.toString()}
+                                keyExtractor={(item, index) => item.kavuahId.toString() || index.toString()}
                                 emptyListText='There are no Kavuahs in the list'
                                 secondSection={kavuah => <View style={GeneralStyles.inItemButtonList}>
                                     <View style={{ flex: 1, alignItems: 'center', }}>

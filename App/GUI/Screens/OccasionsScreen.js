@@ -156,7 +156,7 @@ export default class OccasionsScreen extends Component {
                             data={this.state.occasionList}
                             iconname='event'
                             emptyListText='There are no Events in the list'
-                            keyExtractor={(item, index) => item.occasionId || index.toString()}
+                            keyExtractor={(item, index) => item.occasionId.toString() || index.toString()}
                             title={occasion => {
                                 const currentYear = occasion.getCurrentYear();
                                 return <View>
