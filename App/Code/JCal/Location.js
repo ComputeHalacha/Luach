@@ -49,16 +49,16 @@ export default class Location {
         return !!this.locationId;
     }
 
-    clone() {
+    static clone(location) {
         return new Location(
-            this.Name,
-            this.Israel,
-            this.Latitude,
-            this.Longitude,
-            this.UTCOffset,
-            this.Elevation,
-            this.CandleLighting,
-            this.locationId);
+            location.Name,
+            location.Israel,
+            location.Latitude,
+            location.Longitude,
+            location.UTCOffset,
+            location.Elevation,
+            location.CandleLighting,
+            location.locationId);
     }
 
     static getCandles(location) {

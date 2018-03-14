@@ -134,7 +134,7 @@ export default class SettingsScreen extends Component {
                                         </Text>
                                     </View>
                                 </TouchableHighlight>
-                                <Icon name='edit' color='#888' size={15} style={{ margin: 5 }} onPress={() => this.editLocation(location)} />
+                                <Icon name='edit' color='#888' size={15} containerStyle={{ paddingRight: 12, paddingLeft: 12 }} onPress={() => this.editLocation(location)} />
                             </View>
                         </View>
                         <View style={GeneralStyles.formRow}>

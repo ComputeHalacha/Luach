@@ -119,7 +119,7 @@ export default class NewLocation extends React.Component {
         this.updateLocation = this.updateLocation.bind(this);
     }
     async addLocation() {
-        if (! await this.validateName()) {
+        if (!(await this.validateName())) {
             return;
         }
 
@@ -149,13 +149,13 @@ export default class NewLocation extends React.Component {
         });
     }
     async updateLocation() {
-        if (! await this.validateName()) {
+        if (!(await this.validateName())) {
             return;
         }
-
         const location = this.location,
-            origLocation = location.clone(),
+            origLocation = Location.clone(location),
             currLocation = this.appData.Settings.location;
+
         location.Name = this.state.name;
         location.Israel = this.state.israel;
         location.Latitude = this.state.latitude;
@@ -194,7 +194,7 @@ export default class NewLocation extends React.Component {
     async validateName() {
         const newName = this.state.name;
 
-        if (this.location && newName === location.Name) {
+        if (this.location && newName === this.location.Name) {
             //Same name - no reason to check
             return true;
         }
