@@ -4,7 +4,7 @@ import jDate from './JCal/jDate';
 import Utils from './JCal/Utils';
 
 export const GLOBALS = Object.freeze({
-    VERSION_NAME: '1.58',
+    VERSION_NAME: '1.59',
     IS_IOS: Platform.OS === 'ios',
     IS_ANDROID: Platform.OS === 'android',
     BUTTON_COLOR: Platform.OS === 'android' ? '#99b' : null,

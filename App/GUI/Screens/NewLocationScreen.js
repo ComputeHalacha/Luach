@@ -194,7 +194,7 @@ export default class NewLocation extends React.Component {
     async validateName() {
         const newName = this.state.name;
 
-        if (this.location && newName === this.location.Name) {
+        if (this.location && (newName === this.location.Name)) {
             //Same name - no reason to check
             return true;
         }
