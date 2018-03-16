@@ -80,9 +80,6 @@ export default class FindLocation extends React.PureComponent {
                 })
             );
         }
-        else {
-            popUpMessage('Please enter some text to search for...');
-        }
     }
     getMessage() {
         if (this.state.list === null) {
@@ -153,26 +150,24 @@ export default class FindLocation extends React.PureComponent {
                                     <Text style={GeneralStyles.headerText}>{`Found ${this.state.list.length.toString()} Locations...`}</Text>
                                 </View>
                                 {this.state.list.map((location, index) =>
-                                    <View key={index} style={{ flex: 1 }}>
+                                    <View key={index} style={styles.singleLocation}>
                                         <TouchableHighlight
                                             underlayColor='#afa'
                                             onPress={() => this.update(location)}>
-                                            <View style={styles.singleLocation}>
-                                                <View style={{ flexDirection: 'row' }}>
-                                                    <Icon
-                                                        name='forward'
-                                                        color='#393'
-                                                        size={15} />
-                                                    <Text> {location.Name}</Text>
-                                                </View>
+                                            <View style={{ flexDirection: 'row' }}>
                                                 <Icon
-                                                    name='edit'
-                                                    color='#888'
-                                                    size={13}
-                                                    style={{ margin: 5 }}
-                                                    onPress={() => this.editSingleLocation(location)} />
+                                                    name='forward'
+                                                    color='#393'
+                                                    size={15} />
+                                                <Text> {location.Name}</Text>
                                             </View>
                                         </TouchableHighlight>
+                                        <Icon
+                                            name='edit'
+                                            color='#888'
+                                            size={13}
+                                            style={{ margin: 5 }}
+                                            onPress={() => this.editSingleLocation(location)} />
                                     </View>)
                                 }
                             </View>
@@ -222,6 +217,7 @@ const styles = StyleSheet.create({
         height: 150
     },
     singleLocation: {
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',

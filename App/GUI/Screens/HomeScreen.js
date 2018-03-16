@@ -16,7 +16,7 @@ export default class HomeScreen extends React.Component {
         //Only IOS gets the header on the today screen.
         GLOBALS.IS_IOS
             ? {
-                title: 'Luach',
+                title: 'Luach TEST',
                 headerRight: <Icon name='calendar'
                     type='octicon'
                     color='#77c'

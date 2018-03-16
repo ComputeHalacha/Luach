@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, TouchableHighlight, View, KeyboardAvoidingView, Text, TextInput, Picker, Switch } from 'react-native';
+import { ScrollView, TouchableHighlight, View, Text, TextInput, Picker, Switch } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
 import Location from '../../Code/JCal/Location';
@@ -134,7 +134,7 @@ export default class SettingsScreen extends Component {
                                         </Text>
                                     </View>
                                 </TouchableHighlight>
-                                <Icon name='edit' color='#888' size={15} style={{ margin: 5 }} onPress={() => this.editLocation(location)} />
+                                <Icon name='edit' color='#888' size={15} containerStyle={{ paddingRight: 12, paddingLeft: 12 }} onPress={() => this.editLocation(location)} />
                             </View>
                         </View>
                         <View style={GeneralStyles.formRow}>
@@ -251,14 +251,14 @@ export default class SettingsScreen extends Component {
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>4 digit PIN Number</Text>
-                            <KeyboardAvoidingView
+                            <View
                                 style={{
                                     display: this.state.invalidPin ? 'flex' : 'none',
                                     marginTop: 5,
                                     marginLeft: 10
                                 }}>
                                 <Text style={{ color: '#f55', fontSize: 12, fontWeight: 'bold' }}>PIN must have 4 digits</Text>
-                            </KeyboardAvoidingView>
+                            </View>
                             <TextInput style={GeneralStyles.textInput}
                                 keyboardType='numeric'
                                 returnKeyType='next'
