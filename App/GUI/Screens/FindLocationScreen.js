@@ -153,8 +153,9 @@ export default class FindLocation extends React.PureComponent {
                                     <View key={index} style={styles.singleLocation}>
                                         <TouchableHighlight
                                             underlayColor='#afa'
-                                            onPress={() => this.update(location)}>
-                                            <View style={{ flexDirection: 'row' }}>
+                                            onPress={() => this.update(location)}
+                                            style={styles.locationLink}>
+                                            <View style={GeneralStyles.centeredRow}>
                                                 <Icon
                                                     name='forward'
                                                     color='#393'
@@ -165,8 +166,8 @@ export default class FindLocation extends React.PureComponent {
                                         <Icon
                                             name='edit'
                                             color='#888'
-                                            size={13}
-                                            style={{ margin: 5 }}
+                                            size={15}
+                                            containerStyle={{ paddingRight: 12, paddingLeft: 12 }}
                                             onPress={() => this.editSingleLocation(location)} />
                                     </View>)
                                 }
@@ -223,6 +224,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         borderWidth: 1,
         borderColor: '#eee',
-        padding: 10
+        padding: 5
     },
+    locationLink: {
+        flex: 1,
+        backgroundColor: '#f5f7f5',
+        padding: 5
+    }
 });
