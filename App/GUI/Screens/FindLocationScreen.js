@@ -127,7 +127,6 @@ export default class FindLocation extends React.PureComponent {
                             <Text style={GeneralStyles.label}>Search Location List</Text>
                             <View style={{ flexDirection: 'row' }}>
                                 <TextInput style={[GeneralStyles.textInput, { width: '85%' }]}
-                                    autoFocus={true}
                                     placeholder='Enter search text...'
                                     accessibilityLabel='Search for a location'
                                     autoCorrect={false}
