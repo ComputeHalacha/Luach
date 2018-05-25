@@ -134,10 +134,18 @@ export default class Zmanim {
             set = Utils.addMinutes(set, offset);
         }
 
-        const riseMinutes = (rise.hour * 60) + rise.minute,
-            setMinutes = (set.hour * 60) + set.minute;
+        return (Utils.totalMinutes(set) - Utils.totalMinutes(rise)) / 12;
+    }
 
-        return (setMinutes - riseMinutes) / 12;
+    static getShaaZmanisMga(sunTimes, israel) {
+        let rise = Utils.addMinutes(sunTimes.sunrise, -(israel ? 90 : 72)),
+            set = Utils.addMinutes(sunTimes.sunset, (israel ? 50 : 72));
+
+        if (isNaN(rise.hour) || isNaN(set.hour)) {
+            return NaN;
+        }
+
+        return (Utils.totalMinutes(set) - Utils.totalMinutes(rise)) / 12;
     }
 
     static getCandleLighting(date, location) {
