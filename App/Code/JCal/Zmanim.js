@@ -78,7 +78,7 @@ export default class Zmanim {
             hRise = 57.29578 * Math.acos(hRise);
             utRise = ((360 - hRise) / 15) + ahrRise + Zmanim.adj(tRise) + lonHour;
             sunrise = Zmanim.timeAdj(utRise + location.UTCOffset, date, location);
-            if (sunrise.hour > 13) {
+            if (sunrise.hour > 12) {
                 sunrise.hour -= 12;
             }
         }
