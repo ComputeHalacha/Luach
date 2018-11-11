@@ -2465,10 +2465,6 @@ image-size@^0.6.0:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/image-size/-/image-size-0.6.2.tgz#8ee316d4298b028b965091b673d5f1537adee5b4"
 
-immutable@^3.8.1:
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.1.tgz#200807f11ab0f72710ea485542de088075f68cd2"
-
 imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
@@ -3762,16 +3758,15 @@ react-native-drawer-layout@1.3.2:
   dependencies:
     react-native-dismiss-keyboard "1.0.0"
 
-react-native-elements@^0.13.0:
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-0.13.0.tgz#1cec901105aa29d3d07c10f143c9c0cc39dfc8a5"
+react-native-elements@^0.19.0:
+  version "0.19.1"
+  resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-0.19.1.tgz#f92b69d864a150215d01f81fe3c52a9cada83e45"
+  integrity sha1-+Stp2GShUCFdAfgf48UqnK2oPkU=
   dependencies:
     lodash.isempty "^4.4.0"
     lodash.times "^4.3.2"
     opencollective "^1.0.3"
     prop-types "^15.5.8"
-    react-native-side-menu "^0.20.1"
-    react-native-tab-navigator "^0.3.3"
 
 react-native-fs@^2.9.11:
   version "2.9.11"
@@ -3805,10 +3800,6 @@ react-native-safe-area-view@^0.7.0:
   dependencies:
     hoist-non-react-statics "^2.3.1"
 
-react-native-side-menu@^0.20.1:
-  version "0.20.1"
-  resolved "https://registry.yarnpkg.com/react-native-side-menu/-/react-native-side-menu-0.20.1.tgz#df21b4bb9d8a1aa3bae53d74ddf8a739eb59bfc5"
-
 react-native-sqlite-storage@^3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/react-native-sqlite-storage/-/react-native-sqlite-storage-3.3.4.tgz#fb9c6b3af6f6857e62104e6544da396fff80895d"
@@ -3818,12 +3809,6 @@ react-native-sqlite-storage@^3.3.4:
 react-native-swipe-gestures@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/react-native-swipe-gestures/-/react-native-swipe-gestures-1.0.2.tgz#914e1a72a94bc55b322b4622a01103ab879296dd"
-
-react-native-tab-navigator@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/react-native-tab-navigator/-/react-native-tab-navigator-0.3.3.tgz#b222bad21fbe773c8d28f9a0de30ce62b08724d3"
-  dependencies:
-    immutable "^3.8.1"
 
 react-native-tab-view@^0.0.74:
   version "0.0.74"
@@ -3839,9 +3824,10 @@ react-native-vector-icons@^4.5.0:
     prop-types "^15.5.10"
     yargs "^8.0.2"
 
-react-native@0.54.1:
-  version "0.54.1"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.54.1.tgz#d8c30d83c9f84d7941cf9c8d3d9f8ebca1c53e48"
+react-native@^0.54.1:
+  version "0.54.4"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.54.4.tgz#19c6c598f6acf04f1c032fe9a1812f0c640fa8b7"
+  integrity sha512-MOueNu1NKKjO3LkiZ/v64UAdpVneS8bjSXrwPEpV9c3Zk3PyFNhOH2CXORo+QC1KR/KAWXF5YX4uISPSwFKGrg==
   dependencies:
     absolute-path "^0.0.0"
     art "^0.10.0"

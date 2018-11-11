@@ -58,3 +58,4 @@ android/gradle.properties
 /android/app/gradle.properties
 scripts/
 debug.log
+package-lock.json
