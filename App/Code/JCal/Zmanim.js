@@ -137,15 +137,9 @@ export default class Zmanim {
     }
 
     static getShaaZmanisMga(sunTimes, israel) {
-        const minutes = -(israel ? 90 : 72),
-            alos = Utils.addMinutes(sunTimes.sunrise, minutes),
-            tzais = Utils.addMinutes(sunTimes.sunset, minutes);
-
-        if (isNaN(alos.hour) || isNaN(tzais.hour)) {
-            return NaN;
-        }
-
-        return (Utils.totalMinutes(tzais) - Utils.totalMinutes(alos)) / 12;
+        return Zmanim.getShaaZmanisFromSunTimes(
+            sunTimes,
+            (israel ? 90 : 72));
     }
 
     static getCandleLighting(date, location) {
