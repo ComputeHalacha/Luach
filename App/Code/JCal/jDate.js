@@ -431,8 +431,8 @@ export default class jDate {
                 Zmanim.getChatzosFromSuntimes(suntimesMishor),
             shaaZmanis = sunriseMishor && sunsetMishor &&
                 Zmanim.getShaaZmanisFromSunTimes(suntimesMishor),
-            shaaZmanis90 = sunriseMishor && sunsetMishor &&
-                Zmanim.getShaaZmanisFromSunTimes(suntimesMishor, 90),
+            shaaZmanisMga = sunriseMishor && sunsetMishor &&
+                Zmanim.getShaaZmanisMga(suntimesMishor, location.Israel),
             feet = (location.Elevation * 3.28084).toFixed(0).toString() + ' ft.',
             addItem = (title, value, important) => list.push({ title, value, important });
 
@@ -468,19 +468,19 @@ export default class jDate {
                 Utils.getTimeString(sunriseMishor, false, true), true);
         }
         addItem('Krias Shma - MG\'A',
-            Utils.getTimeString(Utils.addMinutes(mishorNeg90, Math.floor(shaaZmanis90 * 3))));
+            Utils.getTimeString(Utils.addMinutes(mishorNeg90, Math.floor(shaaZmanisMga * 3))));
         addItem('Krias Shma - GR\'A',
             Utils.getTimeString(Utils.addMinutes(sunriseMishor, Math.floor(shaaZmanis * 3))));
         addItem('Zeman Tefillah - MG\'A',
-            Utils.getTimeString(Utils.addMinutes(mishorNeg90, Math.floor(shaaZmanis90 * 4))));
+            Utils.getTimeString(Utils.addMinutes(mishorNeg90, Math.floor(shaaZmanisMga * 4))));
         addItem('Zeman Tefillah - GR\'A',
             Utils.getTimeString(Utils.addMinutes(sunriseMishor, Math.floor(shaaZmanis * 4))));
         if (this.Month === 1 && this.Day === 14) {
             const neg90 = Utils.addMinutes(sunrise, -90);
             addItem('Stop eating Chometz',
-                Utils.getTimeString(Utils.addMinutes(neg90, Math.floor(shaaZmanis90 * 4))));
+                Utils.getTimeString(Utils.addMinutes(neg90, Math.floor(shaaZmanisMga * 4))));
             addItem('Burn Chometz before',
-                Utils.getTimeString(Utils.addMinutes(neg90, Math.floor(shaaZmanis90 * 5))));
+                Utils.getTimeString(Utils.addMinutes(neg90, Math.floor(shaaZmanisMga * 5))));
         }
         if (sunrise && sunset) {
             addItem('Chatzos - Day & Night',
@@ -511,7 +511,7 @@ export default class jDate {
             addItem('72 \'Zmaniot\'',
                 Utils.getTimeString(Utils.addMinutes(sunset, (shaaZmanis * 1.2))));
             addItem('72 \'Zmaniot MA\'',
-                Utils.getTimeString(Utils.addMinutes(sunset, (shaaZmanis90 * 1.2))));
+                Utils.getTimeString(Utils.addMinutes(sunset, (shaaZmanisMga * 1.2))));
         }
         return list;
     }

@@ -78,16 +78,15 @@ export default class Zmanim {
             hRise = 57.29578 * Math.acos(hRise);
             utRise = ((360 - hRise) / 15) + ahrRise + Zmanim.adj(tRise) + lonHour;
             sunrise = Zmanim.timeAdj(utRise + location.UTCOffset, date, location);
-            while (sunrise.hour > 12) {
+            if (sunrise.hour > 12) {
                 sunrise.hour -= 12;
             }
         }
-
         if (Math.abs(hSet) <= 1) {
             hSet = 57.29578 * Math.acos(hSet);
             utSet = (hRise / 15) + ahrSet + Zmanim.adj(tSet) + lonHour;
             sunset = Zmanim.timeAdj(utSet + location.UTCOffset, date, location);
-            while (sunset.hour < 12) {
+            if (sunset.hour > 0 && sunset.hour < 12) {
                 sunset.hour += 12;
             }
         }
@@ -134,10 +133,13 @@ export default class Zmanim {
             set = Utils.addMinutes(set, offset);
         }
 
-        const riseMinutes = (rise.hour * 60) + rise.minute,
-            setMinutes = (set.hour * 60) + set.minute;
+        return (Utils.totalMinutes(set) - Utils.totalMinutes(rise)) / 12;
+    }
 
-        return (setMinutes - riseMinutes) / 12;
+    static getShaaZmanisMga(sunTimes, israel) {
+        return Zmanim.getShaaZmanisFromSunTimes(
+            sunTimes,
+            (israel ? 90 : 72));
     }
 
     static getCandleLighting(date, location) {
