@@ -150,24 +150,26 @@ export default class FindLocation extends React.PureComponent {
                                     <Text style={GeneralStyles.headerText}>{`Found ${this.state.list.length.toString()} Locations...`}</Text>
                                 </View>
                                 {this.state.list.map((location, index) =>
-                                    <View key={index} style={styles.singleLocation}>
+                                    <View key={index} style={{ flex: 1 }}>
                                         <TouchableHighlight
                                             underlayColor='#afa'
                                             onPress={() => this.update(location)}>
-                                            <View style={{ flexDirection: 'row' }}>
+                                            <View style={styles.singleLocation}>
+                                                <View style={{ flexDirection: 'row' }}>
+                                                    <Icon
+                                                        name='forward'
+                                                        color='#393'
+                                                        size={15} />
+                                                    <Text> {location.Name}</Text>
+                                                </View>
                                                 <Icon
-                                                    name='forward'
-                                                    color='#393'
-                                                    size={15} />
-                                                <Text> {location.Name}</Text>
+                                                    name='edit'
+                                                    color='#888'
+                                                    size={13}
+                                                    style={{ margin: 5 }}
+                                                    onPress={() => this.editSingleLocation(location)} />
                                             </View>
                                         </TouchableHighlight>
-                                        <Icon
-                                            name='edit'
-                                            color='#888'
-                                            size={13}
-                                            style={{ margin: 5 }}
-                                            onPress={() => this.editSingleLocation(location)} />
                                     </View>)
                                 }
                             </View>
