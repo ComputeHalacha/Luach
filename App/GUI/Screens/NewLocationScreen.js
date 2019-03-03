@@ -297,7 +297,7 @@ export default class NewLocation extends React.Component {
                         <Picker style={GeneralStyles.picker}
                             onValueChange={candles => this.setState({ candles })}
                             selectedValue={this.state.candles}>
-                            {range(18, 60).map(i =>
+                            {range(10, 120).map(i =>
                                 <Picker.Item
                                     value={i}
                                     key={i}
