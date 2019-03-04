@@ -51,11 +51,6 @@ buck-out/
 */fastlane/report.xml
 */fastlane/Preview.html
 */fastlane/screenshots
-.vscode
-android/gradle.properties
-*.apk
-.vs/
-/android/app/gradle.properties
-scripts/
-debug.log
-package-lock.json
+
+# Bundle artifact
+*.jsbundle

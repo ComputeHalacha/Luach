@@ -6,11 +6,12 @@
     "start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
-    "react": "16.3.0-alpha.1",
-    "react-native": "^0.54.4",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.3",
+    "react-native": "^0.58.6",
     "react-native-chooser": "^1.7.0",
     "react-native-elements": "^0.19.1",
-    "react-native-fs": "^2.12.1",
+    "react-native-fs": "^2.13.3",
     "react-native-mail": "^3.0.7",
     "react-native-modal-datetime-picker": "^4.13.0",
     "react-native-sqlite-storage": "^3.3.9",
@@ -19,11 +20,12 @@
     "react-navigation": "^1.6.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.3.4",
     "babel-eslint": "^7.2.1",
-    "babel-preset-react-native": "1.9.1",
     "eslint": "^3.18.0",
     "eslint-plugin-react": "^6.10.3",
     "eslint-plugin-react-native": "^2.3.1",
-    "eslint-plugin-react-perf": "^2.0.9"
+    "eslint-plugin-react-perf": "^2.0.9",
+    "metro-react-native-babel-preset": "^0.53.0"
   }
 }

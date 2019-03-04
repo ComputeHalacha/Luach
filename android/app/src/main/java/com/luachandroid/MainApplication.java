@@ -28,8 +28,8 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
         new SQLitePluginPackage(),
         new MainReactPackage(),
-            new RNMail(),
-            new RNFSPackage(),
+        new RNMail(),
+        new RNFSPackage(),
         new VectorIconsPackage()
       );
     }
