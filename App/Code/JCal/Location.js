@@ -41,7 +41,7 @@ export default class Location {
         this.Longitude = longitude;
         this.UTCOffset = utcOffset || 0;
         this.Elevation = elevation || 0;
-        this.CandleLighting = Location.getCandles(this);
+        this.CandleLighting = candleLighting || Location.getCandles(this);
         this.locationId = locationId;
     }
 
@@ -62,8 +62,8 @@ export default class Location {
     }
 
     static getCandles(location) {
-        if (location.candleLighting) {
-            return location.candleLighting;
+        if (location.CandleLighting) {
+            return location.CandleLighting;
         }
         else if (!location.Israel) {
             return 18;
