@@ -221,10 +221,22 @@ export default class Utils {
         return (-Utils.toInt(date.getTimezoneOffset() / 60)) !== Utils.currUtcOffset();
     }
 
-
-    /** Determines if the users system is currently set to DST */
-    static isDST() {
-        return Utils.isDateDST(new Date());
+    /** Determines if the given date is within DST in the given location 
+     * Note: This may not be correct if the user has set the Location to a 
+     * time zone outside Israel or the USA which is not the current system time zone. 
+    */
+    static isDST(location, date) {
+        //If the current system time zone is the same as the given locations time zone
+        if (location.UTCOffset === Utils.currUtcOffset()) {
+            //We can use the system data to determine if the given date is within DST 
+            return Utils.isDateDST(date);
+        }
+        else if (location.Israel) {
+            return Utils.isIsrael_DST(date);
+        }
+        else {
+            return Utils.isUSA_DST(date);
+        }
     }
 
     /**
