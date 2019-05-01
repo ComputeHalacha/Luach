@@ -40,7 +40,6 @@ export default class SingleDayDisplay extends React.PureComponent {
         this.editOccasion = this.editOccasion.bind(this);
         this.showDateDetails = this.showDateDetails.bind(this);
         this.showProblems = this.showProblems.bind(this);
-        this.changeLocation = this.changeLocation.bind(this);
         this.toggleTaharaEvent = this.toggleTaharaEvent.bind(this);
     }
     newEntry() {
@@ -83,9 +82,6 @@ export default class SingleDayDisplay extends React.PureComponent {
     }
     showProblems() {
         this.navigator.navigate('FlaggedDates', this.props);
-    }
-    changeLocation() {
-        this.navigator.navigate('FindLocation', this.props);
     }
     editEntry(entry) {
         const hasKavuah = this.props.appData.KavuahList.some(
@@ -234,11 +230,6 @@ export default class SingleDayDisplay extends React.PureComponent {
                         )}
                         <View style={styles.bottomSection}>
                             <View style={{ flex: 0 }}>
-                                <TouchableOpacity onPress={this.changeLocation}>
-                                    <Text style={styles.location}>
-                                        {'In ' + location.Name}
-                                    </Text>
-                                </TouchableOpacity>
                                 <TouchableWithoutFeedback
                                     onPress={this.showDateDetails}>
                                     <View>
@@ -330,7 +321,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                         style={{ flex: 1 }}>
                         <View style={styles.menuItemView}>
                             <Icon
-                                color="#aac"
+                                color="#778"
                                 name="remove-red-eye"
                                 size={menuIconSize}
                             />
@@ -342,7 +333,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                         style={{ flex: 1 }}>
                         <View style={styles.menuItemView}>
                             <Icon
-                                color="#aac"
+                                color="#778"
                                 name="event"
                                 size={menuIconSize}
                             />
@@ -363,7 +354,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                                         : null,
                                 ]}>
                                 <Icon
-                                    color="#aac"
+                                    color="#778"
                                     name="flare"
                                     size={menuIconSize}
                                 />
@@ -383,7 +374,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                                     hasMikvah ? styles.lastMenuView : null,
                                 ]}>
                                 <Icon
-                                    color="#aac"
+                                    color="#778"
                                     name="report-problem"
                                     size={menuIconSize}
                                 />
@@ -403,7 +394,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                                     styles.lastMenuView,
                                 ]}>
                                 <Icon
-                                    color="#aac"
+                                    color="#778"
                                     name="beenhere"
                                     size={menuIconSize}
                                 />
@@ -755,7 +746,7 @@ const styles = StyleSheet.create({
     lastMenuView: { borderRightWidth: 0 },
     menuItemText: {
         fontSize: isLargeScreen() ? 13 : 9,
-        color: '#889',
+        color: '#667',
     },
     bottomSection: {
         flex: 1,
