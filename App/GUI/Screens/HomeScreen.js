@@ -277,7 +277,7 @@ export default class HomeScreen extends React.Component {
         if (this.state.showFlash) {
             this.flashTimeout = setTimeout(() =>
                 this.setState({ showFlash: false })
-                , (global.IsFirstRun ? 10000 : 1500));
+                , (global.IsFirstRun ? 30000 : 1500));
         }
     }
     onLoggedIn() {

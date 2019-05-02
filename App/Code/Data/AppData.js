@@ -82,7 +82,7 @@ const addedFields = [
         allowNull: true,
     },
 ],
-    GLOBAL_FIRST_TIME_RANDOM = 'ed92c2efd74740dbb2da04f17ff922b1';
+    GLOBAL_FIRST_TIME_RANDOM = 'ed92c2efd74740dbb72da04f17ff922b1';
 
 /**
  * An single object that contains all the application data.
@@ -134,32 +134,37 @@ export default class AppData {
         if (!global.GlobalAppData) {
             global.GlobalAppData = await AppData.fromDatabase();
 
-            firstTime(GLOBAL_FIRST_TIME_RANDOM).catch(function () {
+            try {
+                await firstTime(GLOBAL_FIRST_TIME_RANDOM);
+            }
+            catch (err) {
                 const { Settings, EntryList, KavuahList, UserOccasions, TaharaEvents } = global.GlobalAppData;
-                //We will use this for a special welcome screen.
-                global.IsFirstRun = true;
-                
                 /***************
-                 * In the sqlite database, the settings.location is set to Jerusalem.
-                 * This is bad, as Jerusalem.Israel = true and most of our users are in the US and the UK.                
-                 * We can't overwrite the default database as all user data is stored in it.
-                 * So we will try to determine if this is the first time the app was really ever run,
-                 * and if so, change the default location to Lakewood NJ.
-                 * We can't blindly rely on the firstTime function to determine if this is new launch 
-                 * as it was put into the code after many users had already installed the app.
-                 * So in addition to the firstTime check, we look for default database conditions.
-                 * This is that the location is Jerusalem and all other lists are empty.
-                 ****************/
+                * In the sqlite database, the settings.location is set to Jerusalem.
+                * This is bad, as Jerusalem.Israel = true and most of our users are in the US and the UK.                
+                * We can't overwrite the default database as all user data is stored in it.
+                * So we will try to determine if this is the first time the app was really ever run,
+                * and if so, change the default location to Lakewood NJ.
+                * We can't blindly rely on the firstTime function to determine if this is new launch 
+                * as it was put into the code after many users had already installed the app.
+                * So in addition to the firstTime check, we look for default database conditions.
+                * This is that the location is Jerusalem and all other lists are empty.
+                ****************/
                 if (Settings.location.locationId === 28 &&
                     !EntryList.list.length &&
                     !UserOccasions.length &&
                     !KavuahList.length &&
                     !TaharaEvents.length) {
-                    //We want to have Lakewood as the default location - not Jerusalem
-                    Settings.location = Location.getLakewood();
-                    DataUtils.SetCurrentLocationOnDatabase(Settings.location);
+
+                    const lakewood = Location.getLakewood();
+                    //We want to have Lakewood as the default location - not Jerusalem                    
+                    await DataUtils.SetCurrentLocationOnDatabase(lakewood);
+                    global.GlobalAppData.Settings.location = lakewood;
+
+                    //We will use this for the special welcome flash screen.
+                    global.IsFirstRun = true;
                 }
-            });
+            }
         }
         return global.GlobalAppData;
     }
