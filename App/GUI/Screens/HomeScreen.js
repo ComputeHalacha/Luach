@@ -270,13 +270,14 @@ export default class HomeScreen extends React.Component {
         };
     }
     /**
-     * Show the "flash" warning banner on the bottom of the screen for 1.5 second.
+     * Show the "flash" warning banner on the bottom of the screen for 1.5 seconds.
+     * If this is the first time Luach has been run, we will show the flash screen for 10 seconds.
      */
     setFlash() {
         if (this.state.showFlash) {
             this.flashTimeout = setTimeout(() =>
                 this.setState({ showFlash: false })
-                , 1500);
+                , (global.IsFirstRun ? 10000 : 1500));
         }
     }
     onLoggedIn() {
@@ -395,7 +396,7 @@ export default class HomeScreen extends React.Component {
                                 refreshing={this.state.refreshing} />
                         </View>
                         {this.state.showFlash &&
-                            <Flash />
+                        <Flash onClose={() => this.setState({ showFlash: false })} />
                         }
                     </View>
                 }
