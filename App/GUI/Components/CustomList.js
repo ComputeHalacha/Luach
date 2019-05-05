@@ -34,90 +34,139 @@ export default class CustomList extends Component {
         this.renderItem = this.renderItem.bind(this);
     }
     renderItem({ item, index }) {
-        const
-            mainViewStyle = typeof this.props.mainViewStyle === 'function' ?
-                this.props.mainViewStyle(item, index) : this.props.mainViewStyle,
-            title = typeof this.props.title === 'function' ?
-                this.props.title(item, index) : item.toString(),
-            titleStyle = typeof this.props.titleStyle === 'function' ?
-                this.props.titleStyle(item, index) : this.props.titleStyle,
-            nightDay = typeof this.props.nightDay === 'function' ?
-                this.props.nightDay(item, index) : this.props.nightDay,
-            iconStyle = typeof this.props.iconStyle === 'function' ?
-                this.props.iconStyle(item, index) : this.props.iconStyle,
-            iconName = typeof this.props.iconName === 'function' ?
-                this.props.iconName(item, index) : this.props.iconName,
-            iconType = typeof this.props.iconType === 'function' ?
-                this.props.iconType(item, index) : this.props.iconType,
-            iconColor = typeof this.props.iconColor === 'function' ?
-                this.props.iconColor(item, index) : this.props.iconColor,
-            iconSize = typeof this.props.iconSize === 'function' ?
-                this.props.iconSize(item, index) : this.props.iconSize,
-            textSectionViewStyle = typeof this.props.textSectionViewStyle === 'function' ?
-                this.props.textSectionViewStyle(item, index) : this.props.textSectionViewStyle,
-            secondSection = typeof this.props.secondSection === 'function' ?
-                this.props.secondSection(item, index) : this.props.secondSection;
+        const mainViewStyle =
+                typeof this.props.mainViewStyle === 'function'
+                    ? this.props.mainViewStyle(item, index)
+                    : this.props.mainViewStyle,
+            title =
+                typeof this.props.title === 'function'
+                    ? this.props.title(item, index)
+                    : item.toString(),
+            titleStyle =
+                typeof this.props.titleStyle === 'function'
+                    ? this.props.titleStyle(item, index)
+                    : this.props.titleStyle,
+            nightDay =
+                typeof this.props.nightDay === 'function'
+                    ? this.props.nightDay(item, index)
+                    : this.props.nightDay,
+            iconStyle =
+                typeof this.props.iconStyle === 'function'
+                    ? this.props.iconStyle(item, index)
+                    : this.props.iconStyle,
+            iconName =
+                typeof this.props.iconName === 'function'
+                    ? this.props.iconName(item, index)
+                    : this.props.iconName,
+            iconType =
+                typeof this.props.iconType === 'function'
+                    ? this.props.iconType(item, index)
+                    : this.props.iconType,
+            iconColor =
+                typeof this.props.iconColor === 'function'
+                    ? this.props.iconColor(item, index)
+                    : this.props.iconColor,
+            iconSize =
+                typeof this.props.iconSize === 'function'
+                    ? this.props.iconSize(item, index)
+                    : this.props.iconSize,
+            textSectionViewStyle =
+                typeof this.props.textSectionViewStyle === 'function'
+                    ? this.props.textSectionViewStyle(item, index)
+                    : this.props.textSectionViewStyle,
+            secondSection =
+                typeof this.props.secondSection === 'function'
+                    ? this.props.secondSection(item, index)
+                    : this.props.secondSection;
 
-        return (<View style={[
-            styles.mainViewStyle,
-            (nightDay && ({ backgroundColor: nightDay === NightDay.Night ? '#d5d5e6' : '#fff' })),
-            mainViewStyle]}>
-            {(nightDay || iconName) &&
-                <View style={[
-                    { backgroundColor: nightDay === NightDay.Night ? '#ccd' : '#eef' },
-                    styles.iconContainerStyle]}>
-                    {(nightDay && (nightDay === NightDay.Night ?
-                        <Icon name='ios-moon'
-                            color='orange'
-                            type='ionicon'
-                            style={iconStyle} />
-                        :
-                        <Icon name='ios-sunny'
-                            color='#fff100'
-                            type='ionicon'
-                            style={iconStyle} />))
-                        ||
-                        (iconName &&
-                            <Icon name={iconName}
-                                type={iconType}
-                                size={iconSize}
-                                color={iconColor}
-                                style={iconStyle} />)
-                    }
-                </View>
-            }
-            <View style={[styles.textSectionViewStyle, textSectionViewStyle]}>
-                {(isString(title) &&
-                    <Text style={[styles.titleStyle, titleStyle]}>
-                        {title}
-                    </Text>)
-                    ||
-                    <View>
-                        {title}
+        return (
+            <View
+                style={[
+                    styles.mainViewStyle,
+                    nightDay && {
+                        backgroundColor:
+                            nightDay === NightDay.Night ? '#d5d5e6' : '#fff',
+                    },
+                    mainViewStyle,
+                ]}>
+                {(nightDay || iconName) && (
+                    <View
+                        style={[
+                            {
+                                backgroundColor:
+                                    nightDay === NightDay.Night
+                                        ? '#ccd'
+                                        : '#eef',
+                            },
+                            styles.iconContainerStyle,
+                        ]}>
+                        {(nightDay &&
+                            (nightDay === NightDay.Night ? (
+                                <Icon
+                                    name="ios-moon"
+                                    color="orange"
+                                    type="ionicon"
+                                    style={iconStyle}
+                                />
+                            ) : (
+                                <Icon
+                                    name="ios-sunny"
+                                    color="#fff100"
+                                    type="ionicon"
+                                    style={iconStyle}
+                                />
+                            ))) ||
+                            (iconName && (
+                                <Icon
+                                    name={iconName}
+                                    type={iconType}
+                                    size={iconSize}
+                                    color={iconColor}
+                                    style={iconStyle}
+                                />
+                            ))}
                     </View>
-                }
-                {secondSection}
+                )}
+                <View
+                    style={[styles.textSectionViewStyle, textSectionViewStyle]}>
+                    {(isString(title) && (
+                        <Text style={[styles.titleStyle, titleStyle]}>
+                            {title}
+                        </Text>
+                    )) || <View>{title}</View>}
+                    {secondSection}
+                </View>
             </View>
-        </View>);
+        );
     }
     render() {
-        return <View>
-            {(this.props.data && this.props.data.length > 0 &&
-                <View style={[styles.outerStyle, this.props.style]}>
-                    <FlatList
-                        data={this.props.data}
-                        renderItem={this.renderItem}
-                        keyExtractor={this.props.keyExtractor || ((item, index) => index.toString())} />
-                </View>)
-                ||
-                <View style={GeneralStyles.emptyListView}>
-                    <Text style={GeneralStyles.emptyListText}>{this.props.emptyListText}</Text>
-                    <Image
-                        source={require('../Images/logo.png')}
-                        resizeMode='contain'
-                        style={GeneralStyles.emptyListImage} />
-                </View>}
-        </View>;
+        return (
+            <View>
+                {(this.props.data && this.props.data.length > 0 && (
+                    <View style={[styles.outerStyle, this.props.style]}>
+                        <FlatList
+                            data={this.props.data}
+                            renderItem={this.renderItem}
+                            keyExtractor={
+                                this.props.keyExtractor ||
+                                ((item, index) => index.toString())
+                            }
+                        />
+                    </View>
+                )) || (
+                    <View style={GeneralStyles.emptyListView}>
+                        <Text style={GeneralStyles.emptyListText}>
+                            {this.props.emptyListText}
+                        </Text>
+                        <Image
+                            source={require('../Images/logo.png')}
+                            resizeMode="contain"
+                            style={GeneralStyles.emptyListImage}
+                        />
+                    </View>
+                )}
+            </View>
+        );
     }
 }
 
@@ -126,21 +175,21 @@ const styles = StyleSheet.create({
         borderTopWidth: 2,
         borderBottomWidth: 1,
         borderColor: '#cce',
-        flex: 1
+        flex: 1,
     },
     mainViewStyle: {
         borderBottomWidth: 2,
         borderBottomColor: '#e0e0d0',
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     iconContainerStyle: {
         alignItems: 'center',
         justifyContent: 'center',
-        width: 30
+        width: 30,
     },
     titleStyle: {
         flexWrap: 'wrap',
-        paddingRight: 20
+        paddingRight: 20,
     },
     textSectionViewStyle: {
         flexWrap: 'wrap',
@@ -148,6 +197,6 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         paddingTop: 10,
         paddingBottom: 5,
-        flex: 1
+        flex: 1,
     },
 });

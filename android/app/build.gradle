@@ -92,8 +92,8 @@ android {
         applicationId "com.luachandroid"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 66
-        versionName "1.66"
+        versionCode 67
+        versionName "1.67"
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
     }
     signingConfigs {
@@ -137,6 +137,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-webview')
+    implementation project(':react-native-device-info')
     compile project(':react-native-mail')
     compile project(':react-native-vector-icons')
     compile fileTree(include: ['*.jar'], dir: 'libs')

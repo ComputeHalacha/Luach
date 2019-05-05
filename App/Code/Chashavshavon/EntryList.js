@@ -15,8 +15,7 @@ export default class EntryList {
     add(entry, afterwards) {
         if (!(entry instanceof Entry)) {
             throw 'Only objects of type Entry can be added to the EntryList';
-        }
-        else {
+        } else {
             if (!this.list.some(e => e.isSameEntry(entry))) {
                 this.list.push(entry);
                 const index = this.list.indexOf(entry);
@@ -41,15 +40,15 @@ export default class EntryList {
         if (isNumber(arg) && arg >= 0 && arg < this.list.length) {
             entry = this.list.splice(arg, 1);
             wasRemoved = true;
-        }
-        else if (arg instanceof Entry) {
-            const index = this.list.findIndex(e => e === arg || e.isSameEntry(arg));
+        } else if (arg instanceof Entry) {
+            const index = this.list.findIndex(
+                e => e === arg || e.isSameEntry(arg)
+            );
             if (index > -1) {
                 entry = this.list.splice(index, 1);
                 wasRemoved = true;
             }
-        }
-        else {
+        } else {
             throw 'EntryList.remove accepts either an Entry to remove or the index of the Entry to remove';
         }
         if (wasRemoved && afterwards instanceof Function) {
@@ -79,7 +78,8 @@ export default class EntryList {
      */
     get realEntrysList() {
         return EntryList.sortEntries(
-            this.list.filter(e => !e.ignoreForFlaggedDates));
+            this.list.filter(e => !e.ignoreForFlaggedDates)
+        );
     }
     /**
      * Returns the latest Entry
@@ -87,7 +87,7 @@ export default class EntryList {
     lastEntry() {
         let latest;
         for (let entry of this.list) {
-            if (((!latest) || entry.date.Abs > latest.date.Abs)) {
+            if (!latest || entry.date.Abs > latest.date.Abs) {
                 latest = entry;
             }
         }
@@ -125,7 +125,8 @@ export default class EntryList {
         const generator = new FlaggedDatesGenerator(
             this.realEntrysList,
             kavuahList,
-            settings);
+            settings
+        );
         return generator.getProblemOnahs();
     }
     /**
@@ -136,11 +137,9 @@ export default class EntryList {
         return list.sort((a, b) => {
             if (a.date.Abs < b.date.Abs) {
                 return -1;
-            }
-            else if (a.date.Abs > b.date.Abs) {
+            } else if (a.date.Abs > b.date.Abs) {
                 return 1;
-            }
-            else {
+            } else {
                 return a.nightDay - b.nightDay;
             }
         });

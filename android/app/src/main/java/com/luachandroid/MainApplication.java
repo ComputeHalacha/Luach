@@ -3,6 +3,8 @@ package com.luachandroid;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.chirag.RNMail.RNMail;
 import com.rnfs.RNFSPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -28,6 +30,8 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
         new SQLitePluginPackage(),
         new MainReactPackage(),
+            new RNCWebViewPackage(),
+            new RNDeviceInfo(),
         new RNMail(),
         new RNFSPackage(),
         new VectorIconsPackage()

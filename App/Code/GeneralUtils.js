@@ -1,10 +1,18 @@
-import { PixelRatio, Dimensions, Platform, ToastAndroid, Alert } from 'react-native';
+import {
+    PixelRatio,
+    Dimensions,
+    Platform,
+    ToastAndroid,
+    Alert,
+} from 'react-native';
 import { NavigationActions } from 'react-navigation';
+import DeviceInfo from 'react-native-device-info';
 import jDate from './JCal/jDate';
 import Utils from './JCal/Utils';
+import DataUtils from './Data/DataUtils';
 
 export const GLOBALS = Object.freeze({
-    VERSION_NAME: '1.66',
+    VERSION_NAME: DeviceInfo.getReadableVersion().replace(/(.+)\..+/, '$1'),
     IS_IOS: Platform.OS === 'ios',
     IS_ANDROID: Platform.OS === 'android',
     BUTTON_COLOR: Platform.OS === 'android' ? '#99b' : null,
@@ -12,9 +20,12 @@ export const GLOBALS = Object.freeze({
 
 export function popUpMessage(message, optionalTitle) {
     if (GLOBALS.IS_ANDROID) {
-        ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
-    }
-    else {
+        ToastAndroid.showWithGravity(
+            message,
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER
+        );
+    } else {
         Alert.alert(optionalTitle, message);
     }
 }
@@ -31,25 +42,25 @@ export function getScreenHeight() {
 
 /** Is the current screen width less than 650 pixels? */
 export function isSmallScreen() {
-    return (getScreenWidth() * PixelRatio.get()) < 650;
+    return getScreenWidth() * PixelRatio.get() < 650;
 }
 
 /** Is the current screen width more than 1390 pixels? */
 export function isLargeScreen() {
-    return (getScreenWidth() * PixelRatio.get()) > 1390;
+    return getScreenWidth() * PixelRatio.get() > 1390;
 }
 
 /** Returns true if "thing" is either a string primitive or String object.*/
 export function isString(thing) {
-    return (typeof thing === 'string' || thing instanceof String);
+    return typeof thing === 'string' || thing instanceof String;
 }
 /** Returns true if "thing" is either a number primitive or a Number object.*/
 export function isNumber(thing) {
-    return (typeof thing === 'number' || thing instanceof Number);
+    return typeof thing === 'number' || thing instanceof Number;
 }
 /** Returns true if "thing" is a Date object containing a valid date.*/
 export function isValidDate(thing) {
-    return (thing instanceof Date && !isNaN(thing.valueOf()));
+    return thing instanceof Date && !isNaN(thing.valueOf());
 }
 /** Returns whether or not the given, array, string, or argument list contains the given item or substring.
  *
@@ -57,8 +68,7 @@ export function isValidDate(thing) {
 export function has(o, ...arr) {
     if (arr.length === 1 && (Array.isArray(arr[0]) || isString(arr[0]))) {
         return arr[0].includes(o);
-    }
-    else {
+    } else {
         return arr.includes(o);
     }
 }
@@ -71,10 +81,13 @@ export function has(o, ...arr) {
  * the second value if the first is NaN or null, while default params will give give you the NaN or the null.
  */
 export function setDefault(paramValue, defValue) {
-    if (typeof paramValue === 'undefined' || paramValue === null || isNaN(paramValue)) {
+    if (
+        typeof paramValue === 'undefined' ||
+        paramValue === null ||
+        isNaN(paramValue)
+    ) {
         return defValue;
-    }
-    else {
+    } else {
         return paramValue;
     }
 }
@@ -91,9 +104,7 @@ export function range(start, end) {
         end = start;
         start = 1;
     }
-    return Array.from(
-        { length: (end - start) + 1 },
-        (v, i) => start + i);
+    return Array.from({ length: end - start + 1 }, (v, i) => start + i);
 }
 /**
  * Log message to console
@@ -134,10 +145,10 @@ export function goHomeToday(navigator, appData) {
             NavigationActions.navigate({
                 routeName: 'Home',
                 params: {
-                    appData: appData
-                }
-            })
-        ]
+                    appData: appData,
+                },
+            }),
+        ],
     });
     navigator.dispatch(resetAction);
 }
@@ -146,10 +157,25 @@ export function goHomeToday(navigator, appData) {
  * @param {AppData} appData
  */
 export function getTodayJdate(appData) {
-    if (appData && appData.Settings && !appData.Settings.navigateBySecularDate) {
+    if (
+        appData &&
+        appData.Settings &&
+        !appData.Settings.navigateBySecularDate
+    ) {
         return Utils.nowAtLocation(appData.Settings.location);
-    }
-    else {
+    } else {
         return new jDate();
     }
+}
+
+/**
+ * Tries to guess the users location from the set time zone name.
+ * Default is Lakewood NJ.
+ */
+export async function tryToGuessLocation() {
+    const timeZoneName = DeviceInfo.getTimezone(),
+        cityName = timeZoneName.replace(/.+\/(.+)/, '$1').replace('_', ' '),
+        foundList = await DataUtils.SearchLocations(cityName);
+
+    return foundList[0] || Location.getLakewood();
 }

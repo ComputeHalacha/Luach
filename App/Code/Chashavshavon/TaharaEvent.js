@@ -2,7 +2,7 @@ const TaharaEventType = Object.freeze({
     Hefsek: 1,
     Bedika: 2,
     Shailah: 4,
-    Mikvah: 8
+    Mikvah: 8,
 });
 
 class TaharaEvent {
@@ -25,8 +25,7 @@ class TaharaEvent {
      * @param {[TaharaEvent]} taharaEventsList
      */
     static sortList(taharaEventsList) {
-        return taharaEventsList.sort((a, b) =>
-            a.jdate.Abs - b.jdate.Abs);
+        return taharaEventsList.sort((a, b) => a.jdate.Abs - b.jdate.Abs);
     }
     /**
      * Gets the string representation of a TaharaEventType

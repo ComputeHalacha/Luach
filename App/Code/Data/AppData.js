@@ -1,87 +1,86 @@
 import firstTime from 'react-native-catch-first-time';
 import DataUtils from './DataUtils';
 import Settings from '../Settings';
-import Location from '../JCal/Location';
 import Entry from '../Chashavshavon/Entry';
 import { Kavuah } from '../Chashavshavon/Kavuah';
 import EntryList from '../Chashavshavon/EntryList';
-import { error, warn } from '../GeneralUtils';
+import { error, warn, tryToGuessLocation } from '../GeneralUtils';
 /**
  * List of fields that have been added after the initial app launch.
  * Any that do not yet exist, will be added to the db schema during initial loading.
  */
 const addedFields = [
-    //Added 5/10/17
-    {
-        table: 'settings',
-        name: 'keepThirtyOne',
-        type: 'BOOLEAN',
-        allowNull: false,
-        defaultValue: '1',
-    },
-    //Added 5/28/17
-    {
-        table: 'settings',
-        name: 'showIgnoredKavuahs',
-        type: 'BOOLEAN',
-        allowNull: true,
-    },
-    //Added 6/1/17
-    {
-        table: 'entries',
-        name: 'ignoreForKavuah',
-        type: 'BOOLEAN',
-        allowNull: true,
-    },
-    {
-        table: 'entries',
-        name: 'ignoreForFlaggedDates',
-        type: 'BOOLEAN',
-        allowNull: true,
-    },
-    {
-        table: 'entries',
-        name: 'comments',
-        type: 'VARCHAR (500)',
-        allowNull: true,
-    },
-    //Added 6/27/17
-    {
-        table: 'settings',
-        name: 'haflagaOfOnahs',
-        type: 'BOOLEAN',
-        allowNull: true,
-    },
-    //Added 6/28/17
-    {
-        table: 'settings',
-        name: 'noProbsAfterEntry',
-        type: 'BOOLEAN',
-        allowNull: true,
-        defaultValue: '1',
-    },
-    //Added 6/29/17
-    {
-        table: 'settings',
-        name: 'kavuahDiffOnahs',
-        type: 'BOOLEAN',
-        allowNull: true,
-    },
-    //Added 7/3/17
-    {
-        table: 'settings',
-        name: 'hideHelp',
-        type: 'BOOLEAN',
-        allowNull: true,
-    },
-    //Added 8/8/17
-    {
-        table: 'occasions',
-        name: 'color',
-        type: 'VARCHAR (25)',
-        allowNull: true,
-    },
-],
+        //Added 5/10/17
+        {
+            table: 'settings',
+            name: 'keepThirtyOne',
+            type: 'BOOLEAN',
+            allowNull: false,
+            defaultValue: '1',
+        },
+        //Added 5/28/17
+        {
+            table: 'settings',
+            name: 'showIgnoredKavuahs',
+            type: 'BOOLEAN',
+            allowNull: true,
+        },
+        //Added 6/1/17
+        {
+            table: 'entries',
+            name: 'ignoreForKavuah',
+            type: 'BOOLEAN',
+            allowNull: true,
+        },
+        {
+            table: 'entries',
+            name: 'ignoreForFlaggedDates',
+            type: 'BOOLEAN',
+            allowNull: true,
+        },
+        {
+            table: 'entries',
+            name: 'comments',
+            type: 'VARCHAR (500)',
+            allowNull: true,
+        },
+        //Added 6/27/17
+        {
+            table: 'settings',
+            name: 'haflagaOfOnahs',
+            type: 'BOOLEAN',
+            allowNull: true,
+        },
+        //Added 6/28/17
+        {
+            table: 'settings',
+            name: 'noProbsAfterEntry',
+            type: 'BOOLEAN',
+            allowNull: true,
+            defaultValue: '1',
+        },
+        //Added 6/29/17
+        {
+            table: 'settings',
+            name: 'kavuahDiffOnahs',
+            type: 'BOOLEAN',
+            allowNull: true,
+        },
+        //Added 7/3/17
+        {
+            table: 'settings',
+            name: 'hideHelp',
+            type: 'BOOLEAN',
+            allowNull: true,
+        },
+        //Added 8/8/17
+        {
+            table: 'occasions',
+            name: 'color',
+            type: 'VARCHAR (25)',
+            allowNull: true,
+        },
+    ],
     GLOBAL_FIRST_TIME_RANDOM = 'ed92c2efd74740dbb72da04f17ff922b1';
 
 /**
@@ -136,30 +135,35 @@ export default class AppData {
 
             try {
                 await firstTime(GLOBAL_FIRST_TIME_RANDOM);
-            }
-            catch (err) {
-                const { Settings, EntryList, KavuahList, UserOccasions, TaharaEvents } = global.GlobalAppData;
+            } catch (err) {
+                const {
+                    Settings,
+                    EntryList,
+                    KavuahList,
+                    UserOccasions,
+                    TaharaEvents,
+                } = global.GlobalAppData;
                 /***************
-                * In the sqlite database, the settings.location is set to Jerusalem.
-                * This is bad, as Jerusalem.Israel = true and most of our users are in the US and the UK.                
-                * We can't overwrite the default database as all user data is stored in it.
-                * So we will try to determine if this is the first time the app was really ever run,
-                * and if so, change the default location to Lakewood NJ.
-                * We can't blindly rely on the firstTime function to determine if this is new launch 
-                * as it was put into the code after many users had already installed the app.
-                * So in addition to the firstTime check, we look for default database conditions.
-                * This is that the location is Jerusalem and all other lists are empty.
-                ****************/
-                if (Settings.location.locationId === 28 &&
+                 * In the sqlite database, the settings.location is set to Jerusalem.
+                 * This is bad, as Jerusalem.Israel = true and most of our users are in the US and the UK.
+                 * We can't overwrite the default database as all user data is stored in it.
+                 * So we will try to determine if this is the first time the app was really ever run,
+                 * and if so, change the default location to a guess based on the system time zone or else Lakewood NJ.
+                 * We can't blindly rely on the firstTime function to determine if this is new launch
+                 * as it was put into the code after many users had already installed the app.
+                 * So in addition to the firstTime check, we look for default database conditions.
+                 * This is that the location is Jerusalem and all other lists are empty.
+                 ****************/
+                if (
+                    Settings.location.locationId === 28 &&
                     !EntryList.list.length &&
                     !UserOccasions.length &&
                     !KavuahList.length &&
-                    !TaharaEvents.length) {
-
-                    const lakewood = Location.getLakewood();
-                    //We want to have Lakewood as the default location - not Jerusalem                    
-                    await DataUtils.SetCurrentLocationOnDatabase(lakewood);
-                    global.GlobalAppData.Settings.location = lakewood;
+                    !TaharaEvents.length
+                ) {
+                    const newLocation = await tryToGuessLocation();
+                    await DataUtils.SetCurrentLocationOnDatabase(newLocation);
+                    global.GlobalAppData.Settings.location = newLocation;
 
                     //We will use this for the special welcome flash screen.
                     global.IsFirstRun = true;

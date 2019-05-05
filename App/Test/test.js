@@ -10,46 +10,57 @@ import Settings from '../Code/Settings';
 
 export function testFlaggedDates() {
     const settings = new Settings({
-        location: Location.getLakewood(),
-        showOhrZeruah: true,
-        keepThirtyOne: true,
-        onahBeinunis24Hours: true,
-        numberMonthsAheadToWarn: 12,
-        keepLongerHaflagah: true,
-        dilugChodeshPastEnds: false,
-        haflagaOfOnahs: false,
-        kavuahDiffOnahs: false,
-        noProbsAfterEntry: false
-    }),
+            location: Location.getLakewood(),
+            showOhrZeruah: true,
+            keepThirtyOne: true,
+            onahBeinunis24Hours: true,
+            numberMonthsAheadToWarn: 12,
+            keepLongerHaflagah: true,
+            dilugChodeshPastEnds: false,
+            haflagaOfOnahs: false,
+            kavuahDiffOnahs: false,
+            noProbsAfterEntry: false,
+        }),
         entryList = new EntryList(settings, [
             new Entry(new Onah(new jDate(5777, 7, 1), NightDay.Day)),
-            new Entry(new Onah(new jDate(5777, 8, 1), NightDay.Day))
+            new Entry(new Onah(new jDate(5777, 8, 1), NightDay.Day)),
         ]);
     entryList.calulateHaflagas();
 
     const entries = entryList.realEntrysList,
         kavuahs = [
-            new Kavuah(KavuahTypes.DayOfMonth, entries[0], 1, false, true, false)
+            new Kavuah(
+                KavuahTypes.DayOfMonth,
+                entries[0],
+                1,
+                false,
+                true,
+                false
+            ),
         ],
         correctProbs = [
-            new ProblemOnah(new jDate(5777, 7, 30), NightDay.Night,
-                ['Thirtieth Day (24 hour)']),
-            new ProblemOnah(new jDate(5777, 7, 30), NightDay.Day,
-                ['Thirtieth Day']),
-            new ProblemOnah(new jDate(5777, 8, 1), NightDay.Night,
-                [
-                    'Thirty First Day (24 hour)',
-                    'Yom Hachodesh (24 hour)',
-                    'Ohr Zarua of the Kavuah for Day-time on every 1st day of the Jewish Month'
-                ]),
-            new ProblemOnah(new jDate(5777, 8, 1), NightDay.Day,
-                [
-                    'Thirty First Day',
-                    'Yom Hachodesh',
-                    'Kavuah for Day-time on every 1st day of the Jewish Month'
-                ])
+            new ProblemOnah(new jDate(5777, 7, 30), NightDay.Night, [
+                'Thirtieth Day (24 hour)',
+            ]),
+            new ProblemOnah(new jDate(5777, 7, 30), NightDay.Day, [
+                'Thirtieth Day',
+            ]),
+            new ProblemOnah(new jDate(5777, 8, 1), NightDay.Night, [
+                'Thirty First Day (24 hour)',
+                'Yom Hachodesh (24 hour)',
+                'Ohr Zarua of the Kavuah for Day-time on every 1st day of the Jewish Month',
+            ]),
+            new ProblemOnah(new jDate(5777, 8, 1), NightDay.Day, [
+                'Thirty First Day',
+                'Yom Hachodesh',
+                'Kavuah for Day-time on every 1st day of the Jewish Month',
+            ]),
         ],
-        foundProbs = new FlaggedDatesGenerator(entries, kavuahs, settings).getProblemOnahs();
+        foundProbs = new FlaggedDatesGenerator(
+            entries,
+            kavuahs,
+            settings
+        ).getProblemOnahs();
 
     for (let prob of foundProbs) {
         if (!correctProbs.some(p => p.isSameProb(prob))) {

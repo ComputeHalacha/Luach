@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
-import { ScrollView, TouchableHighlight, View, Text, TextInput, Picker, Switch } from 'react-native';
+import {
+    ScrollView,
+    TouchableHighlight,
+    View,
+    Text,
+    TextInput,
+    Picker,
+    Switch,
+} from 'react-native';
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
 import Location from '../../Code/JCal/Location';
@@ -11,16 +19,24 @@ export default class SettingsScreen extends Component {
         const { appData, onUpdate } = navigation.state.params;
         return {
             title: 'Settings',
-            headerRight:
-                <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+            headerRight: (
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-around',
+                    }}>
                     <TouchableHighlight
                         onPress={() =>
-                            navigation.navigate('ExportData', { appData, dataSet: 'Settings' })}>
+                            navigation.navigate('ExportData', {
+                                appData,
+                                dataSet: 'Settings',
+                            })
+                        }>
                         <View style={{ marginRight: 10 }}>
-                            <Icon name='import-export'
-                                color='#aca'
-                                size={25} />
-                            <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
+                            <Icon name="import-export" color="#aca" size={25} />
+                            <Text style={{ fontSize: 10, color: '#797' }}>
+                                Export Data
+                            </Text>
                         </View>
                     </TouchableHighlight>
                     <TouchableHighlight
@@ -29,16 +45,18 @@ export default class SettingsScreen extends Component {
                                 appData,
                                 onUpdate,
                                 url: 'index.html',
-                                title: 'Help'
-                            })}>
+                                title: 'Help',
+                            })
+                        }>
                         <View style={{ marginRight: 3 }}>
-                            <Icon name='help'
-                                color='#aac'
-                                size={25} />
-                            <Text style={{ fontSize: 10, color: '#aac' }}>Luach Help</Text>
+                            <Icon name="help" color="#aac" size={25} />
+                            <Text style={{ fontSize: 10, color: '#aac' }}>
+                                Luach Help
+                            </Text>
                         </View>
                     </TouchableHighlight>
                 </View>
+            ),
         };
     };
     constructor(props) {
@@ -57,7 +75,7 @@ export default class SettingsScreen extends Component {
             settings: appData.Settings,
             //The enteredPin is instead of settings.PIN in case the entered PIN is invalid.
             //We still want to display it, but not to change the setting.
-            enteredPin: appData.Settings.PIN
+            enteredPin: appData.Settings.PIN,
         };
         this.changeSetting = this.changeSetting.bind(this);
         this.changePIN = this.changePIN.bind(this);
@@ -69,12 +87,11 @@ export default class SettingsScreen extends Component {
         this.update();
     }
     editLocation() {
-        this.navigate('NewLocation',
-            {
-                appData: this.appData,
-                location: this.appData.Settings.location,
-                onUpdate: this.update
-            });
+        this.navigate('NewLocation', {
+            appData: this.appData,
+            location: this.appData.Settings.location,
+            onUpdate: this.update,
+        });
     }
     changePIN(pin) {
         const validPin = /^\d{4}$/.test(pin);
@@ -90,14 +107,23 @@ export default class SettingsScreen extends Component {
             showOhrZeruah = setDefault(settings.showOhrZeruah, true),
             keepThirtyOne = setDefault(settings.keepThirtyOne, true),
             onahBeinunis24Hours = settings.onahBeinunis24Hours,
-            numberMonthsAheadToWarn = (settings.numberMonthsAheadToWarn) || 12,
+            numberMonthsAheadToWarn = settings.numberMonthsAheadToWarn || 12,
             keepLongerHaflagah = setDefault(settings.keepLongerHaflagah, true),
-            dilugChodeshPastEnds = setDefault(settings.dilugChodeshPastEnds, true),
+            dilugChodeshPastEnds = setDefault(
+                settings.dilugChodeshPastEnds,
+                true
+            ),
             haflagaOfOnahs = settings.haflagaOfOnahs,
             kavuahDiffOnahs = settings.kavuahDiffOnahs,
-            calcKavuahsOnNewEntry = setDefault(settings.calcKavuahsOnNewEntry, true),
+            calcKavuahsOnNewEntry = setDefault(
+                settings.calcKavuahsOnNewEntry,
+                true
+            ),
             showProbFlagOnHome = setDefault(settings.showProbFlagOnHome, true),
-            showEntryFlagOnHome = setDefault(settings.showEntryFlagOnHome, true),
+            showEntryFlagOnHome = setDefault(
+                settings.showEntryFlagOnHome,
+                true
+            ),
             navigateBySecularDate = settings.navigateBySecularDate,
             showIgnoredKavuahs = settings.showIgnoredKavuahs,
             noProbsAfterEntry = setDefault(settings.noProbsAfterEntry, true),
@@ -112,164 +138,355 @@ export default class SettingsScreen extends Component {
                         appData={this.appData}
                         navigator={this.props.navigation}
                         hideSettings={true}
-                        helpUrl='Settings.html'
-                        helpTitle='Settings' />
+                        helpUrl="Settings.html"
+                        helpTitle="Settings"
+                    />
                     <ScrollView style={{ flex: 1 }}>
                         <View style={GeneralStyles.headerView}>
-                            <Text style={GeneralStyles.headerText}>Halachic Settings</Text>
+                            <Text style={GeneralStyles.headerText}>
+                                Halachic Settings
+                            </Text>
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Choose your location</Text>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <TouchableHighlight underlayColor='#9f9' onPress={() =>
-                                    this.navigate('FindLocation', {
-                                        onUpdate: this.update,
-                                        appData: this.appData
-                                    })}
-                                    style={{ flex: 1, backgroundColor: '#dfd' }}>
+                            <Text style={GeneralStyles.label}>
+                                Choose your location
+                            </Text>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                }}>
+                                <TouchableHighlight
+                                    underlayColor="#9f9"
+                                    onPress={() =>
+                                        this.navigate('FindLocation', {
+                                            onUpdate: this.update,
+                                            appData: this.appData,
+                                        })
+                                    }
+                                    style={{
+                                        flex: 1,
+                                        backgroundColor: '#dfd',
+                                    }}>
                                     <View style={GeneralStyles.centeredRow}>
-                                        <Icon name='edit-location' color='#484' size={35} />
-                                        <Text>
-                                            {location.Name}
-                                        </Text>
+                                        <Icon
+                                            name="edit-location"
+                                            color="#484"
+                                            size={35}
+                                        />
+                                        <Text>{location.Name}</Text>
                                     </View>
                                 </TouchableHighlight>
-                                <Icon name='edit' color='#888' size={15} containerStyle={{ paddingRight: 12, paddingLeft: 12 }} onPress={() => this.editLocation(location)} />
+                                <Icon
+                                    name="edit"
+                                    color="#888"
+                                    size={15}
+                                    containerStyle={{
+                                        paddingRight: 12,
+                                        paddingLeft: 12,
+                                    }}
+                                    onPress={() => this.editLocation(location)}
+                                />
                             </View>
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Flag previous onah (The "Ohr Zaruah")</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('showOhrZeruah', value)}
-                                value={!!showOhrZeruah} />
+                            <Text style={GeneralStyles.label}>
+                                Flag previous onah (The "Ohr Zaruah")
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting('showOhrZeruah', value)
+                                }
+                                value={!!showOhrZeruah}
+                            />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('onahBeinunis24Hours', value)}
-                                value={!!onahBeinunis24Hours} />
+                            <Text style={GeneralStyles.label}>
+                                Keep Onah Beinonis (30, 31 and Yom HaChodesh)
+                                for a full 24 Hours
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting(
+                                        'onahBeinunis24Hours',
+                                        value
+                                    )
+                                }
+                                value={!!onahBeinunis24Hours}
+                            />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Keep day Thirty One for Onah Beinonis</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('keepThirtyOne', value)}
-                                value={!!keepThirtyOne} />
+                            <Text style={GeneralStyles.label}>
+                                Keep day Thirty One for Onah Beinonis
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting('keepThirtyOne', value)
+                                }
+                                value={!!keepThirtyOne}
+                            />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Haflaga is only cancelled by a longer one</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('keepLongerHaflagah', value)}
-                                value={!!keepLongerHaflagah} />
+                            <Text style={GeneralStyles.label}>
+                                Haflaga is only cancelled by a longer one
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting(
+                                        'keepLongerHaflagah',
+                                        value
+                                    )
+                                }
+                                value={!!keepLongerHaflagah}
+                            />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Continue incrementing Dilug Yom Hachodesh Kavuahs into another month</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('dilugChodeshPastEnds', value)}
-                                value={!!dilugChodeshPastEnds} />
+                            <Text style={GeneralStyles.label}>
+                                Continue incrementing Dilug Yom Hachodesh
+                                Kavuahs into another month
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting(
+                                        'dilugChodeshPastEnds',
+                                        value
+                                    )
+                                }
+                                value={!!dilugChodeshPastEnds}
+                            />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Calculate Haflagas by counting Onahs</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('haflagaOfOnahs', value)}
-                                value={!!haflagaOfOnahs} />
+                            <Text style={GeneralStyles.label}>
+                                Calculate Haflagas by counting Onahs
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting('haflagaOfOnahs', value)
+                                }
+                                value={!!haflagaOfOnahs}
+                            />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Flag Kavuahs even if not all the same Onah</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('kavuahDiffOnahs', value)}
-                                value={!!kavuahDiffOnahs} />
+                            <Text style={GeneralStyles.label}>
+                                Flag Kavuahs even if not all the same Onah
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting('kavuahDiffOnahs', value)
+                                }
+                                value={!!kavuahDiffOnahs}
+                            />
                         </View>
                         <View style={GeneralStyles.headerView}>
-                            <Text style={GeneralStyles.headerText}>Application Settings</Text>
+                            <Text style={GeneralStyles.headerText}>
+                                Application Settings
+                            </Text>
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Number of Months ahead to warn</Text>
-                            <Picker style={GeneralStyles.picker}
+                            <Text style={GeneralStyles.label}>
+                                Number of Months ahead to warn
+                            </Text>
+                            <Picker
+                                style={GeneralStyles.picker}
                                 selectedValue={numberMonthsAheadToWarn}
-                                onValueChange={value => this.changeSetting('numberMonthsAheadToWarn', value)}>
+                                onValueChange={value =>
+                                    this.changeSetting(
+                                        'numberMonthsAheadToWarn',
+                                        value
+                                    )
+                                }>
                                 {nums.map((n, i) => {
-                                    return (<Picker.Item label={n.toString()} value={n} key={i} />);
+                                    return (
+                                        <Picker.Item
+                                            label={n.toString()}
+                                            value={n}
+                                            key={i}
+                                        />
+                                    );
                                 })}
                             </Picker>
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Automatically Calculate Kavuahs upon addition of an Entry</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('calcKavuahsOnNewEntry', value)}
-                                value={!!calcKavuahsOnNewEntry} />
+                            <Text style={GeneralStyles.label}>
+                                Automatically Calculate Kavuahs upon addition of
+                                an Entry
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting(
+                                        'calcKavuahsOnNewEntry',
+                                        value
+                                    )
+                                }
+                                value={!!calcKavuahsOnNewEntry}
+                            />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Show Entry, Hefsek Tahara and Mikva information?</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('showEntryFlagOnHome', value)}
-                                value={!!showEntryFlagOnHome} />
+                            <Text style={GeneralStyles.label}>
+                                Show Entry, Hefsek Tahara and Mikva information?
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting(
+                                        'showEntryFlagOnHome',
+                                        value
+                                    )
+                                }
+                                value={!!showEntryFlagOnHome}
+                            />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Show flags for problem dates on Main Screen?</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('showProbFlagOnHome', value)}
-                                value={!!showProbFlagOnHome} />
+                            <Text style={GeneralStyles.label}>
+                                Show flags for problem dates on Main Screen?
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting(
+                                        'showProbFlagOnHome',
+                                        value
+                                    )
+                                }
+                                value={!!showProbFlagOnHome}
+                            />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Calendar displays current:</Text>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 15 }}>
-                                <Text>Jewish Date</Text>
-                                <Switch style={GeneralStyles.switch}
-                                    onValueChange={value => this.changeSetting('navigateBySecularDate', value)}
-                                    value={!!navigateBySecularDate} />
-                                <Text>Secular Date</Text>
-                            </View>
-                            {navigateBySecularDate &&
-                                <Text style={{ fontSize: 11, color: '#b55', paddingLeft: 10, paddingBottom: 5 }}>
-                                    Please Note: If the current time is between sunset and midnight, the current Jewish date will be incorrect.
-                                </Text>
-                            }
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Show explicitly ignored Kavuahs in the Kavuah list</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('showIgnoredKavuahs', value)}
-                                value={!!showIgnoredKavuahs} />
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Don't show Flagged dates for a week after Entry</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('noProbsAfterEntry', value)}
-                                value={!!noProbsAfterEntry} />
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Hide Help Button</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('hideHelp', value)}
-                                value={!!hideHelp} />
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Require PIN to open application?</Text>
-                            <Switch style={GeneralStyles.switch}
-                                onValueChange={value => this.changeSetting('requirePIN', value)}
-                                value={!!requirePIN} />
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>4 digit PIN Number</Text>
+                            <Text style={GeneralStyles.label}>
+                                Calendar displays current:
+                            </Text>
                             <View
                                 style={{
-                                    display: this.state.invalidPin ? 'flex' : 'none',
-                                    marginTop: 5,
-                                    marginLeft: 10
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    paddingLeft: 15,
                                 }}>
-                                <Text style={{ color: '#f55', fontSize: 12, fontWeight: 'bold' }}>PIN must have 4 digits</Text>
+                                <Text>Jewish Date</Text>
+                                <Switch
+                                    style={GeneralStyles.switch}
+                                    onValueChange={value =>
+                                        this.changeSetting(
+                                            'navigateBySecularDate',
+                                            value
+                                        )
+                                    }
+                                    value={!!navigateBySecularDate}
+                                />
+                                <Text>Secular Date</Text>
                             </View>
-                            <TextInput style={GeneralStyles.textInput}
-                                keyboardType='numeric'
-                                returnKeyType='next'
+                            {navigateBySecularDate && (
+                                <Text
+                                    style={{
+                                        fontSize: 11,
+                                        color: '#b55',
+                                        paddingLeft: 10,
+                                        paddingBottom: 5,
+                                    }}>
+                                    Please Note: If the current time is between
+                                    sunset and midnight, the current Jewish date
+                                    will be incorrect.
+                                </Text>
+                            )}
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Show explicitly ignored Kavuahs in the Kavuah
+                                list
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting(
+                                        'showIgnoredKavuahs',
+                                        value
+                                    )
+                                }
+                                value={!!showIgnoredKavuahs}
+                            />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Don't show Flagged dates for a week after Entry
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting(
+                                        'noProbsAfterEntry',
+                                        value
+                                    )
+                                }
+                                value={!!noProbsAfterEntry}
+                            />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Hide Help Button
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting('hideHelp', value)
+                                }
+                                value={!!hideHelp}
+                            />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Require PIN to open application?
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting('requirePIN', value)
+                                }
+                                value={!!requirePIN}
+                            />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                4 digit PIN Number
+                            </Text>
+                            <View
+                                style={{
+                                    display: this.state.invalidPin
+                                        ? 'flex'
+                                        : 'none',
+                                    marginTop: 5,
+                                    marginLeft: 10,
+                                }}>
+                                <Text
+                                    style={{
+                                        color: '#f55',
+                                        fontSize: 12,
+                                        fontWeight: 'bold',
+                                    }}>
+                                    PIN must have 4 digits
+                                </Text>
+                            </View>
+                            <TextInput
+                                style={GeneralStyles.textInput}
+                                keyboardType="numeric"
+                                returnKeyType="next"
                                 maxLength={4}
                                 onChangeText={value => {
                                     this.changePIN(value);
                                 }}
-                                value={this.state.enteredPin} />
+                                value={this.state.enteredPin}
+                            />
                         </View>
                     </ScrollView>
                 </View>
-            </View >);
+            </View>
+        );
     }
 }

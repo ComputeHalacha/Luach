@@ -14,14 +14,27 @@ export default class Location {
      * @param {Number} [candleLighting] Number of minutes before sunset the candles are lit on Friday
      * @param {Number} [locationId] If this location is in a database, keeps track of the id
      */
-    constructor(name, israel, latitude, longitude, utcOffset, elevation, candleLighting, locationId) {
+    constructor(
+        name,
+        israel,
+        latitude,
+        longitude,
+        utcOffset,
+        elevation,
+        candleLighting,
+        locationId
+    ) {
         //If the israel argument was not set at all.
         if (typeof israel === 'undefined' || israel === null) {
             //If the user is within Israels general coordinates,
             //we feel pretty safe assuming they are in Israel.
             //Where else on the map is the user? (Note, the probablity of our users Jewishness: 99.99%)
             //Sinai, Lebanon, Syria, Jordan, in a submarine under the Mediterannian ...
-            israel = (latitude > 29.45 && latitude < 33 && longitude < -34.23 && longitude > -35.9);
+            israel =
+                latitude > 29.45 &&
+                latitude < 33 &&
+                longitude < -34.23 &&
+                longitude > -35.9;
         }
         if (israel) {
             //Israel has only one immutable time zone
@@ -35,7 +48,7 @@ export default class Location {
             utcOffset = -Math.round(longitude / 15);
         }
 
-        this.Name = (name || 'Unknown Location');
+        this.Name = name || 'Unknown Location';
         this.Israel = !!israel;
         this.Latitude = latitude;
         this.Longitude = longitude;
@@ -58,19 +71,33 @@ export default class Location {
             location.UTCOffset,
             location.Elevation,
             location.CandleLighting,
-            location.locationId);
+            location.locationId
+        );
     }
 
     static getCandles(location) {
         if (location.CandleLighting) {
             return location.CandleLighting;
-        }
-        else if (!location.Israel) {
+        } else if (!location.Israel) {
             return 18;
-        }
-        else {
-            const special = [{ names: ['jerusalem', 'yerush', 'petach', 'petah', 'petak', 'beit shemesh'], min: 40 },
-            { names: ['haifa', 'chaifa', 'be\'er sheva', 'beersheba'], min: 22 }],
+        } else {
+            const special = [
+                    {
+                        names: [
+                            'jerusalem',
+                            'yerush',
+                            'petach',
+                            'petah',
+                            'petak',
+                            'beit shemesh',
+                        ],
+                        min: 40,
+                    },
+                    {
+                        names: ['haifa', 'chaifa', 'be\'er sheva', 'beersheba'],
+                        min: 22,
+                    },
+                ],
                 loclc = location.Name.toLowerCase(),
                 city = special.find(sp => {
                     return sp.names.find(spi => {
