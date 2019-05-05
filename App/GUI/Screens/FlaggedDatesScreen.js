@@ -11,19 +11,25 @@ export default class FlaggedDatesScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const { appData } = navigation.state.params;
         return {
-            title: navigation.state.params.jdate ?
-            'Flagged Dates' : 'Upcoming Flagged Dates',
-            headerRight:
-            <TouchableHighlight
-                onPress={() =>
-                    navigation.navigate('ExportData', { appData, dataSet: 'Flagged Dates' })}>
-                <View style={{ marginRight: 10 }}>
-                    <Icon name='import-export'
-                        color='#aca'
-                        size={25} />
-                    <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
-                </View>
-            </TouchableHighlight>
+            title: navigation.state.params.jdate
+                ? 'Flagged Dates'
+                : 'Upcoming Flagged Dates',
+            headerRight: (
+                <TouchableHighlight
+                    onPress={() =>
+                        navigation.navigate('ExportData', {
+                            appData,
+                            dataSet: 'Flagged Dates',
+                        })
+                    }>
+                    <View style={{ marginRight: 10 }}>
+                        <Icon name="import-export" color="#aca" size={25} />
+                        <Text style={{ fontSize: 10, color: '#797' }}>
+                            Export Data
+                        </Text>
+                    </View>
+                </TouchableHighlight>
+            ),
         };
     };
     constructor(props) {
@@ -34,12 +40,12 @@ export default class FlaggedDatesScreen extends React.Component {
             jdate = params.jdate || new JDate();
         //If jdate was supplied in the params, we display only that days FlaggedDates.
         //Otherwise, we will display all Flagged Dates from today onwards.
-        this.isToday = (!params.jdate);
+        this.isToday = !params.jdate;
         this.onUpdate = params.onUpdate;
         this.navigate = this.props.navigation.navigate;
         this.state = {
             appData: appData,
-            currDate: jdate
+            currDate: jdate,
         };
         this.goToDate = this.goToDate.bind(this);
         this.goPrev = this.goPrev.bind(this);
@@ -60,8 +66,7 @@ export default class FlaggedDatesScreen extends React.Component {
         const problemOnahs = this.state.appData.ProblemOnahs.filter(o => {
             if (this.isToday) {
                 return o.jdate.Abs >= this.state.currDate.Abs;
-            }
-            else {
+            } else {
                 return Utils.isSameJdate(o.jdate, this.state.currDate);
             }
         });
@@ -72,45 +77,67 @@ export default class FlaggedDatesScreen extends React.Component {
                         onUpdate={this.onUpdate}
                         appData={this.state.appData}
                         navigator={this.props.navigation}
-                        onGoPrevious={(!this.isToday) && this.goPrev}
-                        onGoNext={(!this.isToday) && this.goNext}
+                        onGoPrevious={!this.isToday && this.goPrev}
+                        onGoNext={!this.isToday && this.goNext}
                         hideFlaggedDates={true}
-                        helpUrl='FlaggedDates.html'
-                        helpTitle='Flagged Dates' />
+                        helpUrl="FlaggedDates.html"
+                        helpTitle="Flagged Dates"
+                    />
                     <ScrollView style={{ flex: 1 }}>
-                        {(!this.isToday) &&
+                        {!this.isToday && (
                             <View style={GeneralStyles.headerView}>
                                 <Text style={GeneralStyles.headerText}>
-                                    {this.state.currDate.toString()}</Text>
+                                    {this.state.currDate.toString()}
+                                </Text>
                             </View>
-                        }
+                        )}
                         <CustomList
                             data={problemOnahs}
                             nightDay={po => po.nightDay}
-                            keyExtractor={item => item.jdate.Abs.toString() + item.nightDay.toString()}
-                            emptyListText={this.isToday ?
-                                'There are no upcoming flagged dates' :
-                                'There is nothing Flagged for ' + this.state.currDate.toString()}
-                            secondSection={po => <View style={GeneralStyles.inItemButtonList}>
-                                <TouchableHighlight
-                                    underlayColor='#faa'
-                                    style={{ flex: 1 }}
-                                    onPress={() => this.goToDate(po.jdate)}>
-                                    <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
-                                        <Text style={[GeneralStyles.inItemLinkText, {
-                                            color: '#585',
-                                            padding: 3
-                                        }]}>Go to Date</Text>
-                                        <Icon
-                                            name='event-note'
-                                            color='#585'
-                                            size={15} />
-
-                                    </View>
-                                </TouchableHighlight>
-                            </View>} />
+                            keyExtractor={item =>
+                                item.jdate.Abs.toString() +
+                                item.nightDay.toString()
+                            }
+                            emptyListText={
+                                this.isToday
+                                    ? 'There are no upcoming flagged dates'
+                                    : 'There is nothing Flagged for ' +
+                                      this.state.currDate.toString()
+                            }
+                            secondSection={po => (
+                                <View style={GeneralStyles.inItemButtonList}>
+                                    <TouchableHighlight
+                                        underlayColor="#faa"
+                                        style={{ flex: 1 }}
+                                        onPress={() => this.goToDate(po.jdate)}>
+                                        <View
+                                            style={{
+                                                flexDirection: 'row-reverse',
+                                                alignItems: 'center',
+                                            }}>
+                                            <Text
+                                                style={[
+                                                    GeneralStyles.inItemLinkText,
+                                                    {
+                                                        color: '#585',
+                                                        padding: 3,
+                                                    },
+                                                ]}>
+                                                Go to Date
+                                            </Text>
+                                            <Icon
+                                                name="event-note"
+                                                color="#585"
+                                                size={15}
+                                            />
+                                        </View>
+                                    </TouchableHighlight>
+                                </View>
+                            )}
+                        />
                     </ScrollView>
                 </View>
-            </View>);
+            </View>
+        );
     }
 }

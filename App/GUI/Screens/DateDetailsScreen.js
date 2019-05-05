@@ -9,24 +9,28 @@ export default class DateDetailsScreen extends React.PureComponent {
     static navigationOptions = ({ navigation }) => {
         const { appData } = navigation.state.params;
         return {
-            title: 'Zmanim for ' + navigation.state.params.appData.Settings.location.Name,
-            headerRight:
-            <TouchableHighlight
-                onPress={() =>
-                    navigation.navigate('ExportData',
-                        {
+            title:
+                'Zmanim for ' +
+                navigation.state.params.appData.Settings.location.Name,
+            headerRight: (
+                <TouchableHighlight
+                    onPress={() =>
+                        navigation.navigate('ExportData', {
                             appData,
                             jdate: DateDetailsScreen.jdate,
-                            dataSet: 'Zmanim - ' +
-                            DateDetailsScreen.jdate.toShortString()
-                        })}>
-                <View style={{ marginRight: 10 }}>
-                    <Icon name='import-export'
-                        color='#aca'
-                        size={25} />
-                    <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
-                </View>
-            </TouchableHighlight>
+                            dataSet:
+                                'Zmanim - ' +
+                                DateDetailsScreen.jdate.toShortString(),
+                        })
+                    }>
+                    <View style={{ marginRight: 10 }}>
+                        <Icon name="import-export" color="#aca" size={25} />
+                        <Text style={{ fontSize: 10, color: '#797' }}>
+                            Export Data
+                        </Text>
+                    </View>
+                </TouchableHighlight>
+            ),
         };
     };
 
@@ -55,34 +59,46 @@ export default class DateDetailsScreen extends React.PureComponent {
     render() {
         DateDetailsScreen.jdate = this.state.jdate;
 
-        const list = this.state.jdate.getAllDetails(this.appData.Settings.location);
-        return <View style={GeneralStyles.container}>
-            <View style={{ flexDirection: 'row', flex: 1 }}>
-                <SideMenu
-                    onUpdate={this.onUpdate}
-                    appData={this.appData}
-                    navigator={this.props.navigation}
-                    onGoPrevious={this.goPrev}
-                    onGoNext={this.goNext} />
-                <ScrollView style={{ flex: 1 }}>
-                    <View style={GeneralStyles.headerView}>
-                        <Text style={GeneralStyles.headerText}>{this.state.jdate.toShortString(true)}</Text>
-                    </View>
-                    <CustomList
-                        data={list}
-                        textSectionViewStyle={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between'
-                        }}
-                        title={i => i.title + (i.value ? ':' : '')}
-                        titleStyle={i => ({
-                            fontWeight: 'bold',
-                            color: i.important ? '#008' : null,
-                            paddingRight: 10
-                        })}
-                        secondSection={i => <Text style={{ textAlign: 'right', flex: 1 }}>{i.value}</Text>} />
-                </ScrollView>
+        const list = this.state.jdate.getAllDetails(
+            this.appData.Settings.location
+        );
+        return (
+            <View style={GeneralStyles.container}>
+                <View style={{ flexDirection: 'row', flex: 1 }}>
+                    <SideMenu
+                        onUpdate={this.onUpdate}
+                        appData={this.appData}
+                        navigator={this.props.navigation}
+                        onGoPrevious={this.goPrev}
+                        onGoNext={this.goNext}
+                    />
+                    <ScrollView style={{ flex: 1 }}>
+                        <View style={GeneralStyles.headerView}>
+                            <Text style={GeneralStyles.headerText}>
+                                {this.state.jdate.toShortString(true)}
+                            </Text>
+                        </View>
+                        <CustomList
+                            data={list}
+                            textSectionViewStyle={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                            }}
+                            title={i => i.title + (i.value ? ':' : '')}
+                            titleStyle={i => ({
+                                fontWeight: 'bold',
+                                color: i.important ? '#008' : null,
+                                paddingRight: 10,
+                            })}
+                            secondSection={i => (
+                                <Text style={{ textAlign: 'right', flex: 1 }}>
+                                    {i.value}
+                                </Text>
+                            )}
+                        />
+                    </ScrollView>
+                </View>
             </View>
-        </View>;
+        );
     }
 }

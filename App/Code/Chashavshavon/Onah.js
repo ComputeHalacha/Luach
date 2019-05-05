@@ -3,7 +3,7 @@ import Utils from '../JCal/Utils';
 
 const NightDay = Object.freeze({
     Night: -1,
-    Day: 1
+    Day: 1,
 });
 /**
  * Represents either the night-time or the day-time sof a single Jewish Date.
@@ -28,8 +28,10 @@ class Onah {
      * @param {Onah} onah
      */
     isSameOnah(onah) {
-        return Utils.isSameJdate(this.jdate, onah.jdate) &&
-            this.nightDay === onah.nightDay;
+        return (
+            Utils.isSameJdate(this.jdate, onah.jdate) &&
+            this.nightDay === onah.nightDay
+        );
     }
     /**
      * Add the given number of Onahs to the current one
@@ -43,9 +45,9 @@ class Onah {
         //First add the full days. Each day is 2 onahs.
         const fullDays = Utils.toInt(number / 2);
         let onah = new Onah(this.jdate.addDays(fullDays), this.nightDay);
-        number -= (fullDays * 2);
+        number -= fullDays * 2;
         while (number > 0) {
-            onah = (number > 0 ? onah.next : onah.previous);
+            onah = number > 0 ? onah.next : onah.previous;
             number--;
         }
         return onah;
@@ -56,8 +58,7 @@ class Onah {
     get previous() {
         if (this.nightDay === NightDay.Day) {
             return new Onah(this.jdate, NightDay.Night);
-        }
-        else {
+        } else {
             return new Onah(this.jdate.addDays(-1), NightDay.Day);
         }
     }
@@ -67,8 +68,7 @@ class Onah {
     get next() {
         if (this.nightDay === NightDay.Day) {
             return new Onah(this.jdate.addDays(1), NightDay.Night);
-        }
-        else {
+        } else {
             return new Onah(this.jdate, NightDay.Day);
         }
     }

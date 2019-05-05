@@ -1,7 +1,7 @@
 import Utils from './Utils.js';
 import jDate from './jDate.js';
 
-'use strict';
+('use strict');
 /** *********************************************************************************************************
  * Computes the Day Yomi for the given day.
  * Sample of use - to get todays daf:
@@ -10,7 +10,7 @@ import jDate from './jDate.js';
  * The code was converted to javascript and tweaked by CBS.
  * It is directly based on the C code in Danny Sadinoff's HebCal - Copyright (C) 1994.
  * The HebCal code for dafyomi was adapted by Aaron Peromsik from Bob Newell's public domain daf.el.
-***********************************************************************************************************/
+ ***********************************************************************************************************/
 export default class Dafyomi {
     static masechtaList = [
         { eng: 'Berachos', heb: 'ברכות', daf: 64 },
@@ -52,23 +52,30 @@ export default class Dafyomi {
         { eng: 'Kinnim', heb: 'קנים', daf: 4 },
         { eng: 'Tamid', heb: 'תמיד', daf: 10 },
         { eng: 'Midos', heb: 'מדות', daf: 4 },
-        { eng: 'Niddah', heb: 'נדה', daf: 73 }];
+        { eng: 'Niddah', heb: 'נדה', daf: 73 },
+    ];
 
     static getDaf(jdate) {
         const absoluteDate = jdate.Abs;
-        let dafcnt = 40, cno, dno, osday, nsday, total, count, j, blatt;
+        let dafcnt = 40,
+            cno,
+            dno,
+            osday,
+            nsday,
+            total,
+            count,
+            j,
+            blatt;
 
         osday = jDate.absSd(new Date(1923, 8, 11));
         nsday = jDate.absSd(new Date(1975, 5, 24));
 
         /*  No cycle, new cycle, old cycle */
-        if (absoluteDate < osday)
-            return null; /* daf yomi hadn't started yet */
+        if (absoluteDate < osday) return null; /* daf yomi hadn't started yet */
         if (absoluteDate >= nsday) {
-            cno = 8 + Utils.toInt(((absoluteDate - nsday) / 2711));
+            cno = 8 + Utils.toInt((absoluteDate - nsday) / 2711);
             dno = (absoluteDate - nsday) % 2711;
-        }
-        else {
+        } else {
             cno = 1 + Utils.toInt((absoluteDate - osday) / 2702);
             dno = Utils.toInt((absoluteDate - osday) / 2702);
         }
@@ -78,10 +85,8 @@ export default class Dafyomi {
         count = -1;
 
         /* Fix Shekalim for old cycles */
-        if (cno <= 7)
-            Dafyomi.masechtaList[4].daf = 13;
-        else
-            Dafyomi.masechtaList[4].daf = 22;
+        if (cno <= 7) Dafyomi.masechtaList[4].daf = 13;
+        else Dafyomi.masechtaList[4].daf = 22;
 
         /* Find the daf */
         j = 0;
@@ -89,7 +94,7 @@ export default class Dafyomi {
             count++;
             total = total + Dafyomi.masechtaList[j].daf - 1;
             if (dno < total) {
-                blatt = (Dafyomi.masechtaList[j].daf + 1) - (total - dno);
+                blatt = Dafyomi.masechtaList[j].daf + 1 - (total - dno);
                 /* fiddle with the weird ones near the end */
                 switch (count) {
                     case 36:
@@ -112,7 +117,7 @@ export default class Dafyomi {
 
         return {
             masechet: Dafyomi.masechtaList[count],
-            daf: blatt
+            daf: blatt,
         };
     }
 

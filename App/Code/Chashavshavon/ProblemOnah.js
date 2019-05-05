@@ -26,12 +26,16 @@ export class ProblemOnah extends Onah {
      * Each flag description is shown on its own line and prefixed with a "►".
      */
     toString() {
-        const goyDate = this.nightDay === NightDay.Night ?
-            this.jdate.addDays(-1).getDate() : this.jdate.getDate();
-        return `The ${this.nightDay === NightDay.Night ? 'night' : 'day'} of ` +
+        const goyDate =
+            this.nightDay === NightDay.Night
+                ? this.jdate.addDays(-1).getDate()
+                : this.jdate.getDate();
+        return (
+            `The ${this.nightDay === NightDay.Night ? 'night' : 'day'} of ` +
             this.jdate.toString() +
             ` (${goyDate.toLocaleDateString()}) is the:` +
-            this.flagsList.map(f => '\n  ►  ' + f).join('');
+            this.flagsList.map(f => '\n  ►  ' + f).join('')
+        );
     }
     /**
      * Determines if the given ProblemOnah is on the same Onah
@@ -39,8 +43,10 @@ export class ProblemOnah extends Onah {
      * @param {ProblemOnah} prob
      */
     isSameProb(prob) {
-        return this.isSameOnah(prob) &&
-            this.flagsList.every(f => prob.flagsList.some(pf => pf === f));
+        return (
+            this.isSameOnah(prob) &&
+            this.flagsList.every(f => prob.flagsList.some(pf => pf === f))
+        );
     }
     /**
      * Filter a list of problem onahs for the ones pertaining to the given date.
@@ -48,8 +54,11 @@ export class ProblemOnah extends Onah {
      * @param {[ProblemOnah]} probOnahList
      */
     static getProbsForDate(jdate, probOnahList) {
-        return probOnahList && probOnahList.length > 0 && probOnahList.filter(po =>
-            Utils.isSameJdate(po.jdate, jdate));
+        return (
+            probOnahList &&
+            probOnahList.length > 0 &&
+            probOnahList.filter(po => Utils.isSameJdate(po.jdate, jdate))
+        );
     }
     /**
      * Sort problems
@@ -59,11 +68,9 @@ export class ProblemOnah extends Onah {
         return probOnahs.sort((a, b) => {
             if (a.jdate.Abs < b.jdate.Abs) {
                 return -1;
-            }
-            else if (a.jdate.Abs > b.jdate.Abs) {
+            } else if (a.jdate.Abs > b.jdate.Abs) {
                 return 1;
-            }
-            else {
+            } else {
                 return a.nightDay - b.nightDay;
             }
         });
@@ -102,8 +109,10 @@ export class ProblemFlag {
      * @param {ProblemFlag} prob
      */
     isSameProb(prob) {
-        return Utils.isSameJdate(this.jdate, prob.jdate) &&
+        return (
+            Utils.isSameJdate(this.jdate, prob.jdate) &&
             this.nightDay === prob.nightDay &&
-            this.description === prob.description;
+            this.description === prob.description
+        );
     }
 }

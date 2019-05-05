@@ -10,7 +10,13 @@ export default class Entry {
      * @param {Boolean} ignoreForKavuah Ignore this Entry while calculating possible Kavuahs
      * @param {String} comment
      */
-    constructor(onah, entryId, ignoreForFlaggedDates, ignoreForKavuah, comments) {
+    constructor(
+        onah,
+        entryId,
+        ignoreForFlaggedDates,
+        ignoreForKavuah,
+        comments
+    ) {
         this.onah = onah;
         this.entryId = entryId;
         this.ignoreForFlaggedDates = !!ignoreForFlaggedDates;
@@ -24,8 +30,9 @@ export default class Entry {
      * @param {Entry} previousEntry
      */
     setHaflaga(previousEntry) {
-        this._haflaga = previousEntry ?
-            previousEntry.date.diffDays(this.date) + 1 : 0;
+        this._haflaga = previousEntry
+            ? previousEntry.date.diffDays(this.date) + 1
+            : 0;
     }
     /**
      * Returns true if the supplied Entry has the same jdate and nightDay as this Entry.
@@ -44,32 +51,39 @@ export default class Entry {
         let count = this.date.diffDays(entry.date) * 2;
         if (this.nightDay < entry.nightDay) {
             count++;
-        }
-        else if (this.nightDay > entry.nightDay) {
+        } else if (this.nightDay > entry.nightDay) {
             count--;
         }
         return count;
     }
     toString() {
-        let str = `${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'} of ${this.date.toShortString()}`;
+        let str = `${
+            this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'
+        } of ${this.date.toShortString()}`;
         if (this.haflaga) {
             str += ` [Haflaga of ${this.haflaga.toString()}]`;
         }
         return str;
     }
     toShortString() {
-        return this.date.toShortString() +
+        return (
+            this.date.toShortString() +
             ' (' +
             (this.nightDay === NightDay.Night ? 'Night' : 'Day') +
-            ')';
+            ')'
+        );
     }
     toLongString() {
         let str = '';
         if (this.ignoreForFlaggedDates || this.ignoreForKavuah) {
             str += 'NON-REGULAR ENTRY\n';
         }
-        str += (this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time') +
-            ' of ' + this.date.toString() + ' - ' + Utils.toStringDate(this.date.getDate(), true, true);
+        str +=
+            (this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time') +
+            ' of ' +
+            this.date.toString() +
+            ' - ' +
+            Utils.toStringDate(this.date.getDate(), true, true);
         if (this.haflaga) {
             str += ` [Haflaga of ${this.haflaga.toString()}]`;
         }
@@ -77,7 +91,8 @@ export default class Entry {
             str += '\nThis Entry does not generate any flagged dates.';
         }
         if (this.ignoreForKavuah) {
-            str += '\nThis Entry is not considered while calculating possible Kavuahs.';
+            str +=
+                '\nThis Entry is not considered while calculating possible Kavuahs.';
         }
         if (this.comments) {
             str += '\nComments: ' + this.comments;
@@ -89,7 +104,9 @@ export default class Entry {
         if (this.ignoreForFlaggedDates || this.ignoreForKavuah) {
             str += 'NON-REGULAR ';
         }
-        str += `Entry for ${this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'}`;
+        str += `Entry for ${
+            this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'
+        }`;
         if (this.haflaga) {
             str += ` [Haflaga of ${this.haflaga.toString()}]`;
         }
@@ -104,7 +121,8 @@ export default class Entry {
             this.entryId,
             this.ignoreForFlaggedDates,
             this.ignoreForKavuah,
-            this.comments);
+            this.comments
+        );
         entry._haflaga = this.haflaga;
         return entry;
     }

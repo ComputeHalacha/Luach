@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
-import { View, WebView, BackHandler } from 'react-native';
+import { View, BackHandler } from 'react-native';
+import WebView from 'react-native-webview';
 import SideMenu from '../Components/SideMenu';
 import { GeneralStyles } from '../styles';
 import { GLOBALS } from '../../Code/GeneralUtils';
 
 export default class BrowserScreen extends PureComponent {
     static navigationOptions = ({ navigation }) => ({
-        title: 'Documentation -  ' + navigation.state.params.title
+        title: 'Documentation -  ' + navigation.state.params.title,
     });
     constructor(props) {
         super(props);
@@ -41,16 +42,24 @@ export default class BrowserScreen extends PureComponent {
                         onUpdate={this.onUpdate}
                         appData={this.appData}
                         navigator={this.props.navigation}
-                        helpUrl='index.html'
-                        helpTitle='Help Home' />
-                    <WebView style={{ flex: 1 }}
-                        ref={webView => this.webView = webView}
+                        helpUrl="index.html"
+                        helpTitle="Help Home"
+                    />
+                    <WebView
+                        style={{ flex: 1 }}
+                        ref={webView => (this.webView = webView)}
+                        originWhitelist={['file://']}
+                        allowFileAccess={true}
+                        allowUniversalAccessFromFileURLs={true}
+                        javaScriptEnabled={true}
                         source={{
-                            uri: GLOBALS.IS_ANDROID ?
-                                `file:///android_asset/docs/${this.url}?v=${GLOBALS.VERSION_NAME}` :
-                                `docs/${this.url}`
+                            uri: GLOBALS.IS_ANDROID
+                                ? `file:///android_asset/docs/${this.url}?v=${
+                                      GLOBALS.VERSION_NAME
+                                  }`
+                                : `docs/${this.url}`,
                         }}
-                        mixedContentMode='always'
+                        mixedContentMode="always"
                         iosdataDetectorTypes={['all']}
                         startInLoadingState={true}
                         onNavigationStateChange={this.onNavigationStateChange}

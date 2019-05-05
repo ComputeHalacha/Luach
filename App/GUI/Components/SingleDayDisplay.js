@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
+import DeviceInfo from 'react-native-device-info';
 import Utils from '../../Code/JCal/Utils';
 import Zmanim from '../../Code/JCal/Zmanim';
 import { popUpMessage, isLargeScreen } from '../../Code/GeneralUtils';
@@ -16,6 +17,7 @@ import {
     TaharaEventType,
 } from '../../Code/Chashavshavon/TaharaEvent';
 import DataUtils from '../../Code/Data/DataUtils';
+import GeneralUtils from '../../Code/GeneralUtils';
 /**
  * Display a home screen box for a single jewish date.
  *
@@ -145,26 +147,33 @@ export default class SingleDayDisplay extends React.PureComponent {
             dailyInfos = jdate.getHolidays(location.Israel),
             isYomTov = jdate.isYomTov(location.Israel),
             dailyInfoText = dailyInfos.length > 0 && (
-                <Text>{dailyInfos.join('\n')}</Text>
+                <Text style={styles.darkText}>{dailyInfos.join('\n')}</Text>
             ),
             suntimesMishor = Zmanim.getSunTimes(jdate, location, false),
             suntimes = Zmanim.getSunTimes(jdate, location, true),
             sunrise =
                 suntimesMishor && suntimesMishor.sunrise
-                    ? Utils.getTimeString(suntimesMishor.sunrise)
+                    ? Utils.getTimeString(
+                          suntimesMishor.sunrise,
+                          DeviceInfo.is24Hour()
+                      )
                     : 'Sun does not rise',
             sunset =
                 suntimes && suntimes.sunset
-                    ? Utils.getTimeString(suntimes.sunset)
+                    ? Utils.getTimeString(
+                          suntimes.sunset,
+                          DeviceInfo.is24Hour()
+                      )
                     : 'Sun does not set',
             candleLighting = jdate.hasCandleLighting() && (
-                <Text>
+                <Text style={styles.darkText}>
                     {'Candle-lighting: ' +
                         Utils.getTimeString(
                             Zmanim.getCandleLightingFromSunTimes(
                                 suntimes,
                                 location
-                            )
+                            ),
+                            DeviceInfo.is24Hour()
                         )}
                 </Text>
             ),
@@ -200,16 +209,16 @@ export default class SingleDayDisplay extends React.PureComponent {
                     { backgroundColor: backgroundColor },
                 ]}>
                 <View>
+                    <View style={styles.dateNumView}>
+                        <Text style={styles.dateNumEng}>
+                            {currSdate.getDate().toString()}
+                        </Text>
+                        {todayText}
+                        <Text style={styles.dateNumHeb}>
+                            {Utils.toJNum(jdate.Day)}
+                        </Text>
+                    </View>
                     <View style={styles.mainSectionView}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.dateNumEng}>
-                                {currSdate.getDate().toString()}
-                            </Text>
-                            {todayText}
-                            <Text style={styles.dateNumHeb}>
-                                {Utils.toJNum(jdate.Day)}
-                            </Text>
-                        </View>
                         <Text style={styles.date}>
                             <Text style={styles.dateHeb}>
                                 {jdate.toString()}
@@ -223,7 +232,10 @@ export default class SingleDayDisplay extends React.PureComponent {
                         {candleLighting}
                         {eiruvTavshilin}
                         {!isYomTov && (
-                            <Text>{`Sedra of the week: ${jdate
+                            <Text
+                                style={
+                                    styles.darkText
+                                }>{`Sedra of the week: ${jdate
                                 .getSedra(location.Israel)
                                 .map(s => s.eng)
                                 .join(' - ')}`}</Text>
@@ -233,14 +245,18 @@ export default class SingleDayDisplay extends React.PureComponent {
                                 <TouchableWithoutFeedback
                                     onPress={this.showDateDetails}>
                                     <View>
-                                        <Text>{'Sunrise: ' + sunrise}</Text>
-                                        <Text>{'Sunset: ' + sunset}</Text>
+                                        <Text style={styles.darkText}>
+                                            {'Sunrise: ' + sunrise}
+                                        </Text>
+                                        <Text style={styles.darkText}>
+                                            {'Sunset: ' + sunset}
+                                        </Text>
                                         <Text
                                             style={{
+                                                color: '#666',
                                                 fontSize: 10,
-                                                fontWeight: 'bold',
                                             }}>
-                                            More...
+                                            ... more ...
                                         </Text>
                                     </View>
                                 </TouchableWithoutFeedback>
@@ -627,35 +643,37 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: 'bold',
     },
+    darkText: { color: '#333' },
     todayText: {
         color: '#800',
         textAlign: 'center',
         fontSize: 20,
         fontWeight: 'bold',
+    },
+    dateNumView: {
+        paddingLeft: '7%',
+        paddingRight: '7%',
+        paddingTop: 3,
+        paddingBottom: 2,
+        backgroundColor: '#00009910',
         flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
     },
     dateNumEng: {
         color: '#080',
-        textAlign: 'left',
         fontSize: 23,
         fontWeight: 'bold',
-        flex: 1,
     },
     dateNumHeb: {
         color: '#008',
-        textAlign: 'right',
         fontSize: 23,
         fontWeight: 'bold',
         textAlignVertical: 'top',
-        flex: 1,
     },
     dateEng: { color: '#080' },
     dateHeb: { color: '#008' },
-    location: {
-        marginTop: 5,
-        color: '#800',
-        fontWeight: 'bold',
-    },
     flagView: {
         backgroundColor: '#f00',
         alignItems: 'center',
@@ -731,7 +749,7 @@ const styles = StyleSheet.create({
         paddingTop: 3,
         paddingBottom: 2,
         marginTop: 2,
-        backgroundColor: '#00000010',
+        backgroundColor: '#00009908',
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',

@@ -17,26 +17,30 @@ import BrowserScreen from './GUI/Screens/BrowserScreen';
 import ExportDataScreen from './GUI/Screens/ExportDataScreen';
 import NewLocationScreen from './GUI/Screens/NewLocationScreen';
 
-AppRegistry.registerComponent('LuachAndroid', () => StackNavigator({
-    Home: { screen: HomeScreen },
-    Settings: { screen: SettingsScreen },
-    NewOccasion: { screen: NewOccasionScreen },
-    Occasions: { screen: OccasionsScreen },
-    Kavuahs: { screen: KavuahScreen },
-    Entries: { screen: EntryScreen },
-    NewEntry: { screen: NewEntryScreen },
-    NewKavuah: { screen: NewKavuahScreen },
-    FlaggedDates: { screen: FlaggedDatesScreen },
-    DateDetails: { screen: DateDetailsScreen },
-    FindKavuahs: { screen: FindKavuahScreen },
-    FindLocation: { screen: FindLocationScreen },
-    MonthView: { screen: MontheViewScreen },
-    Browser: { screen: BrowserScreen },
-    ExportData: { screen: ExportDataScreen },
-    NewLocation: { screen: NewLocationScreen }
-},
-    {
-        initialRouteName: 'Home',
-        //If not in __DEV__  turn off the built-in logger
-        onNavigationStateChange: (__DEV__ ? undefined : null)
-    }));
+AppRegistry.registerComponent('LuachAndroid', () =>
+    StackNavigator(
+        {
+            Home: { screen: HomeScreen },
+            Settings: { screen: SettingsScreen },
+            NewOccasion: { screen: NewOccasionScreen },
+            Occasions: { screen: OccasionsScreen },
+            Kavuahs: { screen: KavuahScreen },
+            Entries: { screen: EntryScreen },
+            NewEntry: { screen: NewEntryScreen },
+            NewKavuah: { screen: NewKavuahScreen },
+            FlaggedDates: { screen: FlaggedDatesScreen },
+            DateDetails: { screen: DateDetailsScreen },
+            FindKavuahs: { screen: FindKavuahScreen },
+            FindLocation: { screen: FindLocationScreen },
+            MonthView: { screen: MontheViewScreen },
+            Browser: { screen: BrowserScreen },
+            ExportData: { screen: ExportDataScreen },
+            NewLocation: { screen: NewLocationScreen },
+        },
+        {
+            initialRouteName: 'Home',
+            //If not in __DEV__  turn off the built-in logger
+            onNavigationStateChange: __DEV__ ? undefined : null,
+        }
+    )
+);

@@ -26,9 +26,14 @@ export class GridView extends Component {
 
         if (onPress) {
             return (
-                <TouchableOpacity activeOpacity={activeOpacity} onPress={onPress}>
+                <TouchableOpacity
+                    activeOpacity={activeOpacity}
+                    onPress={onPress}>
                     <View
-                        style={[this.styles.container, containerStyle && containerStyle]}
+                        style={[
+                            this.styles.container,
+                            containerStyle && containerStyle,
+                        ]}
                         {...this.props}>
                         {this.props.children}
                     </View>
@@ -38,9 +43,11 @@ export class GridView extends Component {
 
         return (
             <View
-                style={[this.styles.container, containerStyle && containerStyle]}
-                {...this.props}
-            >
+                style={[
+                    this.styles.container,
+                    containerStyle && containerStyle,
+                ]}
+                {...this.props}>
                 {this.props.children}
             </View>
         );
@@ -62,11 +69,8 @@ export const Column = props => {
             <TouchableOpacity
                 style={[styles.container, containerStyle && containerStyle]}
                 activeOpacity={activeOpacity}
-                onPress={onPress}
-            >
-                <View {...props}>
-                    {props.children}
-                </View>
+                onPress={onPress}>
+                <View {...props}>{props.children}</View>
             </TouchableOpacity>
         );
     }
@@ -74,8 +78,7 @@ export const Column = props => {
     return (
         <View
             style={[styles.container, containerStyle && containerStyle]}
-            {...props}
-        >
+            {...props}>
             {props.children}
         </View>
     );

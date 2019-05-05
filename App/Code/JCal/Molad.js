@@ -9,22 +9,41 @@ import jDate from './jDate.js';
  */
 export default class Molad {
     static getMolad(month, year) {
-        let totalMonths, partsElapsed, hoursElapsed, parts, monthAdj = month - 7;
+        let totalMonths,
+            partsElapsed,
+            hoursElapsed,
+            parts,
+            monthAdj = month - 7;
 
         if (monthAdj < 0) {
             monthAdj += jDate.monthsJYear(year);
         }
-        totalMonths = Utils.toInt(monthAdj + 235 * Utils.toInt((year - 1) / 19) + 12 * ((year - 1) % 19) +
-            ((((year - 1) % 19) * 7) + 1) / 19);
-        partsElapsed = 204 + (793 * (totalMonths % 1080));
-        hoursElapsed = 5 + (12 * totalMonths) + 793 * Utils.toInt(totalMonths / 1080) +
-            Utils.toInt(partsElapsed / 1080) - 6;
+        totalMonths = Utils.toInt(
+            monthAdj +
+                235 * Utils.toInt((year - 1) / 19) +
+                12 * ((year - 1) % 19) +
+                (((year - 1) % 19) * 7 + 1) / 19
+        );
+        partsElapsed = 204 + 793 * (totalMonths % 1080);
+        hoursElapsed =
+            5 +
+            12 * totalMonths +
+            793 * Utils.toInt(totalMonths / 1080) +
+            Utils.toInt(partsElapsed / 1080) -
+            6;
         parts = Utils.toInt((partsElapsed % 1080) + 1080 * (hoursElapsed % 24));
 
         return {
-            jDate: new jDate((1 + (29 * Utils.toInt(totalMonths))) + Utils.toInt((hoursElapsed / 24))),
-            time: { hour: Utils.toInt(hoursElapsed) % 24, minute: Utils.toInt((parts % 1080) / 18) },
-            chalakim: parts % 18
+            jDate: new jDate(
+                1 +
+                    29 * Utils.toInt(totalMonths) +
+                    Utils.toInt(hoursElapsed / 24)
+            ),
+            time: {
+                hour: Utils.toInt(hoursElapsed) % 24,
+                minute: Utils.toInt((parts % 1080) / 18),
+            },
+            chalakim: parts % 18,
         };
     }
 
@@ -33,25 +52,28 @@ export default class Molad {
     // to determine whether to display "Night" or "Motzai Shabbos" etc. (check this...)
     static getString(year, month) {
         const molad = Molad.getMolad(month, year),
-            nightfall = molad.jDate.getSunriseSunset(Location.getJerusalem()).sunset,
-            isNight = Utils.totalMinutes(Utils.timeDiff(molad.time, nightfall)) >= 0,
+            nightfall = molad.jDate.getSunriseSunset(Location.getJerusalem())
+                .sunset,
+            isNight =
+                Utils.totalMinutes(Utils.timeDiff(molad.time, nightfall)) >= 0,
             dow = molad.jDate.getDayOfWeek();
         let str = '';
 
         if (isNaN(nightfall.hour)) {
             str += Utils.dowEng[dow];
-        }
-        else if (dow === 6 && isNight) {
+        } else if (dow === 6 && isNight) {
             str += 'Motzai Shabbos,';
-        }
-        else if (dow === 5 && isNight) {
+        } else if (dow === 5 && isNight) {
             str += 'Shabbos Night,';
-        }
-        else {
+        } else {
             str += Utils.dowEng[dow] + (isNight ? ' Night' : '');
         }
-        str += ' ' + Utils.getTimeString(molad.time) + ' and ' +
-            molad.chalakim.toString() + ' Chalakim';
+        str +=
+            ' ' +
+            Utils.getTimeString(molad.time) +
+            ' and ' +
+            molad.chalakim.toString() +
+            ' Chalakim';
 
         return str;
     }
@@ -61,23 +83,28 @@ export default class Molad {
     // to determine whether to display "ליל/יום" or "מוצאי שב"ק" etc.
     static getStringHeb(year, month) {
         const molad = Molad.getMolad(month, year),
-            nightfall = molad.jDate.getSunriseSunset(Location.getJerusalem()).sunset,
-            isNight = Utils.totalMinutes(Utils.timeDiff(molad.time, nightfall)) >= 0,
+            nightfall = molad.jDate.getSunriseSunset(Location.getJerusalem())
+                .sunset,
+            isNight =
+                Utils.totalMinutes(Utils.timeDiff(molad.time, nightfall)) >= 0,
             dow = molad.jDate.getDayOfWeek();
         let str = '';
 
         if (dow === 6) {
-            str += (isNight ? 'מוצאי שב"ק' : 'יום שב"ק');
-        }
-        else if (dow === 5) {
-            str += (isNight ? 'ליל שב"ק' : 'ערב שב"ק');
-        }
-        else {
-            str += (isNight ? 'ליל' : 'יום') +
+            str += isNight ? 'מוצאי שב"ק' : 'יום שב"ק';
+        } else if (dow === 5) {
+            str += isNight ? 'ליל שב"ק' : 'ערב שב"ק';
+        } else {
+            str +=
+                (isNight ? 'ליל' : 'יום') +
                 Utils.dowHeb[dow].replace('יום', '');
         }
-        str += ' ' + Utils.getTimeString(molad.time, true) + ' ' +
-            molad.chalakim.toString() + ' חלקים';
+        str +=
+            ' ' +
+            Utils.getTimeString(molad.time, true) +
+            ' ' +
+            molad.chalakim.toString() +
+            ' חלקים';
 
         return str;
     }

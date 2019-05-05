@@ -11,6 +11,7 @@
     "react-native": "^0.59.6",
     "react-native-catch-first-time": "0.0.1",
     "react-native-chooser": "^1.7.0",
+    "react-native-device-info": "^1.6.1",
     "react-native-elements": "^0.19.1",
     "react-native-fs": "^2.13.3",
     "react-native-mail": "^3.0.7",
@@ -18,6 +19,7 @@
     "react-native-sqlite-storage": "^3.3.9",
     "react-native-swipe-gestures": "^1.0.3",
     "react-native-vector-icons": "^4.6.0",
+    "react-native-webview": "^5.8.1",
     "react-navigation": "^1.6.1"
   },
   "devDependencies": {

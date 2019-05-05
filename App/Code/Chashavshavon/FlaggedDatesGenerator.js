@@ -17,13 +17,15 @@ export default class FlaggedDatesGenerator {
     constructor(entries, kavuahs, settings) {
         this.entries = entries;
         this.settings = settings;
-        this.kavuahs = (kavuahs && kavuahs.filter(k =>
-            k.active && !k.ignore)) || [];
-        this.cancelKavuah = kavuahs.find(k =>
-            k.active && k.cancelsOnahBeinunis);
+        this.kavuahs =
+            (kavuahs && kavuahs.filter(k => k.active && !k.ignore)) || [];
+        this.cancelKavuah = kavuahs.find(
+            k => k.active && k.cancelsOnahBeinunis
+        );
         this.probOnahs = [];
-        this.stopWarningDate = jDate.toJDate().addMonths(
-            this.settings.numberMonthsAheadToWarn);
+        this.stopWarningDate = jDate
+            .toJDate()
+            .addMonths(this.settings.numberMonthsAheadToWarn);
     }
     /**
      * Gets the list of Onahs that need to be observed.
@@ -56,18 +58,23 @@ export default class FlaggedDatesGenerator {
             //If Yom Hachodesh was 30 and this month only has 29 days,
             //the 29th and the 1st should both be flagged.
             //In the above scenario, jdate.addMonths will automatically change the Day to 29.
-            hasFullMonthIssue = (entry.date.Day === 30 && nextMonth.Day === 29);
+            hasFullMonthIssue = entry.date.Day === 30 && nextMonth.Day === 29;
 
         if (!isAfterKavuahStart(nextMonth, entry.nightDay, cancelKavuah)) {
             const yomHachodesh = new ProblemFlag(
                 nextMonth,
                 entry.nightDay,
-                'Yom Hachodesh' + (hasFullMonthIssue ? ' (changed from 30 to 29)' : ''));
+                'Yom Hachodesh' +
+                    (hasFullMonthIssue ? ' (changed from 30 to 29)' : '')
+            );
             this._addProblem(yomHachodesh);
             this._add24HourOnah(yomHachodesh);
             //We won't flag the Ohr Zarua if it's included in Onah Beinonis
             //of 24 hours as Onah Beinonis is stricter.
-            if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Night) {
+            if (
+                !this.settings.onahBeinunis24Hours ||
+                entry.nightDay === NightDay.Night
+            ) {
                 this._addOhrZarua(yomHachodesh);
             }
         }
@@ -78,12 +85,16 @@ export default class FlaggedDatesGenerator {
                 const yomHachodesh_2 = new ProblemFlag(
                     nextDay,
                     entry.nightDay,
-                    'Yom Hachodesh (changed from 30 to 1)');
+                    'Yom Hachodesh (changed from 30 to 1)'
+                );
                 this._addProblem(yomHachodesh_2);
                 this._add24HourOnah(yomHachodesh_2);
                 //We won't flag the Ohr Zarua if it's included in Onah Beinonis
                 //of 24 hours as Onah Beinonis is stricter.
-                if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Night) {
+                if (
+                    !this.settings.onahBeinunis24Hours ||
+                    entry.nightDay === NightDay.Night
+                ) {
                     this._addOhrZarua(yomHachodesh_2);
                 }
             }
@@ -95,40 +106,53 @@ export default class FlaggedDatesGenerator {
             const thirty = new ProblemFlag(
                 dayThirty,
                 entry.nightDay,
-                'Thirtieth Day');
+                'Thirtieth Day'
+            );
             this._addProblem(thirty, entry);
             this._add24HourOnah(thirty, entry);
             //We won't flag the Ohr Zarua if it's included in Onah Beinonis
             //of 24 hours as Onah Beinonis is stricter.
-            if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Night) {
+            if (
+                !this.settings.onahBeinunis24Hours ||
+                entry.nightDay === NightDay.Night
+            ) {
                 this._addOhrZarua(thirty, entry);
             }
         }
         //Day Thirty One ***************************************************************
         if (this.settings.keepThirtyOne) {
             const dayThirtyOne = dayThirty.addDays(1);
-            if (!isAfterKavuahStart(dayThirtyOne, entry.nightDay, cancelKavuah)) {
+            if (
+                !isAfterKavuahStart(dayThirtyOne, entry.nightDay, cancelKavuah)
+            ) {
                 const thirtyOne = new ProblemFlag(
                     dayThirtyOne,
                     entry.nightDay,
-                    'Thirty First Day');
+                    'Thirty First Day'
+                );
                 this._addProblem(thirtyOne, entry);
                 this._add24HourOnah(thirtyOne, entry);
                 //We won't flag the Ohr Zarua if it's included in Onah Beinonis
                 //of 24 hours as Onah Beinonis is stricter.
-                if ((!this.settings.onahBeinunis24Hours) || entry.nightDay === NightDay.Night) {
+                if (
+                    !this.settings.onahBeinunis24Hours ||
+                    entry.nightDay === NightDay.Night
+                ) {
                     this._addOhrZarua(thirtyOne, entry);
                 }
             }
         }
         //Haflagah **********************************************************************
         const haflagaDate = entry.date.addDays(entry.haflaga - 1);
-        if ((entry.haflaga > 0) &&
-            (!isAfterKavuahStart(haflagaDate, entry.nightDay, cancelKavuah))) {
+        if (
+            entry.haflaga > 0 &&
+            !isAfterKavuahStart(haflagaDate, entry.nightDay, cancelKavuah)
+        ) {
             const haflaga = new ProblemFlag(
                 haflagaDate,
                 entry.nightDay,
-                `Yom Haflagah (of ${entry.haflaga.toString()} days)`);
+                `Yom Haflagah (of ${entry.haflaga.toString()} days)`
+            );
             //Note the Haflaga is always just the Onah it occurred on - not 24 hours  -
             //even according to those that require it for 30, 31 and Yom Hachodesh.
             this._addProblem(haflaga, entry);
@@ -141,11 +165,18 @@ export default class FlaggedDatesGenerator {
             if (prevEntry && prevEntry.nightDay !== entry.nightDay) {
                 const diffOnahs = prevEntry.getOnahDifferential(entry),
                     nextOnah = entry.onah.addOnahs(diffOnahs);
-                if (!isAfterKavuahStart(nextOnah.jdate, nextOnah.nightDay, cancelKavuah)) {
+                if (
+                    !isAfterKavuahStart(
+                        nextOnah.jdate,
+                        nextOnah.nightDay,
+                        cancelKavuah
+                    )
+                ) {
                     const haflagaOnahs = new ProblemFlag(
                         nextOnah.jdate,
                         nextOnah.nightDay,
-                        `Haflagah of Onahs (of ${diffOnahs.toString()} onahs)`);
+                        `Haflagah of Onahs (of ${diffOnahs.toString()} onahs)`
+                    );
                     this._addProblem(haflagaOnahs);
                     this._addOhrZarua(haflagaOnahs);
                 }
@@ -155,18 +186,30 @@ export default class FlaggedDatesGenerator {
         if (this.settings.keepLongerHaflagah) {
             const probs = [];
             //Go through all earlier entries in the list that have a longer haflaga than this one
-            for (let e of this.entries.filter(en =>
-                en.date.Abs < entry.date.Abs && en.haflaga > entry.haflaga)) {
+            for (let e of this.entries.filter(
+                en => en.date.Abs < entry.date.Abs && en.haflaga > entry.haflaga
+            )) {
                 //See if their haflaga was never surpassed by an Entry after them
-                if (!this.entries.some(oe =>
-                    oe.date.Abs > e.date.Abs &&
-                    oe.haflaga > e.haflaga)) {
+                if (
+                    !this.entries.some(
+                        oe => oe.date.Abs > e.date.Abs && oe.haflaga > e.haflaga
+                    )
+                ) {
                     const haflagaDate = entry.date.addDays(e.haflaga - 1);
-                    if (!isAfterKavuahStart(haflagaDate, entry.nightDay, cancelKavuah)) {
+                    if (
+                        !isAfterKavuahStart(
+                            haflagaDate,
+                            entry.nightDay,
+                            cancelKavuah
+                        )
+                    ) {
                         let nonOverrided = new ProblemFlag(
                             haflagaDate,
                             entry.nightDay,
-                            'Yom Haflaga (' + e.haflaga.toString() + ' days) which was never overided');
+                            'Yom Haflaga (' +
+                                e.haflaga.toString() +
+                                ' days) which was never overided'
+                        );
                         //As there can be more than single longer haflaga'd Entry with the same haflaga,
                         //we want to prevent doubles.
                         if (!probs.some(p => p.isSameProb(nonOverrided))) {
@@ -184,38 +227,51 @@ export default class FlaggedDatesGenerator {
     _findEntryDependentKavuahProblemOnahs(entry) {
         //Kavuah Haflagah - with or without Maayan Pasuach
         for (let kavuah of this.kavuahs.filter(k =>
-            ([KavuahTypes.Haflagah, KavuahTypes.HaflagaMaayanPasuach].includes(k.kavuahType)))) {
+            [KavuahTypes.Haflagah, KavuahTypes.HaflagaMaayanPasuach].includes(
+                k.kavuahType
+            )
+        )) {
             const haflagaDate = entry.date.addDays(kavuah.specialNumber - 1),
                 kavuahHaflaga = new ProblemFlag(
                     haflagaDate,
                     kavuah.settingEntry.nightDay,
-                    'Kavuah of ' + kavuah.toString());
+                    'Kavuah of ' + kavuah.toString()
+                );
             this._addProblem(kavuahHaflaga);
             this._addOhrZarua(kavuahHaflaga);
         }
 
         //Kavuah of Dilug Haflaga.
         //They are cheshboned from actual entries - not theoretical ones
-        for (let kavuah of this.kavuahs.filter(k =>
-            k.kavuahType === KavuahTypes.DilugHaflaga && k.active)) {
-            if (entry.haflaga > 0 && ((entry.haflaga + kavuah.specialNumber) !== 0)) {
-                const haflagaDate = entry.date.addDays((entry.haflaga + kavuah.specialNumber) - 1),
+        for (let kavuah of this.kavuahs.filter(
+            k => k.kavuahType === KavuahTypes.DilugHaflaga && k.active
+        )) {
+            if (
+                entry.haflaga > 0 &&
+                entry.haflaga + kavuah.specialNumber !== 0
+            ) {
+                const haflagaDate = entry.date.addDays(
+                        entry.haflaga + kavuah.specialNumber - 1
+                    ),
                     kavuahDilugHaflaga = new ProblemFlag(
                         haflagaDate,
                         kavuah.settingEntry.nightDay,
-                        'Kavuah of ' + kavuah.toString());
+                        'Kavuah of ' + kavuah.toString()
+                    );
                 this._addProblem(kavuahDilugHaflaga);
                 this._addOhrZarua(kavuahDilugHaflaga);
             }
         }
         //Flagged Dates generated by Kavuahs of Haflagah by Onahs - the Shulchan Aruch Harav
-        for (let kavuah of this.kavuahs.filter(k =>
-            (k.kavuahType === KavuahTypes.HafalagaOnahs))) {
+        for (let kavuah of this.kavuahs.filter(
+            k => k.kavuahType === KavuahTypes.HafalagaOnahs
+        )) {
             const haflagaOnah = entry.onah.addOnahs(kavuah.specialNumber),
                 kavuahHafOnahs = new ProblemFlag(
                     haflagaOnah.jdate,
                     haflagaOnah.nightDay,
-                    'Kavuah of ' + kavuah.toString());
+                    'Kavuah of ' + kavuah.toString()
+                );
             this._addProblem(kavuahHafOnahs);
             this._addOhrZarua(kavuahHafOnahs);
         }
@@ -226,12 +282,14 @@ export default class FlaggedDatesGenerator {
             const iters = Kavuah.getIndependentIterations(
                 kavuah,
                 this.stopWarningDate,
-                this.settings.dilugChodeshPastEnds);
+                this.settings.dilugChodeshPastEnds
+            );
             for (let onah of iters) {
                 const problemFlag = new ProblemFlag(
                     onah.jdate,
                     onah.nightDay,
-                    'Kavuah for ' + kavuah.toString());
+                    'Kavuah for ' + kavuah.toString()
+                );
                 this._addProblem(problemFlag);
                 this._addOhrZarua(problemFlag);
             }
@@ -239,20 +297,30 @@ export default class FlaggedDatesGenerator {
     }
     _add24HourOnah(prob, entry) {
         if (this.settings.onahBeinunis24Hours) {
-            this._addProblem(new ProblemFlag(
-                prob.jdate,
-                prob.nightDay === NightDay.Day ? NightDay.Night : NightDay.Day,
-                prob.description + ' (24 hour)'), entry);
+            this._addProblem(
+                new ProblemFlag(
+                    prob.jdate,
+                    prob.nightDay === NightDay.Day
+                        ? NightDay.Night
+                        : NightDay.Day,
+                    prob.description + ' (24 hour)'
+                ),
+                entry
+            );
         }
     }
     _addOhrZarua(prob, entry) {
         //If the user wants to keep the Ohr Zarua  - the previous onah
         if (this.settings.showOhrZeruah) {
             const ohrZarua = prob.onah.previous;
-            this._addProblem(new ProblemFlag(
-                ohrZarua.jdate,
-                ohrZarua.nightDay,
-                'Ohr Zarua of the ' + prob.description), entry);
+            this._addProblem(
+                new ProblemFlag(
+                    ohrZarua.jdate,
+                    ohrZarua.nightDay,
+                    'Ohr Zarua of the ' + prob.description
+                ),
+                entry
+            );
         }
     }
     /**
@@ -263,7 +331,9 @@ export default class FlaggedDatesGenerator {
      */
     _addProblem(probFlag, settingEntry) {
         if (this._canAddFlaggedDate(probFlag, settingEntry)) {
-            let probOnah = this.probOnahs.find(po => po.isSameOnah(probFlag.onah));
+            let probOnah = this.probOnahs.find(po =>
+                po.isSameOnah(probFlag.onah)
+            );
             if (!probOnah) {
                 probOnah = new ProblemOnah(probFlag.jdate, probFlag.nightDay);
                 this.probOnahs.push(probOnah);
@@ -283,43 +353,55 @@ export default class FlaggedDatesGenerator {
      * will cause this function to return false.
      */
     _canAddFlaggedDate(probFlag, settingEntry) {
-        const jdate = probFlag.jdate, nightDay = probFlag.nightDay;
-        if ((!this.settings.keepLongerHaflagah) && settingEntry &&
-            this.entries.some(e =>
-                //If there is an Entry in the list that is after the setting entry
-                (e.date.Abs > settingEntry.date.Abs ||
-                    (e.date.Abs === settingEntry.date.Abs && e.nightDay > settingEntry.nightDay)) &&
-                //and that entry is before the prospective problem onah
-                (e.date.Abs < jdate.Abs || (e.date.Abs === jdate.Abs && e.nightDay < nightDay)))) {
+        const jdate = probFlag.jdate,
+            nightDay = probFlag.nightDay;
+        if (
+            !this.settings.keepLongerHaflagah &&
+            settingEntry &&
+            this.entries.some(
+                e =>
+                    //If there is an Entry in the list that is after the setting entry
+                    (e.date.Abs > settingEntry.date.Abs ||
+                        (e.date.Abs === settingEntry.date.Abs &&
+                            e.nightDay > settingEntry.nightDay)) &&
+                    //and that entry is before the prospective problem onah
+                    (e.date.Abs < jdate.Abs ||
+                        (e.date.Abs === jdate.Abs && e.nightDay < nightDay))
+            )
+        ) {
             //The problem will not be flagged
             return false;
         }
         if (!this.settings.noProbsAfterEntry) {
             return true;
-        }
-        else {
-            return !this.entries.some(en =>
-                en.date.Abs >= (jdate.Abs - 7) &&
-                (en.date.Abs < jdate.Abs || (en.date.Abs === jdate.Abs && en.nightDay < nightDay))
+        } else {
+            return !this.entries.some(
+                en =>
+                    en.date.Abs >= jdate.Abs - 7 &&
+                    (en.date.Abs < jdate.Abs ||
+                        (en.date.Abs === jdate.Abs && en.nightDay < nightDay))
             );
         }
     }
 }
 
 /**
-  * Returns true if the given date and NightDay are after the setting entry date
-  * of the given Kavuah.
-  * This is used to determine if a Problem Onah is after the setting entry of
-  * a cancelling Kavuah in order to prevent its flagging.
-  * @param {jDate} date
-  * @param {NightDay} nightDay
-  * @param {Kavuah} cancelKavuah
-  */
+ * Returns true if the given date and NightDay are after the setting entry date
+ * of the given Kavuah.
+ * This is used to determine if a Problem Onah is after the setting entry of
+ * a cancelling Kavuah in order to prevent its flagging.
+ * @param {jDate} date
+ * @param {NightDay} nightDay
+ * @param {Kavuah} cancelKavuah
+ */
 function isAfterKavuahStart(date, nightDay, cancelKavuah) {
     if (cancelKavuah) {
         const settingEntry = cancelKavuah.settingEntry;
-        return settingEntry && (
-            (date.Abs > settingEntry.date.Abs) ||
-            (date.Abs === settingEntry.date.Abs && nightDay > settingEntry.nightDay));
+        return (
+            settingEntry &&
+            (date.Abs > settingEntry.date.Abs ||
+                (date.Abs === settingEntry.date.Abs &&
+                    nightDay > settingEntry.nightDay))
+        );
     }
 }

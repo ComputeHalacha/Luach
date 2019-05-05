@@ -3,14 +3,14 @@ import { StyleSheet } from 'react-native';
 const GeneralStyles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     center: {
-        alignItems: 'center'
+        alignItems: 'center',
     },
     centeredRow: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     headerView: {
         backgroundColor: '#99e',
@@ -18,39 +18,39 @@ const GeneralStyles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     headerText: {
         color: '#eef',
         textAlign: 'center',
         fontWeight: 'bold',
-        fontSize: 14
+        fontSize: 14,
     },
     formRow: {
         flex: 1,
-        flexDirection: 'column'
+        flexDirection: 'column',
     },
     label: {
         margin: 0,
         backgroundColor: '#d5d5e6',
-        padding: 10
+        padding: 10,
     },
     picker: { margin: 0 },
     select: {
         margin: 0,
         width: '100%',
-        borderWidth: 0
+        borderWidth: 0,
     },
     optionListBackdrop: { backgroundColor: '#d5d5e6' },
     optionListStyle: {
         backgroundColor: '#fff',
         height: '80%',
         width: '80%',
-        borderRadius: 6
+        borderRadius: 6,
     },
     switch: {
         margin: 5,
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-start',
     },
     textInput: {
         margin: 5,
@@ -61,63 +61,63 @@ const GeneralStyles = StyleSheet.create({
         borderColor: '#cce',
         borderRadius: 5,
         padding: 3,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     buttonList: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-around'
+        justifyContent: 'space-around',
     },
     inItemButtonList: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginTop: 5
+        marginTop: 5,
     },
     inItemLinkText: {
         fontSize: 10,
         fontStyle: 'italic',
-        textAlign: 'center'
+        textAlign: 'center',
     },
     inItemLinkIcon: {
-        height: 20
+        height: 20,
     },
     headerButtons: {
         backgroundColor: '#eef',
         borderBottomWidth: 1,
         borderBottomColor: '#99b',
-        padding: 5
+        padding: 5,
     },
     dateEng: { color: '#080' },
     dateHeb: { color: '#008' },
     btn: {
         fontSize: 7,
-        height: 25
+        height: 25,
     },
     btnAddNew: {
         flex: 0,
         alignSelf: 'center',
         width: 200,
         marginTop: 25,
-        marginBottom: 25
+        marginBottom: 25,
     },
     emptyListView: {
         alignItems: 'center',
         flex: 1,
-        marginTop: 50
+        marginTop: 50,
     },
     emptyListText: {
         fontSize: 20,
         fontWeight: 'bold',
         color: '#99b',
         marginBottom: 35,
-        textAlign: 'center'
+        textAlign: 'center',
     },
     emptyListImage: {
         width: 150,
-        height: 150
+        height: 150,
     },
 });
 

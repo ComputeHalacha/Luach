@@ -4,30 +4,43 @@ import { Icon } from 'react-native-elements';
 import SingleDayDisplay from '../Components/SingleDayDisplay';
 import Login from '../Components/Login';
 import Flash from '../Components/Flash';
+import FirstTimeModal from '../Components/FirstTimeModal';
 import SideMenu from '../Components/SideMenu';
-import { isLargeScreen, log, goHomeToday, getTodayJdate, GLOBALS } from '../../Code/GeneralUtils';
+import {
+    isLargeScreen,
+    log,
+    goHomeToday,
+    getTodayJdate,
+    GLOBALS,
+} from '../../Code/GeneralUtils';
 import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import AppData from '../../Code/Data/AppData';
 import { TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
 
 export default class HomeScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => (
+    static navigationOptions = ({ navigation }) =>
         //Only IOS gets the header on the today screen.
         GLOBALS.IS_IOS
             ? {
-                title: 'Luach',
-                headerRight: <Icon name='calendar'
-                    type='octicon'
-                    color='#77c'
-                    onPress={() => AppData.getAppData().then(ad =>
-                        navigation.navigate('MonthView',
-                            {
-                                appData: ad,
-                                jdate: getTodayJdate(ad)
-                            }))} />
-            }
-            : { header: null });
+                  title: 'Luach',
+                  headerRight: (
+                      <Icon
+                          name="calendar"
+                          type="octicon"
+                          color="#77c"
+                          onPress={() =>
+                              AppData.getAppData().then(ad =>
+                                  navigation.navigate('MonthView', {
+                                      appData: ad,
+                                      jdate: getTodayJdate(ad),
+                                  })
+                              )
+                          }
+                      />
+                  ),
+              }
+            : { header: null };
 
     constructor(props) {
         super(props);
@@ -48,7 +61,11 @@ export default class HomeScreen extends React.Component {
         this.scrollToTop = this.scrollToTop.bind(this);
 
         //If this screen was navigated to from another screen.
-        if (props.navigation && props.navigation.state && props.navigation.state.params) {
+        if (
+            props.navigation &&
+            props.navigation.state &&
+            props.navigation.state.params
+        ) {
             this._navigatedShowing(props.navigation.state.params);
         }
         //We are on the initial showing of the app. We will load the appData from the database.
@@ -65,17 +82,21 @@ export default class HomeScreen extends React.Component {
             //Get the proper Jewish today for the current location
             const nowJ = getTodayJdate(appData),
                 nowS = new Date();
-            if ((!Utils.isSameJdate(today, nowJ)) ||
-                (!Utils.isSameSdate(systemDate, nowS))) {
-                if (Utils.isSameJdate(currDate, today) &&
-                    (!Utils.isSameJdate(currDate, nowJ))) {
+            if (
+                !Utils.isSameJdate(today, nowJ) ||
+                !Utils.isSameSdate(systemDate, nowS)
+            ) {
+                if (
+                    Utils.isSameJdate(currDate, today) &&
+                    !Utils.isSameJdate(currDate, nowJ)
+                ) {
                     daysList = this.getDaysList(nowJ);
                     currDate = nowJ;
                 }
                 this.setState({
                     today: nowJ,
                     systemDate: nowS,
-                    daysList
+                    daysList,
                 });
             }
         }, 60000);
@@ -104,21 +125,32 @@ export default class HomeScreen extends React.Component {
             log('REFRESHED :( - Settings were not the same');
             return true;
         }
-        if (prevAppData.UserOccasions.length !== newAppData.UserOccasions.length) {
+        if (
+            prevAppData.UserOccasions.length !== newAppData.UserOccasions.length
+        ) {
             log('REFRESHED :( - User Occasions list were not the same length');
             return true;
         }
-        if (!prevAppData.UserOccasions.every(uo =>
-            newAppData.UserOccasions.some(uon => uon.isSameOccasion(uo)))) {
+        if (
+            !prevAppData.UserOccasions.every(uo =>
+                newAppData.UserOccasions.some(uon => uon.isSameOccasion(uo))
+            )
+        ) {
             log('REFRESHED :( - Occasions were not all the same');
             return true;
         }
-        if (prevAppData.EntryList.list.length !== newAppData.EntryList.list.length) {
+        if (
+            prevAppData.EntryList.list.length !==
+            newAppData.EntryList.list.length
+        ) {
             log('REFRESHED :( - Entries list were not the same length');
             return true;
         }
-        if (!prevAppData.EntryList.list.every(e =>
-            newAppData.EntryList.list.some(en => en.isSameEntry(e)))) {
+        if (
+            !prevAppData.EntryList.list.every(e =>
+                newAppData.EntryList.list.some(en => en.isSameEntry(e))
+            )
+        ) {
             log('REFRESHED :( - Entries were not all the same');
             return true;
         }
@@ -126,21 +158,31 @@ export default class HomeScreen extends React.Component {
             log('REFRESHED :( - Kavuah list were not the same length');
             return true;
         }
-        if (!prevAppData.KavuahList.every(k =>
-            newAppData.KavuahList.some(kn => kn.isMatchingKavuah(k)))) {
+        if (
+            !prevAppData.KavuahList.every(k =>
+                newAppData.KavuahList.some(kn => kn.isMatchingKavuah(k))
+            )
+        ) {
             log('REFRESHED :( - Kavuahs were not all the same');
             return true;
         }
-        if (prevAppData.ProblemOnahs.length !== newAppData.ProblemOnahs.length) {
+        if (
+            prevAppData.ProblemOnahs.length !== newAppData.ProblemOnahs.length
+        ) {
             log('REFRESHED :( - Probs list were not the same length');
             return true;
         }
-        if (!prevAppData.ProblemOnahs.every(po =>
-            newAppData.ProblemOnahs.some(pon => pon.isSameProb(po)))) {
+        if (
+            !prevAppData.ProblemOnahs.every(po =>
+                newAppData.ProblemOnahs.some(pon => pon.isSameProb(po))
+            )
+        ) {
             log('REFRESHED :( - Probs were not all the same');
             return true;
         }
-        if (prevAppData.TaharaEvents.length !== newAppData.TaharaEvents.length) {
+        if (
+            prevAppData.TaharaEvents.length !== newAppData.TaharaEvents.length
+        ) {
             log('REFRESHED :( - Tahara Events list were not the same length');
             return true;
         }
@@ -148,16 +190,22 @@ export default class HomeScreen extends React.Component {
         return false;
     }
     _handleAppStateChange(nextAppState) {
-        log(`AppState Change: currentState: "${AppState.currentState}", nextState: "${nextAppState}"`);
+        log(
+            `AppState Change: currentState: "${
+                AppState.currentState
+            }", nextState: "${nextAppState}"`
+        );
 
         const appData = this.state.appData;
         //If the require PIN setting is on and we are going into background mode,
         //we want to display the login modal upon re-awakening.
-        if (nextAppState === 'background' &&
+        if (
+            nextAppState === 'background' &&
             appData &&
             appData.Settings &&
             appData.Settings.requirePIN &&
-            appData.Settings.PIN.length === 4) {
+            appData.Settings.PIN.length === 4
+        ) {
             //Next time the app is activated, it will ask for the PIN
             this.setState({ showLogin: true });
         }
@@ -188,7 +236,7 @@ export default class HomeScreen extends React.Component {
             lastEntry: lastEntry,
             today: today,
             currDate: currDate,
-            systemDate: new Date()
+            systemDate: new Date(),
         });
     }
     /**
@@ -210,7 +258,7 @@ export default class HomeScreen extends React.Component {
             today: today,
             currDate: today,
             showFlash: true,
-            refreshing: false
+            refreshing: false,
         };
 
         //Now that the GUI is showing, we get the real data from the database
@@ -223,8 +271,9 @@ export default class HomeScreen extends React.Component {
                 //As we now have a location, the current
                 //Jewish date may be different than the system date
                 today = getTodayJdate(ad),
-                daysList = Utils.isSameJdate(today, this.state.daysList[0]) ?
-                    this.state.daysList : this.getDaysList(today);
+                daysList = Utils.isSameJdate(today, this.state.daysList[0])
+                    ? this.state.daysList
+                    : this.getDaysList(today);
             //We now will re-render the screen with the real data.
             this.setState({
                 appData: ad,
@@ -233,11 +282,13 @@ export default class HomeScreen extends React.Component {
                 systemDate: new Date(),
                 currDate: today,
                 loadingDone: true,
-                showLogin: (ad.Settings.requirePIN &&
+                showLogin:
+                    ad.Settings.requirePIN &&
                     appData.Settings.PIN &&
-                    appData.Settings.PIN.length === 4),
+                    appData.Settings.PIN.length === 4,
                 lastEntry: lastEntry,
-                lastRegularEntry: lastRegularEntry
+                lastRegularEntry: lastRegularEntry,
+                showFirstTimeModal: GLOBALS.IsFirstRun,
             });
         });
     }
@@ -266,7 +317,7 @@ export default class HomeScreen extends React.Component {
             loadingDone: true,
             refreshing: false,
             lastRegularEntry: lastRegularEntry,
-            lastEntry: lastEntry
+            lastEntry: lastEntry,
         };
     }
     /**
@@ -275,9 +326,10 @@ export default class HomeScreen extends React.Component {
      */
     setFlash() {
         if (this.state.showFlash) {
-            this.flashTimeout = setTimeout(() =>
-                this.setState({ showFlash: false })
-                , (global.IsFirstRun ? 30000 : 1500));
+            this.flashTimeout = setTimeout(
+                () => this.setState({ showFlash: false }),
+                1500
+            );
         }
     }
     onLoggedIn() {
@@ -286,21 +338,27 @@ export default class HomeScreen extends React.Component {
     }
     scrollToTop() {
         //scrollToOffset may not scroll all the way to the top without the setTimeout.
-        setTimeout(() => this.flatList.scrollToOffset({ x: 0, y: 0, animated: true }), 1);
+        setTimeout(
+            () => this.flatList.scrollToOffset({ x: 0, y: 0, animated: true }),
+            1
+        );
     }
     _goToDate(jdate) {
-        if (this.state.daysList > 6 &&
-            Utils.isSameJdate(jdate, this.state.today)) {
+        if (
+            this.state.daysList > 6 &&
+            Utils.isSameJdate(jdate, this.state.today)
+        ) {
             goHomeToday(this.navigator, this.state.appData);
-        }
-        else if (!Utils.isSameJdate(jdate, this.state.currDate)) {
-            this.setState({
-                daysList: this.getDaysList(jdate),
-                currDate: jdate,
-                refreshing: false
-            }, this.scrollToTop);
-        }
-        else {
+        } else if (!Utils.isSameJdate(jdate, this.state.currDate)) {
+            this.setState(
+                {
+                    daysList: this.getDaysList(jdate),
+                    currDate: jdate,
+                    refreshing: false,
+                },
+                this.scrollToTop
+            );
+        } else {
             this.scrollToTop();
         }
     }
@@ -309,7 +367,7 @@ export default class HomeScreen extends React.Component {
             day = daysList[daysList.length - 1].addDays(1);
         daysList.push(day);
         this.setState({
-            daysList: daysList
+            daysList: daysList,
         });
     }
     prevDay() {
@@ -334,10 +392,11 @@ export default class HomeScreen extends React.Component {
     }
     getDayOfSeven(jdate) {
         //Due to questions etc. there can be more than one Hefsek.
-        const lastHefseks = this.state.appData.TaharaEvents.filter(te =>
-            te.taharaEventType === TaharaEventType.Hefsek &&
-            te.jdate.Abs < jdate.Abs &&
-            te.jdate.diffDays(jdate) <= 7
+        const lastHefseks = this.state.appData.TaharaEvents.filter(
+            te =>
+                te.taharaEventType === TaharaEventType.Hefsek &&
+                te.jdate.Abs < jdate.Abs &&
+                te.jdate.diffDays(jdate) <= 7
         );
         if (lastHefseks.length > 0) {
             //For the Shiva Neki'im indicator we want only the latest one
@@ -352,26 +411,36 @@ export default class HomeScreen extends React.Component {
         const isToday = Utils.isSameJdate(this.state.today, item),
             lastRegularEntry = this.state.lastRegularEntry,
             lastEntry = this.state.lastEntry,
-            lastEntryDate = lastRegularEntry && (item.Abs > lastRegularEntry.date.Abs) && lastRegularEntry.date,
-            isHefeskDay = lastEntry && Utils.isSameJdate(item, lastEntry.hefsekDate);
-        return <SingleDayDisplay
-            key={item.Abs}
-            jdate={item}
-            systemDate={this.state.systemDate}
-            isToday={isToday}
-            appData={this.state.appData}
-            navigator={this.navigator}
-            onUpdate={this.updateAppData}
-            lastEntryDate={lastEntryDate}
-            dayOfSeven={this.getDayOfSeven(item)}
-            isHefeskDay={isHefeskDay} />;
+            lastEntryDate =
+                lastRegularEntry &&
+                item.Abs > lastRegularEntry.date.Abs &&
+                lastRegularEntry.date,
+            isHefeskDay =
+                lastEntry && Utils.isSameJdate(item, lastEntry.hefsekDate);
+        return (
+            <SingleDayDisplay
+                key={item.Abs}
+                jdate={item}
+                systemDate={this.state.systemDate}
+                isToday={isToday}
+                appData={this.state.appData}
+                navigator={this.navigator}
+                onUpdate={this.updateAppData}
+                lastEntryDate={lastEntryDate}
+                dayOfSeven={this.getDayOfSeven(item)}
+                isHefeskDay={isHefeskDay}
+            />
+        );
     }
     render() {
         return (
             <View style={{ flex: 1 }}>
-                {(this.state.showLogin &&
-                    <Login onLoggedIn={this.onLoggedIn} pin={this.state.appData.Settings.PIN} />)
-                    ||
+                {(this.state.showLogin && (
+                    <Login
+                        onLoggedIn={this.onLoggedIn}
+                        pin={this.state.appData.Settings.PIN}
+                    />
+                )) || (
                     <View style={{ flex: 1 }}>
                         <View style={{ flexDirection: 'row', flex: 1 }}>
                             <SideMenu
@@ -383,23 +452,36 @@ export default class HomeScreen extends React.Component {
                                 onGoToday={this.goToday}
                                 onGoPrevious={this.prevDay}
                                 onGoNext={this.nextDay}
-                                helpUrl='index.html'
-                                helpTitle='Help' />
+                                helpUrl="index.html"
+                                helpTitle="Help"
+                            />
                             <FlatList
-                                ref={flatList => this.flatList = flatList}
+                                ref={flatList => (this.flatList = flatList)}
                                 style={{ flex: 1 }}
                                 data={this.state.daysList}
                                 renderItem={this.renderItem}
-                                keyExtractor={item => this.state.daysList.indexOf(item).toString()}
+                                keyExtractor={item =>
+                                    this.state.daysList.indexOf(item).toString()
+                                }
                                 onEndReached={this._addDaysToEnd}
                                 onRefresh={this.prevDay}
-                                refreshing={this.state.refreshing} />
+                                refreshing={this.state.refreshing}
+                            />
                         </View>
-                        {this.state.showFlash &&
-                        <Flash onClose={() => this.setState({ showFlash: false })} />
-                        }
+                        {this.state.showFlash && <Flash />}
+                        {this.state.showFirstTimeModal && (
+                            <FirstTimeModal
+                                locationName={
+                                    this.state.appData.Settings.location.Name
+                                }
+                                onClose={() =>
+                                    this.setState({ showFirstTimeModal: false })
+                                }
+                            />
+                        )}
                     </View>
-                }
-            </View>);
+                )}
+            </View>
+        );
     }
 }

@@ -23,9 +23,10 @@ export default class NewKavuah extends React.Component {
         this.listOfEntries = appData.EntryList.descending.map(e => e.clone());
         this.appData = appData;
         if (settingEntry) {
-            settingEntry = this.listOfEntries.find(e => e.isSameEntry(settingEntry));
-        }
-        else if (this.listOfEntries.length > 0) {
+            settingEntry = this.listOfEntries.find(e =>
+                e.isSameEntry(settingEntry)
+            );
+        } else if (this.listOfEntries.length > 0) {
             settingEntry = this.listOfEntries[0];
         }
 
@@ -34,126 +35,181 @@ export default class NewKavuah extends React.Component {
             kavuahType: KavuahTypes.Haflagah,
             specialNumber: settingEntry && settingEntry.haflaga,
             cancelsOnahBeinunis: false,
-            active: true
+            active: true,
         };
-        this.getSpecialNumberFromEntry = this.getSpecialNumberFromEntry.bind(this);
-        this.getSpecialNumberFromKavuahType = this.getSpecialNumberFromKavuahType.bind(this);
+        this.getSpecialNumberFromEntry = this.getSpecialNumberFromEntry.bind(
+            this
+        );
+        this.getSpecialNumberFromKavuahType = this.getSpecialNumberFromKavuahType.bind(
+            this
+        );
     }
     componentWillMount() {
         if (!this.state.settingEntry) {
-            popUpMessage('Kavuahs can only be added after an Entry has been added!');
+            popUpMessage(
+                'Kavuahs can only be added after an Entry has been added!'
+            );
             this.dispatch(NavigationActions.back());
         }
     }
     addKavuah() {
         if (!this.state.specialNumber) {
-            popUpMessage('The number for the "' +
-                Kavuah.getNumberDefinition(this.state.kavuahType) + '" was not set.\n' +
-                'If you do not understand how to fill this information, please contact your Rabbi for assistance.',
-                'Incorrect information');
+            popUpMessage(
+                'The number for the "' +
+                    Kavuah.getNumberDefinition(this.state.kavuahType) +
+                    '" was not set.\n' +
+                    'If you do not understand how to fill this information, please contact your Rabbi for assistance.',
+                'Incorrect information'
+            );
             return;
         }
-        const kavuah = new Kavuah(this.state.kavuahType,
-            this.state.settingEntry,
-            this.state.specialNumber,
-            this.state.cancelsOnahBeinunis,
-            this.state.active),
+        const kavuah = new Kavuah(
+                this.state.kavuahType,
+                this.state.settingEntry,
+                this.state.specialNumber,
+                this.state.cancelsOnahBeinunis,
+                this.state.active
+            ),
             doAdd = () =>
                 DataUtils.KavuahToDatabase(kavuah)
                     .then(() => {
-                        popUpMessage(`The Kavuah for ${kavuah.toString()} has been successfully added.`,
-                            'Add Kavuah');
+                        popUpMessage(
+                            `The Kavuah for ${kavuah.toString()} has been successfully added.`,
+                            'Add Kavuah'
+                        );
                         if (this.onUpdate) {
                             this.onUpdate(this.appData);
                         }
                         this.dispatch(NavigationActions.back());
                     })
                     .catch(err => {
-                        warn('Error trying to insert kavuah into the database.');
+                        warn(
+                            'Error trying to insert kavuah into the database.'
+                        );
                         error(err);
                     });
         if (kavuah.specialNumberMatchesEntry) {
             doAdd();
-        }
-        else {
+        } else {
             Alert.alert(
                 'Possibly Incorrect information',
-                'The number for the "' + Kavuah.getNumberDefinition(this.state.kavuahType) +
-                '" does not seem to match the Setting Entry information.\n' +
-                'Please check that the information is correct.\n' +
-                'If you do not fully understand how to fill in this information, ' +
-                'please contact your Rabbi for assistance.',
-                [   //Button 1
+                'The number for the "' +
+                    Kavuah.getNumberDefinition(this.state.kavuahType) +
+                    '" does not seem to match the Setting Entry information.\n' +
+                    'Please check that the information is correct.\n' +
+                    'If you do not fully understand how to fill in this information, ' +
+                    'please contact your Rabbi for assistance.',
+                [
+                    //Button 1
                     {
                         text: 'Cancel',
-                        onPress: () => { return; },
-                        style: 'cancel'
+                        onPress: () => {
+                            return;
+                        },
+                        style: 'cancel',
                     },
                     //Button 2
                     {
-                        text: 'Add anyway', onPress: () => {
+                        text: 'Add anyway',
+                        onPress: () => {
                             doAdd();
-                        }
+                        },
                     },
-                ]);
+                ]
+            );
         }
     }
     getSpecialNumberFromEntry(entry) {
-        return Kavuah.getDefaultSpecialNumber(entry, this.state.kavuahType, this.listOfEntries) ||
-            this.state.specialNumber;
+        return (
+            Kavuah.getDefaultSpecialNumber(
+                entry,
+                this.state.kavuahType,
+                this.listOfEntries
+            ) || this.state.specialNumber
+        );
     }
     getSpecialNumberFromKavuahType(kavuahType) {
-        return Kavuah.getDefaultSpecialNumber(this.state.settingEntry, kavuahType, this.listOfEntries) ||
-            this.state.specialNumber;
+        return (
+            Kavuah.getDefaultSpecialNumber(
+                this.state.settingEntry,
+                kavuahType,
+                this.listOfEntries
+            ) || this.state.specialNumber
+        );
     }
     render() {
-        return <View style={GeneralStyles.container}>
-            <View style={{ flexDirection: 'row', flex: 1 }}>
-                <SideMenu
-                    onUpdate={this.onUpdate}
-                    appData={this.appData}
-                    navigator={this.props.navigation}
-                    helpUrl='Kavuahs.html'
-                    helpTitle='Kavuahs' />
-                <ScrollView style={{ flex: 1 }}>
-                    <KavuahPickers
-                        settingEntry={this.state.settingEntry}
-                        kavuahType={this.state.kavuahType}
-                        specialNumber={this.state.specialNumber}
-                        listOfEntries={this.listOfEntries}
-                        setKavuahType={value =>
-                            this.setState({
-                                kavuahType: value,
-                                specialNumber: this.getSpecialNumberFromKavuahType(value)
-                            })}
-                        setSettingEntry={value =>
-                            this.setState({
-                                settingEntry: value,
-                                specialNumber: this.getSpecialNumberFromEntry(value)
-                            })}
-                        setSpecialNumber={value => this.setState({ specialNumber: value })} />
-                    <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Cancels Onah Beinonis</Text>
-                        <Switch style={GeneralStyles.switch}
-                            value={this.state.cancelsOnahBeinunis}
-                            onValueChange={value => this.setState({ cancelsOnahBeinunis: value })} />
-                    </View>
-                    <View style={GeneralStyles.formRow}>
-                        <Text style={GeneralStyles.label}>Active</Text>
-                        <Switch style={GeneralStyles.switch}
-                            value={this.state.active}
-                            onValueChange={value => this.setState({ active: value })} />
-                    </View>
-                    <Text>{'\n'}</Text>
-                    <View style={GeneralStyles.btnAddNew}>
-                        <Button
-                            title='Add Kavuah'
-                            onPress={this.addKavuah.bind(this)}
-                            accessibilityLabel='Add this new Kavuah'
-                            color={GLOBALS.BUTTON_COLOR} />
-                    </View>
-                </ScrollView>
+        return (
+            <View style={GeneralStyles.container}>
+                <View style={{ flexDirection: 'row', flex: 1 }}>
+                    <SideMenu
+                        onUpdate={this.onUpdate}
+                        appData={this.appData}
+                        navigator={this.props.navigation}
+                        helpUrl="Kavuahs.html"
+                        helpTitle="Kavuahs"
+                    />
+                    <ScrollView style={{ flex: 1 }}>
+                        <KavuahPickers
+                            settingEntry={this.state.settingEntry}
+                            kavuahType={this.state.kavuahType}
+                            specialNumber={this.state.specialNumber}
+                            listOfEntries={this.listOfEntries}
+                            setKavuahType={value =>
+                                this.setState({
+                                    kavuahType: value,
+                                    specialNumber: this.getSpecialNumberFromKavuahType(
+                                        value
+                                    ),
+                                })
+                            }
+                            setSettingEntry={value =>
+                                this.setState({
+                                    settingEntry: value,
+                                    specialNumber: this.getSpecialNumberFromEntry(
+                                        value
+                                    ),
+                                })
+                            }
+                            setSpecialNumber={value =>
+                                this.setState({ specialNumber: value })
+                            }
+                        />
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Cancels Onah Beinonis
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                value={this.state.cancelsOnahBeinunis}
+                                onValueChange={value =>
+                                    this.setState({
+                                        cancelsOnahBeinunis: value,
+                                    })
+                                }
+                            />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Active</Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                value={this.state.active}
+                                onValueChange={value =>
+                                    this.setState({ active: value })
+                                }
+                            />
+                        </View>
+                        <Text>{'\n'}</Text>
+                        <View style={GeneralStyles.btnAddNew}>
+                            <Button
+                                title="Add Kavuah"
+                                onPress={this.addKavuah.bind(this)}
+                                accessibilityLabel="Add this new Kavuah"
+                                color={GLOBALS.BUTTON_COLOR}
+                            />
+                        </View>
+                    </ScrollView>
+                </View>
             </View>
-        </View>;
+        );
     }
 }
