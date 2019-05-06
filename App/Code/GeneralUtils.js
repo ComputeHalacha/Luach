@@ -180,3 +180,33 @@ export async function tryToGuessLocation() {
 
     return foundList[0] || Location.getLakewood();
 }
+
+/**
+ * Get a random number of the specified length. If secure is true, uses crypto and returns a Promise.
+ * @param {Number} length
+ * @param Bool} secure
+ */
+export function getRandomNumber(length, secure) {
+    return secure
+        ? new Promise((resolve, reject) =>
+              crypto.randomBytes(
+                  1 + (length <= 3 ? 1 : 3 + (length - 3) / 2),
+                  (err, buf) => {
+                      if (err) {
+                          reject(err);
+                      } else {
+                          resolve(
+                              parseInt(
+                                  parseInt(buf.toString('hex'), 16)
+                                      .toString()
+                                      .slice(-length)
+                              )
+                          );
+                      }
+                  }
+              )
+          )
+        : Math.floor(
+              1 * 10 ** (length - 1) + Math.random() * (9 * 10 ** (length - 1))
+          );
+}
