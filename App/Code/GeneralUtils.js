@@ -9,6 +9,7 @@ import { NavigationActions } from 'react-navigation';
 import DeviceInfo from 'react-native-device-info';
 import jDate from './JCal/jDate';
 import Utils from './JCal/Utils';
+import Location from './JCal/Location';
 import DataUtils from './Data/DataUtils';
 
 export const GLOBALS = Object.freeze({
@@ -169,13 +170,13 @@ export function getTodayJdate(appData) {
 }
 
 /**
- * Tries to guess the users location from the set time zone name.
+ * Tries to guess the users location from the set time zone name and current utcoffset.
  * Default is Lakewood NJ.
  */
 export async function tryToGuessLocation() {
     const timeZoneName = DeviceInfo.getTimezone(),
         cityName = timeZoneName.replace(/.+\/(.+)/, '$1').replace('_', ' '),
-        foundList = await DataUtils.SearchLocations(cityName);
+        foundList = await DataUtils.SearchLocations(cityName, true);
 
     return foundList[0] || Location.getLakewood();
 }

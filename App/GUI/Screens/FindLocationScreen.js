@@ -15,6 +15,7 @@ import SideMenu from '../Components/SideMenu';
 import DataUtils from '../../Code/Data/DataUtils';
 import Settings from '../../Code/Settings';
 import { GeneralStyles } from '../styles';
+import Utils from '../../Code/JCal/Utils';
 
 export default class FindLocation extends React.PureComponent {
     static navigationOptions = {
@@ -36,6 +37,12 @@ export default class FindLocation extends React.PureComponent {
         this.findLocation = this.findLocation.bind(this);
         this.locationWasEdited = this.locationWasEdited.bind(this);
         this.editSingleLocation = this.editSingleLocation.bind(this);
+        this.locationsInCurrTZ = this.locationsInCurrTZ.bind(this);
+    }
+    async locationsInCurrTZ() {
+        this.setState({ searching: true });
+        const list = await DataUtils.SearchLocations('%', true);
+        this.setState({ list, searching: false });
     }
     async update(location) {
         const appData = this.appData;
@@ -91,7 +98,14 @@ export default class FindLocation extends React.PureComponent {
         }
     }
     getMessage() {
-        if (this.state.list === null) {
+        if (this.state.searching) {
+            //During a search
+            return (
+                <Text style={[styles.messageText, { color: '#595' }]}>
+                    Searching for locations...
+                </Text>
+            );
+        } else if (this.state.list === null) {
             //initial state of the screen
             return (
                 <View style={{ alignItems: 'center', marginBottom: '20%' }}>
@@ -125,18 +139,12 @@ export default class FindLocation extends React.PureComponent {
                     There are no Locations in the list that match your search...
                 </Text>
             );
-        } else if (this.state.searching) {
-            //During a search
-            return (
-                <Text style={[styles.messageText, { color: '#595' }]}>
-                    Searching for locations...
-                </Text>
-            );
         }
     }
 
     render() {
-        const message = this.getMessage();
+        const message = this.getMessage(),
+            offset = Utils.currUtcOffset();
 
         return (
             <View style={GeneralStyles.container}>
@@ -236,6 +244,17 @@ export default class FindLocation extends React.PureComponent {
                                 </View>
                             )}
                         </ScrollView>
+                        {!this.state.searching && (
+                            <TouchableHighlight
+                                underlayColor="#afa"
+                                onPress={() => this.locationsInCurrTZ()}>
+                                <Text style={styles.otherinTz}>
+                                    {`View other locations in current time zone (GMT ${
+                                        offset > 0 ? '+' : ''
+                                    }${offset})`}
+                                </Text>
+                            </TouchableHighlight>
+                        )}
                         <TouchableOpacity
                             onPress={() =>
                                 this.navigate('NewLocation', {
@@ -279,7 +298,7 @@ const styles = StyleSheet.create({
     messageText: {
         fontSize: 16,
         marginTop: '5%',
-        marginBottom: '20%',
+        marginBottom: 10,
         textAlign: 'center',
     },
     messageImage: {
@@ -299,5 +318,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f5f7f5',
         padding: 5,
+    },
+    otherinTz: {
+        fontSize: 10,
+        color: '#00f',
+        textAlign: 'center',
+        marginTop: 5,
+        marginBottom: 5,
     },
 });

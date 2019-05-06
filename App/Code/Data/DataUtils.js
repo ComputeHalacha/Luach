@@ -10,6 +10,7 @@ import EntryList from '../Chashavshavon/EntryList';
 import { NightDay, Onah } from '../Chashavshavon/Onah';
 import { Kavuah } from '../Chashavshavon/Kavuah';
 import { TaharaEvent } from '../Chashavshavon/TaharaEvent';
+import Utils from '../JCal/Utils';
 
 SQLite.DEBUG(!!__DEV__);
 SQLite.enablePromise(true);
@@ -246,17 +247,21 @@ export default class DataUtils {
     /**
      * Returns a list of the Location objects in the database that their name or heb values contain the search term.
      * The search is not case sensitive.
-     * @param {String} search
+     * @param {String} searchTerm The terms to search for
+     * @param {Boolean} [utcOffset] Does the results need to match the current utc offset?
      * @returns {<[Location]>}
      */
-    static async SearchLocations(search) {
-        if (!search) {
+    static async SearchLocations(searchTerm, utcOffset) {
+        if (!searchTerm) {
             throw 'Search parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
         }
-        return await DataUtils._queryLocations(
-            'name || IFNULL(heb, \'\') LIKE ?',
-            [`%${search}%`]
-        );
+        let where = '(name || IFNULL(heb, \'\') LIKE ?)',
+            values = [`%${searchTerm}%`];
+        if (utcOffset) {
+            where += ' and utcOffset=?';
+            values.push(Utils.currUtcOffset());
+        }
+        return await DataUtils._queryLocations(where, values);
     }
     static async GetAllUserOccasions() {
         let list = [];
