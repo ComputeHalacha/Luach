@@ -4,11 +4,11 @@ import RNFS from 'react-native-fs';
 import Mailer from 'react-native-mail';
 import SideMenu from '../Components/SideMenu';
 import {
+    GLOBALS,
     popUpMessage,
     log,
     warn,
     error,
-    GLOBALS,
 } from '../../Code/GeneralUtils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
 import jDate from '../../Code/JCal/jDate';

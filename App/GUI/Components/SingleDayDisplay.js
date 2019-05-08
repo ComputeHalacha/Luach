@@ -435,7 +435,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                     <HefsekNotificationModal
                         hefsekTaharaEvent={appData.taharaEventsList.find(
                             te =>
-                                te.jdate.isSameJdate(jdate) &&
+                                Utils.isSameJdate(te.jdate, jdate) &&
                                 te.taharaEventType === TaharaEventType.Hefsek
                         )}
                         location={location}

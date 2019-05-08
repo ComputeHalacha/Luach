@@ -63,6 +63,17 @@ const GeneralStyles = StyleSheet.create({
         padding: 3,
         justifyContent: 'center',
     },
+    timeInput: {
+        margin: 3,
+        alignSelf: 'flex-start',
+        height: 30,
+        borderWidth: 1,
+        borderColor: '#99a',
+        borderRadius: 5,
+        padding: 3,
+        justifyContent: 'center',
+        backgroundColor: '#dde',
+    },
     buttonList: {
         flex: 1,
         flexDirection: 'row',
@@ -119,6 +130,7 @@ const GeneralStyles = StyleSheet.create({
         width: 150,
         height: 150,
     },
+    divider: { backgroundColor: '#777', margin: 10 },
 });
 
 export { GeneralStyles };
