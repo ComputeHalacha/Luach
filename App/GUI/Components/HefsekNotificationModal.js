@@ -1,10 +1,39 @@
 import React from 'react';
-import { Modal, Text, View, TouchableOpacity, Button } from 'react-native';
-import TimePicker from './TimePicker';
+import {
+    Modal,
+    Text,
+    View,
+    TouchableOpacity,
+    TouchableHighlight,
+    Button,
+} from 'react-native';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import { Divider, Icon } from 'react-native-elements';
 import { addNotification } from '../../Code/Notifications';
-import { range } from '../../Code/GeneralUtils';
+import { GLOBALS, range } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
+
+const AddButton = props => (
+    <TouchableHighlight onPress={() => props.onPress()}>
+        <View
+            style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}>
+            <Icon size={9} reverse name="add" color={GLOBALS.BUTTON_COLOR} />
+            <Text
+                style={{
+                    color: GLOBALS.BUTTON_COLOR,
+                    fontSize: 12,
+                }}>
+                Add Reminders
+            </Text>
+        </View>
+    </TouchableHighlight>
+);
 
 export default class HefsekNotificationModal extends React.Component {
     constructor(props) {
@@ -21,6 +50,9 @@ export default class HefsekNotificationModal extends React.Component {
             taharaEventId,
             sunrise,
             sunset,
+            showMorningPicker: false,
+            showAfternoonPicker: false,
+            showMikvaPicker: false,
             morningTime: { hour: sunrise.hour + 2, minute: 0 },
             afternoonTime: { hour: sunset.hour - 2, minute: 0 },
             mikvaReminderTime: { hour: sunset.hour + 1, minute: 0 },
@@ -77,8 +109,16 @@ export default class HefsekNotificationModal extends React.Component {
             dt
         );
     }
+    getDatetime(time) {
+        const d = new Date(0);
+        d.setHours(time.hour, time.minute);
+        return d;
+    }
+    getTime(date) {
+        return { hour: date.getHours(), minute: date.getMinutes() };
+    }
     render() {
-        const { jdate } = this.props;
+        const { jdate } = this.state;
         return (
             <Modal
                 style={{ flex: 1, backgroundColor: '#fff' }}
@@ -98,9 +138,9 @@ export default class HefsekNotificationModal extends React.Component {
                     }}>
                     <View
                         style={{
-                            backgroundColor: '#333',
+                            backgroundColor: '#777',
                             borderRadius: 10,
-                            padding: 20,
+                            padding: 10,
                             width: '90%',
                         }}>
                         <View
@@ -108,24 +148,34 @@ export default class HefsekNotificationModal extends React.Component {
                                 flexDirection: 'row',
                                 justifyContent: 'space-between',
                             }}>
-                            <View style={GeneralStyles.centeredRow}>
+                            <View
+                                style={[
+                                    GeneralStyles.centeredRow,
+                                    {
+                                        backgroundColor: '#99e',
+                                        width: '100%',
+                                        borderTopLeftRadius: 10,
+                                        borderTopRightRadius: 10,
+                                    },
+                                ]}>
                                 <Text
                                     style={{
                                         fontSize: 20,
-                                        color: '#d8d5f1',
+                                        color: '#eee',
                                         fontWeight: 'bold',
+                                        textAlign: 'center',
+                                        padding: 10,
                                     }}>
-                                    Bedikah and Mikva Notifications{'\n'}
+                                    Bedika and Mikva Notifications
                                 </Text>
                             </View>
-                            <Button title="Close" />
                         </View>
                         <View
                             style={{
                                 backgroundColor: '#d8d5f1',
-                                borderRadius: 10,
-                                paddingTop: 30,
-                                paddingbottom: 30,
+                                borderBottomLeftRadius: 10,
+                                borderBottomRightRadius: 10,
+                                padding: 10,
                                 justifyContent: 'center',
                                 alignContent: 'center',
                                 alignItems: 'center',
@@ -142,58 +192,194 @@ export default class HefsekNotificationModal extends React.Component {
                                     }}>
                                     Hefsek Tahara was done on {jdate.toString()}
                                 </Text>
-                                <Text
+                                <View
                                     style={{
-                                        fontSize: 15,
-                                        color: '#666',
+                                        marginTop: 10,
                                     }}>
-                                    I would like to be reminded to do the
-                                    morning Bedikas during the Shiva Neki'im at{' '}
-                                    <TimePicker
-                                        time={this.state.morningTime}
-                                        onChooseTime={morningTime =>
-                                            this.setState({ morningTime })
-                                        }
-                                    />
+                                    <Divider style={GeneralStyles.divider} />
+                                    <Text>
+                                        I would like to add system reminders to
+                                        do the morning Bedika during the Shiva
+                                        Neki'im
+                                    </Text>
+                                    <View
+                                        style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                        }}>
+                                        <Text>at </Text>
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                this.setState({
+                                                    showMorningPicker: true,
+                                                })
+                                            }>
+                                            <View
+                                                style={GeneralStyles.timeInput}>
+                                                <Text>
+                                                    {Utils.getTimeString(
+                                                        this.state.morningTime
+                                                    )}
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        <DateTimePicker
+                                            isVisible={
+                                                this.state.showMorningPicker
+                                            }
+                                            mode="time"
+                                            date={this.getDatetime(
+                                                this.state.morningTime
+                                            )}
+                                            onConfirm={morningDate =>
+                                                this.setState({
+                                                    morningTime: this.getTime(
+                                                        morningDate
+                                                    ),
+                                                    showMorningPicker: false,
+                                                })
+                                            }
+                                            onCancel={() =>
+                                                this.setState({
+                                                    showMorningPicker: false,
+                                                })
+                                            }
+                                        />
+                                        <Text> each day </Text>
+                                        <AddButton
+                                            onPress={() => this.onSetMorning()}
+                                        />
+                                    </View>
+                                </View>
+                                <Divider style={GeneralStyles.divider} />
+                                <View
+                                    style={{
+                                        marginTop: 10,
+                                    }}>
+                                    <Text>
+                                        I would like to add system reminders to
+                                        do the afternoon Bedika during the Shiva
+                                        Neki'im
+                                    </Text>
+                                    <View
+                                        style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                        }}>
+                                        <Text>at </Text>
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                this.setState({
+                                                    showAfternoonPicker: true,
+                                                })
+                                            }>
+                                            <View
+                                                style={GeneralStyles.timeInput}>
+                                                <Text>
+                                                    {Utils.getTimeString(
+                                                        this.state.afternoonTime
+                                                    )}
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        <DateTimePicker
+                                            isVisible={
+                                                this.state.showAfternoonPicker
+                                            }
+                                            mode="time"
+                                            date={this.getDatetime(
+                                                this.state.afternoonTime
+                                            )}
+                                            onConfirm={afternoonDate =>
+                                                this.setState({
+                                                    afternoonTime: this.getTime(
+                                                        afternoonDate
+                                                    ),
+                                                    showAfternoonPicker: false,
+                                                })
+                                            }
+                                            onCancel={() =>
+                                                this.setState({
+                                                    showAfternoonPicker: false,
+                                                })
+                                            }
+                                        />
+                                        <Text> each day </Text>
+                                        <AddButton
+                                            onPress={() =>
+                                                this.onSetAfternoon()
+                                            }
+                                        />
+                                    </View>
+                                </View>
+                                <Divider style={GeneralStyles.divider} />
+                                <View
+                                    style={{
+                                        marginTop: 10,
+                                    }}>
+                                    <Text>
+                                        I would like to add system reminders
+                                        about the upcoming Mikva night on the
+                                        last day of the Shiva Neki'im
+                                    </Text>
+                                    <View
+                                        style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                        }}>
+                                        <Text>at </Text>
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                this.setState({
+                                                    showMikvaPicker: true,
+                                                })
+                                            }>
+                                            <View
+                                                style={GeneralStyles.timeInput}>
+                                                <Text>
+                                                    {Utils.getTimeString(
+                                                        this.state
+                                                            .mikvaReminderTime
+                                                    )}
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        <DateTimePicker
+                                            isVisible={
+                                                this.state.showMikvaPicker
+                                            }
+                                            mode="time"
+                                            date={this.getDatetime(
+                                                this.state.mikvaReminderTime
+                                            )}
+                                            onConfirm={mikvaDate =>
+                                                this.setState({
+                                                    mikvaReminderTime: this.getTime(
+                                                        mikvaDate
+                                                    ),
+                                                    showMikvaPicker: false,
+                                                })
+                                            }
+                                            onCancel={() =>
+                                                this.setState({
+                                                    showMikvaPicker: false,
+                                                })
+                                            }
+                                        />
+                                        <AddButton
+                                            onPress={() => this.onSetMikvah()}
+                                        />
+                                    </View>
+                                </View>
+                                <Divider style={GeneralStyles.divider} />
+                                <View style={{ margin: 10 }}>
                                     <Button
-                                        onPress={() => this.onSetMorning()}
-                                        title="Set"
+                                        onPress={() => this.props.onClose()}
+                                        title="Close"
+                                        accessibilityLabel="Close this box"
+                                        color={GLOBALS.BUTTON_COLOR}
                                     />
-                                    {'\n\n\n'}
-                                    I would like to be reminded to do the
-                                    afternoon Bedikas during the Shiva Neki'im
-                                    at
-                                    <TimePicker
-                                        time={this.state.afternoonTime}
-                                        onChooseTime={afternoonTime =>
-                                            this.setState({ afternoonTime })
-                                        }
-                                    />
-                                    <Button
-                                        onPress={() => this.onSetAfternoon()}
-                                        title="Set"
-                                    />
-                                    {'\n\n\n'}
-                                    I would like to be reminded about the
-                                    upcoming Mikva night during the last day of
-                                    the Shiva Neki'im at
-                                    <TimePicker
-                                        time={this.state.mikvaReminderTime}
-                                        onChooseTime={mikvaReminderTime =>
-                                            this.setState({ mikvaReminderTime })
-                                        }
-                                    />
-                                    <Button
-                                        onPress={() => this.onSetMikvah()}
-                                        title="Set"
-                                    />
-                                    {'\n\n\n'}
-                                </Text>
-
-                                <Button
-                                    onPress={() => this.props.onClose()}
-                                    title="Cancel"
-                                />
+                                </View>
                             </View>
                         </View>
                     </View>
