@@ -1,87 +1,91 @@
-import firstTime from 'react-native-catch-first-time';
 import DataUtils from './DataUtils';
 import Settings from '../Settings';
 import Entry from '../Chashavshavon/Entry';
 import { Kavuah } from '../Chashavshavon/Kavuah';
 import EntryList from '../Chashavshavon/EntryList';
-import { error, warn, tryToGuessLocation } from '../GeneralUtils';
+import {
+    log,
+    error,
+    warn,
+    tryToGuessLocation,
+    isFirstTimeRun,
+} from '../GeneralUtils';
 /**
  * List of fields that have been added after the initial app launch.
  * Any that do not yet exist, will be added to the db schema during initial loading.
  */
 const addedFields = [
-        //Added 5/10/17
-        {
-            table: 'settings',
-            name: 'keepThirtyOne',
-            type: 'BOOLEAN',
-            allowNull: false,
-            defaultValue: '1',
-        },
-        //Added 5/28/17
-        {
-            table: 'settings',
-            name: 'showIgnoredKavuahs',
-            type: 'BOOLEAN',
-            allowNull: true,
-        },
-        //Added 6/1/17
-        {
-            table: 'entries',
-            name: 'ignoreForKavuah',
-            type: 'BOOLEAN',
-            allowNull: true,
-        },
-        {
-            table: 'entries',
-            name: 'ignoreForFlaggedDates',
-            type: 'BOOLEAN',
-            allowNull: true,
-        },
-        {
-            table: 'entries',
-            name: 'comments',
-            type: 'VARCHAR (500)',
-            allowNull: true,
-        },
-        //Added 6/27/17
-        {
-            table: 'settings',
-            name: 'haflagaOfOnahs',
-            type: 'BOOLEAN',
-            allowNull: true,
-        },
-        //Added 6/28/17
-        {
-            table: 'settings',
-            name: 'noProbsAfterEntry',
-            type: 'BOOLEAN',
-            allowNull: true,
-            defaultValue: '1',
-        },
-        //Added 6/29/17
-        {
-            table: 'settings',
-            name: 'kavuahDiffOnahs',
-            type: 'BOOLEAN',
-            allowNull: true,
-        },
-        //Added 7/3/17
-        {
-            table: 'settings',
-            name: 'hideHelp',
-            type: 'BOOLEAN',
-            allowNull: true,
-        },
-        //Added 8/8/17
-        {
-            table: 'occasions',
-            name: 'color',
-            type: 'VARCHAR (25)',
-            allowNull: true,
-        },
-    ],
-    GLOBAL_FIRST_TIME_RANDOM = 'ed92c2efd74740dbb72da04f17ff922b1';
+    //Added 5/10/17
+    {
+        table: 'settings',
+        name: 'keepThirtyOne',
+        type: 'BOOLEAN',
+        allowNull: false,
+        defaultValue: '1',
+    },
+    //Added 5/28/17
+    {
+        table: 'settings',
+        name: 'showIgnoredKavuahs',
+        type: 'BOOLEAN',
+        allowNull: true,
+    },
+    //Added 6/1/17
+    {
+        table: 'entries',
+        name: 'ignoreForKavuah',
+        type: 'BOOLEAN',
+        allowNull: true,
+    },
+    {
+        table: 'entries',
+        name: 'ignoreForFlaggedDates',
+        type: 'BOOLEAN',
+        allowNull: true,
+    },
+    {
+        table: 'entries',
+        name: 'comments',
+        type: 'VARCHAR (500)',
+        allowNull: true,
+    },
+    //Added 6/27/17
+    {
+        table: 'settings',
+        name: 'haflagaOfOnahs',
+        type: 'BOOLEAN',
+        allowNull: true,
+    },
+    //Added 6/28/17
+    {
+        table: 'settings',
+        name: 'noProbsAfterEntry',
+        type: 'BOOLEAN',
+        allowNull: true,
+        defaultValue: '1',
+    },
+    //Added 6/29/17
+    {
+        table: 'settings',
+        name: 'kavuahDiffOnahs',
+        type: 'BOOLEAN',
+        allowNull: true,
+    },
+    //Added 7/3/17
+    {
+        table: 'settings',
+        name: 'hideHelp',
+        type: 'BOOLEAN',
+        allowNull: true,
+    },
+    //Added 8/8/17
+    {
+        table: 'occasions',
+        name: 'color',
+        type: 'VARCHAR (25)',
+        allowNull: true,
+    },
+];
 
 /**
  * An single object that contains all the application data.
@@ -132,10 +136,9 @@ export default class AppData {
     static async getAppData() {
         if (!global.GlobalAppData) {
             global.GlobalAppData = await AppData.fromDatabase();
+            global.IsFirstRun = false;
 
-            try {
-                await firstTime(GLOBAL_FIRST_TIME_RANDOM);
-            } catch (err) {
+            if (await isFirstTimeRun()) {
                 const {
                     Settings,
                     EntryList,
@@ -154,6 +157,7 @@ export default class AppData {
                  * So in addition to the firstTime check, we look for default database conditions.
                  * This is that the location is Jerusalem and all other lists are empty.
                  ****************/
+                log(`Initial Settings Location: ${Settings.location.Name}`);
                 if (
                     Settings.location.locationId === 28 &&
                     !EntryList.list.length &&
@@ -161,13 +165,18 @@ export default class AppData {
                     !KavuahList.length &&
                     !TaharaEvents.length
                 ) {
+                    log(
+                        'It has been determined that this is a first time launch. Trying to guess location'
+                    );
+
                     const newLocation = await tryToGuessLocation();
                     await DataUtils.SetCurrentLocationOnDatabase(newLocation);
                     global.GlobalAppData.Settings.location = newLocation;
-
+                    log(`Location has been set to: ${newLocation.Name}`);
                     //We will use this for the special welcome flash screen.
                     global.IsFirstRun = true;
                 }
+                log(`global.IsFirstRun has been set to: ${global.IsFirstRun}`);
             }
         }
         return global.GlobalAppData;
