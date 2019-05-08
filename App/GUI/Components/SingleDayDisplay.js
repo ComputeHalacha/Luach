@@ -433,7 +433,12 @@ export default class SingleDayDisplay extends React.PureComponent {
                 </View>
                 {this.state.showHefeskNotificationModal && (
                     <HefsekNotificationModal
-                        jdate={jdate}
+                        hefsekTaharaEvent={appData.taharaEventsList.find(
+                            te =>
+                                te.jdate.isSameJdate(jdate) &&
+                                te.taharaEventType === TaharaEventType.Hefsek
+                        )}
+                        location={location}
                         onClose={() =>
                             this.setState({
                                 showHefeskNotificationModal: false,
