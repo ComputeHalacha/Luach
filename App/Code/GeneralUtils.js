@@ -186,23 +186,26 @@ export async function tryToGuessLocation() {
 }
 
 /**
- * Tries to guess the users location from the set time zone name and current utcoffset.
- * Default is Lakewood NJ.
+ * Returns true if this app has never been launched yet.
+ * Determined by a Asyn storage key.
  */
 export async function isFirstTimeRun() {
     let isFirstTime = false;
     try {
         await firstTime(GLOBAL_FIRST_TIME_RANDOM);
     } catch (err) {
+        //The weirdish react-native-catch-first-time package,
+        //calls Promise.reject('Running first time') if this is a first-time launch.
         isFirstTime = true;
     }
     return isFirstTime;
 }
 
 /**
- * Get a random number of the specified length. If secure is true, uses crypto and returns a Promise.
+ * Get a random number of the specified length.
+ * If secure is true, uses crypto and returns a Promise.
  * @param {Number} length
- * @param Bool} secure
+ * @param {Boolean} secure
  */
 export function getRandomNumber(length, secure) {
     return secure
@@ -225,6 +228,6 @@ export function getRandomNumber(length, secure) {
               )
           )
         : Math.floor(
-              1 * 10 ** (length - 1) + Math.random() * (9 * 10 ** (length - 1))
+              10 ** (length - 1) + Math.random() * (9 * 10 ** (length - 1))
           );
 }

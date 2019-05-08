@@ -1,5 +1,12 @@
 import React from 'react';
-import { Modal, Text, View, Image, TouchableOpacity } from 'react-native';
+import {
+    Modal,
+    Text,
+    View,
+    Image,
+    TouchableOpacity,
+    Button,
+} from 'react-native';
 import { GeneralStyles } from '../styles';
 
 export default class HefsekNotificationModal extends React.Component {
@@ -47,6 +54,7 @@ export default class HefsekNotificationModal extends React.Component {
                                     Bedikah and Mikva Notifications{'\n'}
                                 </Text>
                             </View>
+                            <Button title="Close" />
                         </View>
                         <View
                             style={{
@@ -58,57 +66,62 @@ export default class HefsekNotificationModal extends React.Component {
                                 alignContent: 'center',
                                 alignItems: 'center',
                             }}>
-                            <Text
+                            <View
                                 style={{
-                                    fontSize: 18,
-                                    color: '#55a',
-                                    fontWeight: 'bold',
-                                    textAlign: 'justify',
-                                }}>
-                                Hefsek Tahara was done on {jdate.toString()}
-                            </Text>
-                            <Text
-                                style={{
-                                    fontSize: 15,
-                                    color: '#666',
                                     width: '90%',
-                                    textAlign: 'justify',
                                 }}>
-                                {'\n\n'}
-                                If you would like to set Bedika notifications.
-                                {'\n\n'}
-                                PLEASE NOTE: your initial location has been set
-                                to "{this.props.locationName}".
-                                {'\n\n'}
-                                You can change this from the Settings screen as
-                                well.
-                                {'\n\n'}
-                                For a detailed explanation about how to use
-                                Luach, press on the "Help" button on the left.
-                                {'\n\n\n'}
                                 <Text
                                     style={{
-                                        color: '#a44',
-                                        fontSize: 16,
+                                        fontSize: 18,
+                                        color: '#55a',
                                         fontWeight: 'bold',
                                     }}>
-                                    IMPORTANT NOTE:
-                                    <Text style={{ fontWeight: 'normal' }}>
-                                        {' '}
-                                        PLEASE{' '}
-                                        <Text
-                                            style={{
-                                                textDecorationLine: 'underline',
-                                                fontWeight: 'bold',
-                                            }}>
-                                            DO NOT
-                                        </Text>{' '}
-                                        rely exclusivley upon this application
-                                        for Halachic matters.
-                                    </Text>
+                                    Hefsek Tahara was done on {jdate.toString()}
                                 </Text>
-                                {'\n\n\n'}
-                            </Text>
+                                <Text
+                                    style={{
+                                        fontSize: 15,
+                                        color: '#666',
+                                    }}>
+                                    {'\n\n'}
+                                    If you would like to set Bedika
+                                    notifications.
+                                    {'\n\n'}
+                                    PLEASE NOTE: your initial location has been
+                                    set to "{this.props.locationName}".
+                                    {'\n\n'}
+                                    You can change this from the Settings screen
+                                    as well.
+                                    {'\n\n'}
+                                    For a detailed explanation about how to use
+                                    Luach, press on the "Help" button on the
+                                    left.
+                                    {'\n\n\n'}
+                                    <Text
+                                        style={{
+                                            color: '#a44',
+                                            fontSize: 16,
+                                            fontWeight: 'bold',
+                                        }}>
+                                        IMPORTANT NOTE:
+                                        <Text style={{ fontWeight: 'normal' }}>
+                                            {' '}
+                                            PLEASE{' '}
+                                            <Text
+                                                style={{
+                                                    textDecorationLine:
+                                                        'underline',
+                                                    fontWeight: 'bold',
+                                                }}>
+                                                DO NOT
+                                            </Text>{' '}
+                                            rely exclusivley upon this
+                                            application for Halachic matters.
+                                        </Text>
+                                    </Text>
+                                    {'\n\n\n'}
+                                </Text>
+                            </View>
                         </View>
                     </View>
                 </TouchableOpacity>
