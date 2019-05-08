@@ -17,7 +17,9 @@ import {
     TaharaEventType,
 } from '../../Code/Chashavshavon/TaharaEvent';
 import DataUtils from '../../Code/Data/DataUtils';
-import GeneralUtils from '../../Code/GeneralUtils';
+import { cancelAllHefsekAlarms } from '../../Code/Notifications';
+import HefsekNotificationModal from './HefsekNotificationModal';
+
 /**
  * Display a home screen box for a single jewish date.
  *
@@ -43,6 +45,8 @@ export default class SingleDayDisplay extends React.PureComponent {
         this.showDateDetails = this.showDateDetails.bind(this);
         this.showProblems = this.showProblems.bind(this);
         this.toggleTaharaEvent = this.toggleTaharaEvent.bind(this);
+
+        this.state = { showHefeskNotificationModal: false };
     }
     newEntry() {
         this.navigator.navigate('NewEntry', this.props);
@@ -68,6 +72,11 @@ export default class SingleDayDisplay extends React.PureComponent {
                 appData.taharaEventsList = TaharaEvent.sortList(
                     taharaEventsList
                 );
+                switch (taharaEvent.taharaEventType) {
+                    case TaharaEventType.Hefsek:
+                        this.setState({ showHefeskNotificationModal: true });
+                        break;
+                }
                 this.props.onUpdate(appData);
             });
         } else {
@@ -76,6 +85,9 @@ export default class SingleDayDisplay extends React.PureComponent {
                 taharaEventsList.splice(index, 1);
                 appData.TaharaEvents = taharaEventsList;
                 this.props.onUpdate(appData);
+                if (previousEvent.hasId()) {
+                    cancelAllHefsekAlarms(previousEvent.taharaEventId);
+                }
             });
         }
     }
@@ -419,6 +431,16 @@ export default class SingleDayDisplay extends React.PureComponent {
                         </TouchableWithoutFeedback>
                     )}
                 </View>
+                {this.state.showHefeskNotificationModal && (
+                    <HefsekNotificationModal
+                        jdate={jdate}
+                        onClose={() =>
+                            this.setState({
+                                showHefeskNotificationModal: false,
+                            })
+                        }
+                    />
+                )}
             </View>
         );
     }

@@ -1,16 +1,16 @@
 import React from 'react';
 import { Modal, Text, View, Image, TouchableOpacity } from 'react-native';
-import { GLOBALS } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
-export default class FirstTimeModal extends React.Component {
+export default class HefsekNotificationModal extends React.Component {
     constructor(props) {
         super(props);
     }
     render() {
+        const { jdate } = this.props;
         return (
             <Modal
-                style={{ flex: 1, backgroundColor:'#fff' }}
+                style={{ flex: 1, backgroundColor: '#fff' }}
                 animationType="fade"
                 transparent={true}
                 onRequestClose={() => {
@@ -27,9 +27,7 @@ export default class FirstTimeModal extends React.Component {
                     }}>
                     <View
                         style={{
-                            backgroundColor: '#555',
-                            borderTopWidth: 2,
-                            borderColor: '#555',
+                            backgroundColor: '#333',
                             borderRadius: 10,
                             padding: 20,
                             width: '90%',
@@ -40,29 +38,15 @@ export default class FirstTimeModal extends React.Component {
                                 justifyContent: 'space-between',
                             }}>
                             <View style={GeneralStyles.centeredRow}>
-                                <Image
-                                    style={{
-                                        width: 60,
-                                        height: 60,
-                                        marginRight: 5,
-                                    }}
-                                    resizeMode="stretch"
-                                    source={require('../Images/logo.png')}
-                                />
                                 <Text
                                     style={{
-                                        fontSize: 60,
-                                        color: '#909ACF',
+                                        fontSize: 20,
+                                        color: '#d8d5f1',
                                         fontWeight: 'bold',
                                     }}>
-                                    Luach
+                                    Bedikah and Mikva Notifications{'\n'}
                                 </Text>
                             </View>
-                            <Text
-                                style={{
-                                    fontSize: 11,
-                                    color: '#888',
-                                }}>{`Version ${GLOBALS.VERSION_NAME}`}</Text>
                         </View>
                         <View
                             style={{
@@ -76,12 +60,12 @@ export default class FirstTimeModal extends React.Component {
                             }}>
                             <Text
                                 style={{
-                                    fontSize: 30,
+                                    fontSize: 18,
                                     color: '#55a',
                                     fontWeight: 'bold',
-                                    textAlign: 'center',
+                                    textAlign: 'justify',
                                 }}>
-                                Welcome to Luach!
+                                Hefsek Tahara was done on {jdate.toString()}
                             </Text>
                             <Text
                                 style={{
@@ -91,9 +75,7 @@ export default class FirstTimeModal extends React.Component {
                                     textAlign: 'justify',
                                 }}>
                                 {'\n\n'}
-                                To customize your Halachic or App settings, open
-                                the Settings screen by pressing the "Settings"
-                                button on the left.
+                                If you would like to set Bedika notifications.
                                 {'\n\n'}
                                 PLEASE NOTE: your initial location has been set
                                 to "{this.props.locationName}".

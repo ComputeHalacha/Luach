@@ -7,10 +7,13 @@ import {
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import DeviceInfo from 'react-native-device-info';
+import firstTime from 'react-native-catch-first-time';
 import jDate from './JCal/jDate';
 import Utils from './JCal/Utils';
 import Location from './JCal/Location';
 import DataUtils from './Data/DataUtils';
+
+const GLOBAL_FIRST_TIME_RANDOM = 'ed92c2efd74740dbb72da04f17ff922b1';
 
 export const GLOBALS = Object.freeze({
     VERSION_NAME: DeviceInfo.getReadableVersion().replace(/(.+)\..+/, '$1'),
@@ -178,7 +181,22 @@ export async function tryToGuessLocation() {
         cityName = timeZoneName.replace(/.+\/(.+)/, '$1').replace('_', ' '),
         foundList = await DataUtils.SearchLocations(cityName, true);
 
+    log(`Device time zone is set to: ${timeZoneName}`);
     return foundList[0] || Location.getLakewood();
+}
+
+/**
+ * Tries to guess the users location from the set time zone name and current utcoffset.
+ * Default is Lakewood NJ.
+ */
+export async function isFirstTimeRun() {
+    let isFirstTime = false;
+    try {
+        await firstTime(GLOBAL_FIRST_TIME_RANDOM);
+    } catch (err) {
+        isFirstTime = true;
+    }
+    return isFirstTime;
 }
 
 /**

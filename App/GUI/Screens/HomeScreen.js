@@ -59,6 +59,7 @@ export default class HomeScreen extends React.Component {
         this.nextDay = this.nextDay.bind(this);
         this.goToday = this.goToday.bind(this);
         this.scrollToTop = this.scrollToTop.bind(this);
+        this.getElemementToShow = this.getElemementsToRender.bind(this);
 
         //If this screen was navigated to from another screen.
         if (
@@ -242,55 +243,59 @@ export default class HomeScreen extends React.Component {
     /**
      * This function is called the when the app first initially loads
      */
-    initialShowing() {
-        const today = new jDate();
+    async initialShowing() {
+        let today = new jDate(),
+            daysList = this.getDaysList(today);
+
         //Make sure that the local database schema is up to date.
         AppData.upgradeDatabase();
 
         //We start with an empty appData object just to get the render started immediately.
-        const appData = new AppData(),
-            daysList = this.getDaysList(today);
+        let appData = new AppData();
 
         //As we will be going to the database which takes some time, we set initial default values for the state.
         this.state = {
-            daysList: daysList,
-            appData: appData,
-            today: today,
+            daysList,
+            appData,
+            today,
             currDate: today,
             showFlash: true,
             refreshing: false,
+            showFirstTimeModal: false,
         };
 
-        //Now that the GUI is showing, we get the real data from the database
-        AppData.getAppData().then(ad => {
-            if (!ad.Settings.requirePIN) {
-                this.setFlash();
-            }
-            const lastRegularEntry = ad.EntryList.lastRegularEntry(),
-                lastEntry = ad.EntryList.lastEntry(),
-                //As we now have a location, the current
-                //Jewish date may be different than the system date
-                today = getTodayJdate(ad),
-                daysList = Utils.isSameJdate(today, this.state.daysList[0])
-                    ? this.state.daysList
-                    : this.getDaysList(today);
-            //We now will re-render the screen with the real data.
-            this.setState({
-                appData: ad,
-                daysList: daysList,
-                today: today,
-                systemDate: new Date(),
-                currDate: today,
-                loadingDone: true,
-                showLogin:
-                    ad.Settings.requirePIN &&
-                    appData.Settings.PIN &&
-                    appData.Settings.PIN.length === 4,
-                lastEntry: lastEntry,
-                lastRegularEntry: lastRegularEntry,
-                showFirstTimeModal: GLOBALS.IsFirstRun,
-            });
+        //Now that the GUI is showing, we asynchronously get the "real" data from the database
+        appData = await AppData.getAppData();
+
+        if (!appData.Settings.requirePIN) {
+            this.setFlash();
+        }
+        const lastRegularEntry = appData.EntryList.lastRegularEntry(),
+            lastEntry = appData.EntryList.lastEntry();
+        //As we now have a location, the current
+        //Jewish date may be different than the system date
+        (today = getTodayJdate(appData)),
+            (daysList = Utils.isSameJdate(today, this.state.daysList[0])
+                ? this.state.daysList
+                : this.getDaysList(today));
+
+        //We now will re-render the screen with the real data.
+        this.setState({
+            appData,
+            daysList,
+            today,
+            systemDate: new Date(),
+            currDate: today,
+            loadingDone: true,
+            showLogin:
+                appData.Settings.requirePIN &&
+                appData.Settings.PIN &&
+                appData.Settings.PIN.length === 4,
+            lastEntry,
+            lastRegularEntry,
+            showFirstTimeModal: global.IsFirstRun,
         });
+        log(`From Main: global.IsFirstRun is set to: ${global.IsFirstRun}`);
     }
     /**
      * When returning to this main screen from another screen, we don't need to go to the database.
@@ -404,6 +409,55 @@ export default class HomeScreen extends React.Component {
         }
     }
     /**
+     * Get the element to render on the main screen
+     */
+    getElemementsToRender() {
+        return this.state.showLogin ? (
+            <Login
+                onLoggedIn={this.onLoggedIn}
+                pin={this.state.appData.Settings.PIN}
+            />
+        ) : (
+            <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', flex: 1 }}>
+                    <SideMenu
+                        onUpdate={this.updateAppData}
+                        appData={this.state.appData}
+                        navigator={this.props.navigation}
+                        currDate={this.state.currDate}
+                        isDataLoading={!this.state.loadingDone}
+                        onGoToday={this.goToday}
+                        onGoPrevious={this.prevDay}
+                        onGoNext={this.nextDay}
+                        helpUrl="index.html"
+                        helpTitle="Help"
+                    />
+                    <FlatList
+                        ref={flatList => (this.flatList = flatList)}
+                        style={{ flex: 1 }}
+                        data={this.state.daysList}
+                        renderItem={this.renderItem}
+                        keyExtractor={item =>
+                            this.state.daysList.indexOf(item).toString()
+                        }
+                        onEndReached={this._addDaysToEnd}
+                        onRefresh={this.prevDay}
+                        refreshing={this.state.refreshing}
+                    />
+                </View>
+                {this.state.showFlash && <Flash />}
+                {this.state.showFirstTimeModal && (
+                    <FirstTimeModal
+                        locationName={this.state.appData.Settings.location.Name}
+                        onClose={() =>
+                            this.setState({ showFirstTimeModal: false })
+                        }
+                    />
+                )}
+            </View>
+        );
+    }
+    /**
      * Render a single day
      * @param {{item:jDate}} param0 item will be a single jDate
      */
@@ -433,55 +487,6 @@ export default class HomeScreen extends React.Component {
         );
     }
     render() {
-        return (
-            <View style={{ flex: 1 }}>
-                {(this.state.showLogin && (
-                    <Login
-                        onLoggedIn={this.onLoggedIn}
-                        pin={this.state.appData.Settings.PIN}
-                    />
-                )) || (
-                    <View style={{ flex: 1 }}>
-                        <View style={{ flexDirection: 'row', flex: 1 }}>
-                            <SideMenu
-                                onUpdate={this.updateAppData}
-                                appData={this.state.appData}
-                                navigator={this.props.navigation}
-                                currDate={this.state.currDate}
-                                isDataLoading={!this.state.loadingDone}
-                                onGoToday={this.goToday}
-                                onGoPrevious={this.prevDay}
-                                onGoNext={this.nextDay}
-                                helpUrl="index.html"
-                                helpTitle="Help"
-                            />
-                            <FlatList
-                                ref={flatList => (this.flatList = flatList)}
-                                style={{ flex: 1 }}
-                                data={this.state.daysList}
-                                renderItem={this.renderItem}
-                                keyExtractor={item =>
-                                    this.state.daysList.indexOf(item).toString()
-                                }
-                                onEndReached={this._addDaysToEnd}
-                                onRefresh={this.prevDay}
-                                refreshing={this.state.refreshing}
-                            />
-                        </View>
-                        {this.state.showFlash && <Flash />}
-                        {this.state.showFirstTimeModal && (
-                            <FirstTimeModal
-                                locationName={
-                                    this.state.appData.Settings.location.Name
-                                }
-                                onClose={() =>
-                                    this.setState({ showFirstTimeModal: false })
-                                }
-                            />
-                        )}
-                    </View>
-                )}
-            </View>
-        );
+        return <View style={{ flex: 1 }}>{this.getElemementsToRender()}</View>;
     }
 }
