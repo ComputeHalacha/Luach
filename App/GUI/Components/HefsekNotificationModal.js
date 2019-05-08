@@ -1,17 +1,81 @@
 import React from 'react';
-import {
-    Modal,
-    Text,
-    View,
-    Image,
-    TouchableOpacity,
-    Button,
-} from 'react-native';
+import { Modal, Text, View, TouchableOpacity, Button } from 'react-native';
+import TimePicker from './TimePicker';
+import { addNotification } from '../../Code/Notifications';
+import { range } from '../../Code/GeneralUtils';
+import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
 export default class HefsekNotificationModal extends React.Component {
     constructor(props) {
         super(props);
+
+        const location = props.location,
+            { jdate, taharaEventType, taharaEventId } = props.hefsekTaharaEvent,
+            { sunrise, sunset } = jdate.getSunriseSunset(location);
+
+        this.state = {
+            location,
+            jdate,
+            taharaEventType,
+            taharaEventId,
+            sunrise,
+            sunset,
+            morningTime: { hour: sunrise.hour + 2, minute: 0 },
+            afternoonTime: { hour: sunset.hour - 2, minute: 0 },
+            mikvaReminderTime: { hour: sunset.hour + 1, minute: 0 },
+        };
+
+        this.onSetMorning = this.onSetMorning.bind(this);
+        this.onSetAfternoon = this.onSetAfternoon.bind(this);
+        this.onSetMikvah = this.onSetMikvah.bind(this);
+    }
+    onSetMorning() {
+        const { morningTime } = this.state;
+        for (let i of range(7)) {
+            const dt = this.state.jdate.addDays(i).getDate();
+            dt.setHours(morningTime.hour);
+            dt.setMinutes(morningTime.minute);
+
+            addNotification(
+                `${this.state.taharaEventId}${i}`,
+                'Luach - B. Reminder',
+                `Today is the ${Utils.toSuffixed(
+                    i
+                )} day of the 7.\nThis is a reminder to do the morning B.`,
+                dt
+            );
+        }
+    }
+    onSetAfternoon() {
+        const { afternoonTime } = this.state;
+        for (let i of range(7)) {
+            const dt = this.state.jdate.addDays(i).getDate();
+            dt.setHours(afternoonTime.hour);
+            dt.setMinutes(afternoonTime.minute);
+
+            addNotification(
+                `${this.state.taharaEventId}${i + 10}`,
+                'Luach - B. Reminder',
+                `Today is the ${Utils.toSuffixed(
+                    i
+                )} day of the 7.\nThis is a reminder to do the afternoon B.`,
+                dt
+            );
+        }
+    }
+    onSetMikvah() {
+        const { mikvaReminderTime } = this.state,
+            dt = this.state.jdate.addDays(7).getDate();
+        dt.setHours(mikvaReminderTime.hour);
+        dt.setMinutes(mikvaReminderTime.minute);
+
+        addNotification(
+            `${this.state.taharaEventId}${20}`,
+            'Luach - M. Reminder',
+            'This is a reminder to go to the M. tonight',
+            dt
+        );
     }
     render() {
         const { jdate } = this.props;
@@ -83,44 +147,53 @@ export default class HefsekNotificationModal extends React.Component {
                                         fontSize: 15,
                                         color: '#666',
                                     }}>
-                                    {'\n\n'}
-                                    If you would like to set Bedika
-                                    notifications.
-                                    {'\n\n'}
-                                    PLEASE NOTE: your initial location has been
-                                    set to "{this.props.locationName}".
-                                    {'\n\n'}
-                                    You can change this from the Settings screen
-                                    as well.
-                                    {'\n\n'}
-                                    For a detailed explanation about how to use
-                                    Luach, press on the "Help" button on the
-                                    left.
+                                    I would like to be reminded to do the
+                                    morning Bedikas during the Shiva Neki'im at{' '}
+                                    <TimePicker
+                                        time={this.state.morningTime}
+                                        onChooseTime={morningTime =>
+                                            this.setState({ morningTime })
+                                        }
+                                    />
+                                    <Button
+                                        onPress={() => this.onSetMorning()}
+                                        title="Set"
+                                    />
                                     {'\n\n\n'}
-                                    <Text
-                                        style={{
-                                            color: '#a44',
-                                            fontSize: 16,
-                                            fontWeight: 'bold',
-                                        }}>
-                                        IMPORTANT NOTE:
-                                        <Text style={{ fontWeight: 'normal' }}>
-                                            {' '}
-                                            PLEASE{' '}
-                                            <Text
-                                                style={{
-                                                    textDecorationLine:
-                                                        'underline',
-                                                    fontWeight: 'bold',
-                                                }}>
-                                                DO NOT
-                                            </Text>{' '}
-                                            rely exclusivley upon this
-                                            application for Halachic matters.
-                                        </Text>
-                                    </Text>
+                                    I would like to be reminded to do the
+                                    afternoon Bedikas during the Shiva Neki'im
+                                    at
+                                    <TimePicker
+                                        time={this.state.afternoonTime}
+                                        onChooseTime={afternoonTime =>
+                                            this.setState({ afternoonTime })
+                                        }
+                                    />
+                                    <Button
+                                        onPress={() => this.onSetAfternoon()}
+                                        title="Set"
+                                    />
+                                    {'\n\n\n'}
+                                    I would like to be reminded about the
+                                    upcoming Mikva night during the last day of
+                                    the Shiva Neki'im at
+                                    <TimePicker
+                                        time={this.state.mikvaReminderTime}
+                                        onChooseTime={mikvaReminderTime =>
+                                            this.setState({ mikvaReminderTime })
+                                        }
+                                    />
+                                    <Button
+                                        onPress={() => this.onSetMikvah()}
+                                        title="Set"
+                                    />
                                     {'\n\n\n'}
                                 </Text>
+
+                                <Button
+                                    onPress={() => this.props.onClose()}
+                                    title="Cancel"
+                                />
                             </View>
                         </View>
                     </View>
