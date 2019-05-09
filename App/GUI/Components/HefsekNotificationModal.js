@@ -9,7 +9,11 @@ import {
 } from 'react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { Divider, Icon } from 'react-native-elements';
-import { addNotification } from '../../Code/Notifications';
+import DeviceInfo from 'react-native-device-info';
+import {
+    addNotification,
+    cancelAllHefsekAlarms,
+} from '../../Code/Notifications';
 import { GLOBALS, range } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
@@ -43,13 +47,16 @@ export default class HefsekNotificationModal extends React.Component {
             { jdate, taharaEventType, taharaEventId } = props.hefsekTaharaEvent,
             { sunrise, sunset } = jdate.getSunriseSunset(location);
 
+        this.location = location;
+        this.discreet = this.props.discreet;
+        this.jdate = jdate;
+        this.taharaEventType = taharaEventType;
+        this.taharaEventId = taharaEventId;
+        this.sunrise = sunrise;
+        this.sunset = sunset;
+        this.armyTime = DeviceInfo.is24Hour();
+
         this.state = {
-            location,
-            jdate,
-            taharaEventType,
-            taharaEventId,
-            sunrise,
-            sunset,
             showMorningPicker: false,
             showAfternoonPicker: false,
             showMikvaPicker: false,
@@ -63,62 +70,65 @@ export default class HefsekNotificationModal extends React.Component {
         this.onSetMikvah = this.onSetMikvah.bind(this);
     }
     onSetMorning() {
-        const { morningTime } = this.state;
+        const { morningTime } = this.state,
+            bedikaText = this.discreet ? 'B.' : 'Bedikah';
         for (let i of range(7)) {
-            const dt = this.state.jdate.addDays(i).getDate();
+            const dt = this.jdate.addDays(i).getDate();
             dt.setHours(morningTime.hour);
             dt.setMinutes(morningTime.minute);
 
             addNotification(
-                `${this.state.taharaEventId}${i}`,
-                'Luach - B. Reminder',
-                `Today is the ${Utils.toSuffixed(
-                    i
-                )} day of the 7.\nThis is a reminder to do the morning B.`,
+                `${this.taharaEventId}${i}`,
+                `Luach - ${bedikaText} Reminder`,
+                `Today is the ${Utils.toSuffixed(i)} day of the ${
+                    this.discreet ? '7' : 'Shiva Neki\'im'
+                }.\nThis is a reminder to do the morning ${bedikaText}`,
                 dt
             );
         }
     }
     onSetAfternoon() {
-        const { afternoonTime } = this.state;
+        const { afternoonTime } = this.state,
+            bedikaText = this.discreet ? 'B.' : 'Bedikah';
         for (let i of range(7)) {
-            const dt = this.state.jdate.addDays(i).getDate();
+            const dt = this.jdate.addDays(i).getDate();
             dt.setHours(afternoonTime.hour);
             dt.setMinutes(afternoonTime.minute);
 
             addNotification(
-                `${this.state.taharaEventId}${i + 10}`,
-                'Luach - B. Reminder',
-                `Today is the ${Utils.toSuffixed(
-                    i
-                )} day of the 7.\nThis is a reminder to do the afternoon B.`,
+                `${this.taharaEventId}${i}`,
+                `Luach - ${bedikaText} Reminder`,
+                `Today is the ${Utils.toSuffixed(i)} day of the ${
+                    this.discreet ? '7' : 'Shiva Neki\'im'
+                }.\nThis is a reminder to do the afternoon ${bedikaText}`,
                 dt
             );
         }
     }
     onSetMikvah() {
         const { mikvaReminderTime } = this.state,
-            dt = this.state.jdate.addDays(7).getDate();
+            dt = this.jdate.addDays(7).getDate(),
+            mikvaText = this.discreet ? 'M.' : 'Mikva';
+
         dt.setHours(mikvaReminderTime.hour);
         dt.setMinutes(mikvaReminderTime.minute);
 
         addNotification(
-            `${this.state.taharaEventId}${20}`,
-            'Luach - M. Reminder',
-            'This is a reminder to go to the M. tonight',
+            `${this.taharaEventId}${20}`,
+            `Luach - ${mikvaText} Reminder`,
+            `This is a reminder to go to the ${mikvaText} tonight`,
             dt
         );
     }
     getDatetime(time) {
         const d = new Date(0);
-        d.setHours(time.hour, time.minute);
+        d.setHours(time.hour, time.minute, 0, 0);
         return d;
     }
     getTime(date) {
         return { hour: date.getHours(), minute: date.getMinutes() };
     }
     render() {
-        const { jdate } = this.state;
         return (
             <Modal
                 style={{ flex: 1, backgroundColor: '#fff' }}
@@ -156,6 +166,8 @@ export default class HefsekNotificationModal extends React.Component {
                                         width: '100%',
                                         borderTopLeftRadius: 10,
                                         borderTopRightRadius: 10,
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
                                     },
                                 ]}>
                                 <Text
@@ -163,11 +175,37 @@ export default class HefsekNotificationModal extends React.Component {
                                         fontSize: 20,
                                         color: '#eee',
                                         fontWeight: 'bold',
-                                        textAlign: 'center',
                                         padding: 10,
                                     }}>
                                     Bedika and Mikva Notifications
                                 </Text>
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        cancelAllHefsekAlarms(
+                                            this.taharaEventId
+                                        )
+                                    }>
+                                    <View
+                                        style={{
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginRight: 5,
+                                        }}>
+                                        <Icon
+                                            name="delete-forever"
+                                            color="#a33"
+                                            size={20}
+                                        />
+                                        <Text
+                                            style={{
+                                                fontSize: 9,
+                                                color: '#a33',
+                                            }}>
+                                            Cancel all previous notifications
+                                            for this Hefsek Tahara
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
                             </View>
                         </View>
                         <View
@@ -190,7 +228,17 @@ export default class HefsekNotificationModal extends React.Component {
                                         color: '#55a',
                                         fontWeight: 'bold',
                                     }}>
-                                    Hefsek Tahara was done on {jdate.toString()}
+                                    Hefsek Tahara was done on{' '}
+                                    {this.jdate.toString()}
+                                </Text>
+                                <Text style={{ fontSize: 10 }}>
+                                    {`Sunrise: ${Utils.getTimeString(
+                                        this.sunrise,
+                                        this.armyTime
+                                    )}, Sunset: ${Utils.getTimeString(
+                                        this.sunset,
+                                        this.armyTime
+                                    )}`}
                                 </Text>
                                 <View
                                     style={{
@@ -218,7 +266,8 @@ export default class HefsekNotificationModal extends React.Component {
                                                 style={GeneralStyles.timeInput}>
                                                 <Text>
                                                     {Utils.getTimeString(
-                                                        this.state.morningTime
+                                                        this.state.morningTime,
+                                                        this.armyTime
                                                     )}
                                                 </Text>
                                             </View>
@@ -228,6 +277,7 @@ export default class HefsekNotificationModal extends React.Component {
                                                 this.state.showMorningPicker
                                             }
                                             mode="time"
+                                            is24Hour={this.armyTime}
                                             date={this.getDatetime(
                                                 this.state.morningTime
                                             )}
@@ -287,6 +337,7 @@ export default class HefsekNotificationModal extends React.Component {
                                                 this.state.showAfternoonPicker
                                             }
                                             mode="time"
+                                            is24Hour={this.armyTime}
                                             date={this.getDatetime(
                                                 this.state.afternoonTime
                                             )}
@@ -349,6 +400,7 @@ export default class HefsekNotificationModal extends React.Component {
                                                 this.state.showMikvaPicker
                                             }
                                             mode="time"
+                                            is24Hour={this.armyTime}
                                             date={this.getDatetime(
                                                 this.state.mikvaReminderTime
                                             )}

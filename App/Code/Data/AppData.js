@@ -85,6 +85,14 @@ const addedFields = [
         type: 'VARCHAR (25)',
         allowNull: true,
     },
+    //Added 5/9/19
+    {
+        table: 'settings',
+        name: 'discreet',
+        type: 'BOOLEAN',
+        allowNull: true,
+        defaultValue: '1',
+    },
 ];
 
 /**
