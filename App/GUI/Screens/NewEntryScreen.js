@@ -655,6 +655,7 @@ export default class NewEntry extends React.Component {
                                     alignItems: 'center',
                                     paddingLeft: 15,
                                 }}>
+                                <Text>Don't add reminder</Text>
                                 <Switch
                                     style={GeneralStyles.switch}
                                     onValueChange={value =>
@@ -664,30 +665,45 @@ export default class NewEntry extends React.Component {
                                     }
                                     value={this.state.addReminder}
                                 />
-                                <Text> on the </Text>
-                                <Picker
-                                    style={{ margin: 0 }}
-                                    textStyle={{ fontSize: 10 }}
-                                    selectedValue={this.state.reminderDay}
-                                    onValueChange={reminderDay =>
-                                        this.setState({ reminderDay })
-                                    }>
-                                    {range(10).map(d => (
-                                        <Picker.Item
-                                            label={Utils.toSuffixed(d)}
-                                            value={d}
-                                            key={d}
-                                        />
-                                    ))}
-                                </Picker>
-                                <Text> day, at </Text>
-                                <TimeInput
-                                    selectedTime={this.state.reminderTime}
-                                    onConfirm={reminderTime =>
-                                        this.setState({ reminderTime })
-                                    }
-                                />
+                                <Text>Add reminder</Text>
                             </View>
+                            {this.state.addReminder && (
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        paddingLeft: 15,
+                                    }}>
+                                    <Text>Remind me on the </Text>
+                                    <Picker
+                                        isVisible={true}
+                                        style={{
+                                            margin: 0,
+                                            width: 90,
+                                            height: 30,
+                                        }}
+                                        textStyle={{ fontSize: 10 }}
+                                        selectedValue={this.state.reminderDay}
+                                        onValueChange={reminderDay =>
+                                            this.setState({ reminderDay })
+                                        }>
+                                        {range(10).map(d => (
+                                            <Picker.Item
+                                                label={Utils.toSuffixed(d)}
+                                                value={d}
+                                                key={d}
+                                            />
+                                        ))}
+                                    </Picker>
+                                    <Text> day, at </Text>
+                                    <TimeInput
+                                        selectedTime={this.state.reminderTime}
+                                        onConfirm={reminderTime =>
+                                            this.setState({ reminderTime })
+                                        }
+                                    />
+                                </View>
+                            )}
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>

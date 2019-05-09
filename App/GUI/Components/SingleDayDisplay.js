@@ -328,6 +328,11 @@ export default class SingleDayDisplay extends React.PureComponent {
                                         <TaharaEventsComponent
                                             list={taharaEvents}
                                             remove={this.toggleTaharaEvent}
+                                            showHefeskNotificationModal={() =>
+                                                this.setState({
+                                                    showHefeskNotificationModal: true,
+                                                })
+                                            }
                                         />
                                     </View>
                                 )}
@@ -433,10 +438,8 @@ export default class SingleDayDisplay extends React.PureComponent {
                 </View>
                 {this.state.showHefeskNotificationModal && (
                     <HefsekNotificationModal
-                        hefsekTaharaEvent={appData.taharaEventsList.find(
-                            te =>
-                                Utils.isSameJdate(te.jdate, jdate) &&
-                                te.taharaEventType === TaharaEventType.Hefsek
+                        hefsekTaharaEvent={taharaEvents.find(
+                            te => te.taharaEventType === TaharaEventType.Hefsek
                         )}
                         location={location}
                         discreet={appData.Settings.discreet}
@@ -630,9 +633,7 @@ function TaharaEventsComponent(props) {
                                     te.taharaEventType ===
                                     TaharaEventType.Hefsek
                                 ) {
-                                    this.setState({
-                                        showHefeskNotificationModal: true,
-                                    });
+                                    props.showHefeskNotificationModal();
                                 }
                             }}>
                             <View
