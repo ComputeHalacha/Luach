@@ -182,36 +182,6 @@ export default class HefsekNotificationModal extends React.Component {
                                     }}>
                                     Bedika and Mikva Notifications
                                 </Text>
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        cancelAllBedikaAndMikvaAlarms(
-                                            this.taharaEventId
-                                        );
-                                        popUpMessage(
-                                            'All system reminders pertaining to this Hefsek Tahara have been removed'
-                                        );
-                                    }}>
-                                    <View
-                                        style={{
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            marginRight: 5,
-                                        }}>
-                                        <Icon
-                                            name="delete-forever"
-                                            color="#a33"
-                                            size={20}
-                                        />
-                                        <Text
-                                            style={{
-                                                fontSize: 9,
-                                                color: '#a33',
-                                            }}>
-                                            Cancel all previous notifications
-                                            for this Hefsek Tahara
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
                             </View>
                         </View>
                         <View
@@ -237,7 +207,7 @@ export default class HefsekNotificationModal extends React.Component {
                                     Hefsek Tahara was done on{' '}
                                     {this.jdate.toString()}
                                 </Text>
-                                <Text style={{ fontSize: 10 }}>
+                                <Text style={{ fontSize: 13 }}>
                                     {`Sunrise: ${Utils.getTimeString(
                                         this.sunrise,
                                         this.armyTime
@@ -250,6 +220,36 @@ export default class HefsekNotificationModal extends React.Component {
                                     style={{
                                         marginTop: 10,
                                     }}>
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            cancelAllBedikaAndMikvaAlarms(
+                                                this.taharaEventId
+                                            );
+                                            popUpMessage(
+                                                'All system reminders pertaining to this Hefsek Tahara have been removed'
+                                            );
+                                        }}>
+                                        <View
+                                            style={{
+                                                alignItems: 'center',
+                                                flexDirection: 'row',
+                                            }}>
+                                            <Icon
+                                                name="delete-forever"
+                                                color="#966"
+                                                size={20}
+                                            />
+                                            <Text
+                                                style={{
+                                                    fontSize: 11,
+                                                    color: '#966',
+                                                }}>
+                                                Cancel all previous
+                                                notifications for this Hefsek
+                                                Tahara
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
                                     <Divider style={GeneralStyles.divider} />
                                     <Text>
                                         I would like to add system reminders to
@@ -333,7 +333,7 @@ export default class HefsekNotificationModal extends React.Component {
                                                     mikvaReminderTime,
                                                 })
                                             }
-                                        />                                        
+                                        />
                                         <AddButton
                                             onPress={() => this.onSetMikvah()}
                                         />
