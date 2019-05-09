@@ -14,7 +14,7 @@ import {
     addNotification,
     cancelAllHefsekAlarms,
 } from '../../Code/Notifications';
-import { GLOBALS, range } from '../../Code/GeneralUtils';
+import { GLOBALS, range, popUpMessage } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
@@ -86,6 +86,10 @@ export default class HefsekNotificationModal extends React.Component {
                 dt
             );
         }
+
+        popUpMessage(
+            'Bedika reminders have been added for each morning of the Shiva Neki\'im'
+        );
     }
     onSetAfternoon() {
         const { afternoonTime } = this.state,
@@ -104,6 +108,9 @@ export default class HefsekNotificationModal extends React.Component {
                 dt
             );
         }
+        popUpMessage(
+            'Bedika reminders have been added for each afternoon of the Shiva Neki\'im'
+        );
     }
     onSetMikvah() {
         const { mikvaReminderTime } = this.state,
@@ -118,6 +125,9 @@ export default class HefsekNotificationModal extends React.Component {
             `Luach - ${mikvaText} Reminder`,
             `This is a reminder to go to the ${mikvaText} tonight`,
             dt
+        );
+        popUpMessage(
+            'A Mikva reminder has been added for the last day of the Shiva Neki\'im'
         );
     }
     getDatetime(time) {
@@ -180,11 +190,14 @@ export default class HefsekNotificationModal extends React.Component {
                                     Bedika and Mikva Notifications
                                 </Text>
                                 <TouchableOpacity
-                                    onPress={() =>
+                                    onPress={() => {
                                         cancelAllHefsekAlarms(
                                             this.taharaEventId
-                                        )
-                                    }>
+                                        );
+                                        popUpMessage(
+                                            'All system reminders pertaining to this Hefsek Tahara have been removed'
+                                        );
+                                    }}>
                                     <View
                                         style={{
                                             alignItems: 'center',
