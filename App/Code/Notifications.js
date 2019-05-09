@@ -1,5 +1,8 @@
 import PushNotification from 'react-native-push-notification';
 import PushNotificationIOS from 'react-native-push-notification';
+import DeviceInfo from 'react-native-device-info';
+import { TaharaEventType } from './Chashavshavon/TaharaEvent';
+import Utils from './JCal/Utils';
 import { log, range } from './GeneralUtils';
 
 export function configureNotifier() {
@@ -68,14 +71,49 @@ export function cancelAlarm(id) {
 
 /**
  *
- * @param {id:number} id
+ * @param {taharaEventId:number} id
  */
-export function cancelAllHefsekAlarms(taharaEventId) {
-    for (let i of range(25)) {
+export function cancelAllBedikaAndMikvaAlarms(taharaEventId) {
+    for (let i of range(20)) {
         try {
-            cancelAlarm(taharaEventId.toString() + i.toString());
+            cancelAlarm(`${TaharaEventType.Hefsek}${taharaEventId}${i}`);
         } catch (e) {
             /*Nu, nu*/
         }
     }
+}
+
+/**
+ * Cancels the "Do a Hefsek" reminder (if available)
+ */
+export function cancelHefsekTaharaAlarm() {
+    try {
+        cancelAlarm(TaharaEventType.Hefsek);
+    } catch (e) {
+        /*Nu, nu*/
+    }
+}
+
+/**
+ *
+ * @param {JDate} jdate
+ * @param {{hour:Number, minute:Number}} time
+ * @param {{hour:Number, minute:Number}} sunset
+ * @param  {discreet:Boolean} discreet
+ */
+export function addHefsekTaharaAlarm(jdate, time, sunset, discreet) {
+    const hefsekText = discreet ? 'H.T.' : 'Hefsek Tahara',
+        sdate = jdate.getDate();
+    sdate.setHours(time.hour, time.minute, 0);
+
+    cancelHefsekTaharaAlarm();
+    addNotification(
+        TaharaEventType.Hefsek,
+        `LUach - ${hefsekText} Reminder`,
+        `A  ${hefsekText} may be possible today before shkiah.\nSunset today is at ${Utils.getTimeString(
+            sunset,
+            DeviceInfo.is24Hour
+        )}.`,
+        sdate
+    );
 }

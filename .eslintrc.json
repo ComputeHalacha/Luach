@@ -9,32 +9,21 @@
         "plugin:react/recommended",
         "plugin:react-perf/recommended"
     ],
-    "plugins": [
-        "react",
-        "react-native",
-        "react-perf"
-    ],
+    "plugins": ["react", "react-native", "react-perf"],
     "ecmaFeatures": {
         "jsx": true
     },
     "rules": {
         "no-console": 0,
-        "linebreak-style": [
-            "error",
-            "windows"
-        ],
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
+        "linebreak-style": ["error", "windows"],
+        "quotes": ["error", "single"],
+        "semi": ["error", "always"],
         "react-native/no-unused-styles": 2,
         "react-native/split-platform-components": 2,
         "react-native/no-inline-styles": 0,
         "react-native/no-color-literals": 0,
-        "react/prop-types": 0
+        "react/prop-types": 0,
+        "react-perf/jsx-no-new-object-as-prop": 0,
+        "react-perf/jsx-no-new-array-as-prop": 0
     }
 }
