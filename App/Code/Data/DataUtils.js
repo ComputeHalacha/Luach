@@ -46,6 +46,7 @@ export default class DataUtils {
                     showIgnoredKavuahs: !!dbSet.showIgnoredKavuahs,
                     noProbsAfterEntry: !!dbSet.noProbsAfterEntry,
                     hideHelp: !!dbSet.hideHelp,
+                    discreet: !!dbSet.discreet,
                     requirePIN: !!dbSet.requirePIN,
                     PIN: dbSet.PIN,
                 });
@@ -75,6 +76,7 @@ export default class DataUtils {
             showIgnoredKavuahs=?,
             noProbsAfterEntry=?,
             hideHelp=?,
+            discreet=?,
             requirePIN=?,
             PIN=?`,
             [
@@ -95,6 +97,7 @@ export default class DataUtils {
                 settings.showIgnoredKavuahs,
                 settings.noProbsAfterEntry,
                 settings.hideHelp,
+                settings.discreet,
                 settings.requirePIN,
                 settings.PIN,
             ]

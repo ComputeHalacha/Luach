@@ -30,6 +30,7 @@ export default class Settings {
         this.showIgnoredKavuahs = !!args.showIgnoredKavuahs;
         this.noProbsAfterEntry = setDefault(args.noProbsAfterEntry, true);
         this.hideHelp = !!args.hideHelp;
+        this.discreet = setDefault(args.discreet, true);
         this.requirePIN = !!args.requirePIN;
         this.PIN = setDefault(args.PIN, '1234');
     }
@@ -63,6 +64,7 @@ export default class Settings {
                 this.showIgnoredKavuahs === other.showIgnoredKavuahs &&
                 this.noProbsAfterEntry === other.noProbsAfterEntry &&
                 this.hideHelp === other.hideHelp &&
+                this.discreet === other.discreet &&
                 this.requirePIN === other.requirePIN &&
                 this.PIN === other.PIN)
         );

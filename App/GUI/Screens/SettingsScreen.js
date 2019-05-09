@@ -128,6 +128,7 @@ export default class SettingsScreen extends Component {
             showIgnoredKavuahs = settings.showIgnoredKavuahs,
             noProbsAfterEntry = setDefault(settings.noProbsAfterEntry, true),
             hideHelp = settings.hideHelp,
+            discreet = setDefault(settings.discreet, true),
             requirePIN = setDefault(settings.requirePIN, true);
 
         return (
@@ -438,6 +439,18 @@ export default class SettingsScreen extends Component {
                                     this.changeSetting('hideHelp', value)
                                 }
                                 value={!!hideHelp}
+                            />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                App should be discreet with sensitive info
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting('discreet', value)
+                                }
+                                value={!!discreet}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>

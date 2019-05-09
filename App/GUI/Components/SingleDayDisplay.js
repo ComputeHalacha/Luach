@@ -439,6 +439,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                                 te.taharaEventType === TaharaEventType.Hefsek
                         )}
                         location={location}
+                        discreet={appData.Settings.discreet}
                         onClose={() =>
                             this.setState({
                                 showHefeskNotificationModal: false,
