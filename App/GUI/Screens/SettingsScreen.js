@@ -348,6 +348,18 @@ export default class SettingsScreen extends Component {
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
+                                Discreetly worded system reminders?
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value =>
+                                    this.changeSetting('discreet', value)
+                                }
+                                value={!!discreet}
+                            />
+                        </View>                        
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
                                 Show flags for problem dates on Main Screen?
                             </Text>
                             <Switch
@@ -439,18 +451,6 @@ export default class SettingsScreen extends Component {
                                     this.changeSetting('hideHelp', value)
                                 }
                                 value={!!hideHelp}
-                            />
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                App should be discreet with sensitive info
-                            </Text>
-                            <Switch
-                                style={GeneralStyles.switch}
-                                onValueChange={value =>
-                                    this.changeSetting('discreet', value)
-                                }
-                                value={!!discreet}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>

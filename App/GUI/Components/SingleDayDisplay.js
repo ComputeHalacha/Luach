@@ -624,7 +624,17 @@ function TaharaEventsComponent(props) {
                     return (
                         <TouchableOpacity
                             key={i}
-                            onPress={() => props.remove(te.taharaEventType)}>
+                            onPress={() => props.remove(te.taharaEventType)}
+                            onLongPress={() => {
+                                if (
+                                    te.taharaEventType ===
+                                    TaharaEventType.Hefsek
+                                ) {
+                                    this.setState({
+                                        showHefeskNotificationModal: true,
+                                    });
+                                }
+                            }}>
                             <View
                                 style={[
                                     styles.badgeView,
