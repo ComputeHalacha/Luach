@@ -17,7 +17,7 @@ import {
     TaharaEventType,
 } from '../../Code/Chashavshavon/TaharaEvent';
 import DataUtils from '../../Code/Data/DataUtils';
-import { cancelAllHefsekAlarms } from '../../Code/Notifications';
+import { cancelAllBedikaAndMikvaAlarms } from '../../Code/Notifications';
 import HefsekNotificationModal from './HefsekNotificationModal';
 
 /**
@@ -86,7 +86,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                 appData.TaharaEvents = taharaEventsList;
                 this.props.onUpdate(appData);
                 if (previousEvent.hasId()) {
-                    cancelAllHefsekAlarms(previousEvent.taharaEventId);
+                    cancelAllBedikaAndMikvaAlarms(previousEvent.taharaEventId);
                 }
             });
         }

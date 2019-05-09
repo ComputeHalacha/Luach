@@ -7,16 +7,17 @@ import {
     TouchableHighlight,
     Button,
 } from 'react-native';
-import DateTimePicker from 'react-native-modal-datetime-picker';
 import { Divider, Icon } from 'react-native-elements';
 import DeviceInfo from 'react-native-device-info';
+import TimeInput from './TimeInput';
 import {
     addNotification,
-    cancelAllHefsekAlarms,
+    cancelAllBedikaAndMikvaAlarms,
 } from '../../Code/Notifications';
 import { GLOBALS, range, popUpMessage } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
+import { TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
 
 const AddButton = props => (
     <TouchableHighlight onPress={() => props.onPress()}>
@@ -78,7 +79,7 @@ export default class HefsekNotificationModal extends React.Component {
             dt.setMinutes(morningTime.minute);
 
             addNotification(
-                `${this.taharaEventId}${i}`,
+                `${TaharaEventType.Hefsek}${this.taharaEventId}${i}`,
                 `Luach - ${bedikaText} Reminder`,
                 `Today is the ${Utils.toSuffixed(i)} day of the ${
                     this.discreet ? '7' : 'Shiva Neki\'im'
@@ -100,7 +101,7 @@ export default class HefsekNotificationModal extends React.Component {
             dt.setMinutes(afternoonTime.minute);
 
             addNotification(
-                `${this.taharaEventId}${i}`,
+                `${TaharaEventType.Hefsek}${this.taharaEventId}${i}`,
                 `Luach - ${bedikaText} Reminder`,
                 `Today is the ${Utils.toSuffixed(i)} day of the ${
                     this.discreet ? '7' : 'Shiva Neki\'im'
@@ -121,7 +122,7 @@ export default class HefsekNotificationModal extends React.Component {
         dt.setMinutes(mikvaReminderTime.minute);
 
         addNotification(
-            `${this.taharaEventId}${20}`,
+            `${TaharaEventType.Hefsek}${this.taharaEventId}${20}`,
             `Luach - ${mikvaText} Reminder`,
             `This is a reminder to go to the ${mikvaText} tonight`,
             dt
@@ -129,14 +130,6 @@ export default class HefsekNotificationModal extends React.Component {
         popUpMessage(
             'A Mikva reminder has been added for the last day of the Shiva Neki\'im'
         );
-    }
-    getDatetime(time) {
-        const d = new Date(0);
-        d.setHours(time.hour, time.minute, 0, 0);
-        return d;
-    }
-    getTime(date) {
-        return { hour: date.getHours(), minute: date.getMinutes() };
     }
     render() {
         return (
@@ -191,7 +184,7 @@ export default class HefsekNotificationModal extends React.Component {
                                 </Text>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        cancelAllHefsekAlarms(
+                                        cancelAllBedikaAndMikvaAlarms(
                                             this.taharaEventId
                                         );
                                         popUpMessage(
@@ -269,43 +262,12 @@ export default class HefsekNotificationModal extends React.Component {
                                             alignItems: 'center',
                                         }}>
                                         <Text>at </Text>
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                this.setState({
-                                                    showMorningPicker: true,
-                                                })
-                                            }>
-                                            <View
-                                                style={GeneralStyles.timeInput}>
-                                                <Text>
-                                                    {Utils.getTimeString(
-                                                        this.state.morningTime,
-                                                        this.armyTime
-                                                    )}
-                                                </Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                        <DateTimePicker
-                                            isVisible={
-                                                this.state.showMorningPicker
-                                            }
-                                            mode="time"
-                                            is24Hour={this.armyTime}
-                                            date={this.getDatetime(
+                                        <TimeInput
+                                            selectedTime={
                                                 this.state.morningTime
-                                            )}
-                                            onConfirm={morningDate =>
-                                                this.setState({
-                                                    morningTime: this.getTime(
-                                                        morningDate
-                                                    ),
-                                                    showMorningPicker: false,
-                                                })
                                             }
-                                            onCancel={() =>
-                                                this.setState({
-                                                    showMorningPicker: false,
-                                                })
+                                            onConfirm={morningTime =>
+                                                this.setState({ morningTime })
                                             }
                                         />
                                         <Text> each day </Text>
@@ -330,42 +292,12 @@ export default class HefsekNotificationModal extends React.Component {
                                             alignItems: 'center',
                                         }}>
                                         <Text>at </Text>
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                this.setState({
-                                                    showAfternoonPicker: true,
-                                                })
-                                            }>
-                                            <View
-                                                style={GeneralStyles.timeInput}>
-                                                <Text>
-                                                    {Utils.getTimeString(
-                                                        this.state.afternoonTime
-                                                    )}
-                                                </Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                        <DateTimePicker
-                                            isVisible={
-                                                this.state.showAfternoonPicker
-                                            }
-                                            mode="time"
-                                            is24Hour={this.armyTime}
-                                            date={this.getDatetime(
+                                        <TimeInput
+                                            selectedTime={
                                                 this.state.afternoonTime
-                                            )}
-                                            onConfirm={afternoonDate =>
-                                                this.setState({
-                                                    afternoonTime: this.getTime(
-                                                        afternoonDate
-                                                    ),
-                                                    showAfternoonPicker: false,
-                                                })
                                             }
-                                            onCancel={() =>
-                                                this.setState({
-                                                    showAfternoonPicker: false,
-                                                })
+                                            onConfirm={afternoonTime =>
+                                                this.setState({ afternoonTime })
                                             }
                                         />
                                         <Text> each day </Text>
@@ -392,45 +324,16 @@ export default class HefsekNotificationModal extends React.Component {
                                             alignItems: 'center',
                                         }}>
                                         <Text>at </Text>
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                this.setState({
-                                                    showMikvaPicker: true,
-                                                })
-                                            }>
-                                            <View
-                                                style={GeneralStyles.timeInput}>
-                                                <Text>
-                                                    {Utils.getTimeString(
-                                                        this.state
-                                                            .mikvaReminderTime
-                                                    )}
-                                                </Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                        <DateTimePicker
-                                            isVisible={
-                                                this.state.showMikvaPicker
-                                            }
-                                            mode="time"
-                                            is24Hour={this.armyTime}
-                                            date={this.getDatetime(
+                                        <TimeInput
+                                            selectedTime={
                                                 this.state.mikvaReminderTime
-                                            )}
-                                            onConfirm={mikvaDate =>
+                                            }
+                                            onConfirm={mikvaReminderTime =>
                                                 this.setState({
-                                                    mikvaReminderTime: this.getTime(
-                                                        mikvaDate
-                                                    ),
-                                                    showMikvaPicker: false,
+                                                    mikvaReminderTime,
                                                 })
                                             }
-                                            onCancel={() =>
-                                                this.setState({
-                                                    showMikvaPicker: false,
-                                                })
-                                            }
-                                        />
+                                        />                                        
                                         <AddButton
                                             onPress={() => this.onSetMikvah()}
                                         />

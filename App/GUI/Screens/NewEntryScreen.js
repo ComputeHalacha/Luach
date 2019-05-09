@@ -6,6 +6,7 @@ import {
     Button,
     Switch,
     TextInput,
+    Picker,
     TouchableOpacity,
     Alert,
 } from 'react-native';
@@ -16,14 +17,22 @@ import DeviceInfo from 'react-native-device-info';
 import SideMenu from '../Components/SideMenu';
 import JdateChooser from '../Components/JdateChooser';
 import OnahSynopsis from '../Components/OnahSynopsis';
+import TimeInput from '../Components/TimeInput';
 import Entry from '../../Code/Chashavshavon/Entry';
 import { Kavuah } from '../../Code/Chashavshavon/Kavuah';
 import Utils from '../../Code/JCal/Utils';
 import jDate from '../../Code/JCal/jDate';
 import { NightDay, Onah } from '../../Code/Chashavshavon/Onah';
 import DataUtils from '../../Code/Data/DataUtils';
-import { warn, error, popUpMessage, GLOBALS } from '../../Code/GeneralUtils';
+import {
+    warn,
+    error,
+    popUpMessage,
+    GLOBALS,
+    range,
+} from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
+import { addHefsekTaharaAlarm } from '../../Code/Notifications';
 
 export default class NewEntry extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -71,6 +80,7 @@ export default class NewEntry extends React.Component {
 
         this.onUpdate = onUpdate;
         this.appData = appData;
+        this.location = appData.Settings.location;
 
         let jdate, isNight;
         if (entry) {
@@ -79,11 +89,17 @@ export default class NewEntry extends React.Component {
             isNight = entry.nightDay === NightDay.Night;
         } else {
             jdate = navigation.state.params.jdate;
-            isNight = Utils.isAfterSunset(
-                new Date(),
-                appData.Settings.location
-            );
+            isNight = Utils.isAfterSunset(new Date(), this.location);
         }
+
+        const { sunrise, sunset } = jdate.getSunriseSunset(this.location);
+
+        this.sunriseText = sunrise
+            ? Utils.getTimeString(sunrise, DeviceInfo.is24Hour())
+            : 'Never';
+        this.sunsetText = sunset
+            ? Utils.getTimeString(sunset, DeviceInfo.is24Hour())
+            : 'Never';
 
         this.state = {
             jdate: jdate,
@@ -91,6 +107,9 @@ export default class NewEntry extends React.Component {
             ignoreForFlaggedDates: entry && entry.ignoreForFlaggedDates,
             ignoreForKavuah: entry && entry.ignoreForKavuah,
             comments: (entry && entry.comments) || '',
+            addReminder: !entry,
+            reminderDay: 5,
+            reminderTime: Utils.addMinutes(sunset, -60),
             showAdvancedOptions:
                 entry && (entry.ignoreForFlaggedDates || entry.ignoreForKavuah),
         };
@@ -124,6 +143,20 @@ export default class NewEntry extends React.Component {
                     `The entry for ${entry.toString()} has been successfully added.`,
                     'Add Entry'
                 );
+                if (this.state.addReminder) {
+                    const { jdate, reminderDay, reminderTime } = this.state,
+                        reminderJdate = jdate.addDays(reminderDay),
+                        { sunset } = reminderJdate.getSunriseSunset(
+                            this.location
+                        );
+
+                    addHefsekTaharaAlarm(
+                        reminderJdate,
+                        reminderTime,
+                        sunset,
+                        appData.Settings.discreet
+                    );
+                }
                 this.checkKavuahPatterns(entry);
                 if (this.onUpdate) {
                     this.onUpdate(appData);
@@ -179,6 +212,20 @@ export default class NewEntry extends React.Component {
                     `The entry for ${entry.toString()} has been successfully saved.`,
                     'Change Entry'
                 );
+                if (this.state.addReminder) {
+                    const { jdate, reminderDay, reminderTime } = this.state,
+                        reminderJdate = jdate.addDays(reminderDay),
+                        { sunset } = reminderJdate.getSunriseSunset(
+                            this.location
+                        );
+
+                    addHefsekTaharaAlarm(
+                        reminderJdate,
+                        reminderTime,
+                        sunset,
+                        appData.Settings.discreet
+                    );
+                }
                 this.checkKavuahPatterns(entry);
                 if (appData.Settings.calcKavuahsOnNewEntry) {
                     const possList = Kavuah.getPossibleNewKavuahs(
@@ -421,23 +468,7 @@ export default class NewEntry extends React.Component {
         this.setState({ jdate, showDatePicker: false });
     }
     render() {
-        const sdate = this.state.jdate.getDate(),
-            location = this.appData.Settings.location,
-            suntimes = this.state.jdate.getSunriseSunset(location),
-            sunrise =
-                suntimes && suntimes.sunrise
-                    ? Utils.getTimeString(
-                          suntimes.sunrise,
-                          DeviceInfo.is24Hour()
-                      )
-                    : 'Never',
-            sunset =
-                suntimes && suntimes.sunset
-                    ? Utils.getTimeString(
-                          suntimes.sunset,
-                          DeviceInfo.is24Hour()
-                      )
-                    : 'Never';
+        const sdate = this.state.jdate.getDate();
         return (
             <View style={GeneralStyles.container}>
                 <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -516,7 +547,7 @@ export default class NewEntry extends React.Component {
                             <Text style={{ fontSize: 12 }}>
                                 {`On ${sdate.toLocaleDateString()} in `}
                                 <Text style={{ fontWeight: 'bold' }}>
-                                    {location.Name}
+                                    {this.location.Name}
                                 </Text>
                                 ,{'\nSunrise: '}
                                 <Text
@@ -524,7 +555,7 @@ export default class NewEntry extends React.Component {
                                         fontWeight: 'bold',
                                         color: '#668',
                                     }}>
-                                    {sunrise}
+                                    {this.sunriseText}
                                 </Text>
                                 {'    Sunset: '}
                                 <Text
@@ -532,7 +563,7 @@ export default class NewEntry extends React.Component {
                                         fontWeight: 'bold',
                                         color: '#668',
                                     }}>
-                                    {sunset}
+                                    {this.sunsetText}
                                 </Text>
                                 <Text style={{ fontStyle: 'italic' }}>
                                     {
@@ -614,6 +645,50 @@ export default class NewEntry extends React.Component {
                                 </View>
                             </View>
                         )}
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Add a Hefsek Tahara Reminder
+                            </Text>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    paddingLeft: 15,
+                                }}>
+                                <Switch
+                                    style={GeneralStyles.switch}
+                                    onValueChange={value =>
+                                        this.setState({
+                                            addReminder: value,
+                                        })
+                                    }
+                                    value={this.state.addReminder}
+                                />
+                                <Text> on the </Text>
+                                <Picker
+                                    style={{ margin: 0 }}
+                                    textStyle={{ fontSize: 10 }}
+                                    selectedValue={this.state.reminderDay}
+                                    onValueChange={reminderDay =>
+                                        this.setState({ reminderDay })
+                                    }>
+                                    {range(10).map(d => (
+                                        <Picker.Item
+                                            label={Utils.toSuffixed(d)}
+                                            value={d}
+                                            key={d}
+                                        />
+                                    ))}
+                                </Picker>
+                                <Text> day, at </Text>
+                                <TimeInput
+                                    selectedTime={this.state.reminderTime}
+                                    onConfirm={reminderTime =>
+                                        this.setState({ reminderTime })
+                                    }
+                                />
+                            </View>
+                        </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
                                 Please review chosen Date and Onah
