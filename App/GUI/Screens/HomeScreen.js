@@ -44,7 +44,7 @@ export default class HomeScreen extends React.Component {
 
     constructor(props) {
         super(props);
-
+        
         this.navigator = props.navigation;
 
         this.onLoggedIn = this.onLoggedIn.bind(this);

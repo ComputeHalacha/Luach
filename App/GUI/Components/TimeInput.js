@@ -8,7 +8,7 @@ import { GeneralStyles } from '../styles';
 export default class TimeInput extends React.Component {
     constructor(props) {
         super(props);
-        this.armyTime = DeviceInfo.is24Hour;
+        this.armyTime = DeviceInfo.is24Hour();
 
         this.state = {
             showPicker: false,
