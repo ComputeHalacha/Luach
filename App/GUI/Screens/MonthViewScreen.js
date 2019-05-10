@@ -233,7 +233,7 @@ export default class MonthViewScreen extends React.PureComponent {
                             style={[
                                 styles.singleDayView,
                                 {
-                                    backgroundColor: singleDay.isHefeskDay
+                                    backgroundColor: singleDay.isHefsekDay
                                         ? '#f1fff1'
                                         : holiday || shabbos
                                         ? '#eef'

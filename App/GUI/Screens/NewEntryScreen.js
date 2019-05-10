@@ -145,7 +145,8 @@ export default class NewEntry extends React.Component {
                 );
                 if (this.state.addReminder) {
                     const { jdate, reminderDay, reminderTime } = this.state,
-                        reminderJdate = jdate.addDays(reminderDay),
+                        //Keep in mind that the day of the hefsek and the current day are both included
+                        reminderJdate = jdate.addDays(reminderDay - 1),
                         { sunset } = reminderJdate.getSunriseSunset(
                             this.location
                         );
@@ -609,7 +610,7 @@ export default class NewEntry extends React.Component {
                                             GeneralStyles.label,
                                             { fontSize: 11 },
                                         ]}>
-                                        [Advanced] Not a halachic Veset period.
+                                        [Advanced] Not a halachic Vesset period.
                                         Should not generate Flagged Dates
                                     </Text>
                                     <Switch

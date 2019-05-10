@@ -11,13 +11,14 @@ import { Divider, Icon } from 'react-native-elements';
 import DeviceInfo from 'react-native-device-info';
 import TimeInput from './TimeInput';
 import {
-    addNotification,
-    cancelAllBedikaAndMikvaAlarms,
+    addBedikaAlarms,
+    addMikvaAlarm,
+    cancelAllBedikaAlarms,
+    cancelMikvaAlarm,
 } from '../../Code/Notifications';
-import { GLOBALS, range, popUpMessage } from '../../Code/GeneralUtils';
+import { GLOBALS, popUpMessage } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
-import { TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
 
 const AddButton = props => (
     <TouchableHighlight onPress={() => props.onPress()}>
@@ -71,62 +72,36 @@ export default class HefsekNotificationModal extends React.Component {
         this.onSetMikvah = this.onSetMikvah.bind(this);
     }
     onSetMorning() {
-        const { morningTime } = this.state,
-            bedikaText = this.discreet ? 'B.' : 'Bedikah';
-        for (let i of range(7)) {
-            const dt = this.jdate.addDays(i).getDate();
-            dt.setHours(morningTime.hour);
-            dt.setMinutes(morningTime.minute);
-
-            addNotification(
-                `${TaharaEventType.Hefsek}${this.taharaEventId}${i}`,
-                `Luach - ${bedikaText} Reminder`,
-                `Today is the ${Utils.toSuffixed(i)} day of the ${
-                    this.discreet ? '7' : 'Shiva Neki\'im'
-                }.\nThis is a reminder to do the morning ${bedikaText}`,
-                dt
-            );
-        }
-
+        addBedikaAlarms(
+            this.jdate,
+            'morning',
+            this.taharaEventId,
+            this.state.morningTime,
+            this.discreet
+        );
         popUpMessage(
             'Bedika reminders have been added for each morning of the Shiva Neki\'im'
         );
     }
     onSetAfternoon() {
-        const { afternoonTime } = this.state,
-            bedikaText = this.discreet ? 'B.' : 'Bedikah';
-        for (let i of range(7)) {
-            const dt = this.jdate.addDays(i).getDate();
-            dt.setHours(afternoonTime.hour);
-            dt.setMinutes(afternoonTime.minute);
+        addBedikaAlarms(
+            this.jdate,
+            'afternoon',
+            this.taharaEventId,
+            this.state.afternoonTime,
+            this.discreet
+        );
 
-            addNotification(
-                `${TaharaEventType.Hefsek}${this.taharaEventId}${i}`,
-                `Luach - ${bedikaText} Reminder`,
-                `Today is the ${Utils.toSuffixed(i)} day of the ${
-                    this.discreet ? '7' : 'Shiva Neki\'im'
-                }.\nThis is a reminder to do the afternoon ${bedikaText}`,
-                dt
-            );
-        }
         popUpMessage(
             'Bedika reminders have been added for each afternoon of the Shiva Neki\'im'
         );
     }
     onSetMikvah() {
         const { mikvaReminderTime } = this.state,
-            dt = this.jdate.addDays(7).getDate(),
-            mikvaText = this.discreet ? 'M.' : 'Mikva';
+            reminderJdate = this.jdate.addDays(7),
+            { sunset } = reminderJdate.getSunriseSunset(this.location);
 
-        dt.setHours(mikvaReminderTime.hour);
-        dt.setMinutes(mikvaReminderTime.minute);
-
-        addNotification(
-            `${TaharaEventType.Hefsek}${this.taharaEventId}${20}`,
-            `Luach - ${mikvaText} Reminder`,
-            `This is a reminder to go to the ${mikvaText} tonight`,
-            dt
-        );
+        addMikvaAlarm(reminderJdate, mikvaReminderTime, sunset, this.discreet);
         popUpMessage(
             'A Mikva reminder has been added for the last day of the Shiva Neki\'im'
         );
@@ -222,9 +197,10 @@ export default class HefsekNotificationModal extends React.Component {
                                     }}>
                                     <TouchableOpacity
                                         onPress={() => {
-                                            cancelAllBedikaAndMikvaAlarms(
+                                            cancelAllBedikaAlarms(
                                                 this.taharaEventId
                                             );
+                                            cancelMikvaAlarm();
                                             popUpMessage(
                                                 'All system reminders pertaining to this Hefsek Tahara have been removed'
                                             );
