@@ -5,17 +5,28 @@ import { TaharaEventType } from './Chashavshavon/TaharaEvent';
 import Utils from './JCal/Utils';
 import { log, range } from './GeneralUtils';
 
-export function configureNotifier() {
+export function configureNotifier(onRegister, onNotification) {
     PushNotification.configure({
         // (optional) Called when Token is generated (iOS and Android)
         onRegister: function(token) {
             log('TOKEN:', token);
+            if (onRegister) {
+                onRegister(token);
+            }
         },
 
         // (required) Called when a remote or local notification is opened or received
         onNotification: async function(notification) {
             log('NOTIFICATION:', notification);
+            if (onNotification) {
+                onNotification(notification);
+            }
             notification.finish(PushNotificationIOS.FetchResult.NoData);
+        },
+        permissions: {
+            alert: true,
+            badge: true,
+            sound: true,
         },
         popInitialNotification: true,
         requestPermissions: true,
@@ -37,8 +48,8 @@ export function addNotification(id, title, message, date) {
         userInfo: { id: id.toString() },
         ticker: 'Luach Alarm',
         autoCancel: true,
-        //largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
-        //smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
+        largeIcon: 'ic_launcher', // (optional) default: "ic_launcher"
+        smallIcon: 'ic_notification', // (optional) default: "ic_notification" with fallback for "ic_launcher"
         bigText: message,
         subText: title,
         //color: "red", // (optional) default: system default
@@ -50,12 +61,14 @@ export function addNotification(id, title, message, date) {
         priority: 'high',
         visibility: 'private',
         importance: 'high',
+        alertAction: 'view', // (optional) default: view
+        category: null, // (optional) default: null
         title: title,
         playSound: true,
         soundName: 'default',
         number: '10',
         //repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
-        actions: '["Confirm", "Snooze"]',
+        actions: '[]',
     });
 }
 

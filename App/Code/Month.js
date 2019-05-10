@@ -70,7 +70,7 @@ export default class Month {
         return firstWeek[firstWeek.findIndex(d => d)];
     }
     /**
-     * Gets a 2 dimentional array for all the days in the month grouped by week.
+     * Gets a 2 dimensional array for all the days in the month grouped by week.
      * Format is [weeks][days] where days are each an object:
      * { jdate,
      *  sdate,
