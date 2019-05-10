@@ -17,7 +17,7 @@ import {
     TaharaEventType,
 } from '../../Code/Chashavshavon/TaharaEvent';
 import DataUtils from '../../Code/Data/DataUtils';
-import { cancelAllBedikaAndMikvaAlarms } from '../../Code/Notifications';
+import { cancelAllBedikaAlarms, cancelMikvaAlarm } from '../../Code/Notifications';
 import HefsekNotificationModal from './HefsekNotificationModal';
 
 /**
@@ -32,7 +32,7 @@ import HefsekNotificationModal from './HefsekNotificationModal';
  *   onUpdate
  *   lastEntryDate
  *   dayOfSeven
- *   isHefeskDay - is today the 5th day after the last entry?
+ *   isHefsekDay - is today the 5th day after the last entry?
  */
 export default class SingleDayDisplay extends React.PureComponent {
     constructor(props) {
@@ -46,7 +46,7 @@ export default class SingleDayDisplay extends React.PureComponent {
         this.showProblems = this.showProblems.bind(this);
         this.toggleTaharaEvent = this.toggleTaharaEvent.bind(this);
 
-        this.state = { showHefeskNotificationModal: false };
+        this.state = { showHefsekNotificationModal: false };
     }
     newEntry() {
         this.navigator.navigate('NewEntry', this.props);
@@ -74,7 +74,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                 );
                 switch (taharaEvent.taharaEventType) {
                     case TaharaEventType.Hefsek:
-                        this.setState({ showHefeskNotificationModal: true });
+                        this.setState({ showHefsekNotificationModal: true });
                         break;
                 }
                 this.props.onUpdate(appData);
@@ -86,7 +86,8 @@ export default class SingleDayDisplay extends React.PureComponent {
                 appData.TaharaEvents = taharaEventsList;
                 this.props.onUpdate(appData);
                 if (previousEvent.hasId()) {
-                    cancelAllBedikaAndMikvaAlarms(previousEvent.taharaEventId);
+                    cancelAllBedikaAlarms(previousEvent.taharaEventId);
+                    cancelMikvaAlarm();
                 }
             });
         }
@@ -152,7 +153,7 @@ export default class SingleDayDisplay extends React.PureComponent {
             //We only show the hefsek if there wasn't an actual hefsek on that day
             isPossibleHefsekDay =
                 appData.Settings.showEntryFlagOnHome &&
-                this.props.isHefeskDay &&
+                this.props.isHefsekDay &&
                 !taharaEvents.some(
                     te => te.taharaEventType === TaharaEventType.Hefsek
                 ),
@@ -328,9 +329,9 @@ export default class SingleDayDisplay extends React.PureComponent {
                                         <TaharaEventsComponent
                                             list={taharaEvents}
                                             remove={this.toggleTaharaEvent}
-                                            showHefeskNotificationModal={() =>
+                                            showHefsekNotificationModal={() =>
                                                 this.setState({
-                                                    showHefeskNotificationModal: true,
+                                                    showHefsekNotificationModal: true,
                                                 })
                                             }
                                         />
@@ -436,7 +437,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                         </TouchableWithoutFeedback>
                     )}
                 </View>
-                {this.state.showHefeskNotificationModal && (
+                {this.state.showHefsekNotificationModal && (
                     <HefsekNotificationModal
                         hefsekTaharaEvent={taharaEvents.find(
                             te => te.taharaEventType === TaharaEventType.Hefsek
@@ -445,7 +446,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                         discreet={appData.Settings.discreet}
                         onClose={() =>
                             this.setState({
-                                showHefeskNotificationModal: false,
+                                showHefsekNotificationModal: false,
                             })
                         }
                     />
@@ -633,7 +634,7 @@ function TaharaEventsComponent(props) {
                                     te.taharaEventType ===
                                     TaharaEventType.Hefsek
                                 ) {
-                                    props.showHefeskNotificationModal();
+                                    props.showHefsekNotificationModal();
                                 }
                             }}>
                             <View

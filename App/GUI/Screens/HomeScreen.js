@@ -469,7 +469,7 @@ export default class HomeScreen extends React.Component {
                 lastRegularEntry &&
                 item.Abs > lastRegularEntry.date.Abs &&
                 lastRegularEntry.date,
-            isHefeskDay =
+            isHefsekDay =
                 lastEntry && Utils.isSameJdate(item, lastEntry.hefsekDate);
         return (
             <SingleDayDisplay
@@ -482,7 +482,7 @@ export default class HomeScreen extends React.Component {
                 onUpdate={this.updateAppData}
                 lastEntryDate={lastEntryDate}
                 dayOfSeven={this.getDayOfSeven(item)}
-                isHefeskDay={isHefeskDay}
+                isHefsekDay={isHefsekDay}
             />
         );
     }

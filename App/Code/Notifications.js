@@ -1,8 +1,15 @@
 import PushNotification from 'react-native-push-notification';
 import DeviceInfo from 'react-native-device-info';
-import { TaharaEventType } from './Chashavshavon/TaharaEvent';
 import Utils from './JCal/Utils';
 import { GLOBALS, log, range } from './GeneralUtils';
+
+const NotificationEventType = Object.freeze({
+    Hefsek: 101,
+    MorningBedika: 102,
+    AfternoonBedika: 103,
+    Mikvah: 104,
+    FlaggedOnah: 105,
+});
 
 export function configureNotifier(onRegister, onNotification) {
     log('PushNotification.configure is being called.');
@@ -46,10 +53,10 @@ export function configureNotifier(onRegister, onNotification) {
  * @param {String} message
  * @param {Date} date
  */
-export function addNotification(id, title, message, date) {
+ function addNotification(id, title, message, date) {
     if (date.getTime() < new Date().getTime()) {
         log(
-            'PushNotification.localNotificationSchedule  - notification date is after the curren date. No notificatio will be scheduled.' +
+            'PushNotification.localNotificationSchedule  - notification date is after the current date. No notification will be scheduled.' +
                 JSON.stringify({ id, title, message, date })
         );
     } else {
@@ -103,10 +110,21 @@ export function cancelAlarm(id) {
  *
  * @param {taharaEventId:number} id
  */
-export function cancelAllBedikaAndMikvaAlarms(taharaEventId) {
-    for (let i of range(20)) {
+export function cancelAllBedikaAlarms(taharaEventId) {
+    for (let i of range(7)) {
         try {
-            cancelAlarm(`${TaharaEventType.Hefsek}${taharaEventId}${i}`);
+            cancelAlarm(
+                `${NotificationEventType.MorningBedika}${taharaEventId}${i}`
+            );
+        } catch (e) {
+            /*Nu, nu*/
+        }
+    }
+    for (let i of range(7)) {
+        try {
+            cancelAlarm(
+                `${NotificationEventType.AfternoonBedika}${taharaEventId}${i}`
+            );
         } catch (e) {
             /*Nu, nu*/
         }
@@ -114,11 +132,11 @@ export function cancelAllBedikaAndMikvaAlarms(taharaEventId) {
 }
 
 /**
- * Cancels the "Do a Hefsek" reminder (if available)
+ *
  */
-export function cancelHefsekTaharaAlarm() {
+export function cancelMikvaAlarm() {
     try {
-        cancelAlarm(TaharaEventType.Hefsek);
+        cancelAlarm(NotificationEventType.Mikvah);
     } catch (e) {
         /*Nu, nu*/
     }
@@ -131,19 +149,89 @@ export function cancelHefsekTaharaAlarm() {
  * @param {{hour:Number, minute:Number}} sunset
  * @param  {discreet:Boolean} discreet
  */
+export function addMikvaAlarm(jdate, time, sunset, discreet) {
+    const txt = discreet ? 'M.' : 'Mikvah',
+        sdate = jdate.getDate();
+    sdate.setHours(time.hour, time.minute, 0);
+    addNotification(
+        NotificationEventType.Mikvah,
+        `Luach - ${txt} Reminder`,
+        `This is a reminder about the ${txt} tonight.\nSunset is at ${Utils.getTimeString(
+            sunset,
+            DeviceInfo.is24Hour
+        )}.`,
+        sdate
+    );
+}
+
+/**
+ * Cancels the "Do a Hefsek" reminder (if available)
+ */
+export function cancelHefsekTaharaAlarm() {
+    try {
+        cancelAlarm(NotificationEventType.Hefsek);
+    } catch (e) {
+        /*Nu, nu*/
+    }
+}
+
+/**
+ * Creates a system reminder to do a hefsek tahara on the given date and time.
+ * @param {JDate} jdate
+ * @param {{hour:Number, minute:Number}} time
+ * @param {{hour:Number, minute:Number}} sunset
+ * @param  {discreet:Boolean} discreet
+ */
 export function addHefsekTaharaAlarm(jdate, time, sunset, discreet) {
     const hefsekText = discreet ? 'H.T.' : 'Hefsek Tahara',
         sdate = jdate.getDate();
     sdate.setHours(time.hour, time.minute, 0);
-
-    cancelHefsekTaharaAlarm();
     addNotification(
-        TaharaEventType.Hefsek,
-        `LUach - ${hefsekText} Reminder`,
+        NotificationEventType.Hefsek,
+        `Luach - ${hefsekText} Reminder`,
         `A  ${hefsekText} may be possible today before shkiah.\nSunset today is at ${Utils.getTimeString(
             sunset,
             DeviceInfo.is24Hour
         )}.`,
         sdate
     );
+}
+
+/**
+ *
+ * @param {hefsekJdate} hefsekJdate
+ * @param {Number} dayNumber
+ * @param {string} description
+ * @param {{hour:Number, minute:Number}} time
+ * @param {Number} taharaEventId
+ * @param  {Boolean} discreet
+ */
+export function addBedikaAlarms(
+    hefsekJdate,
+    description,
+    taharaEventId,
+    time,
+    discreet
+) {
+    const bedikaText = discreet ? 'B.' : 'Bedikah',
+    //Secular Date of hefsek
+        sdate = hefsekJdate.getDate();
+        //Set the correct reminder time
+    sdate.setHours(time.hour, time.minute, 0);
+    for (let i of range(7)) {
+        //Next day...        
+        sdate.setDate(sdate.getDate() + 1);
+        addNotification(
+            `${
+                description === 'morning'
+                    ? NotificationEventType.MorningBedika
+                    : NotificationEventType.AfternoonBedika
+            }${taharaEventId}${i}`,
+            `Luach - ${bedikaText} Reminder`,
+            `Today is the ${Utils.toSuffixed(i)} day of the ${
+                this.discreet ? '7' : 'Shiva Neki\'im'
+            }.\nThis is a reminder to do the ${description} ${bedikaText}`,
+            sdate
+        );
+    }
 }

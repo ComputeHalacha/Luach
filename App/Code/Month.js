@@ -78,7 +78,7 @@ export default class Month {
      *  hasEntryDay,
      *  hasProbNight,
      *  hasProbDay,
-     *  isHefeskDay,
+     *  isHefsekDay,
      *  taharaEvents,
      *  hasEvent }
      */
@@ -110,7 +110,7 @@ export default class Month {
                     Utils.isSameJdate(po.jdate, jdate) &&
                     po.nightDay === NightDay.Day
             ),
-            isHefeskDay =
+            isHefsekDay =
                 this.appData.EntryList.list.length > 0 &&
                 Utils.isSameJdate(
                     jdate,
@@ -132,7 +132,7 @@ export default class Month {
             hasEntryDay,
             hasProbNight,
             hasProbDay,
-            isHefeskDay,
+            isHefsekDay,
             taharaEvents,
             event,
         };
