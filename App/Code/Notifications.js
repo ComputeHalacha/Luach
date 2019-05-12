@@ -108,6 +108,13 @@ export function cancelAlarm(id) {
 
 /**
  *
+ */
+export function cancelAllAlarms() {
+    PushNotification.cancelAllLocalNotifications();
+}
+
+/**
+ *
  * @param {taharaEventId:number} id
  */
 export function cancelAllBedikaAlarms(taharaEventId) {

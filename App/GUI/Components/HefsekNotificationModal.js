@@ -4,12 +4,12 @@ import {
     Text,
     View,
     TouchableOpacity,
-    TouchableHighlight,
     Button,
 } from 'react-native';
 import { Divider, Icon } from 'react-native-elements';
 import DeviceInfo from 'react-native-device-info';
 import TimeInput from './TimeInput';
+import AddButton from './AddButton';
 import {
     addBedikaAlarms,
     addMikvaAlarm,
@@ -20,26 +20,7 @@ import { GLOBALS, popUpMessage } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
-const AddButton = props => (
-    <TouchableHighlight onPress={() => props.onPress()}>
-        <View
-            style={{
-                flexDirection: 'row',
-                alignContent: 'center',
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}>
-            <Icon size={9} reverse name="add" color={GLOBALS.BUTTON_COLOR} />
-            <Text
-                style={{
-                    color: GLOBALS.BUTTON_COLOR,
-                    fontSize: 12,
-                }}>
-                Add Reminders
-            </Text>
-        </View>
-    </TouchableHighlight>
-);
+const armyTime = DeviceInfo.is24Hour();
 
 export default class HefsekNotificationModal extends React.Component {
     constructor(props) {
@@ -56,12 +37,9 @@ export default class HefsekNotificationModal extends React.Component {
         this.taharaEventId = taharaEventId;
         this.sunrise = sunrise;
         this.sunset = sunset;
-        this.armyTime = DeviceInfo.is24Hour();
+        
 
         this.state = {
-            showMorningPicker: false,
-            showAfternoonPicker: false,
-            showMikvaPicker: false,
             morningTime: { hour: sunrise.hour + 2, minute: 0 },
             afternoonTime: { hour: sunset.hour - 2, minute: 0 },
             mikvaReminderTime: { hour: sunset.hour + 1, minute: 0 },
@@ -185,10 +163,10 @@ export default class HefsekNotificationModal extends React.Component {
                                 <Text style={{ fontSize: 13 }}>
                                     {`Sunrise: ${Utils.getTimeString(
                                         this.sunrise,
-                                        this.armyTime
+                                        armyTime
                                     )}, Sunset: ${Utils.getTimeString(
                                         this.sunset,
-                                        this.armyTime
+                                        armyTime
                                     )}`}
                                 </Text>
                                 <View
@@ -249,6 +227,7 @@ export default class HefsekNotificationModal extends React.Component {
                                         <Text> each day </Text>
                                         <AddButton
                                             onPress={() => this.onSetMorning()}
+                                            caption='Add Reminders'
                                         />
                                     </View>
                                 </View>
@@ -281,6 +260,7 @@ export default class HefsekNotificationModal extends React.Component {
                                             onPress={() =>
                                                 this.onSetAfternoon()
                                             }
+                                            caption='Add Reminders'
                                         />
                                     </View>
                                 </View>
@@ -312,6 +292,7 @@ export default class HefsekNotificationModal extends React.Component {
                                         />
                                         <AddButton
                                             onPress={() => this.onSetMikvah()}
+                                            caption='Add Reminders'
                                         />
                                     </View>
                                 </View>
