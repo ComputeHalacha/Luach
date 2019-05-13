@@ -17,8 +17,12 @@ import {
     TaharaEventType,
 } from '../../Code/Chashavshavon/TaharaEvent';
 import DataUtils from '../../Code/Data/DataUtils';
-import { cancelAllBedikaAlarms, cancelMikvaAlarm } from '../../Code/Notifications';
+import {
+    cancelAllBedikaAlarms,
+    cancelMikvaAlarm,
+} from '../../Code/Notifications';
 import HefsekNotificationModal from './HefsekNotificationModal';
+import { addBedikaAlarms, addMikvaAlarm } from '../../Code/Notifications';
 
 /**
  * Display a home screen box for a single jewish date.
@@ -45,6 +49,7 @@ export default class SingleDayDisplay extends React.PureComponent {
         this.showDateDetails = this.showDateDetails.bind(this);
         this.showProblems = this.showProblems.bind(this);
         this.toggleTaharaEvent = this.toggleTaharaEvent.bind(this);
+        this.handleReminders = this.handleReminders.bind(this);
 
         this.state = { showHefsekNotificationModal: false };
     }
@@ -74,7 +79,7 @@ export default class SingleDayDisplay extends React.PureComponent {
                 );
                 switch (taharaEvent.taharaEventType) {
                     case TaharaEventType.Hefsek:
-                        this.setState({ showHefsekNotificationModal: true });
+                        this.handleReminders(taharaEvent);
                         break;
                 }
                 this.props.onUpdate(appData);
@@ -89,6 +94,55 @@ export default class SingleDayDisplay extends React.PureComponent {
                     cancelAllBedikaAlarms(previousEvent.taharaEventId);
                     cancelMikvaAlarm();
                 }
+            });
+        }
+    }
+    handleReminders(taharaEvent) {
+        const appData = this.props.appData,
+            settings = appData.Settings,
+            autoReminders =
+                settings.remindBedkMornTime || settings.remindBedkAftrnHour;
+        if (settings.remindMikvahTime) {
+            const jdate = this.props.jdate.addDays(7),
+                { sunset } = jdate.getSunTimes(settings.location);
+            addMikvaAlarm(
+                jdate,
+                settings.remindMikvahTime,
+                sunset,
+                settings.discreet
+            );
+            popUpMessage(
+                'A Mikva reminder has been added for the last day of the Shiva Neki\'im'
+            );
+        }
+        if (autoReminders) {
+            if (settings.remindBedkMornTime) {
+                addBedikaAlarms(
+                    this.props.jdate,
+                    'morning',
+                    taharaEvent.taharaEventId,
+                    settings.remindBedkMornTime,
+                    settings.discreet
+                );
+                popUpMessage(
+                    'Bedika reminders have been added for each morning of the Shiva Neki\'im'
+                );
+            }
+            if (settings.remindBedkAftrnHour) {
+                addBedikaAlarms(
+                    this.props.jdate,
+                    'afternoon',
+                    taharaEvent.taharaEventId,
+                    settings.remindBedkAftrnHour,
+                    settings.discreet
+                );
+                popUpMessage(
+                    'Bedika reminders have been added for each afternoon of the Shiva Neki\'im'
+                );
+            }
+        } else {
+            this.setState({
+                showHefsekNotificationModal: true,
             });
         }
     }
