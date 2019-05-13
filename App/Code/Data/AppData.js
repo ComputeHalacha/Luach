@@ -2,13 +2,20 @@ import DataUtils from './DataUtils';
 import Settings from '../Settings';
 import Entry from '../Chashavshavon/Entry';
 import { Kavuah } from '../Chashavshavon/Kavuah';
+import { NightDay } from '../Chashavshavon/Onah';
 import EntryList from '../Chashavshavon/EntryList';
+import Utils from '../JCal/Utils';
+import {
+    resetDayOnahReminders,
+    resetNightOnahReminders,
+} from '../Notifications';
 import {
     log,
     error,
     warn,
     tryToGuessLocation,
     isFirstTimeRun,
+    isEmpty,
 } from '../GeneralUtils';
 /**
  * List of fields that have been added after the initial app launch.
@@ -93,6 +100,46 @@ const addedFields = [
         allowNull: true,
         defaultValue: '1',
     },
+    //Added 5/13/19
+    {
+        table: 'settings',
+        name: 'remindBedkMornTime',
+        type: 'TIME',
+        allowNull: true,
+        defaultValue: '07:00:00',
+    },
+    //Added 5/13/19
+    {
+        table: 'settings',
+        name: 'remindBedkAftrnHour',
+        type: 'INT',
+        allowNull: true,
+        defaultValue: '-1',
+    },
+    //Added 5/13/19
+    {
+        table: 'settings',
+        name: 'remindMikvahTime',
+        type: 'TIME',
+        allowNull: true,
+        defaultValue: '18:00:00',
+    },
+    //Added 5/13/19
+    {
+        table: 'settings',
+        name: 'remindDayOnahHour',
+        type: 'INT',
+        allowNull: true,
+        defaultValue: '-8',
+    },
+    //Added 5/13/19
+    {
+        table: 'settings',
+        name: 'remindNightOnahHour',
+        type: 'INT',
+        allowNull: true,
+        defaultValue: '-1',
+    },
 ];
 
 /**
@@ -127,7 +174,7 @@ export default class AppData {
      *  Calculates all the Entry Haflagas and Flagged Dates for this appData instance.
      */
     updateProbs() {
-        this.EntryList.calulateHaflagas();
+        this.EntryList.calculateHaflagas();
         let probs = [];
         if (this.EntryList.list.length > 0) {
             probs = this.EntryList.getProblemOnahs(
@@ -216,6 +263,36 @@ export default class AppData {
                 }
             }
             appData.updateProbs(appData);
+            if (
+                !isEmpty(appData.Settings.remindDayOnahHour) ||
+                !isEmpty(appData.Settings.remindNightOnahHour)
+            ) {
+                const now = Utils.nowAtLocation(appData.Settings.location);
+                if (!isEmpty(appData.Settings.remindDayOnahHour)) {
+                    resetDayOnahReminders(
+                        appData.ProblemOnahs.filter(
+                            po =>
+                                po.NightDay === NightDay.Day &&
+                                po.jdate.Abs >= now.Abs
+                        ),
+                        appData.Settings.remindDayOnahHour,
+                        appData.Settings.location,
+                        appData.Settings.discreet
+                    );
+                }
+                if (!isEmpty(appData.Settings.remindNightOnahHour)) {
+                    resetNightOnahReminders(
+                        appData.ProblemOnahs.filter(
+                            po =>
+                                po.NightDay === NightDay.Day &&
+                                po.jdate.Abs >= now.Abs
+                        ),
+                        appData.Settings.remindDayOnahHour,
+                        appData.Settings.location,
+                        appData.Settings.discreet
+                    );
+                }
+            }
         });
     }
     /**

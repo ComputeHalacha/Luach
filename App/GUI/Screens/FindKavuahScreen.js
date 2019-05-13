@@ -298,7 +298,7 @@ export default class FindKavuahScreen extends Component {
                                     <Text>
                                         This option should be chosen if you are
                                         sure that the above suggested Kavuah;
-                                        which was calulated from those Entries
+                                        which was calculated from those Entries
                                         listed above, should not be added. It
                                         will not show up again as a possible
                                         Kavuah when the list of Entries is

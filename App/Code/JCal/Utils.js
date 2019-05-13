@@ -293,6 +293,40 @@ export default class Utils {
             );
         }
     }
+    /**
+     * Returns the given time in a simple formatted string: 17:06:00
+     * @param {{hour:Number, minute:Number}} hm An object in the format {hour : 23, minute :42 }
+     */
+    static getSimpleTimeString(hm) {
+        if (hm && hm.hour >= 0) {
+            return `${hm.hour < 10 ? '0' : ''}${hm.hour}:${
+                hm.minute < 10 ? '0' : ''
+            }${hm.minute}:00`;
+        }
+    }
+    /**
+     * Returns the given time as an object in the format {hour : 17, minute :6 }
+     * @param {string} str A string in the format 17:06:00
+     */
+    static fromSimpleTimeString(str) {
+        if (str) {
+            const parts = str.split(':');
+            if (parts.length > 1) {
+                const hour = parseInt(parts[0]),
+                    minute = parseInt(parts[1]);
+                if (
+                    !isNaN(hour) &&
+                    hour >= 0 &&
+                    hour <= 23 &&
+                    !isNaN(minute) &&
+                    minute >= 0 &&
+                    minute <= 59
+                ) {
+                    return { hour, minute };
+                }
+            }
+        }
+    }
 
     /**
      * Gets the UTC offset in whole hours for the users time zone.
@@ -451,7 +485,7 @@ export default class Utils {
         return jdate1.Month === jdate2.Month && jdate1.Year === jdate2.Year;
     }
     /**
-     * Compares two dates to se if they both refer to the same Secular Month.
+     * Compares two dates to see if they both refer to the same Secular Month.
      * @param {Date} sdate1
      * @param {Date} sdate2
      */
@@ -459,6 +493,19 @@ export default class Utils {
         return (
             sdate1.getMonth() === sdate2.getMonth() &&
             sdate1.getFullYear() === sdate2.getFullYear()
+        );
+    }
+    /**
+     * Compares two time objects.
+     * @param {{hour:Number, minute:Number}} time1
+     * @param {{hour:Number, minute:Number}} time2
+     */
+    static isSameTime(time1, time2) {
+        return (
+            time1 &&
+            time2 &&
+            time1.hour === time2.hour &&
+            time1.minute === time2.minute
         );
     }
     /**

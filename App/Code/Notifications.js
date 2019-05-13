@@ -8,7 +8,8 @@ const NotificationEventType = Object.freeze({
     MorningBedika: 102,
     AfternoonBedika: 103,
     Mikvah: 104,
-    FlaggedOnah: 105,
+    FlaggedDayOnah: 105,
+    FlaggedNightOnah: 106,
 });
 
 export function configureNotifier(onRegister, onNotification) {
@@ -53,7 +54,7 @@ export function configureNotifier(onRegister, onNotification) {
  * @param {String} message
  * @param {Date} date
  */
- function addNotification(id, title, message, date) {
+function addNotification(id, title, message, date) {
     if (date.getTime() < new Date().getTime()) {
         log(
             'PushNotification.localNotificationSchedule  - notification date is after the current date. No notification will be scheduled.' +
@@ -117,7 +118,7 @@ export function cancelAllAlarms() {
  *
  * @param {taharaEventId:number} id
  */
-export function cancelAllBedikaAlarms(taharaEventId) {
+export function cancelAllMorningBedikaAlarms(taharaEventId) {
     for (let i of range(7)) {
         try {
             cancelAlarm(
@@ -127,6 +128,13 @@ export function cancelAllBedikaAlarms(taharaEventId) {
             /*Nu, nu*/
         }
     }
+}
+
+/**
+ *
+ * @param {taharaEventId:number} id
+ */
+export function cancelAllAfternoonBedikaAlarms(taharaEventId) {
     for (let i of range(7)) {
         try {
             cancelAlarm(
@@ -136,6 +144,15 @@ export function cancelAllBedikaAlarms(taharaEventId) {
             /*Nu, nu*/
         }
     }
+}
+
+/**
+ *
+ * @param {taharaEventId:number} id
+ */
+export function cancelAllBedikaAlarms(taharaEventId) {
+    cancelAllMorningBedikaAlarms(taharaEventId);
+    cancelAllAfternoonBedikaAlarms(taharaEventId);
 }
 
 /**
@@ -221,12 +238,12 @@ export function addBedikaAlarms(
     discreet
 ) {
     const bedikaText = discreet ? 'B.' : 'Bedikah',
-    //Secular Date of hefsek
+        //Secular Date of hefsek
         sdate = hefsekJdate.getDate();
-        //Set the correct reminder time
+    //Set the correct reminder time
     sdate.setHours(time.hour, time.minute, 0);
     for (let i of range(7)) {
-        //Next day...        
+        //Next day...
         sdate.setDate(sdate.getDate() + 1);
         addNotification(
             `${
@@ -240,5 +257,93 @@ export function addBedikaAlarms(
             }.\nThis is a reminder to do the ${description} ${bedikaText}`,
             sdate
         );
+    }
+}
+/**
+ *
+ * @param {[ProblemOnah]} problemOnahs
+ * @param {Number} remindDayOnahHour
+ * @param {Location} location
+ * @param {Boolean} discreet
+ */
+export function resetDayOnahReminders(
+    problemOnahs,
+    remindDayOnahHour,
+    location,
+    discreet
+) {
+    removeAllDayOnahReminders();
+    let counter = 1;
+    for (let po of problemOnahs) {
+        if (counter >= 25) {
+            break;
+        }
+        const { jdate } = po,
+            { sunrise } = jdate.getSunriseSunset(location),
+            sdate = jdate.getDate();
+        sdate.setHours(sunrise.hour + remindDayOnahHour, sunrise.minute, 0);
+        addNotification(
+            `${NotificationEventType.FlaggedDayOnah}${counter}`,
+            'Luach - Flagged date reminder',
+            `The daytime of ${jdate.toString()} is a flagged date.\nSunrise is at ${Utils.getTimeString(
+                sunrise,
+                DeviceInfo.is24Hour
+            )}${discreet ? '' : '\n' + po.toString()}`,
+            sdate
+        );
+        counter++;
+    }
+}
+/**
+ *
+ * @param {[ProblemOnah]} problemOnahs
+ * @param {Number} remindNightOnahHour
+ * @param {Location} location
+ * @param {Boolean} discreet
+ */
+export function resetNightOnahReminders(
+    problemOnahs,
+    remindNightOnahHour,
+    location,
+    discreet
+) {
+    removeAllNightOnahReminders();
+    let counter = 1;
+    for (let po of problemOnahs) {
+        if (counter >= 25) {
+            break;
+        }
+        const { jdate } = po,
+            { sunset } = jdate.getSunriseSunset(location),
+            sdate = jdate.getDate();
+        sdate.setHours(sunset.hour + remindNightOnahHour, sunset.minute, 0);
+        addNotification(
+            `${NotificationEventType.FlaggedNightOnah}${counter}`,
+            'Luach - Flagged date reminder',
+            `The nighttime of ${jdate.toString()} is a flagged date.\nSunset is at ${Utils.getTimeString(
+                sunset,
+                DeviceInfo.is24Hour
+            )}${discreet ? '' : '\n' + po.toString()}`,
+            sdate
+        );
+        counter++;
+    }
+}
+export function removeAllDayOnahReminders() {
+    for (let i of range(25)) {
+        try {
+            cancelAlarm(`${NotificationEventType.FlaggedDayOnah}${i}`);
+        } catch (e) {
+            /*Nu, nu*/
+        }
+    }
+}
+export function removeAllNightOnahReminders() {
+    for (let i of range(25)) {
+        try {
+            cancelAlarm(`${NotificationEventType.FlaggedNightOnah}${i}`);
+        } catch (e) {
+            /*Nu, nu*/
+        }
     }
 }

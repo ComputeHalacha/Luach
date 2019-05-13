@@ -85,15 +85,15 @@ export function has(o, ...arr) {
  * the second value if the first is NaN or null, while default params will give give you the NaN or the null.
  */
 export function setDefault(paramValue, defValue) {
-    if (
-        typeof paramValue === 'undefined' ||
-        paramValue === null ||
-        isNaN(paramValue)
-    ) {
-        return defValue;
-    } else {
-        return paramValue;
-    }
+    return isEmpty(paramValue) ? defValue : paramValue;
+}
+/**
+ * Returns true only if the given value is null, undefined or NaN.
+ * None of this falsey stuff here!
+ * @param {*} val
+ */
+export function isEmpty(val) {
+    return typeof val === 'undefined' || val === null || isNaN(val);
 }
 /**
  * Returns an array containing a range of integers.
