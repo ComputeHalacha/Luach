@@ -7,12 +7,14 @@ import {
     TextInput,
     Picker,
     Switch,
+    StyleSheet,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
 import Location from '../../Code/JCal/Location';
 import { setDefault, range, isEmpty } from '../../Code/GeneralUtils';
 import TimeInput from '../Components/TimeInput';
+import CustomPicker from '../Components/CustomPicker';
 import {
     removeAllDayOnahReminders,
     removeAllNightOnahReminders,
@@ -391,30 +393,32 @@ export default class SettingsScreen extends Component {
                                 Remind me about the morning Bedikah during Shiva
                                 Neki'im'?
                             </Text>
-                            <Switch
-                                style={GeneralStyles.switch}
-                                onValueChange={value => {
-                                    this.changeSetting(
-                                        'remindBedkMornTime',
-                                        value ? { hour: 7, minute: 0 } : null
-                                    );
-                                    if (!value) {
-                                        cancelAllMorningBedikaAlarms(
-                                            this.appData.TaharaEvents[
-                                                this.appData.TaharaEvents
-                                                    .length - 1
-                                            ]
+                            <View style={localStyles.switchView}>
+                                <Text>Don't add reminder</Text>
+                                <Switch
+                                    style={GeneralStyles.switch}
+                                    onValueChange={value => {
+                                        this.changeSetting(
+                                            'remindBedkMornTime',
+                                            value
+                                                ? { hour: 7, minute: 0 }
+                                                : null
                                         );
-                                    }
-                                }}
-                                value={!!remindBedkMornTime}
-                            />
+                                        if (!value) {
+                                            cancelAllMorningBedikaAlarms(
+                                                this.appData.TaharaEvents[
+                                                    this.appData.TaharaEvents
+                                                        .length - 1
+                                                ]
+                                            );
+                                        }
+                                    }}
+                                    value={!!remindBedkMornTime}
+                                />
+                                <Text>Add reminder</Text>
+                            </View>
                             {remindBedkMornTime && (
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                    }}>
+                                <View style={localStyles.innerView}>
                                     <Text>Show reminder at </Text>
                                     <TimeInput
                                         selectedTime={remindBedkMornTime}
@@ -434,33 +438,33 @@ export default class SettingsScreen extends Component {
                                 Remind me about the afternoon Bedikah during
                                 Shiva Neki'im'?
                             </Text>
-                            <Switch
-                                style={GeneralStyles.switch}
-                                onValueChange={value => {
-                                    this.changeSetting(
-                                        'remindBedkAftrnHour',
-                                        value ? -1 : null
-                                    );
-                                    if (!value) {
-                                        cancelAllAfternoonBedikaAlarms(
-                                            this.appData.TaharaEvents[
-                                                this.appData.TaharaEvents
-                                                    .length - 1
-                                            ]
+                            <View style={localStyles.switchView}>
+                                <Text>Don't add reminder</Text>
+                                <Switch
+                                    style={GeneralStyles.switch}
+                                    onValueChange={value => {
+                                        this.changeSetting(
+                                            'remindBedkAftrnHour',
+                                            value ? -1 : null
                                         );
-                                    }
-                                }}
-                                value={!isEmpty(remindBedkAftrnHour)}
-                            />
+                                        if (!value) {
+                                            cancelAllAfternoonBedikaAlarms(
+                                                this.appData.TaharaEvents[
+                                                    this.appData.TaharaEvents
+                                                        .length - 1
+                                                ]
+                                            );
+                                        }
+                                    }}
+                                    value={!isEmpty(remindBedkAftrnHour)}
+                                />
+                                <Text>Add reminder</Text>
+                            </View>
                             {!isEmpty(remindBedkAftrnHour) && (
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                    }}>
+                                <View style={localStyles.innerView}>
                                     <Text>Show reminder </Text>
-                                    <Picker
-                                        style={GeneralStyles.picker}
+                                    <CustomPicker
+                                        style={localStyles.numberPicker}
                                         selectedValue={Math.abs(
                                             remindBedkAftrnHour
                                         )}
@@ -479,8 +483,8 @@ export default class SettingsScreen extends Component {
                                                 />
                                             );
                                         })}
-                                    </Picker>
-                                    <Text> hours before sunset</Text>
+                                    </CustomPicker>
+                                    <Text> hours{'\n'}before sunset</Text>
                                 </View>
                             )}
                         </View>
@@ -489,25 +493,27 @@ export default class SettingsScreen extends Component {
                                 Remind me about the Mikvah on the kast day of
                                 Shiva Neki'im'?
                             </Text>
-                            <Switch
-                                style={GeneralStyles.switch}
-                                onValueChange={value => {
-                                    this.changeSetting(
-                                        'remindMikvahTime',
-                                        value ? { hour: 18, minute: 0 } : null
-                                    );
-                                    if (!value) {
-                                        cancelMikvaAlarm();
-                                    }
-                                }}
-                                value={!!remindMikvahTime}
-                            />
+                            <View style={localStyles.switchView}>
+                                <Text>Don't add reminder</Text>
+                                <Switch
+                                    style={GeneralStyles.switch}
+                                    onValueChange={value => {
+                                        this.changeSetting(
+                                            'remindMikvahTime',
+                                            value
+                                                ? { hour: 18, minute: 0 }
+                                                : null
+                                        );
+                                        if (!value) {
+                                            cancelMikvaAlarm();
+                                        }
+                                    }}
+                                    value={!!remindMikvahTime}
+                                />
+                                <Text>Add reminder</Text>
+                            </View>
                             {remindMikvahTime && (
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                    }}>
+                                <View style={localStyles.innerView}>
                                     <Text>Show reminder at </Text>
                                     <TimeInput
                                         selectedTime={remindMikvahTime}
@@ -525,28 +531,28 @@ export default class SettingsScreen extends Component {
                             <Text style={GeneralStyles.label}>
                                 Remind me about Daytime flagged dates?
                             </Text>
-                            <Switch
-                                style={GeneralStyles.switch}
-                                onValueChange={value => {
-                                    this.changeSetting(
-                                        'remindDayOnahHour',
-                                        value ? -8 : null
-                                    );
-                                    if (!value) {
-                                        removeAllDayOnahReminders();
-                                    }
-                                }}
-                                value={!isEmpty(remindDayOnahHour)}
-                            />
+                            <View style={localStyles.switchView}>
+                                <Text>Don't add reminder</Text>
+                                <Switch
+                                    style={GeneralStyles.switch}
+                                    onValueChange={value => {
+                                        this.changeSetting(
+                                            'remindDayOnahHour',
+                                            value ? -8 : null
+                                        );
+                                        if (!value) {
+                                            removeAllDayOnahReminders();
+                                        }
+                                    }}
+                                    value={!isEmpty(remindDayOnahHour)}
+                                />
+                                <Text>Add reminder</Text>
+                            </View>
                             {!isEmpty(remindDayOnahHour) && (
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                    }}>
+                                <View style={localStyles.innerView}>
                                     <Text>Show the reminder </Text>
-                                    <Picker
-                                        style={GeneralStyles.picker}
+                                    <CustomPicker
+                                        style={localStyles.numberPicker}
                                         selectedValue={Math.abs(
                                             remindDayOnahHour
                                         )}
@@ -565,8 +571,8 @@ export default class SettingsScreen extends Component {
                                                 />
                                             );
                                         })}
-                                    </Picker>
-                                    <Text> hours before sunrise</Text>
+                                    </CustomPicker>
+                                    <Text> hours{'\n'}before sunrise</Text>
                                 </View>
                             )}
                         </View>
@@ -574,28 +580,28 @@ export default class SettingsScreen extends Component {
                             <Text style={GeneralStyles.label}>
                                 Remind me about Nighttime flagged dates?
                             </Text>
-                            <Switch
-                                style={GeneralStyles.switch}
-                                onValueChange={value => {
-                                    this.changeSetting(
-                                        'remindNightOnahHour',
-                                        value ? -1 : null
-                                    );
-                                    if (!value) {
-                                        removeAllNightOnahReminders();
-                                    }
-                                }}
-                                value={!isEmpty(remindNightOnahHour)}
-                            />
+                            <View style={localStyles.switchView}>
+                                <Text>Don't add reminder</Text>
+                                <Switch
+                                    style={GeneralStyles.switch}
+                                    onValueChange={value => {
+                                        this.changeSetting(
+                                            'remindNightOnahHour',
+                                            value ? -1 : null
+                                        );
+                                        if (!value) {
+                                            removeAllNightOnahReminders();
+                                        }
+                                    }}
+                                    value={!isEmpty(remindNightOnahHour)}
+                                />
+                                <Text>Add reminder</Text>
+                            </View>
                             {!isEmpty(remindNightOnahHour) && (
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                    }}>
+                                <View style={localStyles.innerView}>
                                     <Text>Show the reminder </Text>
-                                    <Picker
-                                        style={GeneralStyles.picker}
+                                    <CustomPicker
+                                        style={localStyles.numberPicker}
                                         selectedValue={Math.abs(
                                             remindNightOnahHour
                                         )}
@@ -614,8 +620,8 @@ export default class SettingsScreen extends Component {
                                                 />
                                             );
                                         })}
-                                    </Picker>
-                                    <Text> hours before sunset</Text>
+                                    </CustomPicker>
+                                    <Text> hours{'\n'}before sunset</Text>
                                 </View>
                             )}
                         </View>
@@ -749,3 +755,21 @@ export default class SettingsScreen extends Component {
         );
     }
 }
+const localStyles = StyleSheet.create({
+    numberPicker: {
+        width: 85,
+        height: 40,
+    },
+    innerView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 12,
+        backgroundColor: '#eef',
+    },
+    switchView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingLeft: 15,
+    },
+});

@@ -106,7 +106,7 @@ const addedFields = [
         name: 'remindBedkMornTime',
         type: 'TIME',
         allowNull: true,
-        defaultValue: '07:00:00',
+        defaultValue: '\'07:00:00\'',
     },
     //Added 5/13/19
     {
@@ -122,7 +122,7 @@ const addedFields = [
         name: 'remindMikvahTime',
         type: 'TIME',
         allowNull: true,
-        defaultValue: '18:00:00',
+        defaultValue: '\'18:00:00\'',
     },
     //Added 5/13/19
     {

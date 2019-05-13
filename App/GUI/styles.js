@@ -29,6 +29,9 @@ const GeneralStyles = StyleSheet.create({
     formRow: {
         flex: 1,
         flexDirection: 'column',
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: '#99a',
     },
     label: {
         margin: 0,
