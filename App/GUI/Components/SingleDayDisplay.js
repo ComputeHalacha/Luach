@@ -18,11 +18,11 @@ import {
 } from '../../Code/Chashavshavon/TaharaEvent';
 import DataUtils from '../../Code/Data/DataUtils';
 import {
+    addBedikaAlarms, addMikvaAlarm,
     cancelAllBedikaAlarms,
     cancelMikvaAlarm,
 } from '../../Code/Notifications';
 import HefsekNotificationModal from './HefsekNotificationModal';
-import { addBedikaAlarms, addMikvaAlarm } from '../../Code/Notifications';
 
 /**
  * Display a home screen box for a single jewish date.
