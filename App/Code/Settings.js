@@ -1,6 +1,7 @@
 import Location from './JCal/Location';
 import { setDefault } from './GeneralUtils';
 import DataUtils from './Data/DataUtils';
+import Utils from './JCal/Utils';
 
 export default class Settings {
     constructor(args) {
@@ -30,6 +31,16 @@ export default class Settings {
         this.showIgnoredKavuahs = !!args.showIgnoredKavuahs;
         this.noProbsAfterEntry = setDefault(args.noProbsAfterEntry, true);
         this.hideHelp = !!args.hideHelp;
+        //If a reminders field is null, we won't show the reminders
+        this.remindBedkMornTime = Utils.fromSimpleTimeString(
+            args.remindBedkMornTime
+        );
+        this.remindBedkAftrnHour = args.remindBedkAftrnHour;
+        this.remindMikvahTime = Utils.fromSimpleTimeString(
+            args.remindMikvahTime
+        );
+        this.remindDayOnahHour = args.remindDayOnahHour;
+        this.remindNightOnahHour = args.remindNightOnahHour;
         this.discreet = setDefault(args.discreet, true);
         this.requirePIN = !!args.requirePIN;
         this.PIN = setDefault(args.PIN, '1234');
@@ -65,6 +76,17 @@ export default class Settings {
                 this.noProbsAfterEntry === other.noProbsAfterEntry &&
                 this.hideHelp === other.hideHelp &&
                 this.discreet === other.discreet &&
+                Utils.isSameTime(
+                    this.remindBedkMornTime,
+                    other.remindBedkMornTime
+                ) &&
+                this.remindBedkAftrnHour === other.remindBedkAftrnHour &&
+                Utils.isSameTime(
+                    this.remindMikvahTime,
+                    other.remindMikvahTime
+                ) &&
+                this.remindDayOnahHour === other.remindDayOnahHour &&
+                this.remindNightOnahHour === other.remindNightOnahHour &&
                 this.requirePIN === other.requirePIN &&
                 this.PIN === other.PIN)
         );

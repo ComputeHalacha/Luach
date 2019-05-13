@@ -8,7 +8,7 @@ export default class EntryList {
     }
     /**
      * Add an Entry to the list.
-     * In most cases, calulateHaflagas should be called after changing the list.
+     * In most cases, calculateHaflagas should be called after changing the list.
      * @param {Entry} entry
      * @param {Function} [afterwards]
      */
@@ -28,7 +28,7 @@ export default class EntryList {
     }
     /**
      * Remove the given entry from the list
-     * In most cases, calulateHaflagas should be called after changing the list.
+     * In most cases, calculateHaflagas should be called after changing the list.
      * @param {Number|Entry} arg Either the index of the Entry to remove or the actual Entry to remove.
      * Note: The suppled Entry does not have to refer to the same instance as the Entry in the list,
      * an entry where Entry.isSameEntry() returns true is removed.
@@ -103,7 +103,7 @@ export default class EntryList {
     /**
      * Calculates the haflagas for all the entries in the list.
      */
-    calulateHaflagas() {
+    calculateHaflagas() {
         //Get only those entries that can generate flagged dates.
         //Non-real entries do not have a haflaga
         const realEntrysList = this.realEntrysList;

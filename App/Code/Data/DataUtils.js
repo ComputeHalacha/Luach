@@ -47,6 +47,11 @@ export default class DataUtils {
                     noProbsAfterEntry: !!dbSet.noProbsAfterEntry,
                     hideHelp: !!dbSet.hideHelp,
                     discreet: !!dbSet.discreet,
+                    remindBedkMornTime: dbSet.remindBedkMornTime,
+                    remindBedkAftrnHour: dbSet.remindBedkAftrnHour,
+                    remindMikvahTime: dbSet.remindMikvahTime,
+                    remindDayOnahHour: dbSet.remindDayOnahHour,
+                    remindNightOnahHour: dbSet.remindNightOnahHour,
                     requirePIN: !!dbSet.requirePIN,
                     PIN: dbSet.PIN,
                 });
@@ -77,6 +82,11 @@ export default class DataUtils {
             noProbsAfterEntry=?,
             hideHelp=?,
             discreet=?,
+            remindBedkMornTime=?,
+            remindBedkAftrnHour=?,
+            remindMikvahTime=?,
+            remindDayOnahHour=?,
+            remindNightOnahHour=?,
             requirePIN=?,
             PIN=?`,
             [
@@ -98,6 +108,11 @@ export default class DataUtils {
                 settings.noProbsAfterEntry,
                 settings.hideHelp,
                 settings.discreet,
+                Utils.getSimpleTimeString(settings.remindBedkMornTime),
+                settings.remindBedkAftrnHour,
+                Utils.getSimpleTimeString(settings.remindMikvahTime),
+                settings.remindDayOnahHour,
+                settings.remindNightOnahHour,
                 settings.requirePIN,
                 settings.PIN,
             ]
@@ -140,7 +155,7 @@ export default class DataUtils {
                             )
                         );
                     }
-                    entryList.calulateHaflagas();
+                    entryList.calculateHaflagas();
                 }
             })
             .catch(err => {

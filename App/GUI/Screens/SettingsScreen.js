@@ -11,7 +11,15 @@ import {
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
 import Location from '../../Code/JCal/Location';
-import { setDefault, range } from '../../Code/GeneralUtils';
+import { setDefault, range, isEmpty } from '../../Code/GeneralUtils';
+import TimeInput from '../Components/TimeInput';
+import {
+    removeAllDayOnahReminders,
+    removeAllNightOnahReminders,
+    cancelMikvaAlarm,
+    cancelAllAfternoonBedikaAlarms,
+    cancelAllMorningBedikaAlarms,
+} from '../../Code/Notifications';
 import { GeneralStyles } from '../styles';
 
 export default class SettingsScreen extends Component {
@@ -129,6 +137,11 @@ export default class SettingsScreen extends Component {
             noProbsAfterEntry = setDefault(settings.noProbsAfterEntry, true),
             hideHelp = settings.hideHelp,
             discreet = setDefault(settings.discreet, true),
+            remindBedkMornTime = settings.remindBedkMornTime,
+            remindBedkAftrnHour = settings.remindBedkAftrnHour,
+            remindMikvahTime = settings.remindMikvahTime,
+            remindDayOnahHour = settings.remindDayOnahHour,
+            remindNightOnahHour = settings.remindNightOnahHour,
             requirePIN = setDefault(settings.requirePIN, true);
 
         return (
@@ -357,7 +370,7 @@ export default class SettingsScreen extends Component {
                                 }
                                 value={!!discreet}
                             />
-                        </View>                        
+                        </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
                                 Show flags for problem dates on Main Screen?
@@ -372,6 +385,239 @@ export default class SettingsScreen extends Component {
                                 }
                                 value={!!showProbFlagOnHome}
                             />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Remind me about the morning Bedikah during Shiva
+                                Neki'im'?
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value => {
+                                    this.changeSetting(
+                                        'remindBedkMornTime',
+                                        value ? { hour: 7, minute: 0 } : null
+                                    );
+                                    if (!value) {
+                                        cancelAllMorningBedikaAlarms(
+                                            this.appData.TaharaEvents[
+                                                this.appData.TaharaEvents
+                                                    .length - 1
+                                            ]
+                                        );
+                                    }
+                                }}
+                                value={!!remindBedkMornTime}
+                            />
+                            {remindBedkMornTime && (
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}>
+                                    <Text>Show reminder at </Text>
+                                    <TimeInput
+                                        selectedTime={remindBedkMornTime}
+                                        onConfirm={remindBedkMornTime =>
+                                            this.changeSetting(
+                                                'remindBedkMornTime',
+                                                remindBedkMornTime
+                                            )
+                                        }
+                                    />
+                                    <Text> each day</Text>
+                                </View>
+                            )}
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Remind me about the afternoon Bedikah during
+                                Shiva Neki'im'?
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value => {
+                                    this.changeSetting(
+                                        'remindBedkAftrnHour',
+                                        value ? -1 : null
+                                    );
+                                    if (!value) {
+                                        cancelAllAfternoonBedikaAlarms(
+                                            this.appData.TaharaEvents[
+                                                this.appData.TaharaEvents
+                                                    .length - 1
+                                            ]
+                                        );
+                                    }
+                                }}
+                                value={!isEmpty(remindBedkAftrnHour)}
+                            />
+                            {!isEmpty(remindBedkAftrnHour) && (
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}>
+                                    <Text>Show reminder </Text>
+                                    <Picker
+                                        style={GeneralStyles.picker}
+                                        selectedValue={Math.abs(
+                                            remindBedkAftrnHour
+                                        )}
+                                        onValueChange={value =>
+                                            this.changeSetting(
+                                                'remindBedkAftrnHour',
+                                                -value
+                                            )
+                                        }>
+                                        {range(12).map((n, i) => {
+                                            return (
+                                                <Picker.Item
+                                                    label={n.toString()}
+                                                    value={n}
+                                                    key={i}
+                                                />
+                                            );
+                                        })}
+                                    </Picker>
+                                    <Text> hours before sunset</Text>
+                                </View>
+                            )}
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Remind me about the Mikvah on the kast day of
+                                Shiva Neki'im'?
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value => {
+                                    this.changeSetting(
+                                        'remindMikvahTime',
+                                        value ? { hour: 18, minute: 0 } : null
+                                    );
+                                    if (!value) {
+                                        cancelMikvaAlarm();
+                                    }
+                                }}
+                                value={!!remindMikvahTime}
+                            />
+                            {remindMikvahTime && (
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}>
+                                    <Text>Show reminder at </Text>
+                                    <TimeInput
+                                        selectedTime={remindMikvahTime}
+                                        onConfirm={remindMikvahTime =>
+                                            this.changeSetting(
+                                                'remindMikvahTime',
+                                                remindMikvahTime
+                                            )
+                                        }
+                                    />
+                                </View>
+                            )}
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Remind me about Daytime flagged dates?
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value => {
+                                    this.changeSetting(
+                                        'remindDayOnahHour',
+                                        value ? -8 : null
+                                    );
+                                    if (!value) {
+                                        removeAllDayOnahReminders();
+                                    }
+                                }}
+                                value={!isEmpty(remindDayOnahHour)}
+                            />
+                            {!isEmpty(remindDayOnahHour) && (
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}>
+                                    <Text>Show the reminder </Text>
+                                    <Picker
+                                        style={GeneralStyles.picker}
+                                        selectedValue={Math.abs(
+                                            remindDayOnahHour
+                                        )}
+                                        onValueChange={value =>
+                                            this.changeSetting(
+                                                'remindDayOnahHour',
+                                                -value
+                                            )
+                                        }>
+                                        {range(24).map((n, i) => {
+                                            return (
+                                                <Picker.Item
+                                                    label={n.toString()}
+                                                    value={n}
+                                                    key={i}
+                                                />
+                                            );
+                                        })}
+                                    </Picker>
+                                    <Text> hours before sunrise</Text>
+                                </View>
+                            )}
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Remind me about Nighttime flagged dates?
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={value => {
+                                    this.changeSetting(
+                                        'remindNightOnahHour',
+                                        value ? -1 : null
+                                    );
+                                    if (!value) {
+                                        removeAllNightOnahReminders();
+                                    }
+                                }}
+                                value={!isEmpty(remindNightOnahHour)}
+                            />
+                            {!isEmpty(remindNightOnahHour) && (
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}>
+                                    <Text>Show the reminder </Text>
+                                    <Picker
+                                        style={GeneralStyles.picker}
+                                        selectedValue={Math.abs(
+                                            remindNightOnahHour
+                                        )}
+                                        onValueChange={value =>
+                                            this.changeSetting(
+                                                'remindNightOnahHour',
+                                                -value
+                                            )
+                                        }>
+                                        {range(24).map((n, i) => {
+                                            return (
+                                                <Picker.Item
+                                                    label={n.toString()}
+                                                    value={n}
+                                                    key={i}
+                                                />
+                                            );
+                                        })}
+                                    </Picker>
+                                    <Text> hours before sunset</Text>
+                                </View>
+                            )}
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>

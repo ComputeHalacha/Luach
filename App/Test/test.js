@@ -25,7 +25,7 @@ export function testFlaggedDates() {
             new Entry(new Onah(new jDate(5777, 7, 1), NightDay.Day)),
             new Entry(new Onah(new jDate(5777, 8, 1), NightDay.Day)),
         ]);
-    entryList.calulateHaflagas();
+    entryList.calculateHaflagas();
 
     const entries = entryList.realEntrysList,
         kavuahs = [
