@@ -18,7 +18,8 @@ import {
 } from '../../Code/Chashavshavon/TaharaEvent';
 import DataUtils from '../../Code/Data/DataUtils';
 import {
-    addBedikaAlarms, addMikvaAlarm,
+    addBedikaAlarms,
+    addMikvaAlarm,
     cancelAllBedikaAlarms,
     cancelMikvaAlarm,
 } from '../../Code/Notifications';
