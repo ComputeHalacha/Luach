@@ -660,7 +660,10 @@ export default class DataUtils {
                 ${newField.allowNull ? '' : 'NOT '} NULL
                 ${
                     newField.defaultValue
-                        ? 'DEFAULT ' + newField.defaultValue
+                        ? 'DEFAULT ' +
+                          (typeof newField.defaultValue === 'string'
+                              ? '\'' + newField.defaultValue + '\''
+                              : newField.defaultValue.toString())
                         : ''
                 }`
         ).catch(err => {
