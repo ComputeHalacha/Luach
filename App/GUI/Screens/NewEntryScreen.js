@@ -33,6 +33,7 @@ import {
 } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 import { addHefsekTaharaAlarm } from '../../Code/Notifications';
+import BorderedPicker from '../Components/BorderedPicker';
 
 export default class NewEntry extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -676,7 +677,7 @@ export default class NewEntry extends React.Component {
                                         paddingLeft: 15,
                                     }}>
                                     <Text>Remind me on the </Text>
-                                    <Picker
+                                    <BorderedPicker
                                         isVisible={true}
                                         style={{
                                             margin: 0,
@@ -695,7 +696,7 @@ export default class NewEntry extends React.Component {
                                                 key={d}
                                             />
                                         ))}
-                                    </Picker>
+                                    </BorderedPicker>
                                     <Text> day, at </Text>
                                     <TimeInput
                                         selectedTime={this.state.reminderTime}

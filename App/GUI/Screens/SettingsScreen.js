@@ -14,7 +14,7 @@ import SideMenu from '../Components/SideMenu';
 import Location from '../../Code/JCal/Location';
 import { setDefault, range, isEmpty } from '../../Code/GeneralUtils';
 import TimeInput from '../Components/TimeInput';
-import CustomPicker from '../Components/CustomPicker';
+import BorderedPicker from '../Components/BorderedPicker';
 import {
     removeAllDayOnahReminders,
     removeAllNightOnahReminders,
@@ -463,7 +463,7 @@ export default class SettingsScreen extends Component {
                             {!isEmpty(remindBedkAftrnHour) && (
                                 <View style={localStyles.innerView}>
                                     <Text>Show reminder </Text>
-                                    <CustomPicker
+                                    <BorderedPicker
                                         style={localStyles.numberPicker}
                                         selectedValue={Math.abs(
                                             remindBedkAftrnHour
@@ -483,7 +483,7 @@ export default class SettingsScreen extends Component {
                                                 />
                                             );
                                         })}
-                                    </CustomPicker>
+                                    </BorderedPicker>
                                     <Text> hours{'\n'}before sunset</Text>
                                 </View>
                             )}
@@ -551,7 +551,7 @@ export default class SettingsScreen extends Component {
                             {!isEmpty(remindDayOnahHour) && (
                                 <View style={localStyles.innerView}>
                                     <Text>Show the reminder </Text>
-                                    <CustomPicker
+                                    <BorderedPicker
                                         style={localStyles.numberPicker}
                                         selectedValue={Math.abs(
                                             remindDayOnahHour
@@ -571,7 +571,7 @@ export default class SettingsScreen extends Component {
                                                 />
                                             );
                                         })}
-                                    </CustomPicker>
+                                    </BorderedPicker>
                                     <Text> hours{'\n'}before sunrise</Text>
                                 </View>
                             )}
@@ -600,7 +600,7 @@ export default class SettingsScreen extends Component {
                             {!isEmpty(remindNightOnahHour) && (
                                 <View style={localStyles.innerView}>
                                     <Text>Show the reminder </Text>
-                                    <CustomPicker
+                                    <BorderedPicker
                                         style={localStyles.numberPicker}
                                         selectedValue={Math.abs(
                                             remindNightOnahHour
@@ -620,7 +620,7 @@ export default class SettingsScreen extends Component {
                                                 />
                                             );
                                         })}
-                                    </CustomPicker>
+                                    </BorderedPicker>
                                     <Text> hours{'\n'}before sunset</Text>
                                 </View>
                             )}
