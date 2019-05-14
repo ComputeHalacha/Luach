@@ -718,7 +718,6 @@ function TaharaEventsComponent(props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexWrap: 'wrap',
         borderWidth: 1,
         borderColor: '#777',
         borderRadius: 6,
