@@ -106,7 +106,7 @@ const addedFields = [
         name: 'remindBedkMornTime',
         type: 'TIME',
         allowNull: true,
-        defaultValue: '\'07:00:00\'',
+        defaultValue: '07:00:00',
     },
     //Added 5/13/19
     {
@@ -114,7 +114,7 @@ const addedFields = [
         name: 'remindBedkAftrnHour',
         type: 'INT',
         allowNull: true,
-        defaultValue: '-1',
+        defaultValue: -1,
     },
     //Added 5/13/19
     {
@@ -122,7 +122,7 @@ const addedFields = [
         name: 'remindMikvahTime',
         type: 'TIME',
         allowNull: true,
-        defaultValue: '\'18:00:00\'',
+        defaultValue: '18:00:00',
     },
     //Added 5/13/19
     {
@@ -130,7 +130,7 @@ const addedFields = [
         name: 'remindDayOnahHour',
         type: 'INT',
         allowNull: true,
-        defaultValue: '-8',
+        defaultValue: -8,
     },
     //Added 5/13/19
     {
@@ -138,7 +138,7 @@ const addedFields = [
         name: 'remindNightOnahHour',
         type: 'INT',
         allowNull: true,
-        defaultValue: '-1',
+        defaultValue: -1,
     },
 ];
 
@@ -299,7 +299,7 @@ export default class AppData {
      * Update the schema of the local database file.
      * Any new fields that do not yet exist, will be added to the db schema.
      */
-    static upgradeDatabase() {
+    static async upgradeDatabase() {
         //First get a list of tables that may need updating.
         const tablesToChange = [];
         for (let af of addedFields) {
@@ -309,15 +309,15 @@ export default class AppData {
         }
         for (let tbl of tablesToChange) {
             //Get the new fields for this table.
-            const newFields = addedFields.filter(af => af.table === tbl);
-            //Add any new fields that were added after the last update.
-            DataUtils.GetTableFields(tbl).then(fields => {
-                for (let nf of newFields) {
-                    if (!fields.some(f => f.name === nf.name)) {
-                        DataUtils.AddTableField(nf);
-                    }
+            const newFields = addedFields.filter(af => af.table === tbl),
+                fields = await DataUtils.GetTableFields(tbl);
+
+            for (let nf of newFields) {
+                if (!fields.some(f => f.name === nf.name)) {
+                    //Add any new fields that were added after the last update.
+                    await DataUtils.AddTableField(nf);
                 }
-            });
+            }
         }
     }
     /**
@@ -330,6 +330,10 @@ export default class AppData {
             kavuahList,
             problemOnahs,
             taharaEvents;
+
+        //Before getting data from database, make sure that the local database schema is up to date.
+        await AppData.upgradeDatabase();
+
         settings = await DataUtils.SettingsFromDatabase().catch(err => {
             warn('Error running SettingsFromDatabase.');
             error(err);

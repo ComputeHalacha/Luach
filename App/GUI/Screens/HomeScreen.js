@@ -44,7 +44,7 @@ export default class HomeScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        
+
         this.navigator = props.navigation;
 
         this.onLoggedIn = this.onLoggedIn.bind(this);
@@ -246,9 +246,6 @@ export default class HomeScreen extends React.Component {
     async initialShowing() {
         let today = new jDate(),
             daysList = this.getDaysList(today);
-
-        //Make sure that the local database schema is up to date.
-        AppData.upgradeDatabase();
 
         //We start with an empty appData object just to get the render started immediately.
         let appData = new AppData();
