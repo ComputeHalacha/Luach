@@ -29,14 +29,17 @@ const GeneralStyles = StyleSheet.create({
     formRow: {
         flex: 1,
         flexDirection: 'column',
-        borderTopWidth: 1,
-        borderBottomWidth: 1,
+        borderWidth: 1,
         borderColor: '#99a',
+        margin: 2,
+        borderRadius: 2,
     },
     label: {
         margin: 0,
         backgroundColor: '#d5d5e6',
         padding: 10,
+        borderBottomWidth: 1,
+        borderColor: '#99a',
     },
     picker: { margin: 0 },
     select: {

@@ -706,34 +706,39 @@ export default class NewEntry extends React.Component {
                                 </View>
                             )}
                         </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Please review chosen Date and Onah
-                            </Text>
-                            <OnahSynopsis
-                                jdate={this.state.jdate}
-                                nightDay={this.state.nightDay}
+                        <Text
+                            style={{
+                                fontWeight: 'bold',
+                                fontSize:11,
+                                color: '#444',
+                                padding:20,
+                                textAlign:'center'
+                            }}>
+                            Before continuing, please review the Date and Onah....
+                        </Text>
+                        <OnahSynopsis
+                            jdate={this.state.jdate}
+                            nightDay={this.state.nightDay}
+                        />
+                        <View style={GeneralStyles.btnAddNew}>
+                            <Button
+                                title={
+                                    this.entry
+                                        ? 'Save Changes'
+                                        : 'Add This Entry'
+                                }
+                                onPress={
+                                    this.entry
+                                        ? this.updateEntry
+                                        : this.addEntry
+                                }
+                                accessibilityLabel={
+                                    this.entry
+                                        ? 'Save Changes to this Entry'
+                                        : 'Add this new Entry'
+                                }
+                                color={GLOBALS.BUTTON_COLOR}
                             />
-                            <View style={GeneralStyles.btnAddNew}>
-                                <Button
-                                    title={
-                                        this.entry
-                                            ? 'Save Changes'
-                                            : 'Add This Entry'
-                                    }
-                                    onPress={
-                                        this.entry
-                                            ? this.updateEntry
-                                            : this.addEntry
-                                    }
-                                    accessibilityLabel={
-                                        this.entry
-                                            ? 'Save Changes to this Entry'
-                                            : 'Add this new Entry'
-                                    }
-                                    color={GLOBALS.BUTTON_COLOR}
-                                />
-                            </View>
                         </View>
                     </ScrollView>
                 </View>
