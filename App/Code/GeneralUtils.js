@@ -85,15 +85,43 @@ export function has(o, ...arr) {
  * the second value if the first is NaN or null, while default params will give give you the NaN or the null.
  */
 export function setDefault(paramValue, defValue) {
-    return isEmpty(paramValue) ? defValue : paramValue;
+    return isNullish(paramValue) ? defValue : paramValue;
 }
 /**
  * Returns true only if the given value is null, undefined or NaN.
- * None of this falsey stuff here!
  * @param {*} val
  */
-export function isEmpty(val) {
+export function isNullish(val) {
     return typeof val === 'undefined' || val === null || isNaN(val);
+}
+/**
+ * Returns true only if the given value is false, null, undefined or NaN.
+ * @param {*} val
+ */
+export function isNullishOrFalse(val) {
+    return isNullish(val) || val === false;
+}
+/**
+ * Returns true only if the given value is an empty string, null, undefined or NaN.
+ * @param {*} val
+ */
+export function isNullishOrEmpty(val) {
+    return isNullish(val) || val === '';
+}
+/**
+ * Returns true only if the given value is a string with no non-whitespace characters,
+ * null, undefined or NaN.
+ * @param {*} val
+ */
+export function isNullishOrWhitespace(val) {
+    return isNullish(val) || (isString(val) && !val.trim());
+}
+/**
+ * Returns true only if the given value is 0, null, undefined or NaN.
+ * @param {*} val
+ */
+export function isNullishOrZero(val) {
+    return isNullish(val) || val === 0;
 }
 /**
  * Returns an array containing a range of integers.
@@ -104,11 +132,15 @@ export function isEmpty(val) {
  * @returns {[Number]}
  */
 export function range(start, end) {
-    if (arguments.length === 1) {
-        end = start;
-        start = 1;
+    if (!arguments.length) {
+        throw new Error('The "end" value must be supplied');
+    } else {
+        if (arguments.length === 1) {
+            end = start;
+            start = 1;
+        }
+        return Array.from({ length: end - start + 1 }, (v, i) => start + i);
     }
-    return Array.from({ length: end - start + 1 }, (v, i) => start + i);
 }
 /**
  * Log message to console
@@ -209,24 +241,29 @@ export async function isFirstTimeRun() {
  */
 export function getRandomNumber(length, secure) {
     return secure
-        ? new Promise((resolve, reject) =>
-              crypto.randomBytes(
-                  1 + (length <= 3 ? 1 : 3 + (length - 3) / 2),
-                  (err, buf) => {
-                      if (err) {
-                          reject(err);
-                      } else {
-                          resolve(
-                              parseInt(
-                                  parseInt(buf.toString('hex'), 16)
-                                      .toString()
-                                      .slice(-length)
-                              )
-                          );
+        ? new Promise((resolve, reject) => {
+              try {
+                  const crypto = require('crypto');
+                  crypto.randomBytes(
+                      1 + (length <= 3 ? 1 : 3 + (length - 3) / 2),
+                      (err, buf) => {
+                          if (err) {
+                              reject(err);
+                          } else {
+                              resolve(
+                                  parseInt(
+                                      parseInt(buf.toString('hex'), 16)
+                                          .toString()
+                                          .slice(-length)
+                                  )
+                              );
+                          }
                       }
-                  }
-              )
-          )
+                  );
+              } catch (err) {
+                  reject(new Error('crypto support is disabled!'));
+              }
+          })
         : Math.floor(
               10 ** (length - 1) + Math.random() * (9 * 10 ** (length - 1))
           );

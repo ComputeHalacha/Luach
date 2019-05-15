@@ -105,7 +105,7 @@ export class ProblemFlag {
         return new Onah(this.jdate, this.nightDay);
     }
     /**
-     * Tests to see if the given ProblemFlag mathes this one.
+     * Tests to see if the given ProblemFlag matches this one.
      * @param {ProblemFlag} prob
      */
     isSameProb(prob) {

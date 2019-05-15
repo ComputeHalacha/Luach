@@ -15,7 +15,7 @@ import {
     warn,
     tryToGuessLocation,
     isFirstTimeRun,
-    isEmpty,
+    isNullishOrFalse,
 } from '../GeneralUtils';
 /**
  * List of fields that have been added after the initial app launch.
@@ -264,11 +264,11 @@ export default class AppData {
             }
             appData.updateProbs(appData);
             if (
-                !isEmpty(appData.Settings.remindDayOnahHour) ||
-                !isEmpty(appData.Settings.remindNightOnahHour)
+                !isNullishOrFalse(appData.Settings.remindDayOnahHour) ||
+                !isNullishOrFalse(appData.Settings.remindNightOnahHour)
             ) {
                 const now = Utils.nowAtLocation(appData.Settings.location);
-                if (!isEmpty(appData.Settings.remindDayOnahHour)) {
+                if (!isNullishOrFalse(appData.Settings.remindDayOnahHour)) {
                     resetDayOnahReminders(
                         appData.ProblemOnahs.filter(
                             po =>
@@ -280,7 +280,7 @@ export default class AppData {
                         appData.Settings.discreet
                     );
                 }
-                if (!isEmpty(appData.Settings.remindNightOnahHour)) {
+                if (!isNullishOrFalse(appData.Settings.remindNightOnahHour)) {
                     resetNightOnahReminders(
                         appData.ProblemOnahs.filter(
                             po =>

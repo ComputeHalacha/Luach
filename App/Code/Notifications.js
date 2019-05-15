@@ -167,28 +167,6 @@ export function cancelMikvaAlarm() {
 }
 
 /**
- *
- * @param {JDate} jdate
- * @param {{hour:Number, minute:Number}} time
- * @param {{hour:Number, minute:Number}} sunset
- * @param  {discreet:Boolean} discreet
- */
-export function addMikvaAlarm(jdate, time, sunset, discreet) {
-    const txt = discreet ? 'M.' : 'Mikvah',
-        sdate = jdate.getDate();
-    sdate.setHours(time.hour, time.minute, 0);
-    addNotification(
-        NotificationEventType.Mikvah,
-        `Luach - ${txt} Reminder`,
-        `This is a reminder about the ${txt} tonight.\nSunset is at ${Utils.getTimeString(
-            sunset,
-            DeviceInfo.is24Hour
-        )}.`,
-        sdate
-    );
-}
-
-/**
  * Cancels the "Do a Hefsek" reminder (if available)
  */
 export function cancelHefsekTaharaAlarm() {
@@ -230,9 +208,8 @@ export function addHefsekTaharaAlarm(jdate, time, sunset, discreet) {
  * @param {Number} taharaEventId
  * @param  {Boolean} discreet
  */
-export function addBedikaAlarms(
+export function addMorningBedikaAlarms(
     hefsekJdate,
-    description,
     taharaEventId,
     time,
     discreet
@@ -246,18 +223,80 @@ export function addBedikaAlarms(
         //Next day...
         sdate.setDate(sdate.getDate() + 1);
         addNotification(
-            `${
-                description === 'morning'
-                    ? NotificationEventType.MorningBedika
-                    : NotificationEventType.AfternoonBedika
-            }${taharaEventId}${i}`,
+            `${NotificationEventType.MorningBedika}${taharaEventId}${i}`,
             `Luach - ${bedikaText} Reminder`,
             `Today is the ${Utils.toSuffixed(i)} day of the ${
                 this.discreet ? '7' : 'Shiva Neki\'im'
-            }.\nThis is a reminder to do the ${description} ${bedikaText}`,
+            }.\nThis is a reminder to do the morning ${bedikaText}`,
             sdate
         );
     }
+}
+/**
+ *
+ * @param {hefsekJdate} hefsekJdate
+ * @param {Number} dayNumber
+ * @param {string} description
+ * @param {Number} hoursBeforeSunset
+ * @param {Location} location
+ * @param {Number} taharaEventId
+ * @param {Boolean} discreet
+ */
+export function addAfternoonBedikaAlarms(
+    hefsekJdate,
+    taharaEventId,
+    hoursBeforeSunset,
+    location,
+    discreet
+) {
+    const bedikaText = discreet ? 'B.' : 'Bedikah',
+        //Secular Date of hefsek
+        sdate = hefsekJdate.getDate();
+
+    for (let i of range(7)) {
+        const jdate = hefsekJdate.addDays(i),
+            { sunset } = jdate.getSunTimes(location);
+
+        //Next secular day...
+        sdate.setDate(sdate.getDate() + 1);
+        //Set the correct reminder time
+        sdate.setHours(sunset.hour + hoursBeforeSunset, sunset.minute, 0);
+
+        addNotification(
+            `${NotificationEventType.AfternoonBedika}${taharaEventId}${i}`,
+            `Luach - ${bedikaText} Reminder`,
+            `Today is the ${Utils.toSuffixed(i)} day of the ${
+                this.discreet ? '7' : 'Shiva Neki\'im'
+            }.\nThis is a reminder to do the afternoon ${bedikaText}.\nSunset is at ${Utils.getTimeString(
+                sunset,
+                DeviceInfo.is24Hour
+            )}`,
+            sdate
+        );
+    }
+}
+/**
+ *
+ * @param {JDate} jdate
+ * @param {{hour:Number, minute:Number}} time
+ * @param {{hour:Number, minute:Number}} sunset
+ * @param  {discreet:Boolean} discreet
+ */
+export function addMikvaAlarm(jdate, time, sunset, discreet) {
+    const txt = discreet ? 'M.' : 'Mikvah',
+        sdate = jdate.getDate();
+    sdate.setHours(time.hour, time.minute, 0);
+    addNotification(
+        NotificationEventType.Mikvah,
+        `Luach - ${txt} Reminder`,
+        `This is a reminder ${
+            discreet ? 'about' : 'to go to'
+        } the ${txt} tonight.\nSunset is at ${Utils.getTimeString(
+            sunset,
+            DeviceInfo.is24Hour
+        )}.`,
+        sdate
+    );
 }
 /**
  *
@@ -280,15 +319,15 @@ export function resetDayOnahReminders(
         }
         const { jdate } = po,
             { sunrise } = jdate.getSunriseSunset(location),
+            sunriseString = Utils.getTimeString(sunrise, DeviceInfo.is24Hour),
             sdate = jdate.getDate();
         sdate.setHours(sunrise.hour + remindDayOnahHour, sunrise.minute, 0);
         addNotification(
             `${NotificationEventType.FlaggedDayOnah}${counter}`,
-            'Luach - Flagged date reminder',
-            `The daytime of ${jdate.toString()} is a flagged date.\nSunrise is at ${Utils.getTimeString(
-                sunrise,
-                DeviceInfo.is24Hour
-            )}${discreet ? '' : '\n' + po.toString()}`,
+            'Luach - Daytime flagged date notification',
+            (discreet
+                ? `The daytime of ${jdate.toString()} needs to be observed.`
+                : po.toString()) + `\nSunrise is at ${sunriseString}`,
             sdate
         );
         counter++;
@@ -315,15 +354,15 @@ export function resetNightOnahReminders(
         }
         const { jdate } = po,
             { sunset } = jdate.getSunriseSunset(location),
+            sunsetString = Utils.getTimeString(sunset, DeviceInfo.is24Hour),
             sdate = jdate.getDate();
         sdate.setHours(sunset.hour + remindNightOnahHour, sunset.minute, 0);
         addNotification(
             `${NotificationEventType.FlaggedNightOnah}${counter}`,
-            'Luach - Flagged date reminder',
-            `The nighttime of ${jdate.toString()} is a flagged date.\nSunset is at ${Utils.getTimeString(
-                sunset,
-                DeviceInfo.is24Hour
-            )}${discreet ? '' : '\n' + po.toString()}`,
+            'Luach - Nighttime flagged date notification',
+            (discreet
+                ? `The nighttime of ${jdate.toString()} needs to be observed.`
+                : po.toString()) + `\nSunset is at ${sunsetString}`,
             sdate
         );
         counter++;

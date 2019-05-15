@@ -10,7 +10,11 @@ import { Icon } from 'react-native-elements';
 import DeviceInfo from 'react-native-device-info';
 import Utils from '../../Code/JCal/Utils';
 import Zmanim from '../../Code/JCal/Zmanim';
-import { popUpMessage, isLargeScreen } from '../../Code/GeneralUtils';
+import {
+    popUpMessage,
+    isLargeScreen,
+    isNullishOrFalse,
+} from '../../Code/GeneralUtils';
 import { UserOccasion } from '../../Code/JCal/UserOccasion';
 import {
     TaharaEvent,
@@ -18,7 +22,8 @@ import {
 } from '../../Code/Chashavshavon/TaharaEvent';
 import DataUtils from '../../Code/Data/DataUtils';
 import {
-    addBedikaAlarms,
+    addMorningBedikaAlarms,
+    addAfternoonBedikaAlarms,
     addMikvaAlarm,
     cancelAllBedikaAlarms,
     cancelMikvaAlarm,
@@ -60,7 +65,7 @@ export default class SingleDayDisplay extends React.PureComponent {
     newOccasion() {
         this.navigator.navigate('NewOccasion', this.props);
     }
-    toggleTaharaEvent(taharaEventType) {
+    async toggleTaharaEvent(taharaEventType) {
         const appData = this.props.appData,
             taharaEventsList = appData.TaharaEvents,
             previousEvent = taharaEventsList.find(
@@ -73,36 +78,31 @@ export default class SingleDayDisplay extends React.PureComponent {
                 this.props.jdate,
                 taharaEventType
             );
-            DataUtils.TaharaEventToDatabase(taharaEvent).then(() => {
-                taharaEventsList.push(taharaEvent);
-                appData.taharaEventsList = TaharaEvent.sortList(
-                    taharaEventsList
-                );
-                switch (taharaEvent.taharaEventType) {
-                    case TaharaEventType.Hefsek:
-                        this.handleReminders(taharaEvent);
-                        break;
-                }
-                this.props.onUpdate(appData);
-            });
+            await DataUtils.TaharaEventToDatabase(taharaEvent);
+            taharaEventsList.push(taharaEvent);
+            appData.taharaEventsList = TaharaEvent.sortList(taharaEventsList);
+            switch (taharaEvent.taharaEventType) {
+                case TaharaEventType.Hefsek:
+                    this.handleReminders(taharaEvent);
+                    break;
+            }
+            this.props.onUpdate(appData);
         } else {
             const index = taharaEventsList.indexOf(previousEvent);
-            DataUtils.DeleteTaharaEvent(previousEvent).then(() => {
-                taharaEventsList.splice(index, 1);
-                appData.TaharaEvents = taharaEventsList;
-                this.props.onUpdate(appData);
-                if (previousEvent.hasId()) {
-                    cancelAllBedikaAlarms(previousEvent.taharaEventId);
-                    cancelMikvaAlarm();
-                }
-            });
+            await DataUtils.DeleteTaharaEvent(previousEvent);
+            taharaEventsList.splice(index, 1);
+            appData.TaharaEvents = taharaEventsList;
+            this.props.onUpdate(appData);
+            if (previousEvent.hasId()) {
+                cancelAllBedikaAlarms(previousEvent.taharaEventId);
+                cancelMikvaAlarm();
+            }
         }
     }
     handleReminders(taharaEvent) {
         const appData = this.props.appData,
-            settings = appData.Settings,
-            autoReminders =
-                settings.remindBedkMornTime || settings.remindBedkAftrnHour;
+            settings = appData.Settings;
+
         if (settings.remindMikvahTime) {
             const jdate = this.props.jdate.addDays(7),
                 { sunset } = jdate.getSunTimes(settings.location);
@@ -116,32 +116,35 @@ export default class SingleDayDisplay extends React.PureComponent {
                 'A Mikva reminder has been added for the last day of the Shiva Neki\'im'
             );
         }
-        if (autoReminders) {
-            if (settings.remindBedkMornTime) {
-                addBedikaAlarms(
-                    this.props.jdate,
-                    'morning',
-                    taharaEvent.taharaEventId,
-                    settings.remindBedkMornTime,
-                    settings.discreet
-                );
-                popUpMessage(
-                    'Bedika reminders have been added for each morning of the Shiva Neki\'im'
-                );
-            }
-            if (settings.remindBedkAftrnHour) {
-                addBedikaAlarms(
-                    this.props.jdate,
-                    'afternoon',
-                    taharaEvent.taharaEventId,
-                    settings.remindBedkAftrnHour,
-                    settings.discreet
-                );
-                popUpMessage(
-                    'Bedika reminders have been added for each afternoon of the Shiva Neki\'im'
-                );
-            }
-        } else {
+
+        if (settings.remindBedkMornTime) {
+            addMorningBedikaAlarms(
+                this.props.jdate,
+                taharaEvent.taharaEventId,
+                settings.remindBedkMornTime,
+                settings.discreet
+            );
+            popUpMessage(
+                'Bedika reminders have been added for each morning of the Shiva Neki\'im'
+            );
+        }
+        if (settings.remindBedkAftrnHour) {
+            addAfternoonBedikaAlarms(
+                this.props.jdate,
+                taharaEvent.taharaEventId,
+                settings.remindBedkAftrnHour,
+                settings.location,
+                settings.discreet
+            );
+            popUpMessage(
+                'Bedika reminders have been added for each afternoon of the Shiva Neki\'im'
+            );
+        }
+
+        if (
+            isNullishOrFalse(settings.remindBedkMornTime) &&
+            isNullishOrFalse(settings.remindBedkAftrnHour)
+        ) {
             this.setState({
                 showHefsekNotificationModal: true,
             });
