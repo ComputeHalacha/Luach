@@ -93,7 +93,7 @@ export default class SingleDayDisplay extends React.PureComponent {
             taharaEventsList.splice(index, 1);
             appData.TaharaEvents = taharaEventsList;
             this.props.onUpdate(appData);
-            if (previousEvent.hasId()) {
+            if (previousEvent.hasId) {
                 cancelAllBedikaAlarms(previousEvent.taharaEventId);
                 cancelMikvaAlarm();
             }
@@ -105,7 +105,7 @@ export default class SingleDayDisplay extends React.PureComponent {
 
         if (settings.remindMikvahTime) {
             const jdate = this.props.jdate.addDays(7),
-                { sunset } = jdate.getSunTimes(settings.location);
+                { sunset } = jdate.getSunriseSunset(settings.location);
             addMikvaAlarm(
                 jdate,
                 settings.remindMikvahTime,
