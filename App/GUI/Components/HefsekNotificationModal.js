@@ -1,22 +1,18 @@
 import React from 'react';
-import {
-    Modal,
-    Text,
-    View,
-    TouchableOpacity,
-    Button,
-} from 'react-native';
+import { Modal, Text, View, TouchableOpacity, Button, Picker } from 'react-native';
 import { Divider, Icon } from 'react-native-elements';
 import DeviceInfo from 'react-native-device-info';
 import TimeInput from './TimeInput';
 import AddButton from './AddButton';
+import BorderedPicker from './BorderedPicker';
 import {
-    addBedikaAlarms,
+    addMorningBedikaAlarms,
+    addAfternoonBedikaAlarms,
     addMikvaAlarm,
     cancelAllBedikaAlarms,
     cancelMikvaAlarm,
 } from '../../Code/Notifications';
-import { GLOBALS, popUpMessage } from '../../Code/GeneralUtils';
+import { GLOBALS, popUpMessage, range } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
@@ -27,22 +23,18 @@ export default class HefsekNotificationModal extends React.Component {
         super(props);
 
         const location = props.location,
-            { jdate, taharaEventType, taharaEventId } = props.hefsekTaharaEvent,
-            { sunrise, sunset } = jdate.getSunriseSunset(location);
+            { jdate, taharaEventType, taharaEventId } = props.hefsekTaharaEvent;
 
         this.location = location;
         this.discreet = this.props.discreet;
         this.jdate = jdate;
         this.taharaEventType = taharaEventType;
         this.taharaEventId = taharaEventId;
-        this.sunrise = sunrise;
-        this.sunset = sunset;
-        
 
         this.state = {
-            morningTime: { hour: sunrise.hour + 2, minute: 0 },
-            afternoonTime: { hour: sunset.hour - 2, minute: 0 },
-            mikvaReminderTime: { hour: sunset.hour + 1, minute: 0 },
+            morningTime: { hour: 7, minute: 0 },
+            afternoonHour: -1,
+            mikvaReminderTime: { hour: 18, minute: 0 },
         };
 
         this.onSetMorning = this.onSetMorning.bind(this);
@@ -50,9 +42,8 @@ export default class HefsekNotificationModal extends React.Component {
         this.onSetMikvah = this.onSetMikvah.bind(this);
     }
     onSetMorning() {
-        addBedikaAlarms(
+        addMorningBedikaAlarms(
             this.jdate,
-            'morning',
             this.taharaEventId,
             this.state.morningTime,
             this.discreet
@@ -62,11 +53,11 @@ export default class HefsekNotificationModal extends React.Component {
         );
     }
     onSetAfternoon() {
-        addBedikaAlarms(
+        addAfternoonBedikaAlarms(
             this.jdate,
-            'afternoon',
             this.taharaEventId,
-            this.state.afternoonTime,
+            this.state.afternoonHour,
+            this.location,
             this.discreet
         );
 
@@ -227,7 +218,7 @@ export default class HefsekNotificationModal extends React.Component {
                                         <Text> each day </Text>
                                         <AddButton
                                             onPress={() => this.onSetMorning()}
-                                            caption='Add Reminders'
+                                            caption="Add Reminders"
                                         />
                                     </View>
                                 </View>
@@ -246,21 +237,32 @@ export default class HefsekNotificationModal extends React.Component {
                                             flexDirection: 'row',
                                             alignItems: 'center',
                                         }}>
-                                        <Text>at </Text>
-                                        <TimeInput
-                                            selectedTime={
-                                                this.state.afternoonTime
-                                            }
-                                            onConfirm={afternoonTime =>
-                                                this.setState({ afternoonTime })
-                                            }
-                                        />
-                                        <Text> each day </Text>
+                                        <BorderedPicker
+                                            style={{ width: 85, height: 40 }}
+                                            selectedValue={Math.abs(
+                                                this.state.afternoonHour
+                                            )}
+                                            onValueChange={value =>
+                                                this.setState({
+                                                    afternoonHour: -value,
+                                                })
+                                            }>
+                                            {range(12).map((n, i) => {
+                                                return (
+                                                    <Picker.Item
+                                                        label={n.toString()}
+                                                        value={n}
+                                                        key={i}
+                                                    />
+                                                );
+                                            })}
+                                        </BorderedPicker>
+                                        <Text> hours before sunset</Text>                                        
                                         <AddButton
                                             onPress={() =>
                                                 this.onSetAfternoon()
                                             }
-                                            caption='Add Reminders'
+                                            caption="Add Reminders"
                                         />
                                     </View>
                                 </View>
@@ -292,7 +294,7 @@ export default class HefsekNotificationModal extends React.Component {
                                         />
                                         <AddButton
                                             onPress={() => this.onSetMikvah()}
-                                            caption='Add Reminders'
+                                            caption="Add Reminders"
                                         />
                                     </View>
                                 </View>
