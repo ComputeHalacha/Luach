@@ -1,5 +1,12 @@
 import React from 'react';
-import { Modal, Text, View, Image, TouchableOpacity } from 'react-native';
+import {
+    Modal,
+    Text,
+    View,
+    Image,
+    TouchableOpacity,
+    Button,
+} from 'react-native';
 import { GLOBALS } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
@@ -10,7 +17,7 @@ export default class FirstTimeModal extends React.Component {
     render() {
         return (
             <Modal
-                style={{ flex: 1, backgroundColor:'#fff' }}
+                style={{ flex: 1, backgroundColor: '#fff' }}
                 animationType="fade"
                 transparent={true}
                 onRequestClose={() => {
@@ -68,8 +75,6 @@ export default class FirstTimeModal extends React.Component {
                             style={{
                                 backgroundColor: '#d8d5f1',
                                 borderRadius: 10,
-                                paddingTop: 30,
-                                paddingbottom: 30,
                                 justifyContent: 'center',
                                 alignContent: 'center',
                                 alignItems: 'center',
@@ -80,6 +85,7 @@ export default class FirstTimeModal extends React.Component {
                                     color: '#55a',
                                     fontWeight: 'bold',
                                     textAlign: 'center',
+                                    marginTop: 15,
                                 }}>
                                 Welcome to Luach!
                             </Text>
@@ -90,44 +96,64 @@ export default class FirstTimeModal extends React.Component {
                                     width: '90%',
                                     textAlign: 'justify',
                                 }}>
-                                {'\n\n'}
+                                {'\n'}
                                 To customize your Halachic or App settings, open
                                 the Settings screen by pressing the "Settings"
                                 button on the left.
                                 {'\n\n'}
                                 PLEASE NOTE: your initial location has been set
-                                to "{this.props.locationName}".
+                                to "
+                                <Text style={{ fontWeight: 'bold' }}>
+                                    {this.props.locationName}
+                                </Text>
+                                ".
                                 {'\n\n'}
                                 You can change this from the Settings screen as
                                 well.
                                 {'\n\n'}
                                 For a detailed explanation about how to use
                                 Luach, press on the "Help" button on the left.
-                                {'\n\n\n'}
+                                {'\n\n'}
+                            </Text>
+                            <Text
+                                style={{
+                                    color: '#833',
+                                    fontSize: 16,
+                                    fontWeight: 'bold',
+                                    width: '90%',
+                                    textAlign: 'center',
+                                }}>
+                                IMPORTANT NOTE:
                                 <Text
                                     style={{
-                                        color: '#a44',
-                                        fontSize: 16,
-                                        fontWeight: 'bold',
+                                        fontWeight: 'normal',
+                                        fontSize: 13,
                                     }}>
-                                    IMPORTANT NOTE:
-                                    <Text style={{ fontWeight: 'normal' }}>
+                                    {'\n'}PLEASE
+                                    <Text
+                                        style={{
+                                            textDecorationLine: 'underline',
+                                            fontWeight: 'bold',
+                                        }}>
                                         {' '}
-                                        PLEASE{' '}
-                                        <Text
-                                            style={{
-                                                textDecorationLine: 'underline',
-                                                fontWeight: 'bold',
-                                            }}>
-                                            DO NOT
-                                        </Text>{' '}
-                                        rely exclusivley upon this application
-                                        for Halachic matters.
-                                    </Text>
+                                        DO NOT
+                                    </Text>{' '}
+                                    rely exclusivley upon this application for
+                                    Halachic matters.
+                                    {'\n'}
                                 </Text>
-                                {'\n\n\n'}
                             </Text>
                         </View>
+                        <Text
+                            onPress={() => this.props.onClose()}
+                            style={{
+                                color: '#fff',
+                                fontWeight: 'bold',
+                                textAlign: 'center',
+                                paddingTop: 15,
+                            }}>
+                            Continue...
+                        </Text>
                     </View>
                 </TouchableOpacity>
             </Modal>
