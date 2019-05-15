@@ -290,7 +290,7 @@ export default class HomeScreen extends React.Component {
                 appData.Settings.PIN.length === 4,
             lastEntry,
             lastRegularEntry,
-            showFirstTimeModal: global.IsFirstRun,
+            showFirstTimeModal: !global.IsFirstRun,
         });
         log(`From Main: global.IsFirstRun is set to: ${global.IsFirstRun}`);
     }

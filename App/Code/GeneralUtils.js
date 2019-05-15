@@ -235,36 +235,10 @@ export async function isFirstTimeRun() {
 
 /**
  * Get a random number of the specified length.
- * If secure is true, uses crypto and returns a Promise.
  * @param {Number} length
- * @param {Boolean} secure
  */
-export function getRandomNumber(length, secure) {
-    return secure
-        ? new Promise((resolve, reject) => {
-              try {
-                  const crypto = require('crypto');
-                  crypto.randomBytes(
-                      1 + (length <= 3 ? 1 : 3 + (length - 3) / 2),
-                      (err, buf) => {
-                          if (err) {
-                              reject(err);
-                          } else {
-                              resolve(
-                                  parseInt(
-                                      parseInt(buf.toString('hex'), 16)
-                                          .toString()
-                                          .slice(-length)
-                                  )
-                              );
-                          }
-                      }
-                  );
-              } catch (err) {
-                  reject(new Error('crypto support is disabled!'));
-              }
-          })
-        : Math.floor(
-              10 ** (length - 1) + Math.random() * (9 * 10 ** (length - 1))
-          );
+export function getRandomNumber(length) {
+    return Math.floor(
+        10 ** (length - 1) + Math.random() * (9 * 10 ** (length - 1))
+    );
 }

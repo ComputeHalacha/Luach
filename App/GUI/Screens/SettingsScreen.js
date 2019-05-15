@@ -13,7 +13,7 @@ import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
 import Location from '../../Code/JCal/Location';
 import Utils from '../../Code/JCal/Utils';
-import { NightDay } from '../Chashavshavon/Onah';
+import { NightDay } from '../../Code/Chashavshavon/Onah';
 import { setDefault, range, isNullishOrFalse } from '../../Code/GeneralUtils';
 import TimeInput from '../Components/TimeInput';
 import BorderedPicker from '../Components/BorderedPicker';
