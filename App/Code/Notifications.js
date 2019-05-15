@@ -255,7 +255,7 @@ export function addAfternoonBedikaAlarms(
 
     for (let i of range(7)) {
         const jdate = hefsekJdate.addDays(i),
-            { sunset } = jdate.getSunTimes(location);
+            { sunset } = jdate.getSunriseSunset(location);
 
         //Next secular day...
         sdate.setDate(sdate.getDate() + 1);

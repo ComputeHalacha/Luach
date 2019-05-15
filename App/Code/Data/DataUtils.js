@@ -580,39 +580,35 @@ export default class DataUtils {
     }
     static async TaharaEventToDatabase(taharaEvent) {
         if (taharaEvent.hasId) {
-            await DataUtils._executeSql(
-                'UPDATE taharaEvents SET dateAbs=?, taharaEventType=? WHERE taharaEventId=?',
-                [
-                    taharaEvent.jdate.Abs,
-                    taharaEvent.taharaEventType,
-                    taharaEvent.taharaEventId,
-                ]
-            )
-                .then(() => {
-                    log(
-                        `Updated TaharaEvent Id ${taharaEvent.taharaEventId.toString()}`
-                    );
-                })
-                .catch(err => {
-                    warn(
-                        `Error trying to update taharaEvent id ${taharaEvent.taharaEventId.toString()} to the database.`
-                    );
-                    error(err);
-                });
+            try {
+                await DataUtils._executeSql(
+                    'UPDATE taharaEvents SET dateAbs=?, taharaEventType=? WHERE taharaEventId=?',
+                    [
+                        taharaEvent.jdate.Abs,
+                        taharaEvent.taharaEventType,
+                        taharaEvent.taharaEventId,
+                    ]
+                );
+                log(
+                    `Updated TaharaEvent Id ${taharaEvent.taharaEventId.toString()}`
+                );
+            } catch (err) {
+                warn(
+                    `Error trying to update taharaEvent id ${taharaEvent.taharaEventId.toString()} to the database.`
+                );
+                error(err);
+            }
         } else {
-            await DataUtils._executeSql(
-                'INSERT INTO taharaEvents (dateAbs, taharaEventType) VALUES (?, ?)',
-                [taharaEvent.jdate.Abs, taharaEvent.taharaEventType]
-            )
-                .then(results => {
-                    taharaEvent.taharaEventId = results.id;
-                })
-                .catch(err => {
-                    warn(
-                        'Error trying to insert taharaEvent into the database.'
-                    );
-                    error(err);
-                });
+            try {
+                const results = await DataUtils._executeSql(
+                    'INSERT INTO taharaEvents (dateAbs, taharaEventType) VALUES (?, ?)',
+                    [taharaEvent.jdate.Abs, taharaEvent.taharaEventType]
+                );
+                taharaEvent.taharaEventId = results.id;
+            } catch (err) {
+                warn('Error trying to insert taharaEvent into the database.');
+                error(err);
+            }
         }
     }
     static async DeleteTaharaEvent(taharaEvent) {

@@ -56,3 +56,4 @@ buck-out/
 *.jsbundle
 
 \.vs/
+\.vscode/
