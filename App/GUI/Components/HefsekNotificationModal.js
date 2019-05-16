@@ -1,5 +1,12 @@
 import React from 'react';
-import { Modal, Text, View, TouchableOpacity, Button, Picker } from 'react-native';
+import {
+    Modal,
+    Text,
+    View,
+    TouchableOpacity,
+    Button,
+    Picker,
+} from 'react-native';
 import { Divider, Icon } from 'react-native-elements';
 import DeviceInfo from 'react-native-device-info';
 import TimeInput from './TimeInput';
@@ -23,13 +30,16 @@ export default class HefsekNotificationModal extends React.Component {
         super(props);
 
         const location = props.location,
-            { jdate, taharaEventType, taharaEventId } = props.hefsekTaharaEvent;
+            { jdate, taharaEventType, taharaEventId } = props.hefsekTaharaEvent,
+            { sunrise, sunset } = jdate.getSunriseSunset(location);
 
         this.location = location;
         this.discreet = this.props.discreet;
         this.jdate = jdate;
         this.taharaEventType = taharaEventType;
         this.taharaEventId = taharaEventId;
+        this.sunrise = sunrise;
+        this.sunset = sunset;
 
         this.state = {
             morningTime: { hour: 7, minute: 0 },
@@ -84,14 +94,11 @@ export default class HefsekNotificationModal extends React.Component {
                 onRequestClose={() => {
                     this.props.onClose();
                 }}>
-                <TouchableOpacity
+                <View
                     style={{
                         flex: 1,
                         justifyContent: 'center',
                         alignItems: 'center',
-                    }}
-                    onPress={() => {
-                        this.props.onClose();
                     }}>
                     <View
                         style={{
@@ -218,7 +225,7 @@ export default class HefsekNotificationModal extends React.Component {
                                         <Text> each day </Text>
                                         <AddButton
                                             onPress={() => this.onSetMorning()}
-                                            caption="Add Reminders"
+                                            caption="Add"
                                         />
                                     </View>
                                 </View>
@@ -257,12 +264,18 @@ export default class HefsekNotificationModal extends React.Component {
                                                 );
                                             })}
                                         </BorderedPicker>
-                                        <Text> hours before sunset</Text>                                        
+                                        <Text>
+                                            {` hour${
+                                                this.state.afternoonHour !== -1
+                                                    ? 's'
+                                                    : ''
+                                            } before sunset`}
+                                        </Text>
                                         <AddButton
                                             onPress={() =>
                                                 this.onSetAfternoon()
                                             }
-                                            caption="Add Reminders"
+                                            caption="Add"
                                         />
                                     </View>
                                 </View>
@@ -294,7 +307,7 @@ export default class HefsekNotificationModal extends React.Component {
                                         />
                                         <AddButton
                                             onPress={() => this.onSetMikvah()}
-                                            caption="Add Reminders"
+                                            caption="Add"
                                         />
                                     </View>
                                 </View>
@@ -310,7 +323,7 @@ export default class HefsekNotificationModal extends React.Component {
                             </View>
                         </View>
                     </View>
-                </TouchableOpacity>
+                </View>
             </Modal>
         );
     }

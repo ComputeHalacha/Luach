@@ -207,6 +207,10 @@ export default class Utils {
      * @param {{hour:Number, minute:Number}} hm
      */
     static fixHourMinute(hm) {
+        if (!hm)
+            throw new Error(
+                'Utils.fixHourMinute - hm is not an object of type {hour:Number, minute:Number}'
+            );
         //make a copy - javascript sends object parameters by reference
         const result = { hour: hm.hour, minute: hm.minute };
         while (result.minute < 0) {
@@ -234,6 +238,10 @@ export default class Utils {
      * @param {Number} minutes
      */
     static addMinutes(hm, minutes) {
+        if (!hm)
+            throw new Error(
+                'Utils.addMinutes - hm is not an object of type {hour:Number, minute:Number}'
+            );
         return Utils.fixHourMinute({
             hour: hm.hour,
             minute: hm.minute + minutes,
@@ -267,6 +275,10 @@ export default class Utils {
      * @param {Boolean} roundUp If falsey, the numbers will converted to a whole number by rounding down, otherwise, up.
      */
     static getTimeString(hm, army, roundUp) {
+        if (!hm)
+            throw new Error(
+                'Utils.getTimeString - hm is not an object of type {hour:Number, minute:Number}'
+            );
         const round = roundUp ? Math.ceil : Math.floor;
         hm = { hour: round(hm.hour), minute: round(hm.minute) };
         if (army) {
@@ -298,6 +310,10 @@ export default class Utils {
      * @param {{hour:Number, minute:Number}} hm An object in the format {hour : 23, minute :42 }
      */
     static getSimpleTimeString(hm) {
+        if (!hm)
+            throw new Error(
+                'Utils.getSimpleTimeString - hm is not an object of type {hour:Number, minute:Number}'
+            );
         if (hm && hm.hour >= 0) {
             return `${hm.hour < 10 ? '0' : ''}${hm.hour}:${
                 hm.minute < 10 ? '0' : ''
