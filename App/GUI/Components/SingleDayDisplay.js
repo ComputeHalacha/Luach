@@ -112,20 +112,13 @@ export default class SingleDayDisplay extends React.PureComponent {
                 sunset,
                 settings.discreet
             );
-            popUpMessage(
-                'A Mikva reminder has been added for the last day of the Shiva Neki\'im'
-            );
         }
-
         if (settings.remindBedkMornTime) {
             addMorningBedikaAlarms(
                 this.props.jdate,
                 taharaEvent.taharaEventId,
                 settings.remindBedkMornTime,
                 settings.discreet
-            );
-            popUpMessage(
-                'Bedika reminders have been added for each morning of the Shiva Neki\'im'
             );
         }
         if (settings.remindBedkAftrnHour) {
@@ -136,18 +129,16 @@ export default class SingleDayDisplay extends React.PureComponent {
                 settings.location,
                 settings.discreet
             );
-            popUpMessage(
-                'Bedika reminders have been added for each afternoon of the Shiva Neki\'im'
-            );
         }
 
         if (
-            isNullishOrFalse(settings.remindBedkMornTime) &&
-            isNullishOrFalse(settings.remindBedkAftrnHour)
+            !isNullishOrFalse(settings.remindBedkMornTime) ||
+            !isNullishOrFalse(settings.remindBedkAftrnHour) ||
+            !isNullishOrFalse(settings.remindMikvahTime)
         ) {
-            this.setState({
-                showHefsekNotificationModal: true,
-            });
+            popUpMessage(
+                'Notification reminders have been scheduled for this Hefsek Tahara'
+            );
         }
     }
     showDateDetails() {
