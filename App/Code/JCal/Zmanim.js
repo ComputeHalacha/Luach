@@ -30,17 +30,17 @@ export default class Zmanim {
         }
 
         let sunrise, sunset, day = Zmanim.dayOfYear(date),
-            zeninthDeg = 90, zenithMin = 50, lonHour = 0, longitude = 0, latitude = 0,
+            zenithDeg = 90, zenithMin = 50, lonHour = 0, longitude = 0, latitude = 0,
             cosLat = 0, sinLat = 0, cosZen = 0, sinDec = 0, cosDec = 0,
             xmRise = 0, xmSet = 0, xlRise = 0, xlSet = 0, aRise = 0, aSet = 0, ahrRise = 0, ahrSet = 0,
             hRise = 0, hSet = 0, tRise = 0, tSet = 0, utRise = 0, utSet = 0, earthRadius = 6356900,
-            zenithAtElevation = Zmanim.degToDec(zeninthDeg, zenithMin) +
+            zenithAtElevation = Zmanim.degToDec(zenithDeg, zenithMin) +
                 Zmanim.radToDeg(Math.acos(earthRadius / (earthRadius +
                     (considerElevation ? location.Elevation : 0))));
 
-        zeninthDeg = Math.floor(zenithAtElevation);
-        zenithMin = (zenithAtElevation - zeninthDeg) * 60;
-        cosZen = Math.cos(0.01745 * Zmanim.degToDec(zeninthDeg, zenithMin));
+        zenithDeg = Math.floor(zenithAtElevation);
+        zenithMin = (zenithAtElevation - zenithDeg) * 60;
+        cosZen = Math.cos(0.01745 * Zmanim.degToDec(zenithDeg, zenithMin));
         longitude = location.Longitude;
         lonHour = longitude / 15;
         latitude = location.Latitude;
