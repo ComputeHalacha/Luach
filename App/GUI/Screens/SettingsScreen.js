@@ -534,7 +534,9 @@ export default class SettingsScreen extends Component {
                                             );
                                         })}
                                     </BorderedPicker>
-                                    <Text> hours{'\n'}before sunset</Text>
+                                    <Text>{` hour${
+                                        remindBedkAftrnHour !== -1 ? 's' : ''
+                                    }\nbefore sunset`}</Text>
                                 </View>
                             )}
                         </View>
@@ -614,7 +616,9 @@ export default class SettingsScreen extends Component {
                                             );
                                         })}
                                     </BorderedPicker>
-                                    <Text> hours{'\n'}before sunrise</Text>
+                                    <Text>{` hour${
+                                        remindDayOnahHour !== -1 ? 's' : ''
+                                    }\nbefore sunrise`}</Text>
                                 </View>
                             )}
                         </View>
@@ -662,7 +666,9 @@ export default class SettingsScreen extends Component {
                                             );
                                         })}
                                     </BorderedPicker>
-                                    <Text> hours{'\n'}before sunset</Text>
+                                    <Text>{` hour${
+                                        remindNightOnahHour !== -1 ? 's' : ''
+                                    }\nbefore sunset`}</Text>
                                 </View>
                             )}
                         </View>
