@@ -5,7 +5,6 @@ import {
     View,
     Text,
     TextInput,
-    Picker,
     Switch,
     StyleSheet,
 } from 'react-native';
@@ -16,7 +15,7 @@ import Utils from '../../Code/JCal/Utils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
 import { setDefault, range, isNullishOrFalse } from '../../Code/GeneralUtils';
 import TimeInput from '../Components/TimeInput';
-import BorderedPicker from '../Components/BorderedPicker';
+import ModalSelector from 'react-native-modal-selector';
 import {
     removeAllDayOnahReminders,
     removeAllNightOnahReminders,
@@ -98,6 +97,7 @@ export default class SettingsScreen extends Component {
         const settings = this.state.settings;
         settings[name] = value;
         settings.save();
+        this.appData.Settings = settings;
 
         switch (name) {
             case 'remindBedkMornTime':
@@ -161,7 +161,7 @@ export default class SettingsScreen extends Component {
                 break;
         }
 
-        this.update();
+        this.update(this.appData);
     }
     editLocation() {
         this.navigate('NewLocation', {
@@ -176,6 +176,15 @@ export default class SettingsScreen extends Component {
             this.changeSetting('PIN', pin);
         }
         this.setState({ invalidPin: !validPin, enteredPin: pin });
+    }
+    getPickerInit(val, unit) {
+        return Math.abs(val) + ' ' + unit + (Math.abs(val) > 1 ? 's' : '');
+    }
+    getPickerOptions(num, unit) {
+        return range(num).map(n => ({
+            label: n.toString() + ' ' + unit + (n > 1 ? 's' : ''),
+            key: n,
+        }));
     }
     render() {
         const settings = this.state.settings,
@@ -376,25 +385,21 @@ export default class SettingsScreen extends Component {
                             <Text style={GeneralStyles.label}>
                                 Number of Months ahead to warn
                             </Text>
-                            <Picker
-                                style={GeneralStyles.picker}
-                                selectedValue={numberMonthsAheadToWarn}
-                                onValueChange={value =>
-                                    this.changeSetting(
-                                        'numberMonthsAheadToWarn',
-                                        value
-                                    )
-                                }>
-                                {range(24).map((n, i) => {
-                                    return (
-                                        <Picker.Item
-                                            label={n.toString()}
-                                            value={n}
-                                            key={i}
-                                        />
-                                    );
-                                })}
-                            </Picker>
+                            <View>
+                                <ModalSelector
+                                    initValue={this.getPickerInit(
+                                        numberMonthsAheadToWarn,
+                                        'month'
+                                    )}
+                                    onChange={o =>
+                                        this.changeSetting(
+                                            'numberMonthsAheadToWarn',
+                                            o.key
+                                        )
+                                    }
+                                    data={this.getPickerOptions(24, 'month')}
+                                />
+                            </View>
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
@@ -513,30 +518,20 @@ export default class SettingsScreen extends Component {
                             {!isNullishOrFalse(remindBedkAftrnHour) && (
                                 <View style={localStyles.innerView}>
                                     <Text>Show reminder </Text>
-                                    <BorderedPicker
-                                        style={localStyles.numberPicker}
-                                        selectedValue={Math.abs(
-                                            remindBedkAftrnHour
+                                    <ModalSelector
+                                        initValue={this.getPickerInit(
+                                            remindBedkAftrnHour,
+                                            'hour'
                                         )}
-                                        onValueChange={value =>
+                                        onChange={value => {
                                             this.changeSetting(
                                                 'remindBedkAftrnHour',
-                                                -value
-                                            )
-                                        }>
-                                        {range(12).map((n, i) => {
-                                            return (
-                                                <Picker.Item
-                                                    label={n.toString()}
-                                                    value={n}
-                                                    key={i}
-                                                />
+                                                -value.key
                                             );
-                                        })}
-                                    </BorderedPicker>
-                                    <Text>{` hour${
-                                        remindBedkAftrnHour !== -1 ? 's' : ''
-                                    }\nbefore sunset`}</Text>
+                                        }}
+                                        data={this.getPickerOptions(12, 'hour')}
+                                    />
+                                    <Text>{' before sunset'}</Text>
                                 </View>
                             )}
                         </View>
@@ -595,30 +590,20 @@ export default class SettingsScreen extends Component {
                             {!isNullishOrFalse(remindDayOnahHour) && (
                                 <View style={localStyles.innerView}>
                                     <Text>Show the reminder </Text>
-                                    <BorderedPicker
-                                        style={localStyles.numberPicker}
-                                        selectedValue={Math.abs(
-                                            remindDayOnahHour
+                                    <ModalSelector
+                                        initValue={this.getPickerInit(
+                                            remindDayOnahHour,
+                                            'hour'
                                         )}
-                                        onValueChange={value =>
+                                        onChange={value => {
                                             this.changeSetting(
                                                 'remindDayOnahHour',
-                                                -value
-                                            )
-                                        }>
-                                        {range(24).map((n, i) => {
-                                            return (
-                                                <Picker.Item
-                                                    label={n.toString()}
-                                                    value={n}
-                                                    key={i}
-                                                />
+                                                -value.key
                                             );
-                                        })}
-                                    </BorderedPicker>
-                                    <Text>{` hour${
-                                        remindDayOnahHour !== -1 ? 's' : ''
-                                    }\nbefore sunrise`}</Text>
+                                        }}
+                                        data={this.getPickerOptions(24, 'hour')}
+                                    />
+                                    <Text>{' before sunrise'}</Text>
                                 </View>
                             )}
                         </View>
@@ -645,30 +630,20 @@ export default class SettingsScreen extends Component {
                             {!isNullishOrFalse(remindNightOnahHour) && (
                                 <View style={localStyles.innerView}>
                                     <Text>Show the reminder </Text>
-                                    <BorderedPicker
-                                        style={localStyles.numberPicker}
-                                        selectedValue={Math.abs(
-                                            remindNightOnahHour
+                                    <ModalSelector
+                                        initValue={this.getPickerInit(
+                                            remindNightOnahHour,
+                                            'hour'
                                         )}
-                                        onValueChange={value =>
+                                        onChange={value => {
                                             this.changeSetting(
                                                 'remindNightOnahHour',
-                                                -value
-                                            )
-                                        }>
-                                        {range(24).map((n, i) => {
-                                            return (
-                                                <Picker.Item
-                                                    label={n.toString()}
-                                                    value={n}
-                                                    key={i}
-                                                />
+                                                -value.key
                                             );
-                                        })}
-                                    </BorderedPicker>
-                                    <Text>{` hour${
-                                        remindNightOnahHour !== -1 ? 's' : ''
-                                    }\nbefore sunset`}</Text>
+                                        }}
+                                        data={this.getPickerOptions(24, 'hour')}
+                                    />
+                                    <Text>{' before sunset'}</Text>
                                 </View>
                             )}
                         </View>
@@ -803,10 +778,6 @@ export default class SettingsScreen extends Component {
     }
 }
 const localStyles = StyleSheet.create({
-    numberPicker: {
-        width: 85,
-        height: 40,
-    },
     innerView: {
         flexDirection: 'row',
         alignItems: 'center',
