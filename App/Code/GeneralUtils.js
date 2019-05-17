@@ -135,7 +135,7 @@ export function range(start, end) {
     if (!arguments.length) {
         throw new Error('The "end" value must be supplied');
     } else {
-        if (arguments.length === 1) {
+        if (arguments.length < 2 || isNullish(start)) {
             end = start;
             start = 1;
         }

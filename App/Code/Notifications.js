@@ -33,7 +33,7 @@ export function configureNotifier(onRegister, onNotification) {
             if (onNotification) {
                 onNotification(notification);
             }
-            if (GLOBALS.IS_IOS) {
+            if (GLOBALS.IS_IOS && PushNotification.FetchResult && PushNotification.FetchResult) {
                 notification.finish(PushNotification.FetchResult.NoData);
             }
         },
@@ -54,7 +54,7 @@ export function configureNotifier(onRegister, onNotification) {
  * @param {String} message
  * @param {Date} date
  */
-function addNotification(id, title, message, date) {
+export function addNotification(id, title, message, date) {
     if (date.getTime() < new Date().getTime()) {
         log(
             'PushNotification.localNotificationSchedule  - notification date is after the current date. No notification will be scheduled.' +
@@ -79,10 +79,10 @@ function addNotification(id, title, message, date) {
             group: 'Luach Reminders', // (optional) add group to message
             ongoing: false,
             priority: 'high',
-            visibility: 'private',
+            visibility: 'public',
             importance: 'high',
             alertAction: 'view', // (optional) default: view
-            category: null, // (optional) default: null
+            category: 'Luach', // (optional) default: null
             title: title,
             playSound: true,
             soundName: 'default',

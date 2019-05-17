@@ -244,7 +244,7 @@ export default class HomeScreen extends React.Component {
      * This function is called the when the app first initially loads
      */
     async initialShowing() {
-        let today = new jDate(),
+              let today = new jDate(),
             daysList = this.getDaysList(today);
 
         //We start with an empty appData object just to get the render started immediately.

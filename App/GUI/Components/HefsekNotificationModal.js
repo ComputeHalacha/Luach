@@ -1,17 +1,10 @@
 import React from 'react';
-import {
-    Modal,
-    Text,
-    View,
-    TouchableOpacity,
-    Button,
-    Picker,
-} from 'react-native';
+import { Modal, Text, View, TouchableOpacity, Button } from 'react-native';
 import { Divider, Icon } from 'react-native-elements';
 import DeviceInfo from 'react-native-device-info';
 import TimeInput from './TimeInput';
 import AddButton from './AddButton';
-import BorderedPicker from './BorderedPicker';
+import NumberPicker from '../Components/NumberPicker';
 import {
     addMorningBedikaAlarms,
     addAfternoonBedikaAlarms,
@@ -19,7 +12,7 @@ import {
     cancelAllBedikaAlarms,
     cancelMikvaAlarm,
 } from '../../Code/Notifications';
-import { GLOBALS, popUpMessage, range } from '../../Code/GeneralUtils';
+import { GLOBALS, popUpMessage } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
@@ -244,33 +237,20 @@ export default class HefsekNotificationModal extends React.Component {
                                             flexDirection: 'row',
                                             alignItems: 'center',
                                         }}>
-                                        <BorderedPicker
-                                            style={{ width: 85, height: 40 }}
-                                            selectedValue={Math.abs(
+                                        <NumberPicker
+                                            startNumber={0}
+                                            endNumber={12}
+                                            unitName="hour"
+                                            value={Math.abs(
                                                 this.state.afternoonHour
                                             )}
-                                            onValueChange={value =>
+                                            onChange={value =>
                                                 this.setState({
                                                     afternoonHour: -value,
                                                 })
-                                            }>
-                                            {range(12).map((n, i) => {
-                                                return (
-                                                    <Picker.Item
-                                                        label={n.toString()}
-                                                        value={n}
-                                                        key={i}
-                                                    />
-                                                );
-                                            })}
-                                        </BorderedPicker>
-                                        <Text>
-                                            {` hour${
-                                                this.state.afternoonHour !== -1
-                                                    ? 's'
-                                                    : ''
-                                            } before sunset`}
-                                        </Text>
+                                            }
+                                        />
+                                        <Text> before sunset</Text>
                                         <AddButton
                                             onPress={() =>
                                                 this.onSetAfternoon()

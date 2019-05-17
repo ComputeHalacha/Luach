@@ -13,9 +13,9 @@ import SideMenu from '../Components/SideMenu';
 import Location from '../../Code/JCal/Location';
 import Utils from '../../Code/JCal/Utils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
-import { setDefault, range, isNullishOrFalse } from '../../Code/GeneralUtils';
+import { setDefault, isNullishOrFalse } from '../../Code/GeneralUtils';
+import NumberPicker from '../Components/NumberPicker';
 import TimeInput from '../Components/TimeInput';
-import ModalSelector from 'react-native-modal-selector';
 import {
     removeAllDayOnahReminders,
     removeAllNightOnahReminders,
@@ -177,15 +177,6 @@ export default class SettingsScreen extends Component {
         }
         this.setState({ invalidPin: !validPin, enteredPin: pin });
     }
-    getPickerInit(val, unit) {
-        return Math.abs(val) + ' ' + unit + (Math.abs(val) > 1 ? 's' : '');
-    }
-    getPickerOptions(num, unit) {
-        return range(num).map(n => ({
-            label: n.toString() + ' ' + unit + (n > 1 ? 's' : ''),
-            key: n,
-        }));
-    }
     render() {
         const settings = this.state.settings,
             location = settings.location || Location.getLakewood(),
@@ -222,8 +213,8 @@ export default class SettingsScreen extends Component {
             requirePIN = setDefault(settings.requirePIN, true);
 
         return (
-            <View style={GeneralStyles.container}>
-                <View style={{ flexDirection: 'row', flex: 1 }}>
+            <View>
+                <View style={{ flexDirection: 'row' }}>
                     <SideMenu
                         onUpdate={this.update}
                         appData={this.appData}
@@ -232,7 +223,7 @@ export default class SettingsScreen extends Component {
                         helpUrl="Settings.html"
                         helpTitle="Settings"
                     />
-                    <ScrollView style={{ flex: 1 }}>
+                    <ScrollView style={GeneralStyles.container}>
                         <View style={GeneralStyles.headerView}>
                             <Text style={GeneralStyles.headerText}>
                                 Halachic Settings
@@ -281,6 +272,7 @@ export default class SettingsScreen extends Component {
                                 />
                             </View>
                         </View>
+
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
                                 Flag previous onah (The "Ohr Zaruah")
@@ -341,16 +333,20 @@ export default class SettingsScreen extends Component {
                                 Continue incrementing Dilug Yom Hachodesh
                                 Kavuahs into another month
                             </Text>
-                            <Switch
-                                style={GeneralStyles.switch}
-                                onValueChange={value =>
-                                    this.changeSetting(
-                                        'dilugChodeshPastEnds',
-                                        value
-                                    )
-                                }
-                                value={!!dilugChodeshPastEnds}
-                            />
+                            <View style={{ flexDirection: 'row' }}>
+                                {/*Without the folloiwng empty Text, the first NumberPicker below won't close its modal. I have absolutly no idea why.... */}
+                                <Text />
+                                <Switch
+                                    style={GeneralStyles.switch}
+                                    onValueChange={value =>
+                                        this.changeSetting(
+                                            'dilugChodeshPastEnds',
+                                            value
+                                        )
+                                    }
+                                    value={!!dilugChodeshPastEnds}
+                                />
+                            </View>
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
@@ -385,21 +381,18 @@ export default class SettingsScreen extends Component {
                             <Text style={GeneralStyles.label}>
                                 Number of Months ahead to warn
                             </Text>
-                            <View>
-                                <ModalSelector
-                                    initValue={this.getPickerInit(
-                                        numberMonthsAheadToWarn,
-                                        'month'
-                                    )}
-                                    onChange={o =>
-                                        this.changeSetting(
-                                            'numberMonthsAheadToWarn',
-                                            o.key
-                                        )
-                                    }
-                                    data={this.getPickerOptions(24, 'month')}
-                                />
-                            </View>
+                            <NumberPicker
+                                style={{flex:1, height:40, justifyContent:'center', alignItems:'center'}}
+                                endNumber={24}
+                                unitName="month"
+                                value={numberMonthsAheadToWarn}
+                                onChange={value =>
+                                    this.changeSetting(
+                                        'numberMonthsAheadToWarn',
+                                        value
+                                    )
+                                }
+                            />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
@@ -518,18 +511,17 @@ export default class SettingsScreen extends Component {
                             {!isNullishOrFalse(remindBedkAftrnHour) && (
                                 <View style={localStyles.innerView}>
                                     <Text>Show reminder </Text>
-                                    <ModalSelector
-                                        initValue={this.getPickerInit(
-                                            remindBedkAftrnHour,
-                                            'hour'
-                                        )}
-                                        onChange={value => {
+                                    <NumberPicker
+                                        startNumber={0}
+                                        endNumber={12}
+                                        unitName="hour"
+                                        value={Math.abs(remindBedkAftrnHour)}
+                                        onChange={value =>
                                             this.changeSetting(
                                                 'remindBedkAftrnHour',
-                                                -value.key
-                                            );
-                                        }}
-                                        data={this.getPickerOptions(12, 'hour')}
+                                                -value
+                                            )
+                                        }
                                     />
                                     <Text>{' before sunset'}</Text>
                                 </View>
@@ -590,18 +582,17 @@ export default class SettingsScreen extends Component {
                             {!isNullishOrFalse(remindDayOnahHour) && (
                                 <View style={localStyles.innerView}>
                                     <Text>Show the reminder </Text>
-                                    <ModalSelector
-                                        initValue={this.getPickerInit(
-                                            remindDayOnahHour,
-                                            'hour'
-                                        )}
-                                        onChange={value => {
+                                    <NumberPicker
+                                    startNumber={0}
+                                        endNumber={24}
+                                        unitName="hour"
+                                        value={Math.abs(remindDayOnahHour)}
+                                        onChange={value =>
                                             this.changeSetting(
                                                 'remindDayOnahHour',
-                                                -value.key
-                                            );
-                                        }}
-                                        data={this.getPickerOptions(24, 'hour')}
+                                                -value
+                                            )
+                                        }
                                     />
                                     <Text>{' before sunrise'}</Text>
                                 </View>
@@ -630,18 +621,17 @@ export default class SettingsScreen extends Component {
                             {!isNullishOrFalse(remindNightOnahHour) && (
                                 <View style={localStyles.innerView}>
                                     <Text>Show the reminder </Text>
-                                    <ModalSelector
-                                        initValue={this.getPickerInit(
-                                            remindNightOnahHour,
-                                            'hour'
-                                        )}
-                                        onChange={value => {
+                                    <NumberPicker
+                                    startNumber={0}
+                                        endNumber={24}
+                                        unitName="hour"
+                                        value={Math.abs(remindNightOnahHour)}
+                                        onChange={value =>
                                             this.changeSetting(
                                                 'remindNightOnahHour',
-                                                -value.key
-                                            );
-                                        }}
-                                        data={this.getPickerOptions(24, 'hour')}
+                                                -value
+                                            )
+                                        }
                                     />
                                     <Text>{' before sunset'}</Text>
                                 </View>

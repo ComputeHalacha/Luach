@@ -27,7 +27,6 @@ const GeneralStyles = StyleSheet.create({
         fontSize: 14,
     },
     formRow: {
-        flex: 1,
         flexDirection: 'column',
         borderWidth: 1,
         borderColor: '#99a',
