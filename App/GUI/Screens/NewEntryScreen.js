@@ -29,11 +29,10 @@ import {
     error,
     popUpMessage,
     GLOBALS,
-    range,
 } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 import { addHefsekTaharaAlarm } from '../../Code/Notifications';
-import BorderedPicker from '../Components/BorderedPicker';
+import NumberPicker from '../Components/NumberPicker';
 
 export default class NewEntry extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -677,27 +676,16 @@ export default class NewEntry extends React.Component {
                                         paddingLeft: 15,
                                     }}>
                                     <Text>Remind me on the </Text>
-                                    <BorderedPicker
-                                        isVisible={true}
-                                        style={{
-                                            margin: 0,
-                                            width: 90,
-                                            height: 30,
-                                        }}
-                                        textStyle={{ fontSize: 10 }}
-                                        selectedValue={this.state.reminderDay}
-                                        onValueChange={reminderDay =>
+                                    <NumberPicker
+                                        endNumber={15}
+                                        unitName="day"
+                                        suffixed={true}
+                                        value={this.state.reminderDay}
+                                        onChange={reminderDay =>
                                             this.setState({ reminderDay })
-                                        }>
-                                        {range(10).map(d => (
-                                            <Picker.Item
-                                                label={Utils.toSuffixed(d)}
-                                                value={d}
-                                                key={d}
-                                            />
-                                        ))}
-                                    </BorderedPicker>
-                                    <Text> day, at </Text>
+                                        }
+                                    />
+                                    <Text> at </Text>
                                     <TimeInput
                                         selectedTime={this.state.reminderTime}
                                         onConfirm={reminderTime =>
@@ -710,12 +698,13 @@ export default class NewEntry extends React.Component {
                         <Text
                             style={{
                                 fontWeight: 'bold',
-                                fontSize:11,
+                                fontSize: 11,
                                 color: '#444',
-                                padding:20,
-                                textAlign:'center'
+                                padding: 20,
+                                textAlign: 'center',
                             }}>
-                            Before continuing, please review the Date and Onah....
+                            Before continuing, please review the Date and
+                            Onah....
                         </Text>
                         <OnahSynopsis
                             jdate={this.state.jdate}
