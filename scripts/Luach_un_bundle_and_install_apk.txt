@@ -1,0 +1,3 @@
+java -jar "D:/Program Files (x86)/bundletool-all-0.8.0.jar" build-apks --bundle=D:/Repos_git/LuachAndroid/android/app/build/outputs/apk/release/app.aab --output=D:/Repos_git/LuachAndroid/android/app/build/outputs/apk/release/luach-1.62.apks --ks=D:\Repos_git\LuachAndroid\android\app\my-release-key.keystore --ks-pass=pass:613__0FR2 --ks-key-alias=luach_key --key-pass=pass:613__0FR2
+
+java -jar "D:/Program Files (x86)/bundletool-all-0.8.0.jar" install-apks --apks=D:/Repos_git/LuachAndroid/android/app/build/outputs/apk/release/luach-1.62.apks
