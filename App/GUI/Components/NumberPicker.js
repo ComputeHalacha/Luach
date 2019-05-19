@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Text } from 'react-native';
 import ModalSelector from 'react-native-modal-selector';
 import { setDefault, range } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
-export default class NumberPicker extends Component {
+export default class NumberPicker extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
