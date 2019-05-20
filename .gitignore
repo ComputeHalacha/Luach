@@ -57,3 +57,5 @@ buck-out/
 
 \.vs/
 \.vscode/
+
+\app\gradle.properties
