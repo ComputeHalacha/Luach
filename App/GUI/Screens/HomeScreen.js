@@ -394,11 +394,12 @@ export default class HomeScreen extends React.Component {
     }
     getDayOfSeven(jdate) {
         //Due to questions etc. there can be more than one Hefsek.
+        //Due to Yom Kippur and Tisha baav, the hefsek can be 8 days ago
         const lastHefseks = this.state.appData.TaharaEvents.filter(
             te =>
                 te.taharaEventType === TaharaEventType.Hefsek &&
                 te.jdate.Abs < jdate.Abs &&
-                te.jdate.diffDays(jdate) <= 7
+                te.jdate.diffDays(jdate) <= 8
         );
         if (lastHefseks.length > 0) {
             //For the Shiva Neki'im indicator we want only the latest one

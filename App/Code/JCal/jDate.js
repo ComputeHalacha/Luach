@@ -58,11 +58,11 @@ export default class jDate {
                 throw 'jDate constructor: The given Date is not a valid javascript Date';
             }
         } else if (Array.isArray(arg) && arg.length >= 3) {
-            this.Day = arg[0];
-            this.Month = arg[1];
-            this.Year = arg[2];
+            this.Day = arg[ 0 ];
+            this.Month = arg[ 1 ];
+            this.Year = arg[ 2 ];
             this.Abs =
-                (arg.length > 3 && arg[3]) ||
+                (arg.length > 3 && arg[ 3 ]) ||
                 jDate.absJd(this.Year, this.Month, this.Day);
         } else if (isString(arg)) {
             const d = new Date(arg);
@@ -70,8 +70,8 @@ export default class jDate {
                 this.fromAbs(jDate.absSd(d));
             } else {
                 throw 'jDate constructor: The given string "' +
-                    arg +
-                    '" cannot be parsed into a Date';
+                arg +
+                '" cannot be parsed into a Date';
             }
         } else if (isNumber(arg)) {
             //if no other arguments were supplied, we assume that the supplied number is an absolute date
@@ -260,7 +260,7 @@ export default class jDate {
                 ? dontCapitalize
                     ? 't'
                     : 'T'
-                : Utils.dowEng[this.getDayOfWeek()] + ', t') +
+                : Utils.dowEng[ this.getDayOfWeek() ] + ', t') +
             'he ' +
             Utils.toSuffixed(this.Day) +
             ' of ' +
@@ -274,8 +274,8 @@ export default class jDate {
      */
     toShortString(showDow) {
         return (
-            (showDow ? Utils.dowEng[this.getDayOfWeek()] + ' ' : '') +
-            Utils.jMonthsEng[this.Month] +
+            (showDow ? Utils.dowEng[ this.getDayOfWeek() ] + ' ' : '') +
+            Utils.jMonthsEng[ this.Month ] +
             ' ' +
             this.Day.toString() +
             ', ' +
@@ -289,7 +289,7 @@ export default class jDate {
      */
     monthName(showYear = true) {
         return (
-            Utils.jMonthsEng[this.Month] +
+            Utils.jMonthsEng[ this.Month ] +
             (showYear ? ' ' + this.Year.toString() : '')
         );
     }
@@ -297,11 +297,11 @@ export default class jDate {
     /**Returns the current Jewish date in the format: יום חמישי כ"א כסלו תשע"ו.*/
     toStringHeb() {
         return (
-            Utils.dowHeb[this.getDayOfWeek()] +
+            Utils.dowHeb[ this.getDayOfWeek() ] +
             ' ' +
             Utils.toJNum(this.Day) +
             ' ' +
-            Utils.jMonthsHeb[this.Month] +
+            Utils.jMonthsHeb[ this.Month ] +
             ' ' +
             Utils.toJNum(this.Year % 1000)
         );
@@ -340,7 +340,7 @@ export default class jDate {
             (Month === 1 && Day > 14 && Day < (israel ? 22 : 23)) ||
             (Month === 3 && Day === (israel ? 6 : 7)) ||
             (Month === 7 &&
-                ([1, 2, 10, 15, 16, 17, 18, 19, 20, 21, 22].includes(Day) ||
+                ([ 1, 2, 10, 15, 16, 17, 18, 19, 20, 21, 22 ].includes(Day) ||
                     (!israel && Day === 23)))
         );
     }
@@ -981,10 +981,10 @@ export default class jDate {
         }
 
         const months = Utils.toInt(
-                235 * Utils.toInt((year - 1) / 19) + // Leap months this cycle
-                12 * ((year - 1) % 19) + // Regular months in this cycle.
-                    (7 * ((year - 1) % 19) + 1) / 19
-            ), // Months in complete cycles so far.
+            235 * Utils.toInt((year - 1) / 19) + // Leap months this cycle
+            12 * ((year - 1) % 19) + // Regular months in this cycle.
+            (7 * ((year - 1) % 19) + 1) / 19
+        ), // Months in complete cycles so far.
             parts = 204 + 793 * (months % 1080),
             hours =
                 5 +
@@ -1106,11 +1106,11 @@ export default class jDate {
                 list.push(
                     !hebrew
                         ? 'Pirkei Avos - ' +
-                              pa
-                                  .map(s => Utils.toSuffixed(s) + ' Perek')
-                                  .join(' and ')
+                        pa
+                            .map(s => Utils.toSuffixed(s) + ' Perek')
+                            .join(' and ')
                         : 'פרקי אבות - ' +
-                              pa.map(s => Utils.toJNum(s) + ' פרק').join('ו')
+                        pa.map(s => Utils.toJNum(s) + ' פרק').join('ו')
                 );
             }
         }
@@ -1121,14 +1121,14 @@ export default class jDate {
                     : jMonth + 1;
             list.push(
                 !hebrew
-                    ? 'Rosh Chodesh ' + Utils.jMonthsEng[monthIndex]
-                    : 'ראש חודש ' + Utils.jMonthsHeb[monthIndex]
+                    ? 'Rosh Chodesh ' + Utils.jMonthsEng[ monthIndex ]
+                    : 'ראש חודש ' + Utils.jMonthsHeb[ monthIndex ]
             );
         } else if (jDay === 1 && jMonth != 7) {
             list.push(
                 !hebrew
-                    ? 'Rosh Chodesh ' + Utils.jMonthsEng[jMonth]
-                    : 'ראש חודש ' + Utils.jMonthsHeb[jMonth]
+                    ? 'Rosh Chodesh ' + Utils.jMonthsEng[ jMonth ]
+                    : 'ראש חודש ' + Utils.jMonthsHeb[ jMonth ]
             );
         }
         //V'sain Tal U'Matar in Chutz La'aretz is according to the secular date
@@ -1168,8 +1168,8 @@ export default class jDate {
                                 ? 'Pesach - Chol HaMoed'
                                 : 'פסח - חול המועד'
                             : !hebrew
-                            ? 'Pesach - Second Day'
-                            : 'פסח - יום שני'
+                                ? 'Pesach - Second Day'
+                                : 'פסח - יום שני'
                     );
                 else if (has(jDay, 17, 18, 19))
                     list.push(
@@ -1209,8 +1209,8 @@ export default class jDate {
                                 ? 'Shavuos'
                                 : 'חג השבועות'
                             : !hebrew
-                            ? 'Shavuos - First Day'
-                            : 'שבועות - יום ראשון'
+                                ? 'Shavuos - First Day'
+                                : 'שבועות - יום ראשון'
                     );
                 if (jDay === 7 && !israel)
                     list.push(
@@ -1270,8 +1270,8 @@ export default class jDate {
                                 ? 'Sukkos - Chol HaMoed'
                                 : 'סוכות - חול המועד'
                             : !hebrew
-                            ? 'Sukkos - Second Day'
-                            : 'יום שני - חג הסוכות'
+                                ? 'Sukkos - Second Day'
+                                : 'יום שני - חג הסוכות'
                     );
                 else if (has(jDay, 17, 18, 19, 20))
                     list.push(

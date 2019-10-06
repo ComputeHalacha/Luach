@@ -14,6 +14,8 @@ import {
     popUpMessage,
     isLargeScreen,
     isNullishOrFalse,
+    isYomKippurOrTishBav,
+    isErevYomKippurOrTishBav
 } from '../../Code/GeneralUtils';
 import { UserOccasion } from '../../Code/JCal/UserOccasion';
 import {
@@ -104,8 +106,10 @@ export default class SingleDayDisplay extends React.PureComponent {
             settings = appData.Settings;
 
         if (settings.remindMikvahTime) {
-            const jdate = this.props.jdate.addDays(7),
+            const day7 = this.props.jdate.addDays(7),
+                jdate = isErevYomKippurOrTishBav(day7) ? day7.addDays(1) : day7,
                 { sunset } = jdate.getSunriseSunset(settings.location);
+
             addMikvaAlarm(
                 jdate,
                 settings.remindMikvahTime,
@@ -175,19 +179,19 @@ export default class SingleDayDisplay extends React.PureComponent {
             occasions =
                 appData.UserOccasions.length > 0
                     ? UserOccasion.getOccasionsForDate(
-                          jdate,
-                          appData.UserOccasions
-                      )
+                        jdate,
+                        appData.UserOccasions
+                    )
                     : [],
             entries = appData.Settings.showEntryFlagOnHome
                 ? appData.EntryList.list.filter(e =>
-                      Utils.isSameJdate(e.date, jdate)
-                  )
+                    Utils.isSameJdate(e.date, jdate)
+                )
                 : [],
             taharaEvents = appData.Settings.showEntryFlagOnHome
                 ? appData.TaharaEvents.filter(te =>
-                      Utils.isSameJdate(te.jdate, jdate)
-                  )
+                    Utils.isSameJdate(te.jdate, jdate)
+                )
                 : [],
             sdate = jdate.getDate(),
             isDayOff = isToday && nowSdate.getDate() !== sdate.getDate(),
@@ -216,16 +220,16 @@ export default class SingleDayDisplay extends React.PureComponent {
             sunrise =
                 suntimesMishor && suntimesMishor.sunrise
                     ? Utils.getTimeString(
-                          suntimesMishor.sunrise,
-                          DeviceInfo.is24Hour()
-                      )
+                        suntimesMishor.sunrise,
+                        DeviceInfo.is24Hour()
+                    )
                     : 'Sun does not rise',
             sunset =
                 suntimes && suntimes.sunset
                     ? Utils.getTimeString(
-                          suntimes.sunset,
-                          DeviceInfo.is24Hour()
-                      )
+                        suntimes.sunset,
+                        DeviceInfo.is24Hour()
+                    )
                     : 'Sun does not set',
             candleLighting = jdate.hasCandleLighting() && (
                 <Text style={styles.darkText}>
@@ -246,14 +250,14 @@ export default class SingleDayDisplay extends React.PureComponent {
                 entries && entries.length > 0
                     ? '#fee'
                     : flag
-                    ? '#fe9'
-                    : isPossibleHefsekDay
-                    ? '#f1fff1'
-                    : isToday
-                    ? '#e2e2f0'
-                    : isSpecialDay
-                    ? '#eef'
-                    : '#fff',
+                        ? '#fe9'
+                        : isPossibleHefsekDay
+                            ? '#f1fff1'
+                            : isToday
+                                ? '#e2e2f0'
+                                : isSpecialDay
+                                    ? '#eef'
+                                    : '#fff',
             menuIconSize = isLargeScreen() ? 20 : 15,
             hasHefsek = taharaEvents.some(
                 te => te.taharaEventType === TaharaEventType.Hefsek
@@ -263,7 +267,9 @@ export default class SingleDayDisplay extends React.PureComponent {
             ),
             hasMikvah = taharaEvents.some(
                 te => te.taharaEventType === TaharaEventType.Mikvah
-            );
+            ),
+            isYomKippurOrTBA = isYomKippurOrTishBav(jdate),
+            isErevYomKippurOrTBA = isErevYomKippurOrTishBav(jdate);
         return (
             <View
                 style={[
@@ -298,9 +304,9 @@ export default class SingleDayDisplay extends React.PureComponent {
                                 style={
                                     styles.darkText
                                 }>{`Sedra of the week: ${jdate
-                                .getSedra(location.Israel)
-                                .map(s => s.eng)
-                                .join(' - ')}`}</Text>
+                                    .getSedra(location.Israel)
+                                    .map(s => s.eng)
+                                    .join(' - ')}`}</Text>
                         )}
                         <View style={styles.bottomSection}>
                             <View style={{ flex: 0 }}>
@@ -363,6 +369,8 @@ export default class SingleDayDisplay extends React.PureComponent {
                                             />
                                         )}
                                         <DayOfSevenComponent
+                                            isYomKippurOrTBA={isYomKippurOrTBA}
+                                            isErevYomKippurOrTBA={isErevYomKippurOrTBA}
                                             dayOfSeven={this.props.dayOfSeven}
                                             hasMikvah={taharaEvents.some(
                                                 te =>
@@ -581,7 +589,7 @@ function DayOffComponent(props) {
             <Text style={styles.dayOffMessage}>
                 {'* NOTE: As it is currently after Sunset,\n' +
                     `  the correct Jewish Day is ${
-                        Utils.dowEng[props.dayOfWeek]
+                    Utils.dowEng[ props.dayOfWeek ]
                     }.`}
             </Text>
         </View>
@@ -617,7 +625,9 @@ function DaysLastEntryComponent(props) {
 }
 
 function DayOfSevenComponent(props) {
-    if (props.dayOfSeven && props.dayOfSeven > 0) {
+    const { dayOfSeven, hasMikvah, isYomKippurOrTBA, isErevYomKippurOrTBA, onPress } = props;
+    //If today is Yom Kippur and it is the 8th day from the hefsek, the mikvah is pushed off until Motzai fast.
+    if (dayOfSeven && dayOfSeven > 0 && (dayOfSeven < 8 || isYomKippurOrTBA)) {
         return (
             <View style={styles.additionsViews}>
                 <Text
@@ -626,23 +636,37 @@ function DayOfSevenComponent(props) {
                         color: '#99b',
                         textAlign: 'center',
                     }}>
-                    {Utils.toSuffixed(props.dayOfSeven) +
+                    {Utils.toSuffixed(dayOfSeven) +
                         ' day of 7\nfrom Hefsek Tahara'}
                 </Text>
-                {props.dayOfSeven === 7 && !props.hasMikvah && (
-                    <TouchableOpacity onPress={props.onPress}>
-                        <Text
-                            style={{
-                                fontSize: 10,
-                                color: '#55e',
-                                fontWeight: 'bold',
-                                textAlign: 'center',
-                                paddingTop: 4,
-                            }}>
-                            Mikvah possible after nightfall
+                {dayOfSeven === 7 && isErevYomKippurOrTBA && (
+                    <Text
+                        style={{
+                            fontSize: 9,
+                            color: '#944',
+                            fontWeight: 'normal',
+                            textAlign: 'center',
+                            paddingTop: 4,
+                        }}>
+                        Note: Mikvah pushed off due to fast
                         </Text>
-                    </TouchableOpacity>
-                )}
+                )
+                }
+                {!hasMikvah && ((dayOfSeven === 7 && !isErevYomKippurOrTBA) ||
+                    (isYomKippurOrTBA && dayOfSeven === 8)) && (
+                        <TouchableOpacity onPress={onPress}>
+                            <Text
+                                style={{
+                                    fontSize: 10,
+                                    color: '#55e',
+                                    fontWeight: 'bold',
+                                    textAlign: 'center',
+                                    paddingTop: 4,
+                                }}>
+                                Mikvah possible after nightfall
+                        </Text>
+                        </TouchableOpacity>
+                    )}
             </View>
         );
     }

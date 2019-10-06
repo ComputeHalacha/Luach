@@ -203,6 +203,36 @@ export function getTodayJdate(appData) {
         return new jDate();
     }
 }
+/**
+ * Return true if given date is either Yom Kippur or Tish'a Be'av
+ * @param {Jdate} jdate
+ */
+export function isYomKippurOrTishBav(jdate) {
+    if (jdate.Month === 7 && jdate.Day === 10) {
+        return true;
+    }
+    if (jdate.Month === 5 &&
+        (jdate.Day === 9 && jdate.DayOfWeek !== 6) ||
+        (jdate.Day === 10 && jdate.DayOfWeek === 0)) {
+        return true;
+    }
+    return false;
+}
+/**
+ * Return true if given date is either Erev Yom Kippur or Erev Tish'a Be'av
+ * @param {Jdate} jdate
+ */
+export function isErevYomKippurOrTishBav(jdate) {
+    if (jdate.Month === 7 && jdate.Day === 9) {
+        return true;
+    }
+    if (jdate.Month === 5 &&
+        (jdate.Day === 8 && jdate.DayOfWeek !== 5) ||
+        (jdate.Day === 9 && jdate.DayOfWeek === 6)) {
+        return true;
+    }
+    return false;
+}
 
 /**
  * Tries to guess the users location from the set time zone name and current utcoffset.
