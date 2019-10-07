@@ -3,7 +3,8 @@
     "version": "0.0.1",
     "private": true,
     "scripts": {
-        "start": "node node_modules/react-native/local-cli/cli.js start"
+        "start": "node node_modules/react-native/local-cli/cli.js start",
+        "postinstall" : "npx jetify"
     },
     "dependencies": {
         "prop-types": "^15.7.2",
@@ -31,6 +32,7 @@
         "eslint-plugin-react": "^6.10.3",
         "eslint-plugin-react-native": "^2.3.1",
         "eslint-plugin-react-perf": "^2.0.9",
+        "jetifier": "^1.6.4",
         "metro-react-native-babel-preset": "^0.53.0"
     }
 }
