@@ -20,14 +20,16 @@ export default class NewKavuah extends React.Component {
         this.dispatch = navigation.dispatch;
         //We work with a (time descending) list of cloned entries
         //to prevent the "real" entries from becoming immutable
-        this.listOfEntries = appData.EntryList.descending.map(e => e.clone());
+        this.listOfEntries = (appData.EntryList && appData.EntryList.length)
+            ? appData.EntryList.descending.map(e => e.clone())
+            : [];
         this.appData = appData;
         if (settingEntry) {
             settingEntry = this.listOfEntries.find(e =>
                 e.isSameEntry(settingEntry)
             );
         } else if (this.listOfEntries.length > 0) {
-            settingEntry = this.listOfEntries[0];
+            settingEntry = this.listOfEntries[ 0 ];
         }
 
         this.state = {
@@ -56,20 +58,20 @@ export default class NewKavuah extends React.Component {
         if (!this.state.specialNumber) {
             popUpMessage(
                 'The number for the "' +
-                    Kavuah.getNumberDefinition(this.state.kavuahType) +
-                    '" was not set.\n' +
-                    'If you do not understand how to fill this information, please contact your Rabbi for assistance.',
+                Kavuah.getNumberDefinition(this.state.kavuahType) +
+                '" was not set.\n' +
+                'If you do not understand how to fill this information, please contact your Rabbi for assistance.',
                 'Incorrect information'
             );
             return;
         }
         const kavuah = new Kavuah(
-                this.state.kavuahType,
-                this.state.settingEntry,
-                this.state.specialNumber,
-                this.state.cancelsOnahBeinunis,
-                this.state.active
-            ),
+            this.state.kavuahType,
+            this.state.settingEntry,
+            this.state.specialNumber,
+            this.state.cancelsOnahBeinunis,
+            this.state.active
+        ),
             doAdd = () =>
                 DataUtils.KavuahToDatabase(kavuah)
                     .then(() => {
@@ -94,11 +96,11 @@ export default class NewKavuah extends React.Component {
             Alert.alert(
                 'Possibly Incorrect information',
                 'The number for the "' +
-                    Kavuah.getNumberDefinition(this.state.kavuahType) +
-                    '" does not seem to match the Setting Entry information.\n' +
-                    'Please check that the information is correct.\n' +
-                    'If you do not fully understand how to fill in this information, ' +
-                    'please contact your Rabbi for assistance.',
+                Kavuah.getNumberDefinition(this.state.kavuahType) +
+                '" does not seem to match the Setting Entry information.\n' +
+                'Please check that the information is correct.\n' +
+                'If you do not fully understand how to fill in this information, ' +
+                'please contact your Rabbi for assistance.',
                 [
                     //Button 1
                     {
