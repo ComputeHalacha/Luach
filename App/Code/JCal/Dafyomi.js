@@ -130,6 +130,6 @@ export default class Dafyomi {
     //Returns the name of the Masechta and daf number in Hebrew. For example: 'סוכה דף כ.
     static toStringHeb(jd) {
         const d = Dafyomi.getDaf(jd);
-        return d.masechet.heb + ' דף ' + Utils.toJNum(d.masechet.daf);
+        return d.masechet.heb + ' דף ' + Utils.toJNum(d.daf);
     }
 }

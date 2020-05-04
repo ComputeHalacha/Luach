@@ -210,7 +210,9 @@ export default class SettingsScreen extends Component {
             remindMikvahTime = settings.remindMikvahTime,
             remindDayOnahHour = settings.remindDayOnahHour,
             remindNightOnahHour = settings.remindNightOnahHour,
-            requirePIN = setDefault(settings.requirePIN, true);
+            requirePIN = setDefault(settings.requirePIN, true),
+            remoteUserName = settings.remoteUserName,
+            remotePassword = settings.remotePassword;
 
         return (
             <View>
@@ -761,6 +763,32 @@ export default class SettingsScreen extends Component {
                                 value={this.state.enteredPin}
                             />
                         </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Remote backup user name
+                            </Text>
+                            <TextInput
+                                style={GeneralStyles.textInput}
+                                returnKeyType="next"
+                                onChangeText={value => {
+                                    this.changeSetting('remoteUserName', value);
+                                }}
+                                value={remoteUserName}
+                            />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Remote backup password
+                            </Text>
+                            <TextInput
+                                style={GeneralStyles.textInput}
+                                returnKeyType="next"
+                                onChangeText={value => {
+                                    this.changeSetting('remotePassword', value);
+                                }}
+                                value={remotePassword}
+                            />
+                        </View>                    
                     </ScrollView>
                 </View>
             </View>

@@ -140,6 +140,20 @@ const addedFields = [
         allowNull: true,
         defaultValue: -1,
     },
+    //Added 5/4/20
+    {
+        table: 'settings',
+        name: 'remoteUserName',
+        type: 'NVARCHAR (200)',
+        allowNull: true
+    },
+    //Added 5/4/20
+    {
+        table: 'settings',
+        name: 'remotePassword',
+        type: 'NVARCHAR (200)',
+        allowNull: true
+    },
 ];
 
 /**

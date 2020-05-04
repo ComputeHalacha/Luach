@@ -54,6 +54,8 @@ export default class DataUtils {
                     remindNightOnahHour: dbSet.remindNightOnahHour,
                     requirePIN: !!dbSet.requirePIN,
                     PIN: dbSet.PIN,
+                    remoteUserName: dbSet.remoteUserName,
+                    remotePassword: dbSet.remotePassword
                 });
             })
             .catch(err => {
@@ -88,7 +90,9 @@ export default class DataUtils {
             remindDayOnahHour=?,
             remindNightOnahHour=?,
             requirePIN=?,
-            PIN=?`,
+            PIN=?,
+            remoteUserName=?,
+            remotePassword=?`,
             [
                 //Lakewood is the default - locationId: 185
                 (settings.location && settings.location.locationId) || 185,
@@ -115,6 +119,8 @@ export default class DataUtils {
                 settings.remindNightOnahHour,
                 settings.requirePIN,
                 settings.PIN,
+                settings.remoteUserName,
+                settings.remotePassword
             ]
         )
             .then(() => AppData.updateGlobalProbs())
