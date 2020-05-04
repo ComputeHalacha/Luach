@@ -26,6 +26,7 @@ import {
     resetNightOnahReminders,
 } from '../../Code/Notifications';
 import { GeneralStyles } from '../styles';
+import LocalStorage from '../../Code/Data/LocalStorage';
 
 export default class SettingsScreen extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -77,7 +78,7 @@ export default class SettingsScreen extends Component {
         this.navigate = this.props.navigation.navigate;
         const { appData, onUpdate } = this.props.navigation.state.params;
         this.appData = appData;
-        this.update = ad => {
+        this.update = (ad) => {
             ad = ad || this.appData;
             this.setState({ settings: ad.Settings });
             if (onUpdate) {
@@ -89,9 +90,15 @@ export default class SettingsScreen extends Component {
             //The enteredPin is instead of settings.PIN in case the entered PIN is invalid.
             //We still want to display it, but not to change the setting.
             enteredPin: appData.Settings.PIN,
+            localStorage: new LocalStorage(),
         };
         this.changeSetting = this.changeSetting.bind(this);
+        this.changeLocalStorage = this.changeLocalStorage.bind(this);
         this.changePIN = this.changePIN.bind(this);
+    }
+    async componentDidMount() {
+        const localStorage = await LocalStorage.getLocalStorage();
+        this.setState({ localStorage });
     }
     changeSetting(name, value) {
         const settings = this.state.settings;
@@ -129,7 +136,7 @@ export default class SettingsScreen extends Component {
 
                     resetDayOnahReminders(
                         this.appData.ProblemOnahs.filter(
-                            po =>
+                            (po) =>
                                 po.NightDay === NightDay.Day &&
                                 po.jdate.Abs >= now.Abs
                         ),
@@ -147,7 +154,7 @@ export default class SettingsScreen extends Component {
 
                     resetNightOnahReminders(
                         this.appData.ProblemOnahs.filter(
-                            po =>
+                            (po) =>
                                 po.NightDay === NightDay.Night &&
                                 po.jdate.Abs >= now.Abs
                         ),
@@ -170,15 +177,23 @@ export default class SettingsScreen extends Component {
             onUpdate: this.update,
         });
     }
+    changeLocalStorage(name, val) {        
+        const localStorage = this.state.localStorage;
+        localStorage[name] = val;
+        this.setState({ localStorage });
+    }
     changePIN(pin) {
-        const validPin = /^\d{4}$/.test(pin);
+        const localStorage = this.state.localStorage,
+            validPin = /^\d{4}$/.test(pin);
         if (validPin) {
-            this.changeSetting('PIN', pin);
+            LocalStorage.setLocalStorageValue('PIN', pin);
+            localStorage.PIN = pin;
         }
-        this.setState({ invalidPin: !validPin, enteredPin: pin });
+        this.setState({ localStorage, invalidPin: !validPin, enteredPin: pin });
     }
     render() {
         const settings = this.state.settings,
+            localStorage = this.state.localStorage,
             location = settings.location || Location.getLakewood(),
             showOhrZeruah = setDefault(settings.showOhrZeruah, true),
             keepThirtyOne = setDefault(settings.keepThirtyOne, true),
@@ -210,9 +225,9 @@ export default class SettingsScreen extends Component {
             remindMikvahTime = settings.remindMikvahTime,
             remindDayOnahHour = settings.remindDayOnahHour,
             remindNightOnahHour = settings.remindNightOnahHour,
-            requirePIN = setDefault(settings.requirePIN, true),
-            remoteUserName = settings.remoteUserName,
-            remotePassword = settings.remotePassword;
+            requirePIN = setDefault(localStorage.requirePIN, true),
+            remoteUserName = localStorage.remoteUserName,
+            remotePassword = localStorage.remotePassword;
 
         return (
             <View>
@@ -281,7 +296,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting('showOhrZeruah', value)
                                 }
                                 value={!!showOhrZeruah}
@@ -294,7 +309,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting(
                                         'onahBeinunis24Hours',
                                         value
@@ -309,7 +324,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting('keepThirtyOne', value)
                                 }
                                 value={!!keepThirtyOne}
@@ -321,7 +336,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting(
                                         'keepLongerHaflagah',
                                         value
@@ -340,7 +355,7 @@ export default class SettingsScreen extends Component {
                                 <Text />
                                 <Switch
                                     style={GeneralStyles.switch}
-                                    onValueChange={value =>
+                                    onValueChange={(value) =>
                                         this.changeSetting(
                                             'dilugChodeshPastEnds',
                                             value
@@ -356,7 +371,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting('haflagaOfOnahs', value)
                                 }
                                 value={!!haflagaOfOnahs}
@@ -368,7 +383,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting('kavuahDiffOnahs', value)
                                 }
                                 value={!!kavuahDiffOnahs}
@@ -384,11 +399,16 @@ export default class SettingsScreen extends Component {
                                 Number of Months ahead to warn
                             </Text>
                             <NumberPicker
-                                style={{flex:1, height:40, justifyContent:'center', alignItems:'center'}}
+                                style={{
+                                    flex: 1,
+                                    height: 40,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
                                 endNumber={24}
                                 unitName="month"
                                 value={numberMonthsAheadToWarn}
-                                onChange={value =>
+                                onChange={(value) =>
                                     this.changeSetting(
                                         'numberMonthsAheadToWarn',
                                         value
@@ -403,7 +423,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting(
                                         'calcKavuahsOnNewEntry',
                                         value
@@ -418,7 +438,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting(
                                         'showEntryFlagOnHome',
                                         value
@@ -433,7 +453,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting('discreet', value)
                                 }
                                 value={!!discreet}
@@ -445,7 +465,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting(
                                         'showProbFlagOnHome',
                                         value
@@ -463,7 +483,7 @@ export default class SettingsScreen extends Component {
                                 <Text>Don't add reminder</Text>
                                 <Switch
                                     style={GeneralStyles.switch}
-                                    onValueChange={value =>
+                                    onValueChange={(value) =>
                                         this.changeSetting(
                                             'remindBedkMornTime',
                                             value && { hour: 7, minute: 0 }
@@ -478,7 +498,7 @@ export default class SettingsScreen extends Component {
                                     <Text>Show reminder at </Text>
                                     <TimeInput
                                         selectedTime={remindBedkMornTime}
-                                        onConfirm={remindBedkMornTime =>
+                                        onConfirm={(remindBedkMornTime) =>
                                             this.changeSetting(
                                                 'remindBedkMornTime',
                                                 remindBedkMornTime
@@ -498,7 +518,7 @@ export default class SettingsScreen extends Component {
                                 <Text>Don't add reminder</Text>
                                 <Switch
                                     style={GeneralStyles.switch}
-                                    onValueChange={value =>
+                                    onValueChange={(value) =>
                                         this.changeSetting(
                                             'remindBedkAftrnHour',
                                             value && -1
@@ -518,7 +538,7 @@ export default class SettingsScreen extends Component {
                                         endNumber={12}
                                         unitName="hour"
                                         value={Math.abs(remindBedkAftrnHour)}
-                                        onChange={value =>
+                                        onChange={(value) =>
                                             this.changeSetting(
                                                 'remindBedkAftrnHour',
                                                 -value
@@ -538,7 +558,7 @@ export default class SettingsScreen extends Component {
                                 <Text>Don't add reminder</Text>
                                 <Switch
                                     style={GeneralStyles.switch}
-                                    onValueChange={value =>
+                                    onValueChange={(value) =>
                                         this.changeSetting(
                                             'remindMikvahTime',
                                             value && { hour: 18, minute: 0 }
@@ -553,7 +573,7 @@ export default class SettingsScreen extends Component {
                                     <Text>Show reminder at </Text>
                                     <TimeInput
                                         selectedTime={remindMikvahTime}
-                                        onConfirm={remindMikvahTime =>
+                                        onConfirm={(remindMikvahTime) =>
                                             this.changeSetting(
                                                 'remindMikvahTime',
                                                 remindMikvahTime
@@ -571,7 +591,7 @@ export default class SettingsScreen extends Component {
                                 <Text>Don't add reminder</Text>
                                 <Switch
                                     style={GeneralStyles.switch}
-                                    onValueChange={value =>
+                                    onValueChange={(value) =>
                                         this.changeSetting(
                                             'remindDayOnahHour',
                                             value && -8
@@ -585,11 +605,11 @@ export default class SettingsScreen extends Component {
                                 <View style={localStyles.innerView}>
                                     <Text>Show the reminder </Text>
                                     <NumberPicker
-                                    startNumber={0}
+                                        startNumber={0}
                                         endNumber={24}
                                         unitName="hour"
                                         value={Math.abs(remindDayOnahHour)}
-                                        onChange={value =>
+                                        onChange={(value) =>
                                             this.changeSetting(
                                                 'remindDayOnahHour',
                                                 -value
@@ -608,7 +628,7 @@ export default class SettingsScreen extends Component {
                                 <Text>Don't add reminder</Text>
                                 <Switch
                                     style={GeneralStyles.switch}
-                                    onValueChange={value =>
+                                    onValueChange={(value) =>
                                         this.changeSetting(
                                             'remindNightOnahHour',
                                             value && -1
@@ -624,11 +644,11 @@ export default class SettingsScreen extends Component {
                                 <View style={localStyles.innerView}>
                                     <Text>Show the reminder </Text>
                                     <NumberPicker
-                                    startNumber={0}
+                                        startNumber={0}
                                         endNumber={24}
                                         unitName="hour"
                                         value={Math.abs(remindNightOnahHour)}
-                                        onChange={value =>
+                                        onChange={(value) =>
                                             this.changeSetting(
                                                 'remindNightOnahHour',
                                                 -value
@@ -652,7 +672,7 @@ export default class SettingsScreen extends Component {
                                 <Text>Jewish Date</Text>
                                 <Switch
                                     style={GeneralStyles.switch}
-                                    onValueChange={value =>
+                                    onValueChange={(value) =>
                                         this.changeSetting(
                                             'navigateBySecularDate',
                                             value
@@ -683,7 +703,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting(
                                         'showIgnoredKavuahs',
                                         value
@@ -698,7 +718,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting(
                                         'noProbsAfterEntry',
                                         value
@@ -713,7 +733,7 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
+                                onValueChange={(value) =>
                                     this.changeSetting('hideHelp', value)
                                 }
                                 value={!!hideHelp}
@@ -725,8 +745,8 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={value =>
-                                    this.changeSetting('requirePIN', value)
+                                onValueChange={(value) =>
+                                    this.changeLocalStorage('requirePIN', value)
                                 }
                                 value={!!requirePIN}
                             />
@@ -757,7 +777,7 @@ export default class SettingsScreen extends Component {
                                 keyboardType="numeric"
                                 returnKeyType="next"
                                 maxLength={4}
-                                onChangeText={value => {
+                                onChangeText={(value) => {
                                     this.changePIN(value);
                                 }}
                                 value={this.state.enteredPin}
@@ -770,8 +790,8 @@ export default class SettingsScreen extends Component {
                             <TextInput
                                 style={GeneralStyles.textInput}
                                 returnKeyType="next"
-                                onChangeText={value => {
-                                    this.changeSetting('remoteUserName', value);
+                                onChangeText={(value) => {
+                                    this.changeLocalStorage('remoteUserName', value);
                                 }}
                                 value={remoteUserName}
                             />
@@ -783,12 +803,12 @@ export default class SettingsScreen extends Component {
                             <TextInput
                                 style={GeneralStyles.textInput}
                                 returnKeyType="next"
-                                onChangeText={value => {
-                                    this.changeSetting('remotePassword', value);
+                                onChangeText={(value) => {
+                                    this.changeLocalStorage('remotePassword', value);
                                 }}
                                 value={remotePassword}
                             />
-                        </View>                    
+                        </View>
                     </ScrollView>
                 </View>
             </View>

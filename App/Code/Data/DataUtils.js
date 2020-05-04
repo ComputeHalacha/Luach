@@ -51,12 +51,8 @@ export default class DataUtils {
                     remindBedkAftrnHour: dbSet.remindBedkAftrnHour,
                     remindMikvahTime: dbSet.remindMikvahTime,
                     remindDayOnahHour: dbSet.remindDayOnahHour,
-                    remindNightOnahHour: dbSet.remindNightOnahHour,
-                    requirePIN: !!dbSet.requirePIN,
-                    PIN: dbSet.PIN,
-                    remoteUserName: dbSet.remoteUserName,
-                    remotePassword: dbSet.remotePassword
-                });
+                    remindNightOnahHour: dbSet.remindNightOnahHour
+                });                
             })
             .catch(err => {
                 warn('Error trying to get settings from the database.');
@@ -88,11 +84,7 @@ export default class DataUtils {
             remindBedkAftrnHour=?,
             remindMikvahTime=?,
             remindDayOnahHour=?,
-            remindNightOnahHour=?,
-            requirePIN=?,
-            PIN=?,
-            remoteUserName=?,
-            remotePassword=?`,
+            remindNightOnahHour=?`,
             [
                 //Lakewood is the default - locationId: 185
                 (settings.location && settings.location.locationId) || 185,
@@ -116,11 +108,7 @@ export default class DataUtils {
                 settings.remindBedkAftrnHour,
                 Utils.getSimpleTimeString(settings.remindMikvahTime),
                 settings.remindDayOnahHour,
-                settings.remindNightOnahHour,
-                settings.requirePIN,
-                settings.PIN,
-                settings.remoteUserName,
-                settings.remotePassword
+                settings.remindNightOnahHour
             ]
         )
             .then(() => AppData.updateGlobalProbs())

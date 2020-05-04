@@ -42,10 +42,6 @@ export default class Settings {
         this.remindDayOnahHour = args.remindDayOnahHour;
         this.remindNightOnahHour = args.remindNightOnahHour;
         this.discreet = setDefault(args.discreet, true);
-        this.requirePIN = !!args.requirePIN;
-        this.PIN = setDefault(args.PIN, '1234');
-        this.remoteUserName = args.remoteUserName;
-        this.remotePassword = args.remotePassword;
     }
     async save() {
         await DataUtils.SettingsToDatabase(this);
@@ -88,11 +84,7 @@ export default class Settings {
                     other.remindMikvahTime
                 ) &&
                 this.remindDayOnahHour === other.remindDayOnahHour &&
-                this.remindNightOnahHour === other.remindNightOnahHour &&
-                this.requirePIN === other.requirePIN &&
-                this.PIN === other.PIN &&
-                this.remoteUserName === other.remoteUserName &&
-                this.remotePassword === other.remotePassword)
+                this.remindNightOnahHour === other.remindNightOnahHour)
         );
     }
 }

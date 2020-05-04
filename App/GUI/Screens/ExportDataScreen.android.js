@@ -93,7 +93,7 @@ export default class ExportData extends React.Component {
                     '"Shorter Haflagah - No Cancel","Dilug Yom Hachodesh Kavuahs Another Month",' +
                     '"Haflaga Of Onahs","Haflaga of Diff Onahs","Months Ahead To Warn","Calc Kavuahs New Entry",' +
                     '"Show Entries On Main Screen","Show Flags On Main Screen","Calendar Displays Current",' +
-                    '"Show Ignored Kavuahs","No Flags Right After Entry","Hide Help","Discreet","Require PIN"\r\n' +
+                    '"Show Ignored Kavuahs","No Flags Right After Entry","Hide Help","Discreet"\r\n' +
                     `"${settings.location.Name}","${yon(
                         settings.showOhrZeruah
                     )}"` +
@@ -117,7 +117,7 @@ export default class ExportData extends React.Component {
                     )}"` +
                     `,"${yon(settings.hideHelp)}","${yon(
                         settings.discreet
-                    )}","${yon(settings.requirePIN)}"\r\n`;
+                    )}"\r\n`;
                 break;
             }
             case 'Flagged Dates':
@@ -276,9 +276,6 @@ export default class ExportData extends React.Component {
                     )}<hr /></p>` +
                     `<p><b>Discreet</b><br />${yon(
                         settings.discreet
-                    )}<hr /></p>` +
-                    `<p><b>Require PIN to open application?</b><br />${yon(
-                        settings.requirePIN
                     )}<hr /></p>` +
                     '<hr />';
                 break;

@@ -53,9 +53,7 @@ function get() {
         remindDayOnahHour: bool,
         remindNightOnahHour: bool,
         requirePIN: bool,
-        PIN: number,
-        remoteUserName: string,
-        remotePassword: string`;
+        PIN: number`;
 
     var occasions = 
         `title: string,

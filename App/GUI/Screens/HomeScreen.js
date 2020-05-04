@@ -17,6 +17,7 @@ import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import AppData from '../../Code/Data/AppData';
 import { TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
+import LocalStorage from '../../Code/Data/LocalStorage';
 
 export default class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) =>
@@ -197,15 +198,16 @@ export default class HomeScreen extends React.Component {
             }", nextState: "${nextAppState}"`
         );
 
-        const appData = this.state.appData;
+        const appData = this.state.appData,
+        localStorage = this.state.localStorage;
         //If the require PIN setting is on and we are going into background mode,
         //we want to display the login modal upon re-awakening.
         if (
             nextAppState === 'background' &&
             appData &&
             appData.Settings &&
-            appData.Settings.requirePIN &&
-            appData.Settings.PIN.length === 4
+            localStorage.requirePIN &&
+            localStorage.PIN.length === 4
         ) {
             //Next time the app is activated, it will ask for the PIN
             this.setState({ showLogin: true });
@@ -249,11 +251,12 @@ export default class HomeScreen extends React.Component {
 
         //We start with an empty appData object just to get the render started immediately.
         let appData = new AppData();
-
+        let localStorage = new LocalStorage();
         //As we will be going to the database which takes some time, we set initial default values for the state.
         this.state = {
             daysList,
             appData,
+            localStorage,
             today,
             currDate: today,
             showFlash: true,
@@ -263,8 +266,9 @@ export default class HomeScreen extends React.Component {
 
         //Now that the GUI is showing, we asynchronously get the "real" data from the database
         appData = await AppData.getAppData();
+        localStorage = await LocalStorage.getLocalStorage();
 
-        if (!appData.Settings.requirePIN) {
+        if (!localStorage.requirePIN) {
             this.setFlash();
         }
         const lastRegularEntry = appData.EntryList.lastRegularEntry(),
@@ -285,9 +289,9 @@ export default class HomeScreen extends React.Component {
             currDate: today,
             loadingDone: true,
             showLogin:
-                appData.Settings.requirePIN &&
-                appData.Settings.PIN &&
-                appData.Settings.PIN.length === 4,
+                localStorage.requirePIN &&
+                localStorage.PIN &&
+                localStorage.PIN.length === 4,
             lastEntry,
             lastRegularEntry,
             showFirstTimeModal: global.IsFirstRun,
