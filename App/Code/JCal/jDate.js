@@ -981,10 +981,10 @@ export default class jDate {
         }
 
         const months = Utils.toInt(
-                235 * Utils.toInt((year - 1) / 19) + // Leap months this cycle
-                12 * ((year - 1) % 19) + // Regular months in this cycle.
-                    (7 * ((year - 1) % 19) + 1) / 19
-            ), // Months in complete cycles so far.
+            235 * Utils.toInt((year - 1) / 19) + // Leap months this cycle
+            12 * ((year - 1) % 19) + // Regular months in this cycle.
+            (7 * ((year - 1) % 19) + 1) / 19
+        ), // Months in complete cycles so far.
             parts = 204 + 793 * (months % 1080),
             hours =
                 5 +
@@ -1106,11 +1106,11 @@ export default class jDate {
                 list.push(
                     !hebrew
                         ? 'Pirkei Avos - ' +
-                              pa
-                                  .map(s => Utils.toSuffixed(s) + ' Perek')
-                                  .join(' and ')
+                        pa
+                            .map(s => Utils.toSuffixed(s) + ' Perek')
+                            .join(' and ')
                         : 'פרקי אבות - ' +
-                              pa.map(s => Utils.toJNum(s) + ' פרק').join('ו')
+                        pa.map(s => Utils.toJNum(s) + ' פרק').join('ו')
                 );
             }
         }
@@ -1121,14 +1121,14 @@ export default class jDate {
                     : jMonth + 1;
             list.push(
                 !hebrew
-                    ? 'Rosh Chodesh ' + Utils.jMonthsEng[monthIndex]
-                    : 'ראש חודש ' + Utils.jMonthsHeb[monthIndex]
+                    ? 'Rosh Chodesh ' + Utils.jMonthsEng[ monthIndex ]
+                    : 'ראש חודש ' + Utils.jMonthsHeb[ monthIndex ]
             );
         } else if (jDay === 1 && jMonth != 7) {
             list.push(
                 !hebrew
-                    ? 'Rosh Chodesh ' + Utils.jMonthsEng[jMonth]
-                    : 'ראש חודש ' + Utils.jMonthsHeb[jMonth]
+                    ? 'Rosh Chodesh ' + Utils.jMonthsEng[ jMonth ]
+                    : 'ראש חודש ' + Utils.jMonthsHeb[ jMonth ]
             );
         }
         //V'sain Tal U'Matar in Chutz La'aretz is according to the secular date
@@ -1168,8 +1168,8 @@ export default class jDate {
                                 ? 'Pesach - Chol HaMoed'
                                 : 'פסח - חול המועד'
                             : !hebrew
-                            ? 'Pesach - Second Day'
-                            : 'פסח - יום שני'
+                                ? 'Pesach - Second Day'
+                                : 'פסח - יום שני'
                     );
                 else if (has(jDay, 17, 18, 19))
                     list.push(
@@ -1209,8 +1209,8 @@ export default class jDate {
                                 ? 'Shavuos'
                                 : 'חג השבועות'
                             : !hebrew
-                            ? 'Shavuos - First Day'
-                            : 'שבועות - יום ראשון'
+                                ? 'Shavuos - First Day'
+                                : 'שבועות - יום ראשון'
                     );
                 if (jDay === 7 && !israel)
                     list.push(

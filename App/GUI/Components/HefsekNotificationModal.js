@@ -12,7 +12,7 @@ import {
     cancelAllBedikaAlarms,
     cancelMikvaAlarm,
 } from '../../Code/Notifications';
-import { GLOBALS, popUpMessage } from '../../Code/GeneralUtils';
+import { GLOBALS, popUpMessage, isErevYomKippurOrTishBav } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
@@ -70,7 +70,8 @@ export default class HefsekNotificationModal extends React.Component {
     }
     onSetMikvah() {
         const { mikvaReminderTime } = this.state,
-            reminderJdate = this.jdate.addDays(7),
+            day7 = this.jdate.addDays(7),
+            reminderJdate = isErevYomKippurOrTishBav(day7) ? day7.addDays(1): day7,
             { sunset } = reminderJdate.getSunriseSunset(this.location);
 
         addMikvaAlarm(reminderJdate, mikvaReminderTime, sunset, this.discreet);

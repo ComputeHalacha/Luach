@@ -20,7 +20,9 @@ export default class NewKavuah extends React.Component {
         this.dispatch = navigation.dispatch;
         //We work with a (time descending) list of cloned entries
         //to prevent the "real" entries from becoming immutable
-        this.listOfEntries = appData.EntryList.descending.map(e => e.clone());
+        this.listOfEntries = (appData.EntryList && appData.EntryList.length)
+            ? appData.EntryList.descending.map(e => e.clone())
+            : [];
         this.appData = appData;
         if (settingEntry) {
             settingEntry = this.listOfEntries.find(e =>
@@ -64,12 +66,12 @@ export default class NewKavuah extends React.Component {
             return;
         }
         const kavuah = new Kavuah(
-                this.state.kavuahType,
-                this.state.settingEntry,
-                this.state.specialNumber,
-                this.state.cancelsOnahBeinunis,
-                this.state.active
-            ),
+            this.state.kavuahType,
+            this.state.settingEntry,
+            this.state.specialNumber,
+            this.state.cancelsOnahBeinunis,
+            this.state.active
+        ),
             doAdd = () =>
                 DataUtils.KavuahToDatabase(kavuah)
                     .then(() => {
