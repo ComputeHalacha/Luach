@@ -20,6 +20,7 @@ export const GLOBALS = Object.freeze({
     IS_IOS: Platform.OS === 'ios',
     IS_ANDROID: Platform.OS === 'android',
     BUTTON_COLOR: Platform.OS === 'android' ? '#99b' : null,
+    VALID_PIN: /^\d{4,}$/
 });
 
 export function popUpMessage(message, optionalTitle) {

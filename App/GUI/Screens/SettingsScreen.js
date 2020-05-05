@@ -13,7 +13,7 @@ import SideMenu from '../Components/SideMenu';
 import Location from '../../Code/JCal/Location';
 import Utils from '../../Code/JCal/Utils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
-import { setDefault, isNullishOrFalse } from '../../Code/GeneralUtils';
+import { setDefault, isNullishOrFalse, GLOBALS } from '../../Code/GeneralUtils';
 import NumberPicker from '../Components/NumberPicker';
 import TimeInput from '../Components/TimeInput';
 import {
@@ -97,7 +97,8 @@ export default class SettingsScreen extends Component {
         this.changePIN = this.changePIN.bind(this);
     }
     async componentDidMount() {
-        const localStorage = await LocalStorage.getLocalStorage();
+        const localStorage = new LocalStorage();
+        await localStorage.load();
         this.setState({ localStorage });
     }
     changeSetting(name, value) {
@@ -177,16 +178,16 @@ export default class SettingsScreen extends Component {
             onUpdate: this.update,
         });
     }
-    changeLocalStorage(name, val) {        
+    changeLocalStorage(name, val) {
         const localStorage = this.state.localStorage;
+        //save value to device storage
         localStorage[name] = val;
         this.setState({ localStorage });
     }
     changePIN(pin) {
         const localStorage = this.state.localStorage,
-            validPin = /^\d{4}$/.test(pin);
+            validPin = GLOBALS.VALID_PIN.test(pin);
         if (validPin) {
-            LocalStorage.setLocalStorageValue('PIN', pin);
             localStorage.PIN = pin;
         }
         this.setState({ localStorage, invalidPin: !validPin, enteredPin: pin });
@@ -776,7 +777,6 @@ export default class SettingsScreen extends Component {
                                 style={GeneralStyles.textInput}
                                 keyboardType="numeric"
                                 returnKeyType="next"
-                                maxLength={4}
                                 onChangeText={(value) => {
                                     this.changePIN(value);
                                 }}
@@ -791,7 +791,10 @@ export default class SettingsScreen extends Component {
                                 style={GeneralStyles.textInput}
                                 returnKeyType="next"
                                 onChangeText={(value) => {
-                                    this.changeLocalStorage('remoteUserName', value);
+                                    this.changeLocalStorage(
+                                        'remoteUserName',
+                                        value
+                                    );
                                 }}
                                 value={remoteUserName}
                             />
@@ -804,7 +807,10 @@ export default class SettingsScreen extends Component {
                                 style={GeneralStyles.textInput}
                                 returnKeyType="next"
                                 onChangeText={(value) => {
-                                    this.changeLocalStorage('remotePassword', value);
+                                    this.changeLocalStorage(
+                                        'remotePassword',
+                                        value
+                                    );
                                 }}
                                 value={remotePassword}
                             />

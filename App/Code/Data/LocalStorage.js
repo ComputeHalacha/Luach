@@ -1,5 +1,5 @@
 import { AsyncStorage } from 'react-native';
-import { setDefault } from '../GeneralUtils';
+import { log, error } from '../GeneralUtils';
 /**
  * @type {{requirePin:boolean, PIN:String, remoteUserName:String, remotePassword:String  }}
  */
@@ -10,34 +10,6 @@ export default class LocalStorage {
         this._remoteUserName = null;
         this._remotePassword = null;
     }
-    /**
-     * @returns {LocalStorage}
-     */
-    static async getLocalStorage() {
-        const allKeys = await AsyncStorage.getAllKeys(),
-            localStorage = new LocalStorage();
-
-        localStorage._requirePin = setDefault(
-            await Boolean(
-                LocalStorage.getLocalStorageValue('REQUIRE_PIN', allKeys)
-            ),
-            false
-        );
-        localStorage._PIN = await LocalStorage.getLocalStorageValue(
-            'PIN',
-            allKeys
-        );
-        localStorage._remoteUserName = await LocalStorage.getLocalStorageValue(
-            'REMOTE_USERNAME',
-            allKeys
-        );
-        localStorage._remotePassword = await LocalStorage.getLocalStorageValue(
-            'REMOTE_PASSWORD',
-            allKeys
-        );
-        return localStorage;
-    }
-
     get requirePin() {
         return this._requirePin;
     }
@@ -60,7 +32,7 @@ export default class LocalStorage {
     set remoteUserName(val) {
         LocalStorage.setLocalStorageValue('REMOTE_USERNAME', val);
         this._remoteUserName = val;
-    }    
+    }
 
     get remotePassword() {
         return this._remotePassword;
@@ -71,17 +43,40 @@ export default class LocalStorage {
     }
 
     /**
-     * Saves the current settings to AsyncStorage.
-     * @param {LocalStorage} localStorage
+     * Loads the current objects properties from the actual device using AsyncStorage
      */
-    static async saveLocalStorage(localStorage) {
+    async load() {
+        const allKeys = ['REQUIRE_PIN', 'PIN', 'REMOTE_USERNAME', 'REMOTE_PASSWORD'],
+            values = await AsyncStorage.multiGet(allKeys);
+        for (let kvp of values) {
+            switch (kvp[0]) {
+                case 'REQUIRE_PIN':
+                    this._requirePin = Boolean(JSON.parse(kvp[1]));
+                    break;
+                case 'PIN':
+                    this._PIN = JSON.parse(kvp[1]);
+                    break;
+                case 'REMOTE_USERNAME':
+                    this._remoteUserName = JSON.parse(kvp[1]);
+                    break;
+                case 'REMOTE_PASSWORD':
+                    this._remotePassword = JSON.parse(kvp[1]);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Saves this object to AsyncStorage.
+     */
+    async saveLocalStorage() {
         log('started save Settings');
         await AsyncStorage.multiSet(
             [
-                ['REQUIRE_PIN', JSON.stringify(localStorage.requirePin)],
-                ['PIN', localStorage.PIN],
-                ['REMOTE_USERNAME', localStorage.remoteUserName],
-                ['REMOTE_PASSWORD', localStorage.remotePassword],
+                ['REQUIRE_PIN', JSON.stringify(this._requirePin)],
+                ['PIN', this._PIN],
+                ['REMOTE_USERNAME', this._remoteUserName],
+                ['REMOTE_PASSWORD', this._remotePassword],
             ],
             (errors) =>
                 errors &&

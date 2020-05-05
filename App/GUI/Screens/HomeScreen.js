@@ -60,7 +60,7 @@ export default class HomeScreen extends React.Component {
         this.nextDay = this.nextDay.bind(this);
         this.goToday = this.goToday.bind(this);
         this.scrollToTop = this.scrollToTop.bind(this);
-        this.getElemementToShow = this.getElemementsToRender.bind(this);
+        this.getElementsToRender = this.getElementsToRender.bind(this);
 
         //If this screen was navigated to from another screen.
         if (
@@ -198,16 +198,14 @@ export default class HomeScreen extends React.Component {
             }", nextState: "${nextAppState}"`
         );
 
-        const appData = this.state.appData,
-        localStorage = this.state.localStorage;
-        //If the require PIN setting is on and we are going into background mode,
+        const localStorage = this.state.localStorage;
+        //If the require PIN local storage setting is on, and we are going into background mode,
         //we want to display the login modal upon re-awakening.
         if (
             nextAppState === 'background' &&
-            appData &&
-            appData.Settings &&
+            localStorage &&
             localStorage.requirePIN &&
-            localStorage.PIN.length === 4
+            GLOBALS.VALID_PIN.test(localStorage.PIN)
         ) {
             //Next time the app is activated, it will ask for the PIN
             this.setState({ showLogin: true });
@@ -264,9 +262,9 @@ export default class HomeScreen extends React.Component {
             showFirstTimeModal: false,
         };
 
-        //Now that the GUI is showing, we asynchronously get the "real" data from the database
+        //Now that the GUI is showing, we asynchronously get the "real" data from the database and local storage
         appData = await AppData.getAppData();
-        localStorage = await LocalStorage.getLocalStorage();
+        await localStorage.load();
 
         if (!localStorage.requirePIN) {
             this.setFlash();
@@ -283,6 +281,7 @@ export default class HomeScreen extends React.Component {
         //We now will re-render the screen with the real data.
         this.setState({
             appData,
+            localStorage,
             daysList,
             today,
             systemDate: new Date(),
@@ -291,7 +290,7 @@ export default class HomeScreen extends React.Component {
             showLogin:
                 localStorage.requirePIN &&
                 localStorage.PIN &&
-                localStorage.PIN.length === 4,
+                GLOBALS.VALID_PIN.test(localStorage.PIN),
             lastEntry,
             lastRegularEntry,
             showFirstTimeModal: global.IsFirstRun,
@@ -304,26 +303,29 @@ export default class HomeScreen extends React.Component {
      * The params.currDate contains the jdate that we should show on the top of the screen.
      * @param {{appData:AppData,currDate:jDate}} params
      */
-    _navigatedShowing(params) {
+    async _navigatedShowing(params) {
         //As this screen was navigated to from another screen, we will use the original appData.
-        //We also allow another screen to naviate to any date by supplying a currDate property in the navigate props.
+        //We also allow another screen to navigate to any date by supplying a currDate property in the navigate props.
         const appData = params.appData,
             today = getTodayJdate(appData),
             currDate = params.currDate || today,
             lastRegularEntry = appData.EntryList.lastRegularEntry(),
-            lastEntry = appData.EntryList.lastEntry();
+            lastEntry = appData.EntryList.lastEntry(),
+            localStorage = new LocalStorage();
+            await localStorage.load();
         //We don't need to use setState here as this function is only ever called before the initial render from the constructor.
         this.state = {
-            appData: appData,
+            appData,
+            localStorage,
             daysList: this.getDaysList(currDate),
-            currDate: currDate,
-            today: today,
+            currDate,
+            today,
             systemDate: new Date(),
             showFlash: false,
             loadingDone: true,
             refreshing: false,
-            lastRegularEntry: lastRegularEntry,
-            lastEntry: lastEntry,
+            lastRegularEntry,
+            lastEntry,
         };
     }
     /**
@@ -413,7 +415,7 @@ export default class HomeScreen extends React.Component {
     /**
      * Get the element to render on the main screen
      */
-    getElemementsToRender() {
+    getElementsToRender() {
         return this.state.showLogin ? (
             <Login
                 onLoggedIn={this.onLoggedIn}
@@ -489,6 +491,6 @@ export default class HomeScreen extends React.Component {
         );
     }
     render() {
-        return <View style={{ flex: 1 }}>{this.getElemementsToRender()}</View>;
+        return <View style={{ flex: 1 }}>{this.getElementsToRender()}</View>;
     }
 }
