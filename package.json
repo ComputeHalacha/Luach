@@ -10,7 +10,7 @@
         "@react-native-community/async-storage": "^1.10.0",
         "prop-types": "^15.7.2",
         "react": "16.8.3",
-        "react-native": "0.59.9",
+        "react-native": "0.59.10",
         "react-native-catch-first-time": "0.0.1",
         "react-native-chooser": "^1.7.0",
         "react-native-device-info": "^1.6.1",
