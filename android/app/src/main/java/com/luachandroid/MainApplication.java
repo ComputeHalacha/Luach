@@ -3,6 +3,7 @@ package com.luachandroid;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
@@ -31,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
         new SQLitePluginPackage(),
         new MainReactPackage(),
+            new AsyncStoragePackage(),
             new ReactNativePushNotificationPackage(),
             new RNCWebViewPackage(),
             new RNDeviceInfo(),

@@ -1,5 +1,8 @@
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { log, error } from '../GeneralUtils';
+
+const AllKeys = ['REQUIRE_PIN', 'PIN', 'REMOTE_USERNAME', 'REMOTE_PASSWORD'];
+
 /**
  * @type {{requirePin:boolean, PIN:String, remoteUserName:String, remotePassword:String  }}
  */
@@ -10,10 +13,12 @@ export default class LocalStorage {
         this._remoteUserName = null;
         this._remotePassword = null;
     }
+
     get requirePin() {
         return this._requirePin;
     }
     set requirePin(val) {
+        log('Setting requirePin in storage data');
         LocalStorage.setLocalStorageValue('REQUIRE_PIN', val);
         this._requirePin = val;
     }
@@ -22,6 +27,7 @@ export default class LocalStorage {
         return this._PIN;
     }
     set PIN(val) {
+        log('Setting PIN in storage data');
         LocalStorage.setLocalStorageValue('PIN', val);
         this._PIN = val;
     }
@@ -30,6 +36,7 @@ export default class LocalStorage {
         return this._remoteUserName;
     }
     set remoteUserName(val) {
+        log('Setting remoteUserName in storage data');
         LocalStorage.setLocalStorageValue('REMOTE_USERNAME', val);
         this._remoteUserName = val;
     }
@@ -38,6 +45,7 @@ export default class LocalStorage {
         return this._remotePassword;
     }
     set remotePassword(val) {
+        log('Setting remotePassword in storage data');
         LocalStorage.setLocalStorageValue('REMOTE_PASSWORD', val);
         this._remotePassword = val;
     }
@@ -45,67 +53,58 @@ export default class LocalStorage {
     /**
      * Loads the current objects properties from the actual device using AsyncStorage
      */
-    async load() {
-        const allKeys = ['REQUIRE_PIN', 'PIN', 'REMOTE_USERNAME', 'REMOTE_PASSWORD'],
-            values = await AsyncStorage.multiGet(allKeys);
-        for (let kvp of values) {
-            switch (kvp[0]) {
-                case 'REQUIRE_PIN':
-                    this._requirePin = Boolean(JSON.parse(kvp[1]));
-                    break;
-                case 'PIN':
-                    this._PIN = JSON.parse(kvp[1]);
-                    break;
-                case 'REMOTE_USERNAME':
-                    this._remoteUserName = JSON.parse(kvp[1]);
-                    break;
-                case 'REMOTE_PASSWORD':
-                    this._remotePassword = JSON.parse(kvp[1]);
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Saves this object to AsyncStorage.
-     */
-    async saveLocalStorage() {
-        log('started save Settings');
-        await AsyncStorage.multiSet(
-            [
-                ['REQUIRE_PIN', JSON.stringify(this._requirePin)],
-                ['PIN', this._PIN],
-                ['REMOTE_USERNAME', this._remoteUserName],
-                ['REMOTE_PASSWORD', this._remotePassword],
-            ],
-            (errors) =>
-                errors &&
-                error('Error during AsyncStorage.multiSet for settings', errors)
-        );
-        log('Saved settings', this);
-    }
-
-    static async getLocalStorageValue(name, allKeys) {
-        let val;
-        allKeys = allKeys || (await AsyncStorage.getAllKeys());
-        if (allKeys.includes(name)) {
+    static async loadAll() {
+        return new Promise((resolve, reject) => {
             try {
-                const sn = await AsyncStorage.getItem(name);
-                if (sn) {
-                    val = JSON.parse(sn);
-                }
-            } catch (e) {
-                error('Failed to load remotePassword from storage data:', e);
+                AsyncStorage.multiGet(AllKeys, (err, stores) => {
+                    if (err) {
+                        error(
+                            'Error during AsyncStorage.multiGet for settings',
+                            err
+                        );
+                        reject(err);
+                    } else {
+                        const ls = new LocalStorage();
+                        stores.map((result, i, store) => {
+                            const key = store[i][0],
+                                value = store[i][1];
+                            switch (key) {
+                                case 'REQUIRE_PIN':
+                                    ls._requirePin = Boolean(value);
+                                    break;
+                                case 'PIN':
+                                    ls._PIN = JSON.parse(value);
+                                    break;
+                                case 'REMOTE_USERNAME':
+                                    ls._remoteUserName = JSON.parse(value);
+                                    break;
+                                case 'REMOTE_PASSWORD':
+                                    ls._remotePassword = JSON.parse(value);
+                                    break;
+                            }
+                        });
+                        resolve(ls);
+                    }
+                });
+            } catch (er) {
+                reject(er);
             }
-        }
-        return val;
+        });
+    }
+
+    async clear() {
+        await AsyncStorage.multiRemove(AllKeys);
     }
 
     static async setLocalStorageValue(name, value) {
         try {
-            await AsyncStorage.setItem(name, value);
+            await AsyncStorage.setItem(name, JSON.stringify(value));
+            log('Set ' + name + ' to ' + value + ' in storage data');
         } catch (e) {
-            error('Failed to load remotePassword from storage data:', e);
+            error(
+                'Failed to set ' + name + ' to ' + value + ' in storage data:',
+                e
+            );
         }
     }
 }

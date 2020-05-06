@@ -5,25 +5,27 @@ import { GLOBALS } from '../../Code/GeneralUtils';
 export default class Login extends React.PureComponent {
     constructor(props) {
         super(props);
-
         this.state = { incorrectPin: false, enteredPIN: '' };
-
-        this.loginAttempt = this.loginAttempt.bind(this);
+        
+        if (!props.pin) {
+            props.onLoggedIn();
+        } else {            
+            this.loginAttempt = this.loginAttempt.bind(this);
+        }
     }
+
     loginAttempt(pin) {
-        if (pin.length === 4) {
+        if (GLOBALS.VALID_PIN.test(pin)) {
             if (pin === this.props.pin) {
                 this.props.onLoggedIn();
             } else {
                 this.setState({
                     incorrectPin: true,
-                    enteredPIN: '',
                 });
             }
         } else {
             this.setState({
                 incorrectPin: false,
-                enteredPIN: pin,
             });
         }
     }
@@ -67,7 +69,7 @@ export default class Login extends React.PureComponent {
                                 fontSize: 11,
                                 paddingBottom: 10,
                             }}>{`Version ${GLOBALS.VERSION_NAME}`}</Text>
-                        <Text>Please enter your 4 digit PIN</Text>
+                        <Text>Please enter your PIN</Text>
                         <TextInput
                             style={{
                                 width: 150,
@@ -78,12 +80,16 @@ export default class Login extends React.PureComponent {
                             }}
                             keyboardType="numeric"
                             returnKeyType="next"
-                            maxLength={4}
                             autoFocus={true}
                             secureTextEntry={true}
                             iosclearTextOnFocus={true}
                             value={this.state.enteredPIN}
-                            onChangeText={value => this.loginAttempt(value)}
+                            onChangeText={(val) =>
+                                this.setState({ enteredPIN: val })
+                            }
+                            onSubmitEditing={(event) =>
+                                this.loginAttempt(event.nativeEvent.text)
+                            }
                         />
                         <View
                             style={{

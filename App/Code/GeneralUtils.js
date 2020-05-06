@@ -250,7 +250,7 @@ export async function tryToGuessLocation() {
 
 /**
  * Returns true if this app has never been launched yet.
- * Determined by a Asyn storage key.
+ * Determined by a Async storage key.
  */
 export async function isFirstTimeRun() {
     let isFirstTime = false;

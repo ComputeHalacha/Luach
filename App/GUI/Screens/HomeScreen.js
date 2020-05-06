@@ -31,7 +31,7 @@ export default class HomeScreen extends React.Component {
                           type="octicon"
                           color="#77c"
                           onPress={() =>
-                              AppData.getAppData().then(ad =>
+                              AppData.getAppData().then((ad) =>
                                   navigation.navigate('MonthView', {
                                       appData: ad,
                                       jdate: getTodayJdate(ad),
@@ -61,6 +61,7 @@ export default class HomeScreen extends React.Component {
         this.goToday = this.goToday.bind(this);
         this.scrollToTop = this.scrollToTop.bind(this);
         this.getElementsToRender = this.getElementsToRender.bind(this);
+        this.setFlash = this.setFlash.bind(this);
 
         //If this screen was navigated to from another screen.
         if (
@@ -109,6 +110,9 @@ export default class HomeScreen extends React.Component {
             clearInterval(this.checkToday);
         }
         if (this.flashTimeout) {
+            log(
+                '******      CLEARING TIMEOUT for showFlash             *******'
+            );
             clearTimeout(this.flashTimeout);
         }
     }
@@ -134,8 +138,8 @@ export default class HomeScreen extends React.Component {
             return true;
         }
         if (
-            !prevAppData.UserOccasions.every(uo =>
-                newAppData.UserOccasions.some(uon => uon.isSameOccasion(uo))
+            !prevAppData.UserOccasions.every((uo) =>
+                newAppData.UserOccasions.some((uon) => uon.isSameOccasion(uo))
             )
         ) {
             log('REFRESHED :( - Occasions were not all the same');
@@ -149,8 +153,8 @@ export default class HomeScreen extends React.Component {
             return true;
         }
         if (
-            !prevAppData.EntryList.list.every(e =>
-                newAppData.EntryList.list.some(en => en.isSameEntry(e))
+            !prevAppData.EntryList.list.every((e) =>
+                newAppData.EntryList.list.some((en) => en.isSameEntry(e))
             )
         ) {
             log('REFRESHED :( - Entries were not all the same');
@@ -161,8 +165,8 @@ export default class HomeScreen extends React.Component {
             return true;
         }
         if (
-            !prevAppData.KavuahList.every(k =>
-                newAppData.KavuahList.some(kn => kn.isMatchingKavuah(k))
+            !prevAppData.KavuahList.every((k) =>
+                newAppData.KavuahList.some((kn) => kn.isMatchingKavuah(k))
             )
         ) {
             log('REFRESHED :( - Kavuahs were not all the same');
@@ -175,8 +179,8 @@ export default class HomeScreen extends React.Component {
             return true;
         }
         if (
-            !prevAppData.ProblemOnahs.every(po =>
-                newAppData.ProblemOnahs.some(pon => pon.isSameProb(po))
+            !prevAppData.ProblemOnahs.every((po) =>
+                newAppData.ProblemOnahs.some((pon) => pon.isSameProb(po))
             )
         ) {
             log('REFRESHED :( - Probs were not all the same');
@@ -193,9 +197,7 @@ export default class HomeScreen extends React.Component {
     }
     _handleAppStateChange(nextAppState) {
         log(
-            `AppState Change: currentState: "${
-                AppState.currentState
-            }", nextState: "${nextAppState}"`
+            `AppState Change: currentState: "${AppState.currentState}", nextState: "${nextAppState}"`
         );
 
         const localStorage = this.state.localStorage;
@@ -204,7 +206,7 @@ export default class HomeScreen extends React.Component {
         if (
             nextAppState === 'background' &&
             localStorage &&
-            localStorage.requirePIN &&
+            localStorage.requirePin &&
             GLOBALS.VALID_PIN.test(localStorage.PIN)
         ) {
             //Next time the app is activated, it will ask for the PIN
@@ -229,22 +231,21 @@ export default class HomeScreen extends React.Component {
                 daysList = this.getDaysList(currDate);
             }
         }
-
         this.setState({
-            appData: appData,
-            daysList: daysList,
-            lastRegularEntry: lastRegularEntry,
-            lastEntry: lastEntry,
-            today: today,
-            currDate: currDate,
+            appData,
+            daysList,
+            lastRegularEntry,
+            lastEntry,
+            today,
+            currDate,
             systemDate: new Date(),
         });
     }
     /**
      * This function is called the when the app first initially loads
      */
-    async initialShowing() {
-              let today = new jDate(),
+    initialShowing() {
+        let today = new jDate(),
             daysList = this.getDaysList(today);
 
         //We start with an empty appData object just to get the render started immediately.
@@ -263,39 +264,42 @@ export default class HomeScreen extends React.Component {
         };
 
         //Now that the GUI is showing, we asynchronously get the "real" data from the database and local storage
-        appData = await AppData.getAppData();
-        await localStorage.load();
+        AppData.getAppData().then((appData) => {
+            const lastRegularEntry = appData.EntryList.lastRegularEntry(),
+                lastEntry = appData.EntryList.lastEntry();
+            //As we now have a location, the current
+            //Jewish date may be different than the system date
+            (today = getTodayJdate(appData)),
+                (daysList = Utils.isSameJdate(today, this.state.daysList[0])
+                    ? this.state.daysList
+                    : this.getDaysList(today));
 
-        if (!localStorage.requirePIN) {
-            this.setFlash();
-        }
-        const lastRegularEntry = appData.EntryList.lastRegularEntry(),
-            lastEntry = appData.EntryList.lastEntry();
-        //As we now have a location, the current
-        //Jewish date may be different than the system date
-        (today = getTodayJdate(appData)),
-            (daysList = Utils.isSameJdate(today, this.state.daysList[0])
-                ? this.state.daysList
-                : this.getDaysList(today));
-
-        //We now will re-render the screen with the real data.
-        this.setState({
-            appData,
-            localStorage,
-            daysList,
-            today,
-            systemDate: new Date(),
-            currDate: today,
-            loadingDone: true,
-            showLogin:
-                localStorage.requirePIN &&
-                localStorage.PIN &&
-                GLOBALS.VALID_PIN.test(localStorage.PIN),
-            lastEntry,
-            lastRegularEntry,
-            showFirstTimeModal: global.IsFirstRun,
+            //We now will re-render the screen with the real data.
+            this.setState({
+                appData,
+                daysList,
+                today,
+                systemDate: new Date(),
+                currDate: today,
+                loadingDone: true,
+                lastEntry,
+                lastRegularEntry,
+                showFirstTimeModal: global.IsFirstRun,
+            });
+            log(`From Main: global.IsFirstRun is set to: ${global.IsFirstRun}`);
         });
-        log(`From Main: global.IsFirstRun is set to: ${global.IsFirstRun}`);
+        LocalStorage.loadAll().then((localStorage) => {
+            if (!localStorage.requirePin) {
+                this.setFlash();
+            }
+            this.setState({
+                localStorage,
+                showLogin:
+                    localStorage.requirePin &&
+                    localStorage.PIN &&
+                    GLOBALS.VALID_PIN.test(localStorage.PIN),
+            });
+        });
     }
     /**
      * When returning to this main screen from another screen, we don't need to go to the database.
@@ -303,20 +307,17 @@ export default class HomeScreen extends React.Component {
      * The params.currDate contains the jdate that we should show on the top of the screen.
      * @param {{appData:AppData,currDate:jDate}} params
      */
-    async _navigatedShowing(params) {
+    _navigatedShowing(params) {
         //As this screen was navigated to from another screen, we will use the original appData.
         //We also allow another screen to navigate to any date by supplying a currDate property in the navigate props.
         const appData = params.appData,
             today = getTodayJdate(appData),
             currDate = params.currDate || today,
             lastRegularEntry = appData.EntryList.lastRegularEntry(),
-            lastEntry = appData.EntryList.lastEntry(),
-            localStorage = new LocalStorage();
-            await localStorage.load();
+            lastEntry = appData.EntryList.lastEntry();
         //We don't need to use setState here as this function is only ever called before the initial render from the constructor.
         this.state = {
             appData,
-            localStorage,
             daysList: this.getDaysList(currDate),
             currDate,
             today,
@@ -327,6 +328,9 @@ export default class HomeScreen extends React.Component {
             lastRegularEntry,
             lastEntry,
         };
+        LocalStorage.loadAll().then((localStorage) =>
+            this.setState({ localStorage })
+        );
     }
     /**
      * Show the "flash" warning banner on the bottom of the screen for 1.5 seconds.
@@ -334,10 +338,13 @@ export default class HomeScreen extends React.Component {
      */
     setFlash() {
         if (this.state.showFlash) {
-            this.flashTimeout = setTimeout(
-                () => this.setState({ showFlash: false }),
-                1500
-            );
+            log('******      setting TIMEOUT for showFlash      *******');
+            this.flashTimeout = setTimeout(() => {
+                log(
+                    '******      setting showFlash to false             *******'
+                );
+                this.setState({ showFlash: false });
+            }, 1500);
         }
     }
     onLoggedIn() {
@@ -402,7 +409,7 @@ export default class HomeScreen extends React.Component {
         //Due to questions etc. there can be more than one Hefsek.
         //Due to Yom Kippur and Tisha baav, the hefsek can be 8 days ago
         const lastHefseks = this.state.appData.TaharaEvents.filter(
-            te =>
+            (te) =>
                 te.taharaEventType === TaharaEventType.Hefsek &&
                 te.jdate.Abs < jdate.Abs &&
                 te.jdate.diffDays(jdate) <= 8
@@ -419,7 +426,7 @@ export default class HomeScreen extends React.Component {
         return this.state.showLogin ? (
             <Login
                 onLoggedIn={this.onLoggedIn}
-                pin={this.state.appData.Settings.PIN}
+                pin={this.state.localStorage.PIN}
             />
         ) : (
             <View style={{ flex: 1 }}>
@@ -437,11 +444,11 @@ export default class HomeScreen extends React.Component {
                         helpTitle="Help"
                     />
                     <FlatList
-                        ref={flatList => (this.flatList = flatList)}
+                        ref={(flatList) => (this.flatList = flatList)}
                         style={{ flex: 1 }}
                         data={this.state.daysList}
                         renderItem={this.renderItem}
-                        keyExtractor={item =>
+                        keyExtractor={(item) =>
                             this.state.daysList.indexOf(item).toString()
                         }
                         onEndReached={this._addDaysToEnd}

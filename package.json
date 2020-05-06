@@ -4,9 +4,10 @@
     "private": true,
     "scripts": {
         "start": "node node_modules/react-native/local-cli/cli.js start",
-        "postinstall" : "npx jetify"
+        "postinstall": "npx jetify"
     },
     "dependencies": {
+        "@react-native-community/async-storage": "^1.10.0",
         "prop-types": "^15.7.2",
         "react": "^16.8.6",
         "react-native": "^0.59.6",
