@@ -9,8 +9,8 @@
     "dependencies": {
         "@react-native-community/async-storage": "^1.10.0",
         "prop-types": "^15.7.2",
-        "react": "^16.8.6",
-        "react-native": "^0.59.6",
+        "react": "16.11.0",
+        "react-native": "0.62.2",
         "react-native-catch-first-time": "0.0.1",
         "react-native-chooser": "^1.7.0",
         "react-native-device-info": "^1.6.1",
@@ -27,13 +27,14 @@
         "react-navigation": "^1.6.1"
     },
     "devDependencies": {
-        "@babel/core": "^7.3.4",
+        "@babel/core": "^7.4.4",
+        "@babel/runtime": "^7.4.4",
         "babel-eslint": "^7.2.1",
         "eslint": "^4.18.2",
         "eslint-plugin-react": "^6.10.3",
         "eslint-plugin-react-native": "^2.3.1",
         "eslint-plugin-react-perf": "^2.0.9",
         "jetifier": "^1.6.4",
-        "metro-react-native-babel-preset": "^0.53.0"
+        "metro-react-native-babel-preset": "^0.54.0"
     }
 }
