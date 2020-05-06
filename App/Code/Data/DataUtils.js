@@ -11,6 +11,7 @@ import { NightDay, Onah } from '../Chashavshavon/Onah';
 import { Kavuah } from '../Chashavshavon/Kavuah';
 import { TaharaEvent } from '../Chashavshavon/TaharaEvent';
 import Utils from '../JCal/Utils';
+import LocalStorage from './LocalStorage';
 
 SQLite.DEBUG(!!__DEV__);
 SQLite.enablePromise(true);
@@ -53,6 +54,15 @@ export default class DataUtils {
                     remindDayOnahHour: dbSet.remindDayOnahHour,
                     remindNightOnahHour: dbSet.remindNightOnahHour
                 });                
+                /*********************************************************************************
+                If this is the first run after version 1.73 - 
+                where the requirePIN and PIN were moved out from the database into local storage,
+                we will move those values over from the database into local storage.
+                This will not override local storage values afterwards as LocalStorage.initialize
+                only saves the values if the local storage has never been initialized.*/
+                
+                LocalStorage.initialize(dbSet.requirePIN, dbSet.PIN);
+                /**********************************************************************************/
             })
             .catch(err => {
                 warn('Error trying to get settings from the database.');
