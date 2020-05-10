@@ -6,11 +6,21 @@ export default class Login extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = { incorrectPin: false, enteredPIN: '' };
-        
+
         if (!props.pin) {
             props.onLoggedIn();
-        } else {            
+        } else {
+            this.loginTextChange = this.loginTextChange.bind(this);
             this.loginAttempt = this.loginAttempt.bind(this);
+        }
+    }
+
+    loginTextChange(val) {
+        this.setState({ enteredPIN: val });
+        if (GLOBALS.VALID_PIN.test(val)) {
+            if (val === this.props.pin) {
+                this.props.onLoggedIn();
+            }
         }
     }
 
@@ -84,9 +94,7 @@ export default class Login extends React.PureComponent {
                             secureTextEntry={true}
                             iosclearTextOnFocus={true}
                             value={this.state.enteredPIN}
-                            onChangeText={(val) =>
-                                this.setState({ enteredPIN: val })
-                            }
+                            onChangeText={(val) => this.loginTextChange(val)}
                             onSubmitEditing={(event) =>
                                 this.loginAttempt(event.nativeEvent.text)
                             }

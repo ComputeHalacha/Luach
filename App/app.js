@@ -16,6 +16,7 @@ import MontheViewScreen from './GUI/Screens/MonthViewScreen';
 import BrowserScreen from './GUI/Screens/BrowserScreen';
 import ExportDataScreen from './GUI/Screens/ExportDataScreen';
 import NewLocationScreen from './GUI/Screens/NewLocationScreen';
+import RemoteBackupScreen from './GUI/Screens/RemoteBackupScreen';
 
 AppRegistry.registerComponent('LuachAndroid', () =>
     StackNavigator(
@@ -36,6 +37,7 @@ AppRegistry.registerComponent('LuachAndroid', () =>
             Browser: { screen: BrowserScreen },
             ExportData: { screen: ExportDataScreen },
             NewLocation: { screen: NewLocationScreen },
+            RemoteBackup: {screen: RemoteBackupScreen},
         },
         {
             initialRouteName: 'Home',

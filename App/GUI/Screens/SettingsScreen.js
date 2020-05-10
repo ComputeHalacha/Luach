@@ -55,6 +55,19 @@ export default class SettingsScreen extends Component {
                     </TouchableHighlight>
                     <TouchableHighlight
                         onPress={() =>
+                            navigation.navigate("RemoteBackup", {
+                                appData
+                            })
+                        }>
+                        <View style={{ marginRight: 10 }}>
+                            <Icon name="backup" color="#88c" size={25} />
+                            <Text style={{ fontSize: 10, color: "#559" }}>
+                                Backup Data
+                            </Text>
+                        </View>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                        onPress={() =>
                             navigation.navigate("Browser", {
                                 appData,
                                 onUpdate,

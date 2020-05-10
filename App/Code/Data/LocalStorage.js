@@ -99,7 +99,7 @@ export default class LocalStorage {
                 log('Set ' + name + ' to ' + value + ' in storage data');
             }
             else {
-                //Blank value - we will remove it from storage
+                //Undefined or null value - if we find it in the storage, it will be removed
                 const allKeys = await AsyncStorage.getAllKeys();
                 if (allKeys.includes(name)) {
                     await AsyncStorage.removeItem(name);
