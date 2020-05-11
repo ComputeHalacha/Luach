@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
     ScrollView,
     TouchableHighlight,
@@ -7,15 +7,15 @@ import {
     TextInput,
     Switch,
     StyleSheet,
-} from "react-native";
-import { Icon } from "react-native-elements";
-import SideMenu from "../Components/SideMenu";
-import Location from "../../Code/JCal/Location";
-import Utils from "../../Code/JCal/Utils";
-import { NightDay } from "../../Code/Chashavshavon/Onah";
-import { setDefault, isNullishOrFalse, GLOBALS } from "../../Code/GeneralUtils";
-import NumberPicker from "../Components/NumberPicker";
-import TimeInput from "../Components/TimeInput";
+} from 'react-native';
+import { Icon } from 'react-native-elements';
+import SideMenu from '../Components/SideMenu';
+import Location from '../../Code/JCal/Location';
+import Utils from '../../Code/JCal/Utils';
+import { NightDay } from '../../Code/Chashavshavon/Onah';
+import { setDefault, isNullishOrFalse, GLOBALS } from '../../Code/GeneralUtils';
+import NumberPicker from '../Components/NumberPicker';
+import TimeInput from '../Components/TimeInput';
 import {
     removeAllDayOnahReminders,
     removeAllNightOnahReminders,
@@ -24,60 +24,61 @@ import {
     cancelAllMorningBedikaAlarms,
     resetDayOnahReminders,
     resetNightOnahReminders,
-} from "../../Code/Notifications";
-import { GeneralStyles } from "../styles";
-import LocalStorage from "../../Code/Data/LocalStorage";
+} from '../../Code/Notifications';
+import { GeneralStyles } from '../styles';
+import LocalStorage from '../../Code/Data/LocalStorage';
 
 export default class SettingsScreen extends Component {
     static navigationOptions = ({ navigation }) => {
         const { appData, onUpdate } = navigation.state.params;
         return {
-            title: "Settings",
+            title: 'Settings',
             headerRight: (
                 <View
                     style={{
-                        flexDirection: "row",
-                        justifyContent: "space-around",
+                        flexDirection: 'row',
+                        justifyContent: 'space-around',
                     }}>
                     <TouchableHighlight
                         onPress={() =>
-                            navigation.navigate("ExportData", {
+                            navigation.navigate('ExportData', {
                                 appData,
-                                dataSet: "Settings",
+                                dataSet: 'Settings',
                             })
                         }>
                         <View style={{ marginRight: 10 }}>
                             <Icon name="import-export" color="#aca" size={25} />
-                            <Text style={{ fontSize: 10, color: "#797" }}>
+                            <Text style={{ fontSize: 10, color: '#797' }}>
                                 Export Data
                             </Text>
                         </View>
                     </TouchableHighlight>
                     <TouchableHighlight
                         onPress={() =>
-                            navigation.navigate("RemoteBackup", {
-                                appData
+                            navigation.navigate('RemoteBackup', {
+                                onUpdate,
+                                appData,
                             })
                         }>
                         <View style={{ marginRight: 10 }}>
                             <Icon name="backup" color="#88c" size={25} />
-                            <Text style={{ fontSize: 10, color: "#559" }}>
+                            <Text style={{ fontSize: 10, color: '#559' }}>
                                 Backup Data
                             </Text>
                         </View>
                     </TouchableHighlight>
                     <TouchableHighlight
                         onPress={() =>
-                            navigation.navigate("Browser", {
+                            navigation.navigate('Browser', {
                                 appData,
                                 onUpdate,
-                                url: "index.html",
-                                title: "Help",
+                                url: 'index.html',
+                                title: 'Help',
                             })
                         }>
                         <View style={{ marginRight: 3 }}>
                             <Icon name="help" color="#aac" size={25} />
-                            <Text style={{ fontSize: 10, color: "#aac" }}>
+                            <Text style={{ fontSize: 10, color: '#aac' }}>
                                 Luach Help
                             </Text>
                         </View>
@@ -122,7 +123,7 @@ export default class SettingsScreen extends Component {
         this.appData.Settings = settings;
 
         switch (name) {
-            case "remindBedkMornTime":
+            case 'remindBedkMornTime':
                 if (!value) {
                     cancelAllMorningBedikaAlarms(
                         this.appData.TaharaEvents[
@@ -131,7 +132,7 @@ export default class SettingsScreen extends Component {
                     );
                 }
                 break;
-            case "remindBedkAftrnHour":
+            case 'remindBedkAftrnHour':
                 if (!value) {
                     cancelAllAfternoonBedikaAlarms(
                         this.appData.TaharaEvents[
@@ -140,12 +141,12 @@ export default class SettingsScreen extends Component {
                     );
                 }
                 break;
-            case "remindMikvahTime":
+            case 'remindMikvahTime':
                 if (!value) {
                     cancelMikvaAlarm();
                 }
                 break;
-            case "remindDayOnahHour":
+            case 'remindDayOnahHour':
                 if (value) {
                     const now = Utils.nowAtLocation(settings.location);
 
@@ -163,7 +164,7 @@ export default class SettingsScreen extends Component {
                     removeAllDayOnahReminders();
                 }
                 break;
-            case "remindNightOnahHour":
+            case 'remindNightOnahHour':
                 if (value) {
                     const now = Utils.nowAtLocation(settings.location);
 
@@ -186,7 +187,7 @@ export default class SettingsScreen extends Component {
         this.update(this.appData);
     }
     editLocation() {
-        this.navigate("NewLocation", {
+        this.navigate('NewLocation', {
             appData: this.appData,
             location: this.appData.Settings.location,
             onUpdate: this.update,
@@ -249,7 +250,7 @@ export default class SettingsScreen extends Component {
 
         return (
             <View>
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: 'row' }}>
                     <SideMenu
                         onUpdate={this.update}
                         appData={this.appData}
@@ -270,21 +271,21 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <View
                                 style={{
-                                    flexDirection: "row",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
                                 }}>
                                 <TouchableHighlight
                                     underlayColor="#9f9"
                                     onPress={() =>
-                                        this.navigate("FindLocation", {
+                                        this.navigate('FindLocation', {
                                             onUpdate: this.update,
                                             appData: this.appData,
                                         })
                                     }
                                     style={{
                                         flex: 1,
-                                        backgroundColor: "#dfd",
+                                        backgroundColor: '#dfd',
                                     }}>
                                     <View style={GeneralStyles.centeredRow}>
                                         <Icon
@@ -315,7 +316,7 @@ export default class SettingsScreen extends Component {
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting("showOhrZeruah", value)
+                                    this.changeSetting('showOhrZeruah', value)
                                 }
                                 value={!!showOhrZeruah}
                             />
@@ -329,7 +330,7 @@ export default class SettingsScreen extends Component {
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
                                     this.changeSetting(
-                                        "onahBeinunis24Hours",
+                                        'onahBeinunis24Hours',
                                         value
                                     )
                                 }
@@ -343,7 +344,7 @@ export default class SettingsScreen extends Component {
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting("keepThirtyOne", value)
+                                    this.changeSetting('keepThirtyOne', value)
                                 }
                                 value={!!keepThirtyOne}
                             />
@@ -356,7 +357,7 @@ export default class SettingsScreen extends Component {
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
                                     this.changeSetting(
-                                        "keepLongerHaflagah",
+                                        'keepLongerHaflagah',
                                         value
                                     )
                                 }
@@ -368,14 +369,14 @@ export default class SettingsScreen extends Component {
                                 Continue incrementing Dilug Yom Hachodesh
                                 Kavuahs into another month
                             </Text>
-                            <View style={{ flexDirection: "row" }}>
+                            <View style={{ flexDirection: 'row' }}>
                                 {/*Without the folloiwng empty Text, the first NumberPicker below won't close its modal. I have absolutly no idea why.... */}
                                 <Text />
                                 <Switch
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
                                         this.changeSetting(
-                                            "dilugChodeshPastEnds",
+                                            'dilugChodeshPastEnds',
                                             value
                                         )
                                     }
@@ -390,7 +391,7 @@ export default class SettingsScreen extends Component {
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting("haflagaOfOnahs", value)
+                                    this.changeSetting('haflagaOfOnahs', value)
                                 }
                                 value={!!haflagaOfOnahs}
                             />
@@ -402,7 +403,7 @@ export default class SettingsScreen extends Component {
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting("kavuahDiffOnahs", value)
+                                    this.changeSetting('kavuahDiffOnahs', value)
                                 }
                                 value={!!kavuahDiffOnahs}
                             />
@@ -420,15 +421,15 @@ export default class SettingsScreen extends Component {
                                 style={{
                                     flex: 1,
                                     height: 40,
-                                    justifyContent: "center",
-                                    alignItems: "center",
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
                                 }}
                                 endNumber={24}
                                 unitName="month"
                                 value={numberMonthsAheadToWarn}
                                 onChange={(value) =>
                                     this.changeSetting(
-                                        "numberMonthsAheadToWarn",
+                                        'numberMonthsAheadToWarn',
                                         value
                                     )
                                 }
@@ -443,7 +444,7 @@ export default class SettingsScreen extends Component {
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
                                     this.changeSetting(
-                                        "calcKavuahsOnNewEntry",
+                                        'calcKavuahsOnNewEntry',
                                         value
                                     )
                                 }
@@ -458,7 +459,7 @@ export default class SettingsScreen extends Component {
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
                                     this.changeSetting(
-                                        "showEntryFlagOnHome",
+                                        'showEntryFlagOnHome',
                                         value
                                     )
                                 }
@@ -472,7 +473,7 @@ export default class SettingsScreen extends Component {
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting("discreet", value)
+                                    this.changeSetting('discreet', value)
                                 }
                                 value={!!discreet}
                             />
@@ -485,7 +486,7 @@ export default class SettingsScreen extends Component {
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
                                     this.changeSetting(
-                                        "showProbFlagOnHome",
+                                        'showProbFlagOnHome',
                                         value
                                     )
                                 }
@@ -503,7 +504,7 @@ export default class SettingsScreen extends Component {
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
                                         this.changeSetting(
-                                            "remindBedkMornTime",
+                                            'remindBedkMornTime',
                                             value && { hour: 7, minute: 0 }
                                         )
                                     }
@@ -518,7 +519,7 @@ export default class SettingsScreen extends Component {
                                         selectedTime={remindBedkMornTime}
                                         onConfirm={(remindBedkMornTime) =>
                                             this.changeSetting(
-                                                "remindBedkMornTime",
+                                                'remindBedkMornTime',
                                                 remindBedkMornTime
                                             )
                                         }
@@ -538,7 +539,7 @@ export default class SettingsScreen extends Component {
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
                                         this.changeSetting(
-                                            "remindBedkAftrnHour",
+                                            'remindBedkAftrnHour',
                                             value && -1
                                         )
                                     }
@@ -558,12 +559,12 @@ export default class SettingsScreen extends Component {
                                         value={Math.abs(remindBedkAftrnHour)}
                                         onChange={(value) =>
                                             this.changeSetting(
-                                                "remindBedkAftrnHour",
+                                                'remindBedkAftrnHour',
                                                 -value
                                             )
                                         }
                                     />
-                                    <Text>{" before sunset"}</Text>
+                                    <Text>{' before sunset'}</Text>
                                 </View>
                             )}
                         </View>
@@ -578,7 +579,7 @@ export default class SettingsScreen extends Component {
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
                                         this.changeSetting(
-                                            "remindMikvahTime",
+                                            'remindMikvahTime',
                                             value && { hour: 18, minute: 0 }
                                         )
                                     }
@@ -593,7 +594,7 @@ export default class SettingsScreen extends Component {
                                         selectedTime={remindMikvahTime}
                                         onConfirm={(remindMikvahTime) =>
                                             this.changeSetting(
-                                                "remindMikvahTime",
+                                                'remindMikvahTime',
                                                 remindMikvahTime
                                             )
                                         }
@@ -611,7 +612,7 @@ export default class SettingsScreen extends Component {
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
                                         this.changeSetting(
-                                            "remindDayOnahHour",
+                                            'remindDayOnahHour',
                                             value && -8
                                         )
                                     }
@@ -629,12 +630,12 @@ export default class SettingsScreen extends Component {
                                         value={Math.abs(remindDayOnahHour)}
                                         onChange={(value) =>
                                             this.changeSetting(
-                                                "remindDayOnahHour",
+                                                'remindDayOnahHour',
                                                 -value
                                             )
                                         }
                                     />
-                                    <Text>{" before sunrise"}</Text>
+                                    <Text>{' before sunrise'}</Text>
                                 </View>
                             )}
                         </View>
@@ -648,7 +649,7 @@ export default class SettingsScreen extends Component {
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
                                         this.changeSetting(
-                                            "remindNightOnahHour",
+                                            'remindNightOnahHour',
                                             value && -1
                                         )
                                     }
@@ -668,12 +669,12 @@ export default class SettingsScreen extends Component {
                                         value={Math.abs(remindNightOnahHour)}
                                         onChange={(value) =>
                                             this.changeSetting(
-                                                "remindNightOnahHour",
+                                                'remindNightOnahHour',
                                                 -value
                                             )
                                         }
                                     />
-                                    <Text>{" before sunset"}</Text>
+                                    <Text>{' before sunset'}</Text>
                                 </View>
                             )}
                         </View>
@@ -683,8 +684,8 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <View
                                 style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
                                     paddingLeft: 15,
                                 }}>
                                 <Text>Jewish Date</Text>
@@ -692,7 +693,7 @@ export default class SettingsScreen extends Component {
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
                                         this.changeSetting(
-                                            "navigateBySecularDate",
+                                            'navigateBySecularDate',
                                             value
                                         )
                                     }
@@ -704,7 +705,7 @@ export default class SettingsScreen extends Component {
                                 <Text
                                     style={{
                                         fontSize: 11,
-                                        color: "#b55",
+                                        color: '#b55',
                                         paddingLeft: 10,
                                         paddingBottom: 5,
                                     }}>
@@ -723,7 +724,7 @@ export default class SettingsScreen extends Component {
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
                                     this.changeSetting(
-                                        "showIgnoredKavuahs",
+                                        'showIgnoredKavuahs',
                                         value
                                     )
                                 }
@@ -738,7 +739,7 @@ export default class SettingsScreen extends Component {
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
                                     this.changeSetting(
-                                        "noProbsAfterEntry",
+                                        'noProbsAfterEntry',
                                         value
                                     )
                                 }
@@ -752,7 +753,7 @@ export default class SettingsScreen extends Component {
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting("hideHelp", value)
+                                    this.changeSetting('hideHelp', value)
                                 }
                                 value={!!hideHelp}
                             />
@@ -764,7 +765,7 @@ export default class SettingsScreen extends Component {
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeLocalStorage("requirePin", value)
+                                    this.changeLocalStorage('requirePin', value)
                                 }
                                 value={requirePin}
                             />
@@ -776,16 +777,16 @@ export default class SettingsScreen extends Component {
                             <View
                                 style={{
                                     display: this.state.invalidPin
-                                        ? "flex"
-                                        : "none",
+                                        ? 'flex'
+                                        : 'none',
                                     marginTop: 5,
                                     marginLeft: 10,
                                 }}>
                                 <Text
                                     style={{
-                                        color: "#f55",
+                                        color: '#f55',
                                         fontSize: 12,
-                                        fontWeight: "bold",
+                                        fontWeight: 'bold',
                                     }}>
                                     PIN must contain at least 4 numbers
                                 </Text>
@@ -812,7 +813,7 @@ export default class SettingsScreen extends Component {
                                 returnKeyType="next"
                                 onSubmitEditing={(e) => {
                                     this.changeLocalStorage(
-                                        "remoteUserName",
+                                        'remoteUserName',
                                         e.nativeEvent.text
                                     );
                                 }}
@@ -833,7 +834,7 @@ export default class SettingsScreen extends Component {
                                 returnKeyType="next"
                                 onSubmitEditing={(e) => {
                                     this.changeLocalStorage(
-                                        "remotePassword",
+                                        'remotePassword',
                                         e.nativeEvent.text
                                     );
                                 }}
@@ -853,15 +854,15 @@ export default class SettingsScreen extends Component {
 }
 const localStyles = StyleSheet.create({
     innerView: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
         padding: 12,
-        backgroundColor: "#eef",
+        backgroundColor: '#eef',
     },
     switchView: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         paddingLeft: 15,
     },
 });

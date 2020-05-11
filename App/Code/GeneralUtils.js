@@ -1,10 +1,4 @@
-import {
-    PixelRatio,
-    Dimensions,
-    Platform,
-    ToastAndroid,
-    Alert,
-} from 'react-native';
+import { PixelRatio, Dimensions, Platform, ToastAndroid, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import DeviceInfo from 'react-native-device-info';
 import firstTime from 'react-native-catch-first-time';
@@ -20,16 +14,13 @@ export const GLOBALS = Object.freeze({
     IS_IOS: Platform.OS === 'ios',
     IS_ANDROID: Platform.OS === 'android',
     BUTTON_COLOR: Platform.OS === 'android' ? '#99b' : null,
-    VALID_PIN: /^\d{4,}$/
+    VALID_PIN: /^\d{4,}$/,
+    DEFAULT_DB_PATH: '~data/luachAndroidDB.sqlite',
 });
 
 export function popUpMessage(message, optionalTitle) {
     if (GLOBALS.IS_ANDROID) {
-        ToastAndroid.showWithGravity(
-            message,
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER
-        );
+        ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
     } else {
         Alert.alert(optionalTitle, message);
     }
@@ -194,11 +185,7 @@ export function goHomeToday(navigator, appData) {
  * @param {AppData} appData
  */
 export function getTodayJdate(appData) {
-    if (
-        appData &&
-        appData.Settings &&
-        !appData.Settings.navigateBySecularDate
-    ) {
+    if (appData && appData.Settings && !appData.Settings.navigateBySecularDate) {
         return Utils.nowAtLocation(appData.Settings.location);
     } else {
         return new jDate();
@@ -212,9 +199,10 @@ export function isYomKippurOrTishBav(jdate) {
     if (jdate.Month === 7 && jdate.Day === 10) {
         return true;
     }
-    if (jdate.Month === 5 &&
-        (jdate.Day === 9 && jdate.DayOfWeek !== 6) ||
-        (jdate.Day === 10 && jdate.DayOfWeek === 0)) {
+    if (
+        (jdate.Month === 5 && jdate.Day === 9 && jdate.DayOfWeek !== 6) ||
+        (jdate.Day === 10 && jdate.DayOfWeek === 0)
+    ) {
         return true;
     }
     return false;
@@ -227,9 +215,10 @@ export function isErevYomKippurOrTishBav(jdate) {
     if (jdate.Month === 7 && jdate.Day === 9) {
         return true;
     }
-    if (jdate.Month === 5 &&
-        (jdate.Day === 8 && jdate.DayOfWeek !== 5) ||
-        (jdate.Day === 9 && jdate.DayOfWeek === 6)) {
+    if (
+        (jdate.Month === 5 && jdate.Day === 8 && jdate.DayOfWeek !== 5) ||
+        (jdate.Day === 9 && jdate.DayOfWeek === 6)
+    ) {
         return true;
     }
     return false;
@@ -269,7 +258,13 @@ export async function isFirstTimeRun() {
  * @param {Number} length
  */
 export function getRandomNumber(length) {
-    return Math.floor(
-        10 ** (length - 1) + Math.random() * (9 * 10 ** (length - 1))
-    );
+    return Math.floor(10 ** (length - 1) + Math.random() * (9 * 10 ** (length - 1)));
+}
+
+/**
+ * Returns "test" when supplied with "/assets/include/blah/folder/test.extension"
+ * @param {String} path
+ */
+export function getFileName(path) {
+    return path.replace(/.+\/(.+)\..+/, '$1');
 }

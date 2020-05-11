@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import { log, error } from '../GeneralUtils';
+import { log, error, GLOBALS } from '../GeneralUtils';
 
-const AllKeys = [ 'REQUIRE_PIN', 'PIN', 'REMOTE_USERNAME', 'REMOTE_PASSWORD' ];
+const AllKeys = ['REQUIRE_PIN', 'PIN', 'REMOTE_USERNAME', 'REMOTE_PASSWORD', 'DATABASE_PATH'];
 
 /**
- * @type {{requirePin:boolean, PIN:String, remoteUserName:String, remotePassword:String  }}
+ * @type {{requirePin:boolean, PIN:String, remoteUserName:String, remotePassword:String, databasePath:String }}
  */
 export default class LocalStorage {
     constructor() {
@@ -12,6 +12,7 @@ export default class LocalStorage {
         this._PIN = null;
         this._remoteUserName = null;
         this._remotePassword = null;
+        this._databasePath = null; //GLOBALS.DEFAULT_DB_PATH;
     }
 
     get requirePin() {
@@ -46,6 +47,14 @@ export default class LocalStorage {
         this._remotePassword = val;
     }
 
+    get databasePath() {
+        return this._databasePath;
+    }
+    set databasePath(val) {
+        LocalStorage.setLocalStorageValue('DATABASE_PATH', val || '');
+        this._databasePath = val;
+    }
+
     /**
      * Loads the current objects properties from the actual device using AsyncStorage
      */
@@ -54,16 +63,13 @@ export default class LocalStorage {
             try {
                 AsyncStorage.multiGet(AllKeys, (err, stores) => {
                     if (err) {
-                        error(
-                            'Error during AsyncStorage.multiGet for settings',
-                            err
-                        );
+                        error('Error during AsyncStorage.multiGet for settings', err);
                         reject(err);
                     } else {
                         const ls = new LocalStorage();
                         stores.map((result, i, store) => {
-                            const key = store[ i ][ 0 ],
-                                value = store[ i ][ 1 ];
+                            const key = store[i][0],
+                                value = store[i][1];
                             switch (key) {
                                 case 'REQUIRE_PIN':
                                     ls._requirePin = value && Boolean(JSON.parse(value));
@@ -76,6 +82,9 @@ export default class LocalStorage {
                                     break;
                                 case 'REMOTE_PASSWORD':
                                     ls._remotePassword = JSON.parse(value);
+                                    break;
+                                case 'DATABASE_PATH':
+                                    ls._databasePath = JSON.parse(value);
                                     break;
                             }
                         });
@@ -97,8 +106,7 @@ export default class LocalStorage {
             if (value !== null && typeof value !== 'undefined') {
                 await AsyncStorage.setItem(name, JSON.stringify(value));
                 log('Set ' + name + ' to ' + value + ' in storage data');
-            }
-            else {
+            } else {
                 //Undefined or null value - if we find it in the storage, it will be removed
                 const allKeys = await AsyncStorage.getAllKeys();
                 if (allKeys.includes(name)) {
@@ -107,10 +115,7 @@ export default class LocalStorage {
                 }
             }
         } catch (e) {
-            error(
-                'Failed to set ' + name + ' to ' + value + ' in storage data:',
-                e
-            );
+            error('Failed to set ' + name + ' to ' + value + ' in storage data:', e);
         }
     }
 
@@ -130,10 +135,30 @@ export default class LocalStorage {
         });
     }
 
+    static async wasDatabasepathInitialized() {
+        return new Promise((resolve, reject) => {
+            try {
+                AsyncStorage.getAllKeys((err, keys) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(keys && keys.length && keys.includes('DATABASE_PATH'));
+                    }
+                });
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+
     static async initialize(requirePin, PIN) {
         if (!(await this.wasInitialized())) {
             LocalStorage.setLocalStorageValue('REQUIRE_PIN', !!requirePin);
             LocalStorage.setLocalStorageValue('PIN', PIN);
+        }
+        if (!(await this.wasDatabasepathInitialized())) {
+            //This is the inbuilt original database
+            LocalStorage.setLocalStorageValue('DATABASE_PATH', GLOBALS.DEFAULT_DB_PATH);
         }
     }
 }

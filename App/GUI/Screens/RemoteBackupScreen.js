@@ -4,12 +4,13 @@ import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 import LocalStorage from '../../Code/Data/LocalStorage';
 import SideMenu from '../Components/SideMenu';
-import { GLOBALS, popUpMessage, log, warn, error } from '../../Code/GeneralUtils';
+import { GLOBALS, popUpMessage, log, warn, error, getFileName } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
+import AppData from '../../Code/Data/AppData';
+import DataUtils from '../../Code/Data/DataUtils';
 
-const dbFileName = 'luachAndroidDB.sqlite',
-    serverURL = __DEV__ ? 'http://10.0.2.2:81/api/luach' : 'https://www.compute.co.il/api/luach';
+const serverURL = __DEV__ ? 'http://10.0.2.2:81/api/luach' : 'https://www.compute.co.il/api/luach';
 
 export default class RemoteBackupScreen extends React.Component {
     static navigationOptions = {
@@ -17,11 +18,17 @@ export default class RemoteBackupScreen extends React.Component {
     };
     constructor(props) {
         super(props);
-        this.navigator = this.props.navigation;
-
-        const { appData } = this.navigator.state.params;
-
+        this.navigate = this.props.navigation.navigate;
+        const { appData, onUpdate } = this.props.navigation.state.params;
         this.appData = appData;
+        this.dbFileName = null;
+        this.update = (ad) => {
+            ad = ad || this.appData;
+            if (onUpdate) {
+                onUpdate(ad);
+            }
+        };
+
         this.sdate = new Date();
         this.sdateString =
             Utils.sMonthsEng[this.sdate.getMonth()] + ' ' + this.sdate.getFullYear().toString();
@@ -38,19 +45,19 @@ export default class RemoteBackupScreen extends React.Component {
     async componentDidMount() {
         const localStorage = await LocalStorage.loadAll();
         this.setState({ localStorage });
-
+        this.dbFileName = getFileName(localStorage.databasePath);
         if (this.state.localStorage.remoteUserName && this.state.localStorage.remotePassword) {
             await this.setLastBackupDate();
         }
     }
     async setLastBackupDate() {
         let lastBackupDate;
-        const response = await this.request('date/' + dbFileName);
+        const response = await this.request('date');
         if (response && response.Succeeded && response.Date) {
             const buDate = new Date(response.Date);
             lastBackupDate = buDate.toLocaleString();
         } else {
-            popUpMessage(response.ErrorMessage || 'OINKKKKKKKKKKKKKKKKKK');
+            popUpMessage(response.ErrorMessage);
         }
 
         this.setState({ lastBackupDate });
@@ -98,19 +105,24 @@ export default class RemoteBackupScreen extends React.Component {
         }
     }
     async uploadBackup() {
+        const url = serverURL + '/backup';
+        let base64;
+        if (/^~data\//.test(this.state.localStorage.databasePath)) {
+            base64 = await RNFS.readFileAssets('data/' + this.dbFileName, 'base64');
+        } else {
+            base64 = await RNFS.readFile(this.state.localStorage.databasePath, 'base64');
+        }
+        const buffer = Buffer.from(base64, 'base64');
         try {
-            const url = serverURL + '/backup/' + dbFileName,
-                base64 = await RNFS.readFileAssets('data/' + dbFileName, 'base64'),
-                buffer = Buffer.from(base64, 'base64'),
-                response = await fetch(url, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/octet-stream',
-                        Authorization: `bearer ${this.getAccountName()}`,
-                        Accept: 'application/json',
-                    },
-                    body: buffer,
-                });
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/octet-stream',
+                    Authorization: `bearer ${this.getAccountName()}`,
+                    Accept: 'application/json',
+                },
+                body: buffer,
+            });
             log(`Http Request: PUT ${url}`);
             const responseData = await response.json(),
                 succeeded = responseData && responseData.Succeeded;
@@ -125,16 +137,48 @@ export default class RemoteBackupScreen extends React.Component {
         }
     }
     async restoreBackup() {
-         const url = serverURL + dbFileName,
-                response = await this.request(url);
-                if (response.Succeeded) {
-                const buffer = Buffer.from(response.FileData, 'base64');
-                await RNFS.writeFile('data/' + dbFileName, buffer, 'base64');
-                    popUpMessage('OK');
-                } else {
-                    log(response);
-                    popUpMessage(response);
-                }
+        //The restore is done by Base64 "bridging" -  
+        //the server encodes the sqlite file in base64 and returns it as a string.
+        //We retrieve that here and decode it back to binary. 
+        const response = await this.request('');
+        if (response.Succeeded) {
+            try {
+                log('Successfully acquired backup file from server');
+                const prevPath = this.state.localStorage.databasePath;
+                log('The exiting database is at ' + prevPath);
+                //The database file is put in a folder where both android and IOS have access
+                const databasePath = RNFS.DocumentDirectoryPath + '/' + this.getNewDatabaseName();
+                log('The new database will be ' + databasePath);
+                //Write the file data to disc. 
+                //The RNFS.writeFile function does the decoding from base 64 to binary.
+                await RNFS.writeFile(databasePath, response.FileData, 'base64');
+                log('Successfully wrote backup file to ' + databasePath);
+                //Save the new database path to the local storage
+                await LocalStorage.setLocalStorageValue('DATABASE_PATH', databasePath);
+                //Set the data base utilities to access the new database path
+                DataUtils._databasePath = databasePath;
+                log('Set the DataUtils database path to ' + databasePath);
+                log('The new database is named ' + getFileName(databasePath));
+                //Reset the global application data object
+                global.GlobalAppData = null;
+                log('Set Global.AppData to null');
+                //Reload the global app data from the newly overwritten database file
+                const appData = await AppData.getAppData();
+                log('Reloaded Global.AppData from new database');
+                //Update all components up the tree
+                this.update(appData);
+                //Delete the old one
+                RNFS.unlink(prevPath);
+                log('Deleted previous file ' + prevPath);
+                popUpMessage('Data has been successfully restored from the online backup.');
+            } catch (e) {
+                error(e.message);
+                popUpMessage('Luach was unable to restore from the online backup.\n' + e.message);
+            }
+        } else {
+            log(response);
+            popUpMessage(response);
+        }
     }
 
     changeLocalStorage(name, val) {
@@ -142,6 +186,10 @@ export default class RemoteBackupScreen extends React.Component {
         //save value to device storage
         localStorage[name] = val;
         this.setState({ localStorage });
+    }
+    getNewDatabaseName() {
+        const d = new Date();
+        return `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}_${d.getHours()}-${d.getMinutes()}-${d.getSeconds()}.sqlite`;
     }
     render() {
         const remoteUserName =
@@ -244,7 +292,7 @@ export default class RemoteBackupScreen extends React.Component {
                                 currently stored locally in Luach.
                             </Text>
                         </View>
-                        <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>                        
+                        <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
                             <Button
                                 title='Backup My Data'
                                 onPress={this.uploadBackup}

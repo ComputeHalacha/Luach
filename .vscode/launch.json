@@ -3,7 +3,7 @@
     "configurations": [
         {
             "name": "Debug Android",
-            "program": "${workspaceRoot}/.vscode/launchReactNative.js",
+            "cwd": "${workspaceFolder}",
             "type": "reactnative",
             "request": "launch",
             "platform": "android",
@@ -12,7 +12,7 @@
         },
         {
             "name": "Debug iOS",
-            "program": "${workspaceRoot}/.vscode/launchReactNative.js",
+            "cwd": "${workspaceFolder}",
             "type": "reactnative",
             "request": "launch",
             "platform": "ios",
@@ -22,7 +22,7 @@
         },
         {
             "name": "Attach to packager",
-            "program": "${workspaceRoot}/.vscode/launchReactNative.js",
+            "cwd": "${workspaceFolder}",
             "type": "reactnative",
             "request": "attach",
             "sourceMaps": true,
@@ -30,7 +30,7 @@
         },
         {
             "name": "Debug in Exponent",
-            "program": "${workspaceRoot}/.vscode/launchReactNative.js",
+            "cwd": "${workspaceFolder}",
             "type": "reactnative",
             "request": "launch",
             "platform": "exponent",

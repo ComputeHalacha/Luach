@@ -330,7 +330,7 @@ export default class AppData {
             kavuahList,
             problemOnahs,
             taharaEvents;
-
+        
         //Before getting data from database, make sure that the local database schema is up to date.
         await AppData.upgradeDatabase();
 
