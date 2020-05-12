@@ -1,5 +1,5 @@
 import SQLite from 'react-native-sqlite-storage';
-import { isNumber, log, error, warn, getFileName } from '../GeneralUtils';
+import { isNumber, log, error, warn, getFileName, GLOBALS } from '../GeneralUtils';
 import AppData from './AppData';
 import jDate from '../JCal/jDate';
 import Settings from '../Settings';
@@ -675,10 +675,17 @@ export default class DataUtils {
         let db;
 
         await DataUtils.getDatabasePath().then(async (databasePath) => {
-            await SQLite.openDatabase({
-                name: getFileName(databasePath),
-                createFromLocation: databasePath,
-            })
+            const name = getFileName(databasePath), //The file name without the extension.
+                options = { name };
+            if (databasePath === GLOBALS.DEFAULT_DB_PATH) {
+                options.createFromLocation = databasePath;
+            } else {
+                //We are loading from a restored backup.
+                //The file will be in DocumentDirectoryPath.
+                options.createFromLocation = name + '.sqlite';
+                options.readonly = false;
+            }
+            await SQLite.openDatabase(options)
                 .then(async (database) => {
                     db = database;
                     log('0120 - database is open. Starting transaction...');

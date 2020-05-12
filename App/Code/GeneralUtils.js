@@ -56,7 +56,7 @@ export function isNumber(thing) {
 }
 /** Returns true if "thing" is a Date object containing a valid date.*/
 export function isValidDate(thing) {
-    return thing instanceof Date && !isNaN(thing.valueOf());
+    return thing && thing instanceof Date && !isNaN(thing.valueOf());
 }
 /** Returns whether or not the given, array, string, or argument list contains the given item or substring.
  *
@@ -262,9 +262,12 @@ export function getRandomNumber(length) {
 }
 
 /**
- * Returns "test" when supplied with "/assets/include/blah/folder/test.extension"
+ * Gets just the filename without the path or extension.
+ * Returns "test" when supplied with ".../assets/include/blah/folder/test.extension"
  * @param {String} path
  */
 export function getFileName(path) {
-    return path.replace(/.+\/(.+)\..+/, '$1');
+    if (path) {
+        return path.replace(/.+\/(.+)\..+/, '$1');
+    }
 }

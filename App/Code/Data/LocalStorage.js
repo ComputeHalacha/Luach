@@ -12,7 +12,7 @@ export default class LocalStorage {
         this._PIN = null;
         this._remoteUserName = null;
         this._remotePassword = null;
-        this._databasePath = null; //GLOBALS.DEFAULT_DB_PATH;
+        this._databasePath = GLOBALS.DEFAULT_DB_PATH;
     }
 
     get requirePin() {
