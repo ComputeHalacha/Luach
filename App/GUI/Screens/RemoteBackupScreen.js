@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View, Text, Button, TextInput } from 'react-native';
 import LocalStorage from '../../Code/Data/LocalStorage';
 import SideMenu from '../Components/SideMenu';
-import { GLOBALS, popUpMessage, isValidDate } from '../../Code/GeneralUtils';
+import { GLOBALS, popUpMessage, isValidDate, confirm } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 import RemoteBackup from '../../Code/RemoteBackup';
@@ -32,7 +32,9 @@ export default class RemoteBackupScreen extends React.Component {
             enteredRemotePassword: null,
             localStorage: new LocalStorage(),
         };
+        this.changeLocalStorage = this.changeLocalStorage.bind(this);
         this.getLastBackupDate = this.getLastBackupDate.bind(this);
+        this.restoreFromBackup = this.restoreFromBackup.bind(this);
     }
 
     async componentDidMount() {
@@ -56,12 +58,21 @@ export default class RemoteBackupScreen extends React.Component {
     }
 
     async restoreFromBackup() {
-        const { success, appData, message } = await this.remoteBackup.restoreBackup();
-        if (success && appData) {
-            this.update(appData);
-            popUpMessage('Data has been successfully restored from the online backup.');
-        } else {
-            popUpMessage(message);
+        if (
+            await confirm(
+                'Confirm Restore from Backup',
+                'Are you sure that you want to restore all data and settings from the remote backup?\n' +
+                    'WARNING: Restoring your data, will overwrite any existing data and settings ' +
+                    'currently stored locally in Luach.'
+            )
+        ) {
+            const { success, appData, message } = await this.remoteBackup.restoreBackup();
+            if (success && appData) {
+                this.update(appData);
+                popUpMessage('Data has been successfully restored from the online backup.');
+            } else {
+                popUpMessage(message);
+            }
         }
     }
 
@@ -84,7 +95,7 @@ export default class RemoteBackupScreen extends React.Component {
                     <SideMenu
                         onUpdate={this.update}
                         appData={this.appData}
-                        navigator={this.navigator}
+                        navigator={this.props.navigation}
                         helpUrl='Settings.html'
                         helpTitle='Settings'
                     />

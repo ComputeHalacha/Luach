@@ -20,10 +20,26 @@ export const GLOBALS = Object.freeze({
 
 export function popUpMessage(message, optionalTitle) {
     if (GLOBALS.IS_ANDROID) {
-        ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
+        ToastAndroid.showWithGravity(message, ToastAndroid.LONG, ToastAndroid.CENTER);
     } else {
         Alert.alert(optionalTitle, message);
     }
+}
+
+export async function confirm(message, title) {
+    return new Promise((resolve, reject) => {
+        Alert.alert(title, message, [
+            {
+                text: 'No',
+                onPress: () => reject(false),
+                style: 'cancel',
+            },
+            {
+                text: 'Yes',
+                onPress: () => resolve(true),
+            },
+        ]);
+    });
 }
 
 /**Gets the current window width in points */
