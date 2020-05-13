@@ -1,4 +1,4 @@
-# Luach ![Luach](https://www.compute.co.il/luach/app/Images/Feature.png "Luach Logo")
+# Luach ![Luach](GooglePlayListing/Images/Feature.png?raw=true "Luach Logo")
 
 Luach is a React-Native mobile project to keep track of a Jewish womens Halachic calendar.
 
