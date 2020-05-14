@@ -30,18 +30,17 @@ The code above would return:
 Thursday, the 3rd of Kislev 5777
 ```
 
-To print out the times of sunset and sunrise for July 27th 2017 in Lakewood NJ, you would use:
+To print out the formatted times of sunset and sunrise for July 27th 2023 in Lakewood NJ, you would use:
 
 ```javascript
-import Location from 'JCal/Location';
 import Zmanim from 'JCal/Zmanim';
+import Locations from 'JCal/Locations';
 import Utils from 'JCal/Utils';
 
-const lakewood = Location.getLakewood(),
-    date = new Date(2017, 6, 27),
-    sunTimes = Zmanim.getSunTimes(date, lakewood),
-    sunrise = Utils.getTimeString(sunTimes[0]),
-    sunset = Utils.getTimeString(sunTimes[1]),
+const {sunrise, sunset} = Zmanim.getSunTimes(
+            new Date(2023, 6, 27),
+            Locations.Lakewood_NJ);
 
-    console.log(`Sunrise: ${sunrise}, Sunset: ${sunset}`);
+console.log(`Sunrise: ${Utils.getTimeString(sunrise)} 
+             Sunset: ${Utils.getTimeString(sunset)}`);
 ```

@@ -28,13 +28,9 @@ export default class Location {
         if (typeof israel === 'undefined' || israel === null) {
             //If the user is within Israels general coordinates,
             //we feel pretty safe assuming they are in Israel.
-            //Where else on the map is the user? (Note, the probablity of our users Jewishness: 99.99%)
-            //Sinai, Lebanon, Syria, Jordan, in a submarine under the Mediterannian ...
-            israel =
-                latitude > 29.45 &&
-                latitude < 33 &&
-                longitude < -34.23 &&
-                longitude > -35.9;
+            //Where else on the map is the user? (Note, the probability of our users Jewishness: 99.99%)
+            //Sinai, Lebanon, Syria, Jordan, in a submarine under the Mediterranean ...
+            israel = latitude > 29.45 && latitude < 33 && longitude < -34.23 && longitude > -35.9;
         }
         if (israel) {
             //Israel has only one immutable time zone
@@ -83,14 +79,7 @@ export default class Location {
         } else {
             const special = [
                     {
-                        names: [
-                            'jerusalem',
-                            'yerush',
-                            'petach',
-                            'petah',
-                            'petak',
-                            'beit shemesh',
-                        ],
+                        names: ['jerusalem', 'yerush', 'petach', 'petah', 'petak', 'beit shemesh'],
                         min: 40,
                     },
                     {
@@ -99,8 +88,8 @@ export default class Location {
                     },
                 ],
                 loclc = location.Name.toLowerCase(),
-                city = special.find(sp => {
-                    return sp.names.find(spi => {
+                city = special.find((sp) => {
+                    return sp.names.find((spi) => {
                         return loclc.indexOf(spi) > -1;
                     });
                 });

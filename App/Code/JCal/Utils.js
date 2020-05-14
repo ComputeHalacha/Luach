@@ -553,7 +553,7 @@ export default class Utils {
      * Converts the given complex number to an integer by removing the decimal part.
      * Returns same results as Math.floor for positive numbers and Math.ceil for negative ones.
      * Almost identical functionality to Math.trunc and parseInt.
-     * The difference is if the argument is NaN. Math.trunc returns NaN while ths fuction returns 0.
+     * The difference is if the argument is NaN. Math.trunc returns NaN while ths function returns 0.
      * In performance tests, this function was found to be quicker than the alternatives.
      * @param {Number} float The complex number to convert to an integer
      */

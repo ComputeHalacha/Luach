@@ -5,18 +5,21 @@ import PirkeiAvos from './PirkeiAvos.js';
 import Zmanim from './Zmanim.js';
 import DafYomi from './Dafyomi';
 
-/** Keeps a "repository" of years that have had their elapsed days previously calculated. Format: { year:5776, elapsed:2109283 } */
+/** Keeps a memcached "repository" of years that have had their elapsed days previously calculated. 
+ * Format: { year:5776, elapsed:2109283 } */
 const _yearCache = [],
-    //The absolute date for the zero hour of all javascript date objects - 1/1/1970 0:00:00 UTC
+    //The "absolute date" for the zero hour of all javascript Date objects - 1/1/1970 0:00:00 UTC
+    //This is the number of days elapsed from the theoretical date Sunday, December 31, 0001 BCE
     JS_START_DATE_ABS = 719163,
-    //The number of milliseconds in everyday
+    //The number of milliseconds in every day
     MS_PER_DAY = 8.64e7,
     //The time zone offset (in minutes) for 1/1/1970 0:00:00 UTC at the current users time zone
     JS_START_OFFSET = new Date(0).getTimezoneOffset();
+
 /* ****************************************************************************************************************
- * Many of the date conversion algorithmsin the jDate class are based on the C code which was translated from Lisp
- * in "Calendrical Calculations" by Nachum Dershowitz and Edward M. Reingold
- * in Software---Practice & Experience, vol. 20, no. 9 (September, 1990), pp. 899--928.
+ * Many of the date conversion algorithms in the jDate class are based on the C code -
+ * which was translated from the Lisp code in "Calendrical Calculations" 
+ * by Nachum Dershowitz and Edward M. Reingold in Software---Practice & Experience, vol. 20, no. 9 (September, 1990), pp. 899--928.
  * ****************************************************************************************************************/
 
 /** Represents a single day in the Jewish Calendar. */
@@ -42,7 +45,7 @@ export default class jDate {
     constructor(arg, month, day, abs) {
         //The day of the Jewish Month
         this.Day = NaN;
-        //The Jewish Month. As in the Torah, Nissan is 1 and Adara Sheini is 13
+        //The Jewish Month. As in the Torah, Nissan is 1 and Adar Sheini is 13
         this.Month = NaN;
         //The Number of years since the creation of the world
         this.Year = NaN;
@@ -1020,7 +1023,7 @@ export default class jDate {
         }
 
         //Add this year to the cache to save on calculations later on
-        _yearCache.push({ year: year, elapsed: altDay });
+        _yearCache.push({ year, elapsed: altDay });
 
         return altDay;
     }
@@ -1051,7 +1054,9 @@ export default class jDate {
     }
 
     /**
-     * Gets an Array[String] of holidays, fasts and any other special specifications for the given Jewish date.
+     * Gets an Array[String] for Jewish holidays, fasts or other special signifigance for the given Jewish date.
+     * For example for December 4th 2021, we would return:
+     * ['Shabbos Kodesh', 'Rosh Chodesh Teves', 'Chanuka - Six Candles']
      */
     static getHolidays(jd, israel, hebrew) {
         const list = [],
@@ -1413,7 +1418,7 @@ export default class jDate {
         return list;
     }
     /**
-     * Gets a String with the name of a major holidays or fast
+     * Gets a String with the name of a major holiday or fast for the given day.
      */
     static getMajorHoliday(jd, israel, hebrew) {
         const jYear = jd.Year,
