@@ -1,7 +1,7 @@
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 import LocalStorage from './Data/LocalStorage';
-import { GLOBALS, log, warn, error, getFileName } from './GeneralUtils';
+import { log, warn, error, getFileName } from './GeneralUtils';
 import AppData from './Data/AppData';
 import DataUtils from './Data/DataUtils';
 
@@ -56,58 +56,71 @@ export default class RemoteBackup {
             const responseData = await response.json(),
                 succeeded = responseData && responseData.Succeeded;
             if (succeeded) {
-                log(`Response Succeeded: ${JSON.stringify(responseData)}`);
+                log(`${options.method} ${url} - Response Succeeded: ${JSON.stringify(responseData)}`);
             } else {
                 warn(`Response did NOT Succeed: ${JSON.stringify(responseData)}`);
             }
             return responseData;
         } catch (err) {
-            error(`Http request error: ${JSON.stringify(err)}`);
+            error(`${method || 'GET'} ${url} - Http request error: ${JSON.stringify(err)}`);
         }
     }
     async createAccount() {
         const response = await this.request('account');
+        let success = false,
+            message = null;
         if (response.Succeeded) {
-            return 'Account has been successfully created';
+            success = true;
+            message = 'Account has been successfully created';
         } else {
             warn(response);
-            return `Luach could not create the account.\\n${response.ErrorMessage}`;
+            message = `Luach could not create the account.\\n${response.ErrorMessage}`;
         }
+        return { success, message };
+    }
+    async accountExists() {
+        const response = await this.request('exists');
+        return response.Succeeded && response.Exists;
     }
     async uploadBackup() {
-        const url = serverURL + '/backup',
-            localStorage = await this.getLocalStorage();
-        let base64;
-        if (localStorage.databasePath === GLOBALS.DEFAULT_DB_PATH && GLOBALS.IS_ANDROID) {
-            base64 = await RNFS.readFileAssets(GLOBALS.DEFAULT_DB_PATH.replace('~', ''), 'base64');
-        } else {
-            base64 = await RNFS.readFile(localStorage.databasePath, 'base64');
-        }
-        const buffer = Buffer.from(base64, 'base64');
-        try {
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/octet-stream',
-                    Authorization: `bearer ${await this.getAccountName()}`,
-                    Accept: 'application/json',
-                },
-                body: buffer,
-            });
-            log(`Http Request: PUT ${url}`);
-            const responseData = await response.json(),
-                succeeded = responseData && responseData.Succeeded;
-            if (succeeded) {
-                log(`Response Succeeded: ${JSON.stringify(responseData)}`);
-                return 'Your data has been successfully backed up to the Luach server.';
-            } else {
-                warn(`Response did NOT Succeed: ${JSON.stringify(responseData)}`);
-                return `Luach was not able to back up your data to the Luach server.\\n${responseData.ErrorMessage}`;
+        const url = `${serverURL}/backup`,
+            dbAbsolutePath = await DataUtils.getDatabaseAbsolutePath();
+        let success = false,
+            message = null;
+        if (RNFS.exists(dbAbsolutePath)) {
+            log(`Current database located successfully at ${dbAbsolutePath}`);
+            const base64 = await RNFS.readFile(dbAbsolutePath, 'base64'),
+                buffer = Buffer.from(base64, 'base64');
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/octet-stream',
+                        Authorization: `bearer ${await this.getAccountName()}`,
+                        Accept: 'application/json',
+                    },
+                    body: buffer,
+                });
+                log(`Http Request: PUT ${url}`);
+                const responseData = await response.json();
+                success = responseData && responseData.Succeeded;
+                if (success) {
+                    log(`PUT ${url} - Response.Succeeded = true: ${JSON.stringify(responseData)}`);
+                    message = 'Your data has been successfully backed up to the Luach server.';
+                } else {
+                    warn(`PUT ${url} - Response.Succeeded = false: ${JSON.stringify(responseData)}`);
+                    message = `Luach was not able to back up your data to the Luach server.\\n${responseData.ErrorMessage}`;
+                }
+            } catch (err) {
+                error(`PUT ${url} - Http request error: ${JSON.stringify(err)}`);
+                message = `Luach was not able to back up your data to the Luach server.\\n${err.message}`;
             }
-        } catch (err) {
-            error(`Http request error: ${JSON.stringify(err)}`);
-            return `Luach was not able to back up your data to the Luach server.\\n${err.message}`;
+        } else {
+            warn(`Current database not found at ${dbAbsolutePath}`);
+            message = `Luach was not able to back up your data to the Luach server.\\n
+                        Your local data could not be accessed for upload`;
         }
+        return { success, message };
     }
     /**
      * Restore a previously uploaded remote backup.
@@ -122,31 +135,34 @@ export default class RemoteBackup {
             response = await this.request();
         if (response.Succeeded) {
             try {
-                log('Successfully acquired backup file from server');
+                log(`GET ${serverURL} - Successfully acquired backup file from server`);
                 const prevPath = localStorage.databasePath,
                     //The database file is put in a folder where both android and IOS have access
-                    newPath = RNFS.DocumentDirectoryPath + '/' + this.getNewDatabaseName();
-                log('The exiting database is at ' + prevPath);
-                log('The new database will be ' + newPath);
+                    newPath = `${RNFS.DocumentDirectoryPath}/${this.getNewDatabaseName()}`,
+                    newDbName = getFileName(newPath);
+                log(`The existing database is named ${getFileName(prevPath)} 
+                        and was found at ${prevPath}`);
+                log(
+                    `The NEW database will be named${newDbName} 
+                        and its pre-populated file will be placed at ${newPath}`
+                );
                 //Write the file data to disc.
                 //The RNFS.writeFile function does the decoding from base 64 to binary.
                 await RNFS.writeFile(newPath, response.FileData, 'base64');
-                log('Successfully wrote backup file to ' + newPath);
+                log(`Successfully copied backup file to ${newPath}`);
                 //Save the new database path to the local storage
                 await LocalStorage.setLocalStorageValue('DATABASE_PATH', newPath);
                 //Set the data base utilities to access the new database path
                 DataUtils._databasePath = newPath;
-                log('Set the DataUtils database path to ' + newPath);
-                log('The new database is named ' + getFileName(newPath));
+                log(`Set the DataUtils database path to ${newPath}`);
                 //Reset the global application data object
-                global.GlobalAppData = null;
-                log('Set Global.AppData to null');
+                appData = await AppData.fromDatabase();
+                global.GlobalAppData = appData;
                 //Reload the global app data from the newly overwritten database file
-                appData = await AppData.getAppData();
                 log('Reloaded Global.AppData from new database');
                 //Delete the old database file
                 RNFS.unlink(prevPath);
-                log('Deleted previous file ' + prevPath);
+                log(`Deleted previous file ${prevPath}`);
                 success = true;
             } catch (e) {
                 error(e.message);
@@ -157,5 +173,25 @@ export default class RemoteBackup {
             message = `Luach was unable to restore from the online backup.\\n${response.ErrorMessage}`;
         }
         return { success, appData, message };
+    }
+    static async DoBackupNoMatterWhat(localStorage) {
+        const remoteBackup = new RemoteBackup();
+        if (!localStorage) localStorage = remoteBackup.getLocalStorage();
+        else remoteBackup.localStorage = localStorage;
+        if (!localStorage.remoteUserName || !localStorage.remotePassword) {
+            return {
+                success: false,
+                message:
+                    '"remote user name" and "remote password" must be entered on the Settings page before doing a backup.',
+            };
+        }
+        const hasAccount = await remoteBackup.accountExists();
+        if (!hasAccount) {
+            const response = await remoteBackup.createAccount();
+            if (!response.success) {
+                return response;
+            }
+        }
+        return await remoteBackup.uploadBackup();
     }
 }

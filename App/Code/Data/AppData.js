@@ -140,6 +140,13 @@ const addedFields = [
         allowNull: true,
         defaultValue: -1,
     },
+    //Added 5/15/20
+    {
+        table: 'settings',
+        name: 'autoBackup',
+        type: 'BOOLEAN',
+        allowNull: true
+    },
 ];
 
 /**

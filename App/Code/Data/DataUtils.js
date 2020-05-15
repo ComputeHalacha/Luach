@@ -1,5 +1,5 @@
 import SQLite from 'react-native-sqlite-storage';
-import { isNumber, log, error, warn, getFileName, GLOBALS } from '../GeneralUtils';
+import { isNumber, log, error, warn, getFileName,getAppBundleIdAndroid, GLOBALS } from '../GeneralUtils';
 import AppData from './AppData';
 import jDate from '../JCal/jDate';
 import Settings from '../Settings';
@@ -27,6 +27,17 @@ export default class DataUtils {
             DataUtils._databasePath = localStorage.databasePath;
             return localStorage.databasePath;
         }
+    }
+
+    /**
+     * Gets the true actual database path that the data is getting read from and written to
+     */
+    static async getDatabaseAbsolutePath() {
+        const path = await this.getDatabasePath(),
+            databasePath = path && path.replace('~', '');
+        return path ? (GLOBALS.IS_ANDROID
+            ? `/data/data/${getAppBundleIdAndroid()}/databases/${getFileName(databasePath)}`
+            : databasePath) : null;
     }
 
     static async SettingsFromDatabase() {
@@ -58,6 +69,7 @@ export default class DataUtils {
                     noProbsAfterEntry: !!dbSet.noProbsAfterEntry,
                     hideHelp: !!dbSet.hideHelp,
                     discreet: !!dbSet.discreet,
+                    autoBackup: !!dbSet.autoBackup,
                     remindBedkMornTime: dbSet.remindBedkMornTime,
                     remindBedkAftrnHour: dbSet.remindBedkAftrnHour,
                     remindMikvahTime: dbSet.remindMikvahTime,
@@ -101,6 +113,7 @@ export default class DataUtils {
             noProbsAfterEntry=?,
             hideHelp=?,
             discreet=?,
+            autoBackup=?,
             remindBedkMornTime=?,
             remindBedkAftrnHour=?,
             remindMikvahTime=?,
@@ -125,6 +138,7 @@ export default class DataUtils {
                 settings.noProbsAfterEntry,
                 settings.hideHelp,
                 settings.discreet,
+                settings.autoBackup,
                 Utils.getSimpleTimeString(settings.remindBedkMornTime),
                 settings.remindBedkAftrnHour,
                 Utils.getSimpleTimeString(settings.remindMikvahTime),
@@ -277,7 +291,7 @@ export default class DataUtils {
         if (!searchTerm) {
             throw 'Search parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
         }
-        let where = "(name || IFNULL(heb, '') LIKE ?)",
+        let where = '(name || IFNULL(heb, \'\') LIKE ?)',
             values = [`%${searchTerm}%`];
         if (utcOffset) {
             where += ' and utcOffset=?';
@@ -434,7 +448,7 @@ export default class DataUtils {
     }
     static async KavuahToDatabase(kavuah) {
         if (!(kavuah.settingEntry && kavuah.settingEntry.hasId)) {
-            throw "A kavuah can not be saved to the database unless it's setting entry is already in the database.";
+            throw 'A kavuah can not be saved to the database unless it\'s setting entry is already in the database.';
         }
         const params = [
             kavuah.kavuahType,
@@ -624,7 +638,7 @@ export default class DataUtils {
                     newField.defaultValue
                         ? 'DEFAULT ' +
                           (typeof newField.defaultValue === 'string'
-                              ? "'" + newField.defaultValue + "'"
+                              ? '\'' + newField.defaultValue + '\''
                               : newField.defaultValue.toString())
                         : ''
                 }`

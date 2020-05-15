@@ -13,7 +13,7 @@ import SideMenu from '../Components/SideMenu';
 import Location from '../../Code/JCal/Location';
 import Utils from '../../Code/JCal/Utils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
-import { setDefault, isNullishOrFalse, GLOBALS } from '../../Code/GeneralUtils';
+import { setDefault, isNullishOrFalse, GLOBALS, popUpMessage, inform } from '../../Code/GeneralUtils';
 import NumberPicker from '../Components/NumberPicker';
 import TimeInput from '../Components/TimeInput';
 import {
@@ -47,10 +47,8 @@ export default class SettingsScreen extends Component {
                             })
                         }>
                         <View style={{ marginRight: 10 }}>
-                            <Icon name="import-export" color="#aca" size={25} />
-                            <Text style={{ fontSize: 10, color: '#797' }}>
-                                Export Data
-                            </Text>
+                            <Icon name='import-export' color='#aca' size={25} />
+                            <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
                         </View>
                     </TouchableHighlight>
                     <TouchableHighlight
@@ -61,10 +59,8 @@ export default class SettingsScreen extends Component {
                             })
                         }>
                         <View style={{ marginRight: 10 }}>
-                            <Icon name="backup" color="#88c" size={25} />
-                            <Text style={{ fontSize: 10, color: '#559' }}>
-                                Backup Data
-                            </Text>
+                            <Icon name='backup' color='#88c' size={25} />
+                            <Text style={{ fontSize: 10, color: '#559' }}>Backup/Restore</Text>
                         </View>
                     </TouchableHighlight>
                     <TouchableHighlight
@@ -77,10 +73,8 @@ export default class SettingsScreen extends Component {
                             })
                         }>
                         <View style={{ marginRight: 3 }}>
-                            <Icon name="help" color="#aac" size={25} />
-                            <Text style={{ fontSize: 10, color: '#aac' }}>
-                                Luach Help
-                            </Text>
+                            <Icon name='help' color='#aac' size={25} />
+                            <Text style={{ fontSize: 10, color: '#aac' }}>Luach Help</Text>
                         </View>
                     </TouchableHighlight>
                 </View>
@@ -111,6 +105,8 @@ export default class SettingsScreen extends Component {
         this.changeSetting = this.changeSetting.bind(this);
         this.changeLocalStorage = this.changeLocalStorage.bind(this);
         this.changePIN = this.changePIN.bind(this);
+        this.changeUsername = this.changeUsername.bind(this);
+        this.changePassword = this.changePassword.bind(this);
     }
     async componentDidMount() {
         const localStorage = await LocalStorage.loadAll();
@@ -126,18 +122,14 @@ export default class SettingsScreen extends Component {
             case 'remindBedkMornTime':
                 if (!value) {
                     cancelAllMorningBedikaAlarms(
-                        this.appData.TaharaEvents[
-                            this.appData.TaharaEvents.length - 1
-                        ]
+                        this.appData.TaharaEvents[this.appData.TaharaEvents.length - 1]
                     );
                 }
                 break;
             case 'remindBedkAftrnHour':
                 if (!value) {
                     cancelAllAfternoonBedikaAlarms(
-                        this.appData.TaharaEvents[
-                            this.appData.TaharaEvents.length - 1
-                        ]
+                        this.appData.TaharaEvents[this.appData.TaharaEvents.length - 1]
                     );
                 }
                 break;
@@ -152,9 +144,7 @@ export default class SettingsScreen extends Component {
 
                     resetDayOnahReminders(
                         this.appData.ProblemOnahs.filter(
-                            (po) =>
-                                po.NightDay === NightDay.Day &&
-                                po.jdate.Abs >= now.Abs
+                            (po) => po.NightDay === NightDay.Day && po.jdate.Abs >= now.Abs
                         ),
                         value,
                         settings.location,
@@ -170,9 +160,7 @@ export default class SettingsScreen extends Component {
 
                     resetNightOnahReminders(
                         this.appData.ProblemOnahs.filter(
-                            (po) =>
-                                po.NightDay === NightDay.Night &&
-                                po.jdate.Abs >= now.Abs
+                            (po) => po.NightDay === NightDay.Night && po.jdate.Abs >= now.Abs
                         ),
                         value,
                         settings.location,
@@ -182,6 +170,15 @@ export default class SettingsScreen extends Component {
                     removeAllNightOnahReminders();
                 }
                 break;
+                case 'autoBackup':{
+                    const localStorage = this.state.localStorage;
+                    if (!localStorage.remoteUserName || !localStorage.remotePassword) {
+                        inform(
+                            'To automatically backup your data when a new Entry is added, you need to enter a "remote user name" and "remote password" below.'
+                        );
+                    }
+                    break;
+                }
         }
 
         this.update(this.appData);
@@ -207,6 +204,23 @@ export default class SettingsScreen extends Component {
         }
         this.setState({ localStorage, invalidPin: !validPin, enteredPin: pin });
     }
+    changeUsername(userName) {
+        if (userName && userName.length < 5) {
+            popUpMessage(
+                'Please choose a user name with at least 5 characters',
+                'Invalid user Name'
+            );
+        } else {
+            this.changeLocalStorage('remoteUserName', userName);
+        }
+    }
+    changePassword(password) {
+        if (this.state.localStorage.remoteUserName && password.length < 5) {
+            popUpMessage('Please choose a Password with at least 5 characters', 'Invalid password');
+        } else {
+            this.changeLocalStorage('remotePassword', password);
+        }
+    }
     render() {
         const settings = this.state.settings,
             localStorage = this.state.localStorage,
@@ -216,26 +230,18 @@ export default class SettingsScreen extends Component {
             onahBeinunis24Hours = settings.onahBeinunis24Hours,
             numberMonthsAheadToWarn = settings.numberMonthsAheadToWarn || 12,
             keepLongerHaflagah = setDefault(settings.keepLongerHaflagah, true),
-            dilugChodeshPastEnds = setDefault(
-                settings.dilugChodeshPastEnds,
-                true
-            ),
+            dilugChodeshPastEnds = setDefault(settings.dilugChodeshPastEnds, true),
             haflagaOfOnahs = settings.haflagaOfOnahs,
             kavuahDiffOnahs = settings.kavuahDiffOnahs,
-            calcKavuahsOnNewEntry = setDefault(
-                settings.calcKavuahsOnNewEntry,
-                true
-            ),
+            calcKavuahsOnNewEntry = setDefault(settings.calcKavuahsOnNewEntry, true),
             showProbFlagOnHome = setDefault(settings.showProbFlagOnHome, true),
-            showEntryFlagOnHome = setDefault(
-                settings.showEntryFlagOnHome,
-                true
-            ),
+            showEntryFlagOnHome = setDefault(settings.showEntryFlagOnHome, true),
             navigateBySecularDate = settings.navigateBySecularDate,
             showIgnoredKavuahs = settings.showIgnoredKavuahs,
             noProbsAfterEntry = setDefault(settings.noProbsAfterEntry, true),
             hideHelp = settings.hideHelp,
             discreet = setDefault(settings.discreet, true),
+            autoBackup = settings.autoBackup,
             remindBedkMornTime = settings.remindBedkMornTime,
             remindBedkAftrnHour = settings.remindBedkAftrnHour,
             remindMikvahTime = settings.remindMikvahTime,
@@ -243,10 +249,8 @@ export default class SettingsScreen extends Component {
             remindNightOnahHour = settings.remindNightOnahHour,
             requirePin = !!localStorage.requirePin,
             enteredPin = this.state.enteredPin || localStorage.PIN,
-            remoteUserName =
-                this.state.enteredRemoteUserName || localStorage.remoteUserName,
-            remotePassword =
-                this.state.enteredRemotePassword || localStorage.remotePassword;
+            remoteUserName = this.state.enteredRemoteUserName || localStorage.remoteUserName,
+            remotePassword = this.state.enteredRemotePassword || localStorage.remotePassword;
 
         return (
             <View>
@@ -256,19 +260,15 @@ export default class SettingsScreen extends Component {
                         appData={this.appData}
                         navigator={this.props.navigation}
                         hideSettings={true}
-                        helpUrl="Settings.html"
-                        helpTitle="Settings"
+                        helpUrl='Settings.html'
+                        helpTitle='Settings'
                     />
                     <ScrollView style={GeneralStyles.container}>
                         <View style={GeneralStyles.headerView}>
-                            <Text style={GeneralStyles.headerText}>
-                                Halachic Settings
-                            </Text>
+                            <Text style={GeneralStyles.headerText}>Halachic Settings</Text>
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Choose your location
-                            </Text>
+                            <Text style={GeneralStyles.label}>Choose your location</Text>
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -276,7 +276,7 @@ export default class SettingsScreen extends Component {
                                     alignItems: 'center',
                                 }}>
                                 <TouchableHighlight
-                                    underlayColor="#9f9"
+                                    underlayColor='#9f9'
                                     onPress={() =>
                                         this.navigate('FindLocation', {
                                             onUpdate: this.update,
@@ -288,17 +288,13 @@ export default class SettingsScreen extends Component {
                                         backgroundColor: '#dfd',
                                     }}>
                                     <View style={GeneralStyles.centeredRow}>
-                                        <Icon
-                                            name="edit-location"
-                                            color="#484"
-                                            size={35}
-                                        />
+                                        <Icon name='edit-location' color='#484' size={35} />
                                         <Text>{location.Name}</Text>
                                     </View>
                                 </TouchableHighlight>
                                 <Icon
-                                    name="edit"
-                                    color="#888"
+                                    name='edit'
+                                    color='#888'
                                     size={15}
                                     containerStyle={{
                                         paddingRight: 12,
@@ -323,16 +319,12 @@ export default class SettingsScreen extends Component {
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
-                                Keep Onah Beinonis (30, 31 and Yom HaChodesh)
-                                for a full 24 Hours
+                                Keep Onah Beinonis (30, 31 and Yom HaChodesh) for a full 24 Hours
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting(
-                                        'onahBeinunis24Hours',
-                                        value
-                                    )
+                                    this.changeSetting('onahBeinunis24Hours', value)
                                 }
                                 value={!!onahBeinunis24Hours}
                             />
@@ -356,18 +348,14 @@ export default class SettingsScreen extends Component {
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting(
-                                        'keepLongerHaflagah',
-                                        value
-                                    )
+                                    this.changeSetting('keepLongerHaflagah', value)
                                 }
                                 value={!!keepLongerHaflagah}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
-                                Continue incrementing Dilug Yom Hachodesh
-                                Kavuahs into another month
+                                Continue incrementing Dilug Yom Hachodesh Kavuahs into another month
                             </Text>
                             <View style={{ flexDirection: 'row' }}>
                                 {/*Without the folloiwng empty Text, the first NumberPicker below won't close its modal. I have absolutly no idea why.... */}
@@ -375,10 +363,7 @@ export default class SettingsScreen extends Component {
                                 <Switch
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
-                                        this.changeSetting(
-                                            'dilugChodeshPastEnds',
-                                            value
-                                        )
+                                        this.changeSetting('dilugChodeshPastEnds', value)
                                     }
                                     value={!!dilugChodeshPastEnds}
                                 />
@@ -409,14 +394,10 @@ export default class SettingsScreen extends Component {
                             />
                         </View>
                         <View style={GeneralStyles.headerView}>
-                            <Text style={GeneralStyles.headerText}>
-                                Application Settings
-                            </Text>
+                            <Text style={GeneralStyles.headerText}>Application Settings</Text>
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Number of Months ahead to warn
-                            </Text>
+                            <Text style={GeneralStyles.label}>Number of Months ahead to warn</Text>
                             <NumberPicker
                                 style={{
                                     flex: 1,
@@ -425,28 +406,21 @@ export default class SettingsScreen extends Component {
                                     alignItems: 'center',
                                 }}
                                 endNumber={24}
-                                unitName="month"
+                                unitName='month'
                                 value={numberMonthsAheadToWarn}
                                 onChange={(value) =>
-                                    this.changeSetting(
-                                        'numberMonthsAheadToWarn',
-                                        value
-                                    )
+                                    this.changeSetting('numberMonthsAheadToWarn', value)
                                 }
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
-                                Automatically Calculate Kavuahs upon addition of
-                                an Entry
+                                Automatically Calculate Kavuahs upon addition of an Entry
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting(
-                                        'calcKavuahsOnNewEntry',
-                                        value
-                                    )
+                                    this.changeSetting('calcKavuahsOnNewEntry', value)
                                 }
                                 value={!!calcKavuahsOnNewEntry}
                             />
@@ -458,10 +432,7 @@ export default class SettingsScreen extends Component {
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting(
-                                        'showEntryFlagOnHome',
-                                        value
-                                    )
+                                    this.changeSetting('showEntryFlagOnHome', value)
                                 }
                                 value={!!showEntryFlagOnHome}
                             />
@@ -472,10 +443,18 @@ export default class SettingsScreen extends Component {
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={(value) =>
-                                    this.changeSetting('discreet', value)
-                                }
+                                onValueChange={(value) => this.changeSetting('discreet', value)}
                                 value={!!discreet}
+                            />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Automatically backup data when a new Entry is added?
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={(value) => this.changeSetting('autoBackup', value)}
+                                value={!!autoBackup}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
@@ -485,18 +464,14 @@ export default class SettingsScreen extends Component {
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting(
-                                        'showProbFlagOnHome',
-                                        value
-                                    )
+                                    this.changeSetting('showProbFlagOnHome', value)
                                 }
                                 value={!!showProbFlagOnHome}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
-                                Remind me about the morning Bedikah during Shiva
-                                Neki'im'?
+                                Remind me about the morning Bedikah during Shiva Neki'im'?
                             </Text>
                             <View style={localStyles.switchView}>
                                 <Text>Don't add reminder</Text>
@@ -530,22 +505,16 @@ export default class SettingsScreen extends Component {
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
-                                Remind me about the afternoon Bedikah during
-                                Shiva Neki'im'?
+                                Remind me about the afternoon Bedikah during Shiva Neki'im'?
                             </Text>
                             <View style={localStyles.switchView}>
                                 <Text>Don't add reminder</Text>
                                 <Switch
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
-                                        this.changeSetting(
-                                            'remindBedkAftrnHour',
-                                            value && -1
-                                        )
+                                        this.changeSetting('remindBedkAftrnHour', value && -1)
                                     }
-                                    value={
-                                        !isNullishOrFalse(remindBedkAftrnHour)
-                                    }
+                                    value={!isNullishOrFalse(remindBedkAftrnHour)}
                                 />
                                 <Text>Add reminder</Text>
                             </View>
@@ -555,13 +524,10 @@ export default class SettingsScreen extends Component {
                                     <NumberPicker
                                         startNumber={0}
                                         endNumber={12}
-                                        unitName="hour"
+                                        unitName='hour'
                                         value={Math.abs(remindBedkAftrnHour)}
                                         onChange={(value) =>
-                                            this.changeSetting(
-                                                'remindBedkAftrnHour',
-                                                -value
-                                            )
+                                            this.changeSetting('remindBedkAftrnHour', -value)
                                         }
                                     />
                                     <Text>{' before sunset'}</Text>
@@ -570,8 +536,7 @@ export default class SettingsScreen extends Component {
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
-                                Remind me about the Mikvah on the last day of
-                                Shiva Neki'im'?
+                                Remind me about the Mikvah on the last day of Shiva Neki'im'?
                             </Text>
                             <View style={localStyles.switchView}>
                                 <Text>Don't add reminder</Text>
@@ -593,10 +558,7 @@ export default class SettingsScreen extends Component {
                                     <TimeInput
                                         selectedTime={remindMikvahTime}
                                         onConfirm={(remindMikvahTime) =>
-                                            this.changeSetting(
-                                                'remindMikvahTime',
-                                                remindMikvahTime
-                                            )
+                                            this.changeSetting('remindMikvahTime', remindMikvahTime)
                                         }
                                     />
                                 </View>
@@ -611,10 +573,7 @@ export default class SettingsScreen extends Component {
                                 <Switch
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
-                                        this.changeSetting(
-                                            'remindDayOnahHour',
-                                            value && -8
-                                        )
+                                        this.changeSetting('remindDayOnahHour', value && -8)
                                     }
                                     value={!isNullishOrFalse(remindDayOnahHour)}
                                 />
@@ -626,13 +585,10 @@ export default class SettingsScreen extends Component {
                                     <NumberPicker
                                         startNumber={0}
                                         endNumber={24}
-                                        unitName="hour"
+                                        unitName='hour'
                                         value={Math.abs(remindDayOnahHour)}
                                         onChange={(value) =>
-                                            this.changeSetting(
-                                                'remindDayOnahHour',
-                                                -value
-                                            )
+                                            this.changeSetting('remindDayOnahHour', -value)
                                         }
                                     />
                                     <Text>{' before sunrise'}</Text>
@@ -648,14 +604,9 @@ export default class SettingsScreen extends Component {
                                 <Switch
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
-                                        this.changeSetting(
-                                            'remindNightOnahHour',
-                                            value && -1
-                                        )
+                                        this.changeSetting('remindNightOnahHour', value && -1)
                                     }
-                                    value={
-                                        !isNullishOrFalse(remindNightOnahHour)
-                                    }
+                                    value={!isNullishOrFalse(remindNightOnahHour)}
                                 />
                                 <Text>Add reminder</Text>
                             </View>
@@ -665,13 +616,10 @@ export default class SettingsScreen extends Component {
                                     <NumberPicker
                                         startNumber={0}
                                         endNumber={24}
-                                        unitName="hour"
+                                        unitName='hour'
                                         value={Math.abs(remindNightOnahHour)}
                                         onChange={(value) =>
-                                            this.changeSetting(
-                                                'remindNightOnahHour',
-                                                -value
-                                            )
+                                            this.changeSetting('remindNightOnahHour', -value)
                                         }
                                     />
                                     <Text>{' before sunset'}</Text>
@@ -679,9 +627,7 @@ export default class SettingsScreen extends Component {
                             )}
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Calendar displays current:
-                            </Text>
+                            <Text style={GeneralStyles.label}>Calendar displays current:</Text>
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -692,10 +638,7 @@ export default class SettingsScreen extends Component {
                                 <Switch
                                     style={GeneralStyles.switch}
                                     onValueChange={(value) =>
-                                        this.changeSetting(
-                                            'navigateBySecularDate',
-                                            value
-                                        )
+                                        this.changeSetting('navigateBySecularDate', value)
                                     }
                                     value={!!navigateBySecularDate}
                                 />
@@ -709,24 +652,19 @@ export default class SettingsScreen extends Component {
                                         paddingLeft: 10,
                                         paddingBottom: 5,
                                     }}>
-                                    Please Note: If the current time is between
-                                    sunset and midnight, the current Jewish date
-                                    will be incorrect.
+                                    Please Note: If the current time is between sunset and midnight,
+                                    the current Jewish date will be incorrect.
                                 </Text>
                             )}
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
-                                Show explicitly ignored Kavuahs in the Kavuah
-                                list
+                                Show explicitly ignored Kavuahs in the Kavuah list
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting(
-                                        'showIgnoredKavuahs',
-                                        value
-                                    )
+                                    this.changeSetting('showIgnoredKavuahs', value)
                                 }
                                 value={!!showIgnoredKavuahs}
                             />
@@ -738,23 +676,16 @@ export default class SettingsScreen extends Component {
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting(
-                                        'noProbsAfterEntry',
-                                        value
-                                    )
+                                    this.changeSetting('noProbsAfterEntry', value)
                                 }
                                 value={!!noProbsAfterEntry}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Hide Help Button
-                            </Text>
+                            <Text style={GeneralStyles.label}>Hide Help Button</Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={(value) =>
-                                    this.changeSetting('hideHelp', value)
-                                }
+                                onValueChange={(value) => this.changeSetting('hideHelp', value)}
                                 value={!!hideHelp}
                             />
                         </View>
@@ -771,14 +702,10 @@ export default class SettingsScreen extends Component {
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                PIN Number - minimum 4 digits
-                            </Text>
+                            <Text style={GeneralStyles.label}>PIN Number - minimum 4 digits</Text>
                             <View
                                 style={{
-                                    display: this.state.invalidPin
-                                        ? 'flex'
-                                        : 'none',
+                                    display: this.state.invalidPin ? 'flex' : 'none',
                                     marginTop: 5,
                                     marginLeft: 10,
                                 }}>
@@ -793,30 +720,21 @@ export default class SettingsScreen extends Component {
                             </View>
                             <TextInput
                                 style={GeneralStyles.textInput}
-                                keyboardType="numeric"
-                                returnKeyType="next"
+                                keyboardType='numeric'
+                                returnKeyType='next'
                                 onSubmitEditing={(e) => {
                                     this.changePIN(e.nativeEvent.text);
                                 }}
-                                onChangeText={(val) =>
-                                    this.setState({ enteredPin: val })
-                                }
+                                onChangeText={(val) => this.setState({ enteredPin: val })}
                                 value={enteredPin}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Remote backup user name
-                            </Text>
+                            <Text style={GeneralStyles.label}>Remote backup user name</Text>
                             <TextInput
                                 style={GeneralStyles.textInput}
-                                returnKeyType="next"
-                                onSubmitEditing={(e) => {
-                                    this.changeLocalStorage(
-                                        'remoteUserName',
-                                        e.nativeEvent.text
-                                    );
-                                }}
+                                returnKeyType='next'
+                                onSubmitEditing={(e) => this.changeUsername(e.nativeEvent.text)}
                                 onChangeText={(val) =>
                                     this.setState({
                                         enteredRemoteUserName: val,
@@ -826,18 +744,11 @@ export default class SettingsScreen extends Component {
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Remote backup password
-                            </Text>
+                            <Text style={GeneralStyles.label}>Remote backup password</Text>
                             <TextInput
                                 style={GeneralStyles.textInput}
-                                returnKeyType="next"
-                                onSubmitEditing={(e) => {
-                                    this.changeLocalStorage(
-                                        'remotePassword',
-                                        e.nativeEvent.text
-                                    );
-                                }}
+                                returnKeyType='next'
+                                onSubmitEditing={(e) => this.changePassword(e.nativeEvent.text)}
                                 onChangeText={(val) =>
                                     this.setState({
                                         enteredRemotePassword: val,

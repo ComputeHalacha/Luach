@@ -1,15 +1,15 @@
 import React from 'react';
-import { ScrollView, View, Text, Button, TextInput } from 'react-native';
+import { ScrollView, View, Text, Button, TextInput, Alert } from 'react-native';
 import LocalStorage from '../../Code/Data/LocalStorage';
 import SideMenu from '../Components/SideMenu';
-import { GLOBALS, popUpMessage, isValidDate, confirm } from '../../Code/GeneralUtils';
+import { GLOBALS, popUpMessage, isValidDate, confirm, goHomeToday } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 import RemoteBackup from '../../Code/RemoteBackup';
 
 export default class RemoteBackupScreen extends React.Component {
     static navigationOptions = {
-        title: 'Backup your data',
+        title: 'Backup and Restore',
     };
     constructor(props) {
         super(props);
@@ -33,6 +33,8 @@ export default class RemoteBackupScreen extends React.Component {
             localStorage: new LocalStorage(),
         };
         this.changeLocalStorage = this.changeLocalStorage.bind(this);
+        this.changeUsername = this.changeUsername.bind(this);
+        this.changePassword = this.changePassword.bind(this);
         this.getLastBackupDate = this.getLastBackupDate.bind(this);
         this.restoreFromBackup = this.restoreFromBackup.bind(this);
     }
@@ -69,7 +71,18 @@ export default class RemoteBackupScreen extends React.Component {
             const { success, appData, message } = await this.remoteBackup.restoreBackup();
             if (success && appData) {
                 this.update(appData);
-                popUpMessage('Data has been successfully restored from the online backup.');
+                Alert.alert(
+                    'Successfully restored from backup',
+                    'The information has been successfully restored from the remote backup.\nLuach will now reset.',
+                    [
+                        {
+                            text: 'OK',
+                            onPress: () => {
+                                goHomeToday(this.props.navigation, appData);
+                            },
+                        },
+                    ]
+                );
             } else {
                 popUpMessage(message);
             }
@@ -81,6 +94,24 @@ export default class RemoteBackupScreen extends React.Component {
         //save value to device storage
         localStorage[name] = val;
         this.setState({ localStorage });
+    }
+
+    changeUsername(userName) {
+        if (userName && userName.length < 5) {
+            popUpMessage(
+                'Please choose a user name with at least 5 characters',
+                'Invalid user Name'
+            );
+        } else {
+            this.changeLocalStorage('remoteUserName', userName);
+        }
+    }
+    changePassword(password) {
+        if (this.state.localStorage.remoteUserName && password.length < 5) {
+            popUpMessage('Please choose a Password with at least 5 characters', 'Invalid password');
+        } else {
+            this.changeLocalStorage('remotePassword', password);
+        }
     }
 
     render() {
@@ -100,14 +131,19 @@ export default class RemoteBackupScreen extends React.Component {
                         helpTitle='Settings'
                     />
                     <ScrollView style={{ flex: 1 }}>
+                        <View style={GeneralStyles.headerView}>
+                            {(this.state.lastBackupDate && (
+                                <Text style={GeneralStyles.headerText}>
+                                    Last Backup Date: {this.state.lastBackupDate}
+                                </Text>
+                            )) || <Text style={GeneralStyles.headerText}>No backup found</Text>}
+                        </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Remote backup user name</Text>
                             <TextInput
                                 style={GeneralStyles.textInput}
                                 multiline={false}
-                                onEndEditing={(e) =>
-                                    this.changeLocalStorage('remoteUserName', e.nativeEvent.text)
-                                }
+                                onEndEditing={(e) => this.changeUsername(e.nativeEvent.text)}
                                 onChangeText={(val) =>
                                     this.setState({
                                         enteredRemoteUserName: val,
@@ -121,9 +157,7 @@ export default class RemoteBackupScreen extends React.Component {
                             <TextInput
                                 style={GeneralStyles.textInput}
                                 multiline={false}
-                                onEndEditing={(e) =>
-                                    this.changeLocalStorage('remotePassword', e.nativeEvent.text)
-                                }
+                                onEndEditing={(e) => this.changePassword(e.nativeEvent.text)}
                                 onChangeText={(val) =>
                                     this.setState({
                                         enteredRemotePassword: val,
@@ -136,9 +170,11 @@ export default class RemoteBackupScreen extends React.Component {
                             <Button
                                 title='Create Account'
                                 onPress={async () =>
-                                    popUpMessage(await this.remoteBackup.createAccount())
+                                    popUpMessage(
+                                        await (await this.remoteBackup.createAccount()).message
+                                    )
                                 }
-                                accessibilityLabel='Create remote account'
+                                accessibilityLabel='Create an Account'
                                 color={GLOBALS.BUTTON_COLOR}
                             />
                             <Button
@@ -153,13 +189,6 @@ export default class RemoteBackupScreen extends React.Component {
                                 accessibilityLabel='Login to Account'
                                 color={GLOBALS.BUTTON_COLOR}
                             />
-                        </View>
-                        <View style={GeneralStyles.headerView}>
-                            {(this.state.lastBackupDate && (
-                                <Text style={GeneralStyles.headerText}>
-                                    Last Backup Date: {this.state.lastBackupDate}
-                                </Text>
-                            )) || <Text style={GeneralStyles.headerText}>No backup found</Text>}
                         </View>
                         <View
                             style={{
@@ -193,15 +222,6 @@ export default class RemoteBackupScreen extends React.Component {
                             </Text>
                         </View>
                         <View style={[GeneralStyles.buttonList, GeneralStyles.headerButtons]}>
-                            <Button
-                                title='Backup My Data'
-                                onPress={async () => {
-                                    popUpMessage(await this.remoteBackup.uploadBackup());
-                                    this.getLastBackupDate();
-                                }}
-                                accessibilityLabel='Backup My Data'
-                                color={GLOBALS.BUTTON_COLOR}
-                            />
                             {this.state.lastBackupDate && (
                                 <Button
                                     title='Restore from Backup'
@@ -210,6 +230,17 @@ export default class RemoteBackupScreen extends React.Component {
                                     color={GLOBALS.BUTTON_COLOR}
                                 />
                             )}
+                            <Button
+                                title='Backup My Data'
+                                onPress={async () => {
+                                    popUpMessage(
+                                        await (await this.remoteBackup.uploadBackup()).message
+                                    );
+                                    this.getLastBackupDate();
+                                }}
+                                accessibilityLabel='Backup My Data'
+                                color={GLOBALS.BUTTON_COLOR}
+                            />
                         </View>
                     </ScrollView>
                 </View>

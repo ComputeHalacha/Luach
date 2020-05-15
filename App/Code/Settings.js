@@ -42,6 +42,7 @@ export default class Settings {
         this.remindDayOnahHour = args.remindDayOnahHour;
         this.remindNightOnahHour = args.remindNightOnahHour;
         this.discreet = setDefault(args.discreet, true);
+        this.autoBackup = setDefault(args.autoBackup, false);
     }
     async save() {
         await DataUtils.SettingsToDatabase(this);
@@ -74,6 +75,7 @@ export default class Settings {
                 this.noProbsAfterEntry === other.noProbsAfterEntry &&
                 this.hideHelp === other.hideHelp &&
                 this.discreet === other.discreet &&
+                this.autoBackup === other.autoBackup &&
                 Utils.isSameTime(
                     this.remindBedkMornTime,
                     other.remindBedkMornTime

@@ -1,5 +1,6 @@
 import { PixelRatio, Dimensions, Platform, ToastAndroid, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
+import RNFS from 'react-native-fs';
 import DeviceInfo from 'react-native-device-info';
 import firstTime from 'react-native-catch-first-time';
 import jDate from './JCal/jDate';
@@ -39,6 +40,20 @@ export async function confirm(message, title) {
                 onPress: () => resolve(true),
             },
         ]);
+    });
+}
+export async function inform(message, title) {
+    return new Promise((resolve, reject) => {
+        try {
+            Alert.alert(title, message, [
+                {
+                    text: 'OK',
+                    onPress: () => resolve(true),
+                },
+            ]);
+        } catch (e) {
+            reject(e.message);
+        }
     });
 }
 
@@ -285,5 +300,14 @@ export function getRandomNumber(length) {
 export function getFileName(path) {
     if (path) {
         return path.replace(/.+\/(.+)\..+/, '$1');
+    }
+}
+
+/**
+ * An ugly hack to get the current apps internal name on Android.
+ */
+export function getAppBundleIdAndroid() {
+    if (GLOBALS.IS_ANDROID) {
+        return RNFS.DocumentDirectoryPath.replace(/.+\/(.+?)\/files/, '$1');
     }
 }

@@ -154,7 +154,7 @@ export default class OccasionsScreen extends Component {
             this.onUpdate(appData);
         }
         this.setState({
-            appData: appData,
+            appData,
             //forces a refresh
             occasionList: [...appData.UserOccasions],
         });
