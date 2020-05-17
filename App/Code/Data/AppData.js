@@ -18,6 +18,7 @@ import RemoteBackup from '../RemoteBackup';
 /**
  * List of fields that have been added after the initial app launch.
  * Any that do not yet exist, will be added to the db schema during initial loading.
+ * Optionally sets an async callback to run after the field has been added.
  */
 const addedFields = [
     //Added 5/10/17
@@ -143,7 +144,9 @@ const addedFields = [
         table: 'settings',
         name: 'autoBackup',
         type: 'BOOLEAN',
-        allowNull: 1,
+        allowNull: true,
+        defaultValue: '1',
+        afterAddCallback: async () => await RemoteBackup.createFreshUserNewAccount(),
     },
 ];
 
@@ -313,6 +316,10 @@ export default class AppData {
                 if (!fields.some((f) => f.name === nf.name)) {
                     //Add any new fields that were added after the last update.
                     await DataUtils.AddTableField(nf);
+                    //If there was a callback supplied.
+                    if (nf.afterAddCallback) {
+                        await nf.afterAddCallback();
+                    }
                 }
             }
         }

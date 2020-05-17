@@ -16,7 +16,7 @@ export default class LocalStorage {
     }
 
     get requirePin() {
-        return this._requirePin;
+        return !!this._requirePin;
     }
     set requirePin(val) {
         LocalStorage.setLocalStorageValue('REQUIRE_PIN', !!val);
@@ -48,7 +48,7 @@ export default class LocalStorage {
     }
 
     get databasePath() {
-        return this._databasePath;
+        return this._databasePath || GLOBALS.DEFAULT_DB_PATH;
     }
     set databasePath(val) {
         LocalStorage.setLocalStorageValue('DATABASE_PATH', val || '');
