@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-    ScrollView,
-    View,
-    Text,
-    TextInput,
-    Button,
-    Alert,
-    TouchableOpacity,
-} from 'react-native';
+import { ScrollView, View, Text, TextInput, Button, Alert, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 import DateTimePicker from 'react-native-modal-datetime-picker';
@@ -19,7 +11,7 @@ import { UserOccasionTypes, UserOccasion } from '../../Code/JCal/UserOccasion';
 import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import DataUtils from '../../Code/Data/DataUtils';
-import { popUpMessage, warn, error, GLOBALS } from '../../Code/GeneralUtils';
+import { popUpMessage, warn, error, inform, GLOBALS } from '../../Code/GeneralUtils';
 import { GeneralStyles } from '../styles';
 
 export default class NewOccasion extends React.Component {
@@ -43,12 +35,10 @@ export default class NewOccasion extends React.Component {
                                     marginRight: 13,
                                 }}>
                                 <Icon
-                                    name="near-me"
-                                    color="#66a"
+                                    name='near-me'
+                                    color='#66a'
                                     size={18}
-                                    containerStyle={
-                                        GeneralStyles.inItemLinkIcon
-                                    }
+                                    containerStyle={GeneralStyles.inItemLinkIcon}
                                 />
                                 <Text
                                     style={{
@@ -64,18 +54,12 @@ export default class NewOccasion extends React.Component {
                     )}
                     <TouchableOpacity
                         onPress={() =>
-                            NewOccasion.deleteOccasion(
-                                occasion,
-                                appData,
-                                ad => {
-                                    if (onUpdate) {
-                                        onUpdate(ad);
-                                    }
-                                    navigation.dispatch(
-                                        NavigationActions.back()
-                                    );
+                            NewOccasion.deleteOccasion(occasion, appData, (ad) => {
+                                if (onUpdate) {
+                                    onUpdate(ad);
                                 }
-                            )
+                                navigation.dispatch(NavigationActions.back());
+                            })
                         }>
                         <View
                             style={{
@@ -83,11 +67,7 @@ export default class NewOccasion extends React.Component {
                                 justifyContent: 'center',
                                 marginRight: 5,
                             }}>
-                            <Icon
-                                name="delete-forever"
-                                color="#a33"
-                                size={20}
-                            />
+                            <Icon name='delete-forever' color='#a33' size={20} />
                             <Text
                                 style={{
                                     fontSize: 9,
@@ -136,12 +116,9 @@ export default class NewOccasion extends React.Component {
         this.chooseColor = this.chooseColor.bind(this);
         this.changeSDate = this.changeSDate.bind(this);
     }
-    addOccasion() {
+    async addOccasion() {
         if (this.state.title.length < 1) {
-            popUpMessage(
-                'Please enter the title of this Event or Occasion.',
-                'Add occasion'
-            );
+            inform('Please enter the title of this Event or Occasion.', 'Add occasion');
             return;
         }
         const ad = this.appData,
@@ -153,33 +130,27 @@ export default class NewOccasion extends React.Component {
                 this.state.comments
             );
         ad.UserOccasions.push(occasion);
-        DataUtils.UserOccasionToDatabase(occasion)
-            .then(() => {
-                if (this.onUpdate) {
-                    this.onUpdate(ad);
-                }
-                popUpMessage(
-                    `The occasion ${
-                        occasion.title
-                    } has been successfully added.`,
-                    'Add occasion'
-                );
-                this.dispatch(NavigationActions.back());
-            })
-            .catch(err => {
-                warn('Error trying to add a User Occasion in the database.');
-                error(err);
-                popUpMessage(
-                    'We are sorry, Luach is unable to add this Occasion.\nPlease contact luach@compute.co.il.'
-                );
-            });
+        try {
+            await DataUtils.UserOccasionToDatabase(occasion);
+            if (this.onUpdate) {
+                this.onUpdate(ad);
+            }
+            popUpMessage(
+                `The occasion ${occasion.title} has been successfully added.`,
+                'Add occasion'
+            );
+            this.dispatch(NavigationActions.back());
+        } catch (err) {
+            warn('Error trying to add a User Occasion in the database.');
+            error(err);
+            popUpMessage(
+                'We are sorry, Luach is unable to add this Occasion.\nPlease contact luach@compute.co.il.'
+            );
+        }
     }
     updateOccasion() {
         if (this.state.title.length < 1) {
-            popUpMessage(
-                'Please enter the title of this Event or Occasion.',
-                'Add occasion'
-            );
+            popUpMessage('Please enter the title of this Event or Occasion.', 'Add occasion');
             return;
         }
         const occasion = this.occasion,
@@ -194,18 +165,14 @@ export default class NewOccasion extends React.Component {
         DataUtils.UserOccasionToDatabase(occasion)
             .then(() => {
                 popUpMessage(
-                    `The occasion ${
-                        occasion.title
-                    } has been successfully saved.`,
+                    `The occasion ${occasion.title} has been successfully saved.`,
                     'Edit occasion'
                 );
                 this.onUpdate(this.appData);
                 this.dispatch(NavigationActions.back());
             })
-            .catch(err => {
-                warn(
-                    'Error trying to add save the changes to User Occasion in the database.'
-                );
+            .catch((err) => {
+                warn('Error trying to add save the changes to User Occasion in the database.');
                 error(err);
                 popUpMessage(
                     'We are sorry, Luach is unable to save the changes to this Occasion.\nPlease contact luach@compute.co.il.'
@@ -226,53 +193,45 @@ export default class NewOccasion extends React.Component {
      * @param {Function} onUpdate
      */
     static deleteOccasion(occasion, appData, onUpdate) {
-        Alert.alert(
-            'Confirm Event Removal',
-            'Are you sue that you want to remove this Event?',
-            [
-                //Button 1
-                {
-                    text: 'Cancel',
-                    onPress: () => {
-                        return;
-                    },
-                    style: 'cancel',
+        Alert.alert('Confirm Event Removal', 'Are you sue that you want to remove this Event?', [
+            //Button 1
+            {
+                text: 'Cancel',
+                onPress: () => {
+                    return;
                 },
-                //Button 2
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        DataUtils.DeleteUserOccasion(occasion)
-                            .then(() => {
-                                let occasionList = appData.UserOccasions,
-                                    index = occasionList.indexOf(occasion);
-                                if (index > -1) {
-                                    occasionList.splice(index, 1);
-                                    appData.UserOccasions = occasionList;
-                                    if (onUpdate) {
-                                        onUpdate(appData);
-                                    }
-                                    popUpMessage(
-                                        `The Event ${
-                                            occasion.title
-                                        } has been successfully removed.`,
-                                        'Remove Event'
-                                    );
+                style: 'cancel',
+            },
+            //Button 2
+            {
+                text: 'OK',
+                onPress: () => {
+                    DataUtils.DeleteUserOccasion(occasion)
+                        .then(() => {
+                            let occasionList = appData.UserOccasions,
+                                index = occasionList.indexOf(occasion);
+                            if (index > -1) {
+                                occasionList.splice(index, 1);
+                                appData.UserOccasions = occasionList;
+                                if (onUpdate) {
+                                    onUpdate(appData);
                                 }
-                            })
-                            .catch(err => {
-                                warn(
-                                    'Error trying to delete an Event from the database.'
-                                );
-                                error(err);
                                 popUpMessage(
-                                    'We are sorry, Luach is unable to remove this Event.\nPlease contact luach@compute.co.il.'
+                                    `The Event ${occasion.title} has been successfully removed.`,
+                                    'Remove Event'
                                 );
-                            });
-                    },
+                            }
+                        })
+                        .catch((err) => {
+                            warn('Error trying to delete an Event from the database.');
+                            error(err);
+                            popUpMessage(
+                                'We are sorry, Luach is unable to remove this Event.\nPlease contact luach@compute.co.il.'
+                            );
+                        });
                 },
-            ]
-        );
+            },
+        ]);
     }
     chooseColor(color) {
         this.setState({ color: color, modalVisible: false });
@@ -283,9 +242,7 @@ export default class NewOccasion extends React.Component {
     }
     render() {
         const sdate = this.state.jdate.getDate(),
-            muxedDate = `${this.state.jdate.toShortString(
-                false
-            )} (${sdate.toLocaleDateString()})`;
+            muxedDate = `${this.state.jdate.toShortString(false)} (${sdate.toLocaleDateString()})`;
         return (
             <View style={GeneralStyles.container}>
                 <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -294,24 +251,20 @@ export default class NewOccasion extends React.Component {
                         appData={this.appData}
                         navigator={this.props.navigation}
                         currDate={this.state.jdate}
-                        helpUrl="Events.html"
-                        helpTitle="Events"
+                        helpUrl='Events.html'
+                        helpTitle='Events'
                     />
                     <ScrollView style={{ flex: 1 }}>
                         <View style={GeneralStyles.headerView}>
-                            <Text style={GeneralStyles.headerText}>
-                                {muxedDate}
-                            </Text>
+                            <Text style={GeneralStyles.headerText}>{muxedDate}</Text>
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Event/Occasion Title
-                            </Text>
+                            <Text style={GeneralStyles.label}>Event/Occasion Title</Text>
                             <TextInput
                                 style={GeneralStyles.textInput}
                                 autoFocus
-                                placeholder="Occasion Title"
-                                onEndEditing={event =>
+                                placeholder='Occasion Title'
+                                onEndEditing={(event) =>
                                     this.setState({
                                         title: event.nativeEvent.text,
                                     })
@@ -323,7 +276,7 @@ export default class NewOccasion extends React.Component {
                             <Text style={GeneralStyles.label}>Jewish Date</Text>
                             <JdateChooser
                                 jdate={this.state.jdate}
-                                setDate={jdate => this.setState({ jdate })}
+                                setDate={(jdate) => this.setState({ jdate })}
                             />
                         </View>
                         <View style={{ padding: 10 }}>
@@ -336,74 +289,53 @@ export default class NewOccasion extends React.Component {
                             </Text>
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Secular Date
-                            </Text>
+                            <Text style={GeneralStyles.label}>Secular Date</Text>
                             <View style={GeneralStyles.textInput}>
                                 <TouchableOpacity
-                                    onPress={() =>
-                                        this.setState({ showDatePicker: true })
-                                    }>
+                                    onPress={() => this.setState({ showDatePicker: true })}>
                                     <Text>{Utils.toStringDate(sdate)}</Text>
                                 </TouchableOpacity>
                                 <DateTimePicker
                                     isVisible={this.state.showDatePicker}
                                     date={sdate}
                                     onConfirm={this.changeSDate}
-                                    onCancel={() =>
-                                        this.setState({ showDatePicker: false })
-                                    }
+                                    onCancel={() => this.setState({ showDatePicker: false })}
                                 />
                             </View>
                         </View>
                         <OccasionTypeChooser
                             jdate={this.state.jdate}
                             occasionType={this.state.occasionType || 0}
-                            setOccasionType={value =>
-                                this.setState({ occasionType: value })
-                            }
+                            setOccasionType={(value) => this.setState({ occasionType: value })}
                         />
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Background Color
-                            </Text>
+                            <Text style={GeneralStyles.label}>Background Color</Text>
                             <ColorChooser
-                                caption="Choose Background Color"
+                                caption='Choose Background Color'
                                 color={this.state.color}
-                                scheme="dark"
+                                scheme='dark'
                                 onChange={this.chooseColor}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Comments</Text>
                             <TextInput
-                                style={[
-                                    GeneralStyles.textInput,
-                                    { height: 100 },
-                                ]}
-                                onEndEditing={event =>
+                                style={[GeneralStyles.textInput, { height: 100 }]}
+                                onEndEditing={(event) =>
                                     this.setState({
                                         comments: event.nativeEvent.text,
                                     })
                                 }
                                 defaultValue={this.state.comments}
-                                placeholder="Enter any comments"
+                                placeholder='Enter any comments'
                                 multiline={true}
                                 maxLength={500}
                             />
                         </View>
                         <View style={GeneralStyles.btnAddNew}>
                             <Button
-                                title={
-                                    this.occasion
-                                        ? 'Save Changes'
-                                        : 'Add Event / Occasion'
-                                }
-                                onPress={
-                                    this.occasion
-                                        ? this.updateOccasion
-                                        : this.addOccasion
-                                }
+                                title={this.occasion ? 'Save Changes' : 'Add Event / Occasion'}
+                                onPress={this.occasion ? this.updateOccasion : this.addOccasion}
                                 accessibilityLabel={
                                     this.occasion
                                         ? 'Save Changes to this Event'

@@ -42,7 +42,7 @@ export default class Settings {
         this.remindDayOnahHour = args.remindDayOnahHour;
         this.remindNightOnahHour = args.remindNightOnahHour;
         this.discreet = setDefault(args.discreet, true);
-        this.autoBackup = setDefault(args.autoBackup, false);
+        this.autoBackup = setDefault(args.autoBackup, true);
     }
     async save() {
         await DataUtils.SettingsToDatabase(this);

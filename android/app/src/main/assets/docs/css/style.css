@@ -4,6 +4,7 @@
 body { font-size: 14px; margin: 0; padding: 0 0 50px 0; }
 img { border: 0; }
 blockquote, p, div, blockquote p { font-size: 14px; font-weight: normal; }
+blockquote { margin-top: 1em; }
 .divCaption { margin: 0 0 5px 0; background-color: #f1f1ff; }
     .divCaption a.goHome { float: right; padding-top: 25px; display: block; width: 30px; text-align: right; color: #9099CE; font-size: 20px; text-decoration: none; }
 a.goHome:hover { text-decoration: none; }
@@ -14,6 +15,7 @@ a.goHome:hover { text-decoration: none; }
 .nav-justified { border: solid 1px #ddf; border-radius: 10px; background-color: #fff; margin-bottom: 10px; }
     .nav-justified > li > a { font-size: 1em; text-align: left !important; }
     .nav-justified > li:last-child > a { border-radius: 0 0 10px 10px; }
+.divList { margin-left: 2em; }
 break { display: block; margin-top: 5px; }
 
 /*ICONS********/

@@ -1,7 +1,7 @@
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 import LocalStorage from './Data/LocalStorage';
-import { log, warn, error, getFileName } from './GeneralUtils';
+import { log, warn, error, getFileName, getRandomString } from './GeneralUtils';
 import AppData from './Data/AppData';
 import DataUtils from './Data/DataUtils';
 
@@ -30,6 +30,9 @@ export default class RemoteBackup {
             'Content-Type': 'application/json',
         };
     }
+    /**
+     * @returns {LocalStorage} a filled local storage object
+     */
     async getLocalStorage() {
         if (!this.localStorage) {
             this.localStorage = await LocalStorage.loadAll();
@@ -56,7 +59,9 @@ export default class RemoteBackup {
             const responseData = await response.json(),
                 succeeded = responseData && responseData.Succeeded;
             if (succeeded) {
-                log(`${options.method} ${url} - Response Succeeded: ${JSON.stringify(responseData)}`);
+                log(
+                    `${options.method} ${url} - Response Succeeded: ${JSON.stringify(responseData)}`
+                );
             } else {
                 warn(`Response did NOT Succeed: ${JSON.stringify(responseData)}`);
             }
@@ -108,7 +113,9 @@ export default class RemoteBackup {
                     log(`PUT ${url} - Response.Succeeded = true: ${JSON.stringify(responseData)}`);
                     message = 'Your data has been successfully backed up to the Luach server.';
                 } else {
-                    warn(`PUT ${url} - Response.Succeeded = false: ${JSON.stringify(responseData)}`);
+                    warn(
+                        `PUT ${url} - Response.Succeeded = false: ${JSON.stringify(responseData)}`
+                    );
                     message = `Luach was not able to back up your data to the Luach server.\\n${responseData.ErrorMessage}`;
                 }
             } catch (err) {
@@ -193,5 +200,25 @@ export default class RemoteBackup {
             }
         }
         return await remoteBackup.uploadBackup();
+    }
+    static async createFreshUserNewAccount() {
+        const remoteBackup = new RemoteBackup(),
+            localStorage = await remoteBackup.getLocalStorage();
+        if (localStorage.remoteUserName || localStorage.remotePassword) {
+            log(
+                'This user has already set their username or password. No account will be created.'
+            );
+            return false;
+        }
+        while (await remoteBackup.accountExists()) {
+            localStorage.remoteUserName = getRandomString(8);
+            localStorage.remotePassword = getRandomString(8);
+        }
+        const response = await remoteBackup.createAccount();
+        if (!response.success) {
+            log(`Luach was unable to restore from the online backup.\\n${response.message}`);
+            warn(JSON.stringify(response));
+        }
+        return response.success;
     }
 }

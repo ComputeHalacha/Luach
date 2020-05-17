@@ -13,7 +13,13 @@ import SideMenu from '../Components/SideMenu';
 import Location from '../../Code/JCal/Location';
 import Utils from '../../Code/JCal/Utils';
 import { NightDay } from '../../Code/Chashavshavon/Onah';
-import { setDefault, isNullishOrFalse, GLOBALS, popUpMessage, inform } from '../../Code/GeneralUtils';
+import {
+    setDefault,
+    isNullishOrFalse,
+    GLOBALS,
+    popUpMessage,
+    inform,
+} from '../../Code/GeneralUtils';
 import NumberPicker from '../Components/NumberPicker';
 import TimeInput from '../Components/TimeInput';
 import {
@@ -170,15 +176,15 @@ export default class SettingsScreen extends Component {
                     removeAllNightOnahReminders();
                 }
                 break;
-                case 'autoBackup':{
-                    const localStorage = this.state.localStorage;
-                    if (!localStorage.remoteUserName || !localStorage.remotePassword) {
-                        inform(
-                            'To automatically backup your data when a new Entry is added, you need to enter a "remote user name" and "remote password" below.'
-                        );
-                    }
-                    break;
+            case 'autoBackup': {
+                const localStorage = this.state.localStorage;
+                if (!localStorage.remoteUserName || !localStorage.remotePassword) {
+                    inform(
+                        'To automatically backup your data when a new Entry is added, you need to enter a "remote user name" and "remote password" below.'
+                    );
                 }
+                break;
+            }
         }
 
         this.update(this.appData);
@@ -205,18 +211,28 @@ export default class SettingsScreen extends Component {
         this.setState({ localStorage, invalidPin: !validPin, enteredPin: pin });
     }
     changeUsername(userName) {
-        if (userName && userName.length < 5) {
+        if (userName && userName.length < 7) {
             popUpMessage(
-                'Please choose a user name with at least 5 characters',
+                'Please choose a User Name with at least 7 characters',
                 'Invalid user Name'
+            );
+        } else if (userName && userName === this.state.localStorage.password) {
+            popUpMessage(
+                'Please choose a User Name that is not the same as your Password',
+                'Invalid user name'
             );
         } else {
             this.changeLocalStorage('remoteUserName', userName);
         }
     }
     changePassword(password) {
-        if (this.state.localStorage.remoteUserName && password.length < 5) {
-            popUpMessage('Please choose a Password with at least 5 characters', 'Invalid password');
+        if (this.state.localStorage.remoteUserName && password.length < 7) {
+            popUpMessage('Please choose a Password with at least 7 characters', 'Invalid password');
+        } else if (password && password === this.state.localStorage.remoteUserName) {
+            popUpMessage(
+                'Please choose a Password that is not the same as your User Name',
+                'Invalid password'
+            );
         } else {
             this.changeLocalStorage('remotePassword', password);
         }
@@ -241,7 +257,7 @@ export default class SettingsScreen extends Component {
             noProbsAfterEntry = setDefault(settings.noProbsAfterEntry, true),
             hideHelp = settings.hideHelp,
             discreet = setDefault(settings.discreet, true),
-            autoBackup = settings.autoBackup,
+            autoBackup = setDefault(settings.autoBackup, true),
             remindBedkMornTime = settings.remindBedkMornTime,
             remindBedkAftrnHour = settings.remindBedkAftrnHour,
             remindMikvahTime = settings.remindMikvahTime,
@@ -397,6 +413,61 @@ export default class SettingsScreen extends Component {
                             <Text style={GeneralStyles.headerText}>Application Settings</Text>
                         </View>
                         <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Calendar displays current:</Text>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    paddingLeft: 15,
+                                }}>
+                                <Text>Jewish Date</Text>
+                                <Switch
+                                    style={GeneralStyles.switch}
+                                    onValueChange={(value) =>
+                                        this.changeSetting('navigateBySecularDate', value)
+                                    }
+                                    value={!!navigateBySecularDate}
+                                />
+                                <Text>Secular Date</Text>
+                            </View>
+                            {navigateBySecularDate && (
+                                <Text
+                                    style={{
+                                        fontSize: 11,
+                                        color: '#b55',
+                                        paddingLeft: 10,
+                                        paddingBottom: 5,
+                                    }}>
+                                    Please Note: If the current time is between sunset and midnight,
+                                    the current Jewish date will be incorrect.
+                                </Text>
+                            )}
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Automatically Calculate Kavuahs upon addition of an Entry
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={(value) =>
+                                    this.changeSetting('calcKavuahsOnNewEntry', value)
+                                }
+                                value={!!calcKavuahsOnNewEntry}
+                            />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Don't show Flagged dates for a week after Entry
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={(value) =>
+                                    this.changeSetting('noProbsAfterEntry', value)
+                                }
+                                value={!!noProbsAfterEntry}
+                            />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Number of Months ahead to warn</Text>
                             <NumberPicker
                                 style={{
@@ -415,36 +486,53 @@ export default class SettingsScreen extends Component {
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
-                                Automatically Calculate Kavuahs upon addition of an Entry
+                                Show explicitly ignored Kavuahs in the Kavuah list
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting('calcKavuahsOnNewEntry', value)
+                                    this.changeSetting('showIgnoredKavuahs', value)
                                 }
-                                value={!!calcKavuahsOnNewEntry}
+                                value={!!showIgnoredKavuahs}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Show Entry, Hefsek Tahara and Mikva information?
-                            </Text>
+                            <Text style={GeneralStyles.label}>Hide Help Button</Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={(value) =>
-                                    this.changeSetting('showEntryFlagOnHome', value)
+                                onValueChange={(value) => this.changeSetting('hideHelp', value)}
+                                value={!!hideHelp}
+                            />
+                        </View>
+                        <View style={GeneralStyles.headerView}>
+                            <Text style={GeneralStyles.headerText}>Remote Backup Settings</Text>
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>Remote backup user name</Text>
+                            <TextInput
+                                style={GeneralStyles.textInput}
+                                returnKeyType='next'
+                                onSubmitEditing={(e) => this.changeUsername(e.nativeEvent.text)}
+                                onChangeText={(val) =>
+                                    this.setState({
+                                        enteredRemoteUserName: val,
+                                    })
                                 }
-                                value={!!showEntryFlagOnHome}
+                                value={remoteUserName}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Discreetly worded system reminders?
-                            </Text>
-                            <Switch
-                                style={GeneralStyles.switch}
-                                onValueChange={(value) => this.changeSetting('discreet', value)}
-                                value={!!discreet}
+                            <Text style={GeneralStyles.label}>Remote backup password</Text>
+                            <TextInput
+                                style={GeneralStyles.textInput}
+                                returnKeyType='next'
+                                onSubmitEditing={(e) => this.changePassword(e.nativeEvent.text)}
+                                onChangeText={(val) =>
+                                    this.setState({
+                                        enteredRemotePassword: val,
+                                    })
+                                }
+                                value={remotePassword}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
@@ -457,17 +545,10 @@ export default class SettingsScreen extends Component {
                                 value={!!autoBackup}
                             />
                         </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>
-                                Show flags for problem dates on Main Screen?
+                        <View style={GeneralStyles.headerView}>
+                            <Text style={GeneralStyles.headerText}>
+                                Reminders and Notifications
                             </Text>
-                            <Switch
-                                style={GeneralStyles.switch}
-                                onValueChange={(value) =>
-                                    this.changeSetting('showProbFlagOnHome', value)
-                                }
-                                value={!!showProbFlagOnHome}
-                            />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
@@ -626,67 +707,41 @@ export default class SettingsScreen extends Component {
                                 </View>
                             )}
                         </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Calendar displays current:</Text>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    paddingLeft: 15,
-                                }}>
-                                <Text>Jewish Date</Text>
-                                <Switch
-                                    style={GeneralStyles.switch}
-                                    onValueChange={(value) =>
-                                        this.changeSetting('navigateBySecularDate', value)
-                                    }
-                                    value={!!navigateBySecularDate}
-                                />
-                                <Text>Secular Date</Text>
-                            </View>
-                            {navigateBySecularDate && (
-                                <Text
-                                    style={{
-                                        fontSize: 11,
-                                        color: '#b55',
-                                        paddingLeft: 10,
-                                        paddingBottom: 5,
-                                    }}>
-                                    Please Note: If the current time is between sunset and midnight,
-                                    the current Jewish date will be incorrect.
-                                </Text>
-                            )}
+                        <View style={GeneralStyles.headerView}>
+                            <Text style={GeneralStyles.headerText}>Privacy & Security</Text>
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
-                                Show explicitly ignored Kavuahs in the Kavuah list
+                                Show Entry, Hefsek Tahara and Mikva information?
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting('showIgnoredKavuahs', value)
+                                    this.changeSetting('showEntryFlagOnHome', value)
                                 }
-                                value={!!showIgnoredKavuahs}
+                                value={!!showEntryFlagOnHome}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
-                                Don't show Flagged dates for a week after Entry
+                                Show flags for problem dates on Main Screen?
                             </Text>
                             <Switch
                                 style={GeneralStyles.switch}
                                 onValueChange={(value) =>
-                                    this.changeSetting('noProbsAfterEntry', value)
+                                    this.changeSetting('showProbFlagOnHome', value)
                                 }
-                                value={!!noProbsAfterEntry}
+                                value={!!showProbFlagOnHome}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Hide Help Button</Text>
+                            <Text style={GeneralStyles.label}>
+                                Discreetly worded system reminders?
+                            </Text>
                             <Switch
                                 style={GeneralStyles.switch}
-                                onValueChange={(value) => this.changeSetting('hideHelp', value)}
-                                value={!!hideHelp}
+                                onValueChange={(value) => this.changeSetting('discreet', value)}
+                                value={!!discreet}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>
@@ -727,34 +782,6 @@ export default class SettingsScreen extends Component {
                                 }}
                                 onChangeText={(val) => this.setState({ enteredPin: val })}
                                 value={enteredPin}
-                            />
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Remote backup user name</Text>
-                            <TextInput
-                                style={GeneralStyles.textInput}
-                                returnKeyType='next'
-                                onSubmitEditing={(e) => this.changeUsername(e.nativeEvent.text)}
-                                onChangeText={(val) =>
-                                    this.setState({
-                                        enteredRemoteUserName: val,
-                                    })
-                                }
-                                value={remoteUserName}
-                            />
-                        </View>
-                        <View style={GeneralStyles.formRow}>
-                            <Text style={GeneralStyles.label}>Remote backup password</Text>
-                            <TextInput
-                                style={GeneralStyles.textInput}
-                                returnKeyType='next'
-                                onSubmitEditing={(e) => this.changePassword(e.nativeEvent.text)}
-                                onChangeText={(val) =>
-                                    this.setState({
-                                        enteredRemotePassword: val,
-                                    })
-                                }
-                                value={remotePassword}
                             />
                         </View>
                     </ScrollView>

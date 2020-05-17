@@ -5,10 +5,7 @@ import { Kavuah } from '../Chashavshavon/Kavuah';
 import { NightDay } from '../Chashavshavon/Onah';
 import EntryList from '../Chashavshavon/EntryList';
 import Utils from '../JCal/Utils';
-import {
-    resetDayOnahReminders,
-    resetNightOnahReminders,
-} from '../Notifications';
+import { resetDayOnahReminders, resetNightOnahReminders } from '../Notifications';
 import {
     log,
     error,
@@ -17,6 +14,7 @@ import {
     isFirstTimeRun,
     isNullishOrFalse,
 } from '../GeneralUtils';
+import RemoteBackup from '../RemoteBackup';
 /**
  * List of fields that have been added after the initial app launch.
  * Any that do not yet exist, will be added to the db schema during initial loading.
@@ -145,7 +143,7 @@ const addedFields = [
         table: 'settings',
         name: 'autoBackup',
         type: 'BOOLEAN',
-        allowNull: true
+        allowNull: 1,
     },
 ];
 
@@ -162,14 +160,7 @@ export default class AppData {
      * @param {[ProblemOnah]} problemOnahs
      * @param {[TaharaEvent]} taharaEvents
      */
-    constructor(
-        settings,
-        occasions,
-        entryList,
-        kavuahList,
-        problemOnahs,
-        taharaEvents
-    ) {
+    constructor(settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents) {
         this.Settings = settings || new Settings({});
         this.UserOccasions = occasions || [];
         this.EntryList = entryList || new EntryList();
@@ -184,10 +175,7 @@ export default class AppData {
         this.EntryList.calculateHaflagas();
         let probs = [];
         if (this.EntryList.list.length > 0) {
-            probs = this.EntryList.getProblemOnahs(
-                this.KavuahList,
-                this.Settings
-            );
+            probs = this.EntryList.getProblemOnahs(this.KavuahList, this.Settings);
         }
         this.ProblemOnahs = probs;
     }
@@ -237,6 +225,12 @@ export default class AppData {
                     log(`Location has been set to: ${newLocation.Name}`);
                     //We will use this for the special welcome flash screen.
                     global.IsFirstRun = true;
+                    //Create a remote backup account.
+                    if (await RemoteBackup.createFreshUserNewAccount()) {
+                        log(
+                            'A new remote account has been created with a random username and password'
+                        );
+                    }
                 }
                 log(`global.IsFirstRun has been set to: ${global.IsFirstRun}`);
             }
@@ -250,7 +244,7 @@ export default class AppData {
      * @param {Boolean} remove
      */
     static updateGlobalProbs(item, remove) {
-        AppData.getAppData().then(appData => {
+        AppData.getAppData().then((appData) => {
             if (item) {
                 if (!remove) {
                     if (item instanceof Entry) {
@@ -278,9 +272,7 @@ export default class AppData {
                 if (!isNullishOrFalse(appData.Settings.remindDayOnahHour)) {
                     resetDayOnahReminders(
                         appData.ProblemOnahs.filter(
-                            po =>
-                                po.NightDay === NightDay.Day &&
-                                po.jdate.Abs >= now.Abs
+                            (po) => po.NightDay === NightDay.Day && po.jdate.Abs >= now.Abs
                         ),
                         appData.Settings.remindDayOnahHour,
                         appData.Settings.location,
@@ -290,9 +282,7 @@ export default class AppData {
                 if (!isNullishOrFalse(appData.Settings.remindNightOnahHour)) {
                     resetNightOnahReminders(
                         appData.ProblemOnahs.filter(
-                            po =>
-                                po.NightDay === NightDay.Day &&
-                                po.jdate.Abs >= now.Abs
+                            (po) => po.NightDay === NightDay.Day && po.jdate.Abs >= now.Abs
                         ),
                         appData.Settings.remindDayOnahHour,
                         appData.Settings.location,
@@ -316,11 +306,11 @@ export default class AppData {
         }
         for (let tbl of tablesToChange) {
             //Get the new fields for this table.
-            const newFields = addedFields.filter(af => af.table === tbl),
+            const newFields = addedFields.filter((af) => af.table === tbl),
                 fields = await DataUtils.GetTableFields(tbl);
 
             for (let nf of newFields) {
-                if (!fields.some(f => f.name === nf.name)) {
+                if (!fields.some((f) => f.name === nf.name)) {
                     //Add any new fields that were added after the last update.
                     await DataUtils.AddTableField(nf);
                 }
@@ -331,33 +321,28 @@ export default class AppData {
      * Returns an appData instance containing all the user data from the local database file.
      */
     static async fromDatabase() {
-        let settings,
-            occasions,
-            entryList,
-            kavuahList,
-            problemOnahs,
-            taharaEvents;
-        
+        let settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents;
+
         //Before getting data from database, make sure that the local database schema is up to date.
         await AppData.upgradeDatabase();
 
-        settings = await DataUtils.SettingsFromDatabase().catch(err => {
+        settings = await DataUtils.SettingsFromDatabase().catch((err) => {
             warn('Error running SettingsFromDatabase.');
             error(err);
         });
-        occasions = await DataUtils.GetAllUserOccasions().catch(err => {
+        occasions = await DataUtils.GetAllUserOccasions().catch((err) => {
             warn('Error running GetAllUserOccasions.');
             error(err);
         });
-        entryList = await DataUtils.EntryListFromDatabase().catch(err => {
+        entryList = await DataUtils.EntryListFromDatabase().catch((err) => {
             warn('Error running EntryListFromDatabase.');
             error(err);
         });
-        kavuahList = await DataUtils.GetAllKavuahs(entryList).catch(err => {
+        kavuahList = await DataUtils.GetAllKavuahs(entryList).catch((err) => {
             warn('Error running GetAllKavuahs.');
             error(err);
         });
-        taharaEvents = await DataUtils.GetAllTaharaEvents().catch(err => {
+        taharaEvents = await DataUtils.GetAllTaharaEvents().catch((err) => {
             warn('Error running GetAllTaharaEvents.');
             error(err);
         });
@@ -365,13 +350,6 @@ export default class AppData {
         //After getting all the data, the problem onahs are set.
         problemOnahs = entryList.getProblemOnahs(kavuahList, settings);
 
-        return new AppData(
-            settings,
-            occasions,
-            entryList,
-            kavuahList,
-            problemOnahs,
-            taharaEvents
-        );
+        return new AppData(settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents);
     }
 }

@@ -97,18 +97,28 @@ export default class RemoteBackupScreen extends React.Component {
     }
 
     changeUsername(userName) {
-        if (userName && userName.length < 5) {
+        if (userName && userName.length < 7) {
             popUpMessage(
-                'Please choose a user name with at least 5 characters',
+                'Please choose a user name with at least 7 characters',
                 'Invalid user Name'
+            );
+        } else if (userName && userName === this.state.localStorage.password) {
+            popUpMessage(
+                'Please choose a User Name that is not the same as your Password',
+                'Invalid user name'
             );
         } else {
             this.changeLocalStorage('remoteUserName', userName);
         }
     }
     changePassword(password) {
-        if (this.state.localStorage.remoteUserName && password.length < 5) {
-            popUpMessage('Please choose a Password with at least 5 characters', 'Invalid password');
+        if (this.state.localStorage.remoteUserName && password.length < 7) {
+            popUpMessage('Please choose a Password with at least 7 characters', 'Invalid password');
+        } else if (password && password === this.state.localStorage.remoteUserName) {
+            popUpMessage(
+                'Please choose a Password that is not the same as your user name',
+                'Invalid password'
+            );
         } else {
             this.changeLocalStorage('remotePassword', password);
         }

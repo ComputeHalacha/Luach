@@ -1,5 +1,13 @@
 import SQLite from 'react-native-sqlite-storage';
-import { isNumber, log, error, warn, getFileName,getAppBundleIdAndroid, GLOBALS } from '../GeneralUtils';
+import {
+    isNumber,
+    log,
+    error,
+    warn,
+    getFileName,
+    getAppBundleIdAndroid,
+    GLOBALS,
+} from '../GeneralUtils';
 import AppData from './AppData';
 import jDate from '../JCal/jDate';
 import Settings from '../Settings';
@@ -35,48 +43,50 @@ export default class DataUtils {
     static async getDatabaseAbsolutePath() {
         const path = await this.getDatabasePath(),
             databasePath = path && path.replace('~', '');
-        return path ? (GLOBALS.IS_ANDROID
-            ? `/data/data/${getAppBundleIdAndroid()}/databases/${getFileName(databasePath)}`
-            : databasePath) : null;
+        return path
+            ? GLOBALS.IS_ANDROID
+                ? `/data/data/${getAppBundleIdAndroid()}/databases/${getFileName(databasePath)}`
+                : databasePath
+            : null;
     }
 
     static async SettingsFromDatabase() {
         let settings;
-        await DataUtils._executeSql('SELECT * from settings')
-            .then(async (results) => {
-                const dbSet = results.list[0],
-                    location = await DataUtils.LocationFromDatabase(dbSet.locationId);
-                settings = new Settings({
-                    location: location,
-                    showOhrZeruah: !!dbSet.showOhrZeruah,
-                    keepThirtyOne: !!dbSet.keepThirtyOne,
-                    onahBeinunis24Hours: !!dbSet.onahBeinunis24Hours,
-                    numberMonthsAheadToWarn: dbSet.numberMonthsAheadToWarn,
-                    keepLongerHaflagah: !!dbSet.keepLongerHaflagah,
-                    //In the database, the dilugChodeshPastEnds value is stored
-                    //in a field misnamed "cheshbonKavuahByCheshbon".
-                    //A field that was no longer in use was appropriated for this value,
-                    //and we don't want to change the database schema itself
-                    //so as not to overwrite existing data.
-                    dilugChodeshPastEnds: !!dbSet.cheshbonKavuahByCheshbon,
-                    haflagaOfOnahs: !!dbSet.haflagaOfOnahs,
-                    kavuahDiffOnahs: !!dbSet.kavuahDiffOnahs,
-                    calcKavuahsOnNewEntry: !!dbSet.calcKavuahsOnNewEntry,
-                    showProbFlagOnHome: !!dbSet.showProbFlagOnHome,
-                    showEntryFlagOnHome: !!dbSet.showEntryFlagOnHome,
-                    navigateBySecularDate: !!dbSet.navigateBySecularDate,
-                    showIgnoredKavuahs: !!dbSet.showIgnoredKavuahs,
-                    noProbsAfterEntry: !!dbSet.noProbsAfterEntry,
-                    hideHelp: !!dbSet.hideHelp,
-                    discreet: !!dbSet.discreet,
-                    autoBackup: !!dbSet.autoBackup,
-                    remindBedkMornTime: dbSet.remindBedkMornTime,
-                    remindBedkAftrnHour: dbSet.remindBedkAftrnHour,
-                    remindMikvahTime: dbSet.remindMikvahTime,
-                    remindDayOnahHour: dbSet.remindDayOnahHour,
-                    remindNightOnahHour: dbSet.remindNightOnahHour,
-                });
-                /*********************************************************************************
+        try {
+            const results = await DataUtils._executeSql('SELECT * from settings'),
+                dbSet = results.list[0],
+                location = await DataUtils.LocationFromDatabase(dbSet.locationId);
+            settings = new Settings({
+                location: location,
+                showOhrZeruah: !!dbSet.showOhrZeruah,
+                keepThirtyOne: !!dbSet.keepThirtyOne,
+                onahBeinunis24Hours: !!dbSet.onahBeinunis24Hours,
+                numberMonthsAheadToWarn: dbSet.numberMonthsAheadToWarn,
+                keepLongerHaflagah: !!dbSet.keepLongerHaflagah,
+                //In the database, the dilugChodeshPastEnds value is stored
+                //in a field misnamed "cheshbonKavuahByCheshbon".
+                //A field that was no longer in use was appropriated for this value,
+                //and we don't want to change the database schema itself
+                //so as not to overwrite existing data.
+                dilugChodeshPastEnds: !!dbSet.cheshbonKavuahByCheshbon,
+                haflagaOfOnahs: !!dbSet.haflagaOfOnahs,
+                kavuahDiffOnahs: !!dbSet.kavuahDiffOnahs,
+                calcKavuahsOnNewEntry: !!dbSet.calcKavuahsOnNewEntry,
+                showProbFlagOnHome: !!dbSet.showProbFlagOnHome,
+                showEntryFlagOnHome: !!dbSet.showEntryFlagOnHome,
+                navigateBySecularDate: !!dbSet.navigateBySecularDate,
+                showIgnoredKavuahs: !!dbSet.showIgnoredKavuahs,
+                noProbsAfterEntry: !!dbSet.noProbsAfterEntry,
+                hideHelp: !!dbSet.hideHelp,
+                discreet: !!dbSet.discreet,
+                autoBackup: !!dbSet.autoBackup,
+                remindBedkMornTime: dbSet.remindBedkMornTime,
+                remindBedkAftrnHour: dbSet.remindBedkAftrnHour,
+                remindMikvahTime: dbSet.remindMikvahTime,
+                remindDayOnahHour: dbSet.remindDayOnahHour,
+                remindNightOnahHour: dbSet.remindNightOnahHour,
+            });
+            /*********************************************************************************
                 If this is the first run after version 1.73 - 
                 where the requirePIN and PIN were moved out from the database into local storage,
                 AND the databasePath was moved from a static string to local storage,
@@ -84,111 +94,115 @@ export default class DataUtils {
                 This will not override local storage values afterwards as LocalStorage.initialize
                 only saves the values if the local storage has never been initialized.*/
 
-                LocalStorage.initialize(dbSet.requirePIN, dbSet.PIN);
-                /**********************************************************************************/
-            })
-            .catch((err) => {
-                warn('Error trying to get settings from the database.');
-                error(err);
-            });
+            LocalStorage.initialize(dbSet.requirePIN, dbSet.PIN);
+            /**********************************************************************************/
+        } catch (err) {
+            warn('Error trying to get settings from the database.');
+            error(err);
+        }
+
         return settings;
     }
     static async SettingsToDatabase(settings) {
-        await DataUtils._executeSql(
-            `UPDATE settings SET
-            locationId=?,
-            showOhrZeruah=?,
-            keepThirtyOne=?,
-            onahBeinunis24Hours=?,
-            numberMonthsAheadToWarn=?,
-            keepLongerHaflagah=?,
-            cheshbonKavuahByCheshbon=?,
-            haflagaOfOnahs=?,
-            kavuahDiffOnahs=?,
-            calcKavuahsOnNewEntry=?,
-            showProbFlagOnHome=?,
-            showEntryFlagOnHome=?,
-            navigateBySecularDate=?,
-            showIgnoredKavuahs=?,
-            noProbsAfterEntry=?,
-            hideHelp=?,
-            discreet=?,
-            autoBackup=?,
-            remindBedkMornTime=?,
-            remindBedkAftrnHour=?,
-            remindMikvahTime=?,
-            remindDayOnahHour=?,
-            remindNightOnahHour=?`,
-            [
-                //Lakewood is the default - locationId: 185
-                (settings.location && settings.location.locationId) || 185,
-                settings.showOhrZeruah,
-                settings.keepThirtyOne,
-                settings.onahBeinunis24Hours,
-                settings.numberMonthsAheadToWarn,
-                settings.keepLongerHaflagah,
-                settings.dilugChodeshPastEnds,
-                settings.haflagaOfOnahs,
-                settings.kavuahDiffOnahs,
-                settings.calcKavuahsOnNewEntry,
-                settings.showProbFlagOnHome,
-                settings.showEntryFlagOnHome,
-                settings.navigateBySecularDate,
-                settings.showIgnoredKavuahs,
-                settings.noProbsAfterEntry,
-                settings.hideHelp,
-                settings.discreet,
-                settings.autoBackup,
-                Utils.getSimpleTimeString(settings.remindBedkMornTime),
-                settings.remindBedkAftrnHour,
-                Utils.getSimpleTimeString(settings.remindMikvahTime),
-                settings.remindDayOnahHour,
-                settings.remindNightOnahHour,
-            ]
-        )
-            .then(() => AppData.updateGlobalProbs())
-            .catch((err) => {
-                warn('Error trying to enter settings into the database.');
-                error(err);
-            });
+        try {
+            await DataUtils._executeSql(
+                `UPDATE settings SET
+                locationId=?,
+                showOhrZeruah=?,
+                keepThirtyOne=?,
+                onahBeinunis24Hours=?,
+                numberMonthsAheadToWarn=?,
+                keepLongerHaflagah=?,
+                cheshbonKavuahByCheshbon=?,
+                haflagaOfOnahs=?,
+                kavuahDiffOnahs=?,
+                calcKavuahsOnNewEntry=?,
+                showProbFlagOnHome=?,
+                showEntryFlagOnHome=?,
+                navigateBySecularDate=?,
+                showIgnoredKavuahs=?,
+                noProbsAfterEntry=?,
+                hideHelp=?,
+                discreet=?,
+                autoBackup=?,
+                remindBedkMornTime=?,
+                remindBedkAftrnHour=?,
+                remindMikvahTime=?,
+                remindDayOnahHour=?,
+                remindNightOnahHour=?`,
+                [
+                    //Lakewood is the default - locationId: 185
+                    (settings.location && settings.location.locationId) || 185,
+                    settings.showOhrZeruah,
+                    settings.keepThirtyOne,
+                    settings.onahBeinunis24Hours,
+                    settings.numberMonthsAheadToWarn,
+                    settings.keepLongerHaflagah,
+                    settings.dilugChodeshPastEnds,
+                    settings.haflagaOfOnahs,
+                    settings.kavuahDiffOnahs,
+                    settings.calcKavuahsOnNewEntry,
+                    settings.showProbFlagOnHome,
+                    settings.showEntryFlagOnHome,
+                    settings.navigateBySecularDate,
+                    settings.showIgnoredKavuahs,
+                    settings.noProbsAfterEntry,
+                    settings.hideHelp,
+                    settings.discreet,
+                    settings.autoBackup,
+                    Utils.getSimpleTimeString(settings.remindBedkMornTime),
+                    settings.remindBedkAftrnHour,
+                    Utils.getSimpleTimeString(settings.remindMikvahTime),
+                    settings.remindDayOnahHour,
+                    settings.remindNightOnahHour,
+                ]
+            );
+            await AppData.updateGlobalProbs();
+        } catch (err) {
+            warn('Error trying to enter settings into the database.');
+            error(err);
+        }
     }
     static async SetCurrentLocationOnDatabase(location) {
-        await DataUtils._executeSql(
-            `UPDATE settings SET
-            locationId=?`,
-            [location.locationId]
-        ).catch((err) => {
+        try {
+            await DataUtils._executeSql(
+                `UPDATE settings SET
+                locationId=?`,
+                [location.locationId]
+            );
+        } catch (err) {
             warn('Error trying to enter location setting into the database.');
             error(err);
-        });
+        }
     }
     static async EntryListFromDatabase() {
         const entryList = new EntryList();
-        await DataUtils._executeSql('SELECT * from entries ORDER BY dateAbs, day')
-            .then((results) => {
-                if (results.list.length > 0) {
-                    for (let e of results.list) {
-                        const onah = new Onah(
-                            new jDate(e.dateAbs),
-                            e.day ? NightDay.Day : NightDay.Night
-                        );
-                        entryList.add(
-                            new Entry(
-                                onah,
-                                e.entryId,
-                                e.ignoreForFlaggedDates,
-                                e.ignoreForKavuah,
-                                e.comments
-                            )
-                        );
-                    }
-                    entryList.calculateHaflagas();
+        try {
+            const results = await DataUtils._executeSql(
+                'SELECT * from entries ORDER BY dateAbs, day'
+            );
+            if (results.list.length > 0) {
+                for (let e of results.list) {
+                    const onah = new Onah(
+                        new jDate(e.dateAbs),
+                        e.day ? NightDay.Day : NightDay.Night
+                    );
+                    entryList.add(
+                        new Entry(
+                            onah,
+                            e.entryId,
+                            e.ignoreForFlaggedDates,
+                            e.ignoreForKavuah,
+                            e.comments
+                        )
+                    );
                 }
-            })
-            .catch((err) => {
-                warn('Error trying to get all entries from the database.');
-                error(err);
-            });
+                entryList.calculateHaflagas();
+            }
+        } catch (err) {
+            warn('Error trying to get all entries from the database.');
+            error(err);
+        }
         return entryList;
     }
     static async LocationFromDatabase(locationId) {
@@ -196,11 +210,14 @@ export default class DataUtils {
         if (!locationId) {
             throw 'locationId parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
         }
-        await DataUtils._queryLocations('locationId=?', [locationId]).then((ls) => {
+        try {
+            const ls = await DataUtils._queryLocations('locationId=?', [locationId]);
             if (ls.length > 0) {
                 location = ls[0];
             }
-        });
+        } catch (err) {
+            warn(`Error loading location id ${locationId} from the database: ${err.message}`);
+        }
         return location;
     }
     /**
@@ -330,53 +347,55 @@ export default class DataUtils {
             occasion.comments,
         ];
         if (occasion.hasId) {
-            await DataUtils._executeSql(
-                `UPDATE occasions SET
-                    title=?,
-                    type=?,
-                    dateAbs=?,
-                    color=?,
-                    comments=?
-                WHERE occasionId=?`,
-                [...params, occasion.occasionId]
-            )
-                .then(() => {
-                    log(`Updated Occasion Id ${occasion.occasionId.toString()}`);
-                })
-                .catch((err) => {
-                    warn(
-                        `Error trying to update Occasion Id ${occasion.occasionId.toString()} to the database.`
-                    );
-                    error(err);
-                });
+            try {
+                await DataUtils._executeSql(
+                    `UPDATE occasions SET
+                        title=?,
+                        type=?,
+                        dateAbs=?,
+                        color=?,
+                        comments=?
+                    WHERE occasionId=?`,
+                    [...params, occasion.occasionId]
+                );
+                log(`Updated Occasion Id ${occasion.occasionId.toString()}`);
+            } catch (err) {
+                warn(
+                    `Error trying to update Occasion Id ${occasion.occasionId.toString()} to the database.`
+                );
+                error(err);
+            }
         } else {
-            await DataUtils._executeSql(
-                `INSERT INTO occasions (
+            try {
+                const results = await DataUtils._executeSql(
+                    `INSERT INTO occasions (
                         title,
                         type,
                         dateAbs,
                         color,
                         comments)
                     VALUES (?,?,?,?,?)`,
-                params
-            )
-                .then((results) => (occasion.occasionId = results.id))
-                .catch((err) => {
-                    warn('Error trying to insert occasion into the database.');
-                    error(err);
-                });
+                    params
+                );
+                occasion.occasionId = results.id;
+            } catch (err) {
+                warn('Error trying to insert occasion into the database.');
+                error(err);
+            }
         }
     }
     static async DeleteUserOccasion(occasion) {
         if (!occasion.hasId) {
             throw 'Occasions can only be deleted from the database if they have an id';
         }
-        await DataUtils._executeSql('DELETE from occasions where occasionId=?', [
-            occasion.occasionId,
-        ]).catch((err) => {
+        try {
+            await DataUtils._executeSql('DELETE from occasions where occasionId=?', [
+                occasion.occasionId,
+            ]);
+        } catch (err) {
             warn(`Error trying to delete occasion id ${occasion.occasionId} from the database`);
             error(err);
-        });
+        }
     }
     /**
      * Gets all Kavuahs from the database.
@@ -387,25 +406,24 @@ export default class DataUtils {
             entries = entries.list;
         }
         let list = [];
-        await DataUtils._executeSql('SELECT * from kavuahs')
-            .then((results) => {
-                list = results.list.map(
-                    (k) =>
-                        new Kavuah(
-                            k.kavuahType,
-                            (k.settingEntry = entries.find((e) => e.entryId === k.settingEntryId)),
-                            k.specialNumber,
-                            !!k.cancelsOnahBeinunis,
-                            !!k.active,
-                            !!k.ignore,
-                            k.kavuahId
-                        )
-                );
-            })
-            .catch((err) => {
-                warn('Error trying to get all kavuahs from the database.');
-                error(err);
-            });
+        try {
+            const results = await DataUtils._executeSql('SELECT * from kavuahs');
+            list = results.list.map(
+                (k) =>
+                    new Kavuah(
+                        k.kavuahType,
+                        (k.settingEntry = entries.find((e) => e.entryId === k.settingEntryId)),
+                        k.specialNumber,
+                        !!k.cancelsOnahBeinunis,
+                        !!k.active,
+                        !!k.ignore,
+                        k.kavuahId
+                    )
+            );
+        } catch (err) {
+            warn('Error trying to get all kavuahs from the database.');
+            error(err);
+        }
         return list;
     }
     /**
@@ -655,27 +673,29 @@ export default class DataUtils {
      * @param {[any]} [values] Array of values to be used for the whereClause if it contains any sqlite parameters - such as 'id=?'. For example, if the whereClause is "name=? and israel=?", then values should be: ['Natanya', true].
      */
     static async _queryLocations(whereClause, values) {
-        const list = [];
-        await DataUtils._executeSql(
-            `SELECT * FROM locations ${whereClause ? ' WHERE ' + whereClause : ''} ORDER BY name`,
-            values
-        ).then((results) => {
-            log('442 - Results returned from db  - in _queryLocations');
-            for (let l of results.list) {
-                list.push(
-                    new Location(
-                        l.name,
-                        !!l.israel,
-                        l.latitude,
-                        l.longitude,
-                        l.utcoffset,
-                        l.elevation && l.elevation > 0 ? l.elevation : 0,
-                        l.candles,
-                        l.locationId
-                    )
-                );
-            }
-        });
+        const list = [],
+            results = await DataUtils._executeSql(
+                `SELECT * FROM locations ${
+                    whereClause ? ' WHERE ' + whereClause : ''
+                } ORDER BY name`,
+                values
+            );
+        log('442 - Results returned from db  - in _queryLocations');
+        for (let l of results.list) {
+            list.push(
+                new Location(
+                    l.name,
+                    !!l.israel,
+                    l.latitude,
+                    l.longitude,
+                    l.utcoffset,
+                    l.elevation && l.elevation > 0 ? l.elevation : 0,
+                    l.candles,
+                    l.locationId
+                )
+            );
+        }
+
         return list;
     }
     /**
@@ -688,67 +708,56 @@ export default class DataUtils {
         let insertId;
         let db;
 
-        await DataUtils.getDatabasePath().then(async (databasePath) => {
-            const name = getFileName(databasePath), //The file name without the extension.
-                options = { name };
-            if (databasePath === GLOBALS.DEFAULT_DB_PATH) {
-                options.createFromLocation = databasePath;
+        const databasePath = await DataUtils.getDatabasePath(),
+            name = getFileName(databasePath), //The file name without the extension.
+            options = { name };
+        if (databasePath === GLOBALS.DEFAULT_DB_PATH) {
+            options.createFromLocation = databasePath;
+        } else {
+            //We are loading from a restored backup.
+            //The file will be in DocumentDirectoryPath.
+            options.createFromLocation = name + '.sqlite';
+            options.readonly = false;
+        }
+        try {
+            const database = await SQLite.openDatabase(options);
+            db = database;
+            log('0120 - database is open. Starting transaction...');
+            const results = await db.executeSql(sql, values);
+            if (!!results && results.length > 0 && !!results[0].rows && !!results[0].rows.item) {
+                log(
+                    `0121 - the sql was executed successfully - ${results[0].rows.length.toString()} rows returned`
+                );
+                for (let i = 0; i < results[0].rows.length; i++) {
+                    resultsList.push(results[0].rows.item(i));
+                }
+            } else if (!!results && isNumber(results.rowsAffected)) {
+                log(
+                    `0122 - sql executed successfully - ${results.rowsAffected.toString()} rows affected`
+                );
             } else {
-                //We are loading from a restored backup.
-                //The file will be in DocumentDirectoryPath.
-                options.createFromLocation = name + '.sqlite';
-                options.readonly = false;
+                log('0123 - sql executed successfully - Results information is not available');
             }
-            await SQLite.openDatabase(options)
-                .then(async (database) => {
-                    db = database;
-                    log('0120 - database is open. Starting transaction...');
-                    await db.executeSql(sql, values).then((results) => {
-                        if (
-                            !!results &&
-                            results.length > 0 &&
-                            !!results[0].rows &&
-                            !!results[0].rows.item
-                        ) {
-                            log(
-                                `0121 - the sql was executed successfully - ${results[0].rows.length.toString()} rows returned`
-                            );
-                            for (let i = 0; i < results[0].rows.length; i++) {
-                                resultsList.push(results[0].rows.item(i));
-                            }
-                        } else if (!!results && isNumber(results.rowsAffected)) {
-                            log(
-                                `0122 - sql executed successfully - ${results.rowsAffected.toString()} rows affected`
-                            );
-                        } else {
-                            log(
-                                '0123 - sql executed successfully - Results information is not available'
-                            );
-                        }
-                        if (!!results && results.length) {
-                            insertId = results[0].insertId;
-                        }
-                    });
-                })
-                .catch((err) => {
-                    warn('0124 - error opening database');
-                    error(err);
-                    DataUtils._closeDatabase(db);
-                });
-        });
+            if (!!results && results.length) {
+                insertId = results[0].insertId;
+            }
+        } catch (err) {
+            warn('0124 - error opening database');
+            error(err);
+            await DataUtils._closeDatabase(db);
+        }
 
         return { list: resultsList, id: insertId };
     }
-    static _closeDatabase(db) {
+    static async _closeDatabase(db) {
         if (db) {
-            db.close()
-                .then(() => {
-                    log('130 -  Database is now CLOSED');
-                })
-                .catch((err) => {
-                    warn('131 - error closing database');
-                    error(err);
-                });
+            try {
+                await db.close();
+                log('130 -  Database is now CLOSED');
+            } catch (err) {
+                warn('131 - error closing database');
+                error(err);
+            }
         } else {
             warn('132 - db variable is not a database object');
         }
