@@ -121,19 +121,17 @@ export default class NewOccasion extends React.Component {
             inform('Please enter the title of this Event or Occasion.', 'Add occasion');
             return;
         }
-        const ad = this.appData,
-            occasion = new UserOccasion(
-                this.state.title,
-                this.state.occasionType,
-                this.state.jdate.Abs,
-                this.state.color,
-                this.state.comments
-            );
-        ad.UserOccasions.push(occasion);
+        const occasion = new UserOccasion(
+            this.state.title,
+            this.state.occasionType,
+            this.state.jdate.Abs,
+            this.state.color,
+            this.state.comments
+        );
         try {
-            await DataUtils.UserOccasionToDatabase(occasion);
+            this.appData.UserOccasions.push(await DataUtils.UserOccasionToDatabase(occasion));
             if (this.onUpdate) {
-                this.onUpdate(ad);
+                this.onUpdate(this.appData);
             }
             popUpMessage(
                 `The occasion ${occasion.title} has been successfully added.`,

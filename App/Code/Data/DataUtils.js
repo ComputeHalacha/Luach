@@ -308,7 +308,7 @@ export default class DataUtils {
         if (!searchTerm) {
             throw 'Search parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
         }
-        let where = '(name || IFNULL(heb, \'\') LIKE ?)',
+        let where = "(name || IFNULL(heb, '') LIKE ?)",
             values = [`%${searchTerm}%`];
         if (utcOffset) {
             where += ' and utcOffset=?';
@@ -378,11 +378,15 @@ export default class DataUtils {
                     params
                 );
                 occasion.occasionId = results.id;
+                log(
+                    `New occasion "${occasion.title}" was inserted. OccasionId is ${occasion.occasionId}`
+                );
             } catch (err) {
                 warn('Error trying to insert occasion into the database.');
                 error(err);
             }
         }
+        return occasion;
     }
     static async DeleteUserOccasion(occasion) {
         if (!occasion.hasId) {
@@ -466,7 +470,7 @@ export default class DataUtils {
     }
     static async KavuahToDatabase(kavuah) {
         if (!(kavuah.settingEntry && kavuah.settingEntry.hasId)) {
-            throw 'A kavuah can not be saved to the database unless it\'s setting entry is already in the database.';
+            throw "A kavuah can not be saved to the database unless it's setting entry is already in the database.";
         }
         const params = [
             kavuah.kavuahType,
@@ -656,7 +660,7 @@ export default class DataUtils {
                     newField.defaultValue
                         ? 'DEFAULT ' +
                           (typeof newField.defaultValue === 'string'
-                              ? '\'' + newField.defaultValue + '\''
+                              ? "'" + newField.defaultValue + "'"
                               : newField.defaultValue.toString())
                         : ''
                 }`

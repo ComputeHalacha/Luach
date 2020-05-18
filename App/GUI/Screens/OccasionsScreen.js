@@ -1,27 +1,15 @@
 import React, { Component } from 'react';
-import {
-    ScrollView,
-    Text,
-    View,
-    TouchableHighlight,
-    TouchableOpacity,
-    Alert,
-} from 'react-native';
+import { ScrollView, Text, View, TouchableHighlight, TouchableOpacity, Alert } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SideMenu from '../Components/SideMenu';
 import CustomList from '../Components/CustomList';
 import DataUtils from '../../Code/Data/DataUtils';
 import { UserOccasionTypes, UserOccasion } from '../../Code/JCal/UserOccasion';
-import {
-    warn,
-    error,
-    popUpMessage,
-    getTodayJdate,
-} from '../../Code/GeneralUtils';
+import { warn, error, popUpMessage, getTodayJdate } from '../../Code/GeneralUtils';
 import Utils from '../../Code/JCal/Utils';
 import { GeneralStyles } from '../styles';
 
-let today;
+let updateOccasionScreen, today;
 function getToday(appData) {
     if (!today) {
         today = getTodayJdate(appData);
@@ -29,9 +17,8 @@ function getToday(appData) {
     return today;
 }
 export default class OccasionsScreen extends Component {
-    static doUpdate = null;
     static navigationOptions = ({ navigation }) => {
-        const { appData } = navigation.state.params;
+        const { appData, onUpdate } = navigation.state.params;
         return {
             title: 'Events / Occasions',
             headerRight: (
@@ -48,25 +35,21 @@ export default class OccasionsScreen extends Component {
                             })
                         }>
                         <View style={{ marginRight: 10, alignItems: 'center' }}>
-                            <Icon name="import-export" color="#aca" size={25} />
-                            <Text style={{ fontSize: 10, color: '#797' }}>
-                                Export Data
-                            </Text>
+                            <Icon name='import-export' color='#aca' size={25} />
+                            <Text style={{ fontSize: 10, color: '#797' }}>Export Data</Text>
                         </View>
                     </TouchableHighlight>
                     <TouchableHighlight
                         onPress={() =>
                             navigation.navigate('NewOccasion', {
                                 appData: appData,
-                                onUpdate: OccasionsScreen.doUpdate,
+                                onUpdate: updateOccasionScreen || onUpdate,
                                 jdate: getToday(appData),
                             })
                         }>
                         <View style={{ marginRight: 3 }}>
-                            <Icon name="add" color="#aac" size={25} />
-                            <Text style={{ fontSize: 10, color: '#aac' }}>
-                                New Event
-                            </Text>
+                            <Icon name='add' color='#aac' size={25} />
+                            <Text style={{ fontSize: 10, color: '#aac' }}>New Event</Text>
                         </View>
                     </TouchableHighlight>
                 </View>
@@ -91,60 +74,56 @@ export default class OccasionsScreen extends Component {
         this.getYearText = this.getYearText.bind(this);
     }
 
+    componentDidMount() {
+        updateOccasionScreen = this.update;
+    }
+
     editOccasion(occasion) {
         this.navigate('NewOccasion', {
             occasion,
             appData: this.state.appData,
-            onUpdate: OccasionsScreen.doUpdate,
+            onUpdate: updateOccasionScreen,
         });
     }
     deleteOccasion(occasion) {
-        Alert.alert(
-            'Confirm Event Removal',
-            'Are you sure that you want to remove this Event?',
-            [
-                //Button 1
-                {
-                    text: 'Cancel',
-                    onPress: () => {
-                        return;
-                    },
-                    style: 'cancel',
+        Alert.alert('Confirm Event Removal', 'Are you sure that you want to remove this Event?', [
+            //Button 1
+            {
+                text: 'Cancel',
+                onPress: () => {
+                    return;
                 },
-                //Button 2
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        DataUtils.DeleteUserOccasion(occasion)
-                            .then(() => {
-                                const appData = this.state.appData;
-                                let occasionList = appData.UserOccasions,
-                                    index = occasionList.indexOf(occasion);
-                                if (index > -1) {
-                                    occasionList.splice(index, 1);
-                                    appData.UserOccasions = occasionList;
-                                    OccasionsScreen.doUpdate(appData);
-                                    popUpMessage(
-                                        `The Event "${
-                                            occasion.title
-                                        }" has been successfully removed.`,
-                                        'Remove Event'
-                                    );
-                                }
-                            })
-                            .catch(err => {
-                                warn(
-                                    'Error trying to delete an occasion from the database.'
-                                );
-                                error(err);
+                style: 'cancel',
+            },
+            //Button 2
+            {
+                text: 'OK',
+                onPress: () => {
+                    DataUtils.DeleteUserOccasion(occasion)
+                        .then(() => {
+                            const appData = this.state.appData;
+                            let occasionList = appData.UserOccasions,
+                                index = occasionList.indexOf(occasion);
+                            if (index > -1) {
+                                occasionList.splice(index, 1);
+                                appData.UserOccasions = occasionList;
+                                updateOccasionScreen(appData);
                                 popUpMessage(
-                                    'We are sorry, Luach is unable to remove this Event.\nPlease contact luach@compute.co.il.'
+                                    `The Event "${occasion.title}" has been successfully removed.`,
+                                    'Remove Event'
                                 );
-                            });
-                    },
+                            }
+                        })
+                        .catch((err) => {
+                            warn('Error trying to delete an occasion from the database.');
+                            error(err);
+                            popUpMessage(
+                                'We are sorry, Luach is unable to remove this Event.\nPlease contact luach@compute.co.il.'
+                            );
+                        });
                 },
-            ]
-        );
+            },
+        ]);
     }
     update(appData) {
         //sort occasions by date
@@ -179,34 +158,31 @@ export default class OccasionsScreen extends Component {
         }
     }
     render() {
-        OccasionsScreen.doUpdate = this.update;
         return (
             <View style={GeneralStyles.container}>
                 <View style={{ flexDirection: 'row', flex: 1 }}>
                     <SideMenu
-                        onUpdate={OccasionsScreen.doUpdate}
+                        onUpdate={updateOccasionScreen}
                         appData={this.state.appData}
                         navigator={this.props.navigation}
                         hideOccasions={true}
-                        helpUrl="Events.html"
-                        helpTitle="Events"
+                        helpUrl='Events.html'
+                        helpTitle='Events'
                     />
                     <ScrollView style={{ flex: 1 }}>
                         <CustomList
                             data={this.state.occasionList}
-                            iconname="event"
-                            emptyListText="There are no Events in the list"
+                            iconname='event'
+                            emptyListText='There are no Events in the list'
                             keyExtractor={(item, index) =>
                                 item.occasionId.toString() || index.toString()
                             }
-                            title={occasion => {
+                            title={(occasion) => {
                                 const currentYear = occasion.getCurrentYear();
                                 return (
                                     <View>
                                         <TouchableOpacity
-                                            onPress={() =>
-                                                this.editOccasion(occasion)
-                                            }>
+                                            onPress={() => this.editOccasion(occasion)}>
                                             <View
                                                 style={{
                                                     flexDirection: 'row',
@@ -214,14 +190,9 @@ export default class OccasionsScreen extends Component {
                                                     padding: 5,
                                                     borderRadius: 5,
                                                     margin: 4,
-                                                    backgroundColor:
-                                                        occasion.color,
+                                                    backgroundColor: occasion.color,
                                                 }}>
-                                                <Icon
-                                                    size={14}
-                                                    color="#ffe"
-                                                    name="event"
-                                                />
+                                                <Icon size={14} color='#ffe' name='event' />
                                                 <Text
                                                     style={{
                                                         color: '#ffe',
@@ -241,9 +212,7 @@ export default class OccasionsScreen extends Component {
                                                             fontStyle: 'italic',
                                                             fontSize: 9,
                                                         }}>
-                                                        {Utils.toSuffixed(
-                                                            currentYear
-                                                        ) + ' year'}
+                                                        {Utils.toSuffixed(currentYear) + ' year'}
                                                     </Text>
                                                 )}
                                             </View>
@@ -252,10 +221,10 @@ export default class OccasionsScreen extends Component {
                                     </View>
                                 );
                             }}
-                            secondSection={occasion => (
+                            secondSection={(occasion) => (
                                 <View style={GeneralStyles.inItemButtonList}>
                                     <TouchableHighlight
-                                        underlayColor="#696"
+                                        underlayColor='#696'
                                         style={{ flex: 1 }}
                                         onPress={() =>
                                             this.navigate('Home', {
@@ -265,26 +234,20 @@ export default class OccasionsScreen extends Component {
                                         }>
                                         <View style={GeneralStyles.center}>
                                             <Icon
-                                                name="event-note"
-                                                color="#696"
+                                                name='event-note'
+                                                color='#696'
                                                 size={18}
-                                                containerStyle={
-                                                    GeneralStyles.inItemLinkIcon
-                                                }
+                                                containerStyle={GeneralStyles.inItemLinkIcon}
                                             />
-                                            <Text
-                                                style={
-                                                    GeneralStyles.inItemLinkText
-                                                }>
+                                            <Text style={GeneralStyles.inItemLinkText}>
                                                 {' '}
                                                 Go to Date
                                             </Text>
                                         </View>
                                     </TouchableHighlight>
-                                    {occasion.occasionType !==
-                                        UserOccasionTypes.OneTime && (
+                                    {occasion.occasionType !== UserOccasionTypes.OneTime && (
                                         <TouchableHighlight
-                                            underlayColor="#66a"
+                                            underlayColor='#66a'
                                             style={{ flex: 1 }}
                                             onPress={() =>
                                                 this.navigate('Home', {
@@ -294,17 +257,12 @@ export default class OccasionsScreen extends Component {
                                             }>
                                             <View style={GeneralStyles.center}>
                                                 <Icon
-                                                    name="near-me"
-                                                    color="#66a"
+                                                    name='near-me'
+                                                    color='#66a'
                                                     size={18}
-                                                    containerStyle={
-                                                        GeneralStyles.inItemLinkIcon
-                                                    }
+                                                    containerStyle={GeneralStyles.inItemLinkIcon}
                                                 />
-                                                <Text
-                                                    style={
-                                                        GeneralStyles.inItemLinkText
-                                                    }>
+                                                <Text style={GeneralStyles.inItemLinkText}>
                                                     {' '}
                                                     Next Occurence
                                                 </Text>
@@ -312,47 +270,31 @@ export default class OccasionsScreen extends Component {
                                         </TouchableHighlight>
                                     )}
                                     <TouchableHighlight
-                                        underlayColor="#788778"
+                                        underlayColor='#788778'
                                         style={{ flex: 1 }}
-                                        onPress={() =>
-                                            this.editOccasion(occasion)
-                                        }>
+                                        onPress={() => this.editOccasion(occasion)}>
                                         <View style={GeneralStyles.center}>
                                             <Icon
-                                                name="edit"
-                                                color="#99a999"
+                                                name='edit'
+                                                color='#99a999'
                                                 size={18}
-                                                containerStyle={
-                                                    GeneralStyles.inItemLinkIcon
-                                                }
+                                                containerStyle={GeneralStyles.inItemLinkIcon}
                                             />
-                                            <Text
-                                                style={
-                                                    GeneralStyles.inItemLinkText
-                                                }>
-                                                Edit
-                                            </Text>
+                                            <Text style={GeneralStyles.inItemLinkText}>Edit</Text>
                                         </View>
                                     </TouchableHighlight>
                                     <TouchableHighlight
-                                        underlayColor="#faa"
+                                        underlayColor='#faa'
                                         style={{ flex: 1 }}
-                                        onPress={() =>
-                                            this.deleteOccasion(occasion)
-                                        }>
+                                        onPress={() => this.deleteOccasion(occasion)}>
                                         <View style={GeneralStyles.center}>
                                             <Icon
-                                                name="delete-forever"
-                                                color="#faa"
+                                                name='delete-forever'
+                                                color='#faa'
                                                 size={18}
-                                                containerStyle={
-                                                    GeneralStyles.inItemLinkIcon
-                                                }
+                                                containerStyle={GeneralStyles.inItemLinkIcon}
                                             />
-                                            <Text
-                                                style={
-                                                    GeneralStyles.inItemLinkText
-                                                }>
+                                            <Text style={GeneralStyles.inItemLinkText}>
                                                 {' '}
                                                 Remove
                                             </Text>

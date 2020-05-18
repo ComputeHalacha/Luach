@@ -21,7 +21,7 @@ export const GLOBALS = Object.freeze({
 
 export function popUpMessage(message, optionalTitle) {
     if (GLOBALS.IS_ANDROID) {
-        ToastAndroid.showWithGravity(message, ToastAndroid.LONG, ToastAndroid.CENTER);
+        ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
     } else {
         Alert.alert(optionalTitle, message);
     }
