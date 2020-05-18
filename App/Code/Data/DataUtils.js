@@ -235,47 +235,45 @@ export default class DataUtils {
             location.CandleLighting,
         ];
         if (location.hasId()) {
-            await DataUtils._executeSql(
-                `UPDATE locations SET
-                    name=?,
-                    israel=?,
-                    latitude=?,
-                    longitude=?,
-                    utcoffset=?,
-                    elevation=?,
-                    candles=?
-                WHERE locationId=?`,
-                [...params, location.locationId]
-            )
-                .then(() => {
-                    log(`Updated Location Id ${location.locationId.toString()}`);
-                })
-                .catch((err) => {
-                    warn(
-                        `Error trying to update Location Id ${location.locationId.toString()} to the database.`
-                    );
-                    error(err);
-                });
+            try {
+                await DataUtils._executeSql(
+                    `UPDATE locations SET
+                        name=?,
+                        israel=?,
+                        latitude=?,
+                        longitude=?,
+                        utcoffset=?,
+                        elevation=?,
+                        candles=?
+                    WHERE locationId=?`,
+                    [...params, location.locationId]
+                );
+                log(`Updated Location Id ${location.locationId.toString()}`);
+            } catch (err) {
+                warn(
+                    `Error trying to update Location Id ${location.locationId.toString()} to the database.`
+                );
+                error(err);
+            }
         } else {
-            await DataUtils._executeSql(
-                `INSERT INTO locations (
-                        name,
-                        israel,
-                        latitude,
-                        longitude,
-                        utcoffset,
-                        elevation,
-                        candles)
-                    VALUES (?,?,?,?,?,?,?)`,
-                params
-            )
-                .then((results) => {
-                    location.locationId = results.id;
-                })
-                .catch((err) => {
-                    warn('Error trying to insert location into the database.');
-                    error(err);
-                });
+            try {
+                const results = await DataUtils._executeSql(
+                    `INSERT INTO locations (
+                            name,
+                            israel,
+                            latitude,
+                            longitude,
+                            utcoffset,
+                            elevation,
+                            candles)
+                        VALUES (?,?,?,?,?,?,?)`,
+                    params
+                );
+                location.locationId = results.id;
+            } catch (err) {
+                warn('Error trying to insert location into the database.');
+                error(err);
+            }
         }
     }
     /**
@@ -286,12 +284,14 @@ export default class DataUtils {
         if (!location.hasId()) {
             throw 'Locations can only be deleted from the database if they have an id';
         }
-        await DataUtils._executeSql('DELETE from locations where locationId=?', [
-            location.locationId,
-        ]).catch((err) => {
+        try {
+            await DataUtils._executeSql('DELETE from locations where locationId=?', [
+                location.locationId,
+            ]);
+        } catch (err) {
             warn(`Error trying to delete location id ${location.locationId} from the database`);
             error(err);
-        });
+        }
     }
     /** Returns a list of Location objects that match the search query with all the locations in the database.*/
     static async GetAllLocations() {
@@ -308,7 +308,7 @@ export default class DataUtils {
         if (!searchTerm) {
             throw 'Search parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
         }
-        let where = "(name || IFNULL(heb, '') LIKE ?)",
+        let where = '(name || IFNULL(heb, \'\') LIKE ?)',
             values = [`%${searchTerm}%`];
         if (utcOffset) {
             where += ' and utcOffset=?';
@@ -318,24 +318,16 @@ export default class DataUtils {
     }
     static async GetAllUserOccasions() {
         let list = [];
-        await DataUtils._executeSql('SELECT * from occasions ORDER BY dateAbs')
-            .then((results) => {
-                list = results.list.map(
-                    (o) =>
-                        new UserOccasion(
-                            o.title,
-                            o.type,
-                            o.dateAbs,
-                            o.color,
-                            o.comments,
-                            o.occasionId
-                        )
-                );
-            })
-            .catch((err) => {
-                warn('Error trying to get all occasions from the database.');
-                error(err);
-            });
+        try {
+            const results = await DataUtils._executeSql('SELECT * from occasions ORDER BY dateAbs');
+            list = results.list.map(
+                (o) =>
+                    new UserOccasion(o.title, o.type, o.dateAbs, o.color, o.comments, o.occasionId)
+            );
+        } catch (err) {
+            warn('Error trying to get all occasions from the database.');
+            error(err);
+        }
         return list;
     }
     static async UserOccasionToDatabase(occasion) {
@@ -435,42 +427,38 @@ export default class DataUtils {
      */
     static async GetAllTaharaEvents() {
         let list = [];
-        //Because this table was added after the app launched, we add it if needed during app load.
-        await DataUtils._executeSql(
-            `CREATE TABLE IF NOT EXISTS taharaEvents (
+        try {
+            //Because this table was added after the app launched, we add it if needed during app load.
+            await DataUtils._executeSql(
+                `CREATE TABLE IF NOT EXISTS taharaEvents (
                     taharaEventId INTEGER PRIMARY KEY ASC
                                     UNIQUE
                                     NOT NULL,
                     dateAbs  INTEGER NOT NULL,
                     taharaEventType  INTEGER NOT NULL);`
-        )
-            .then(
-                async () =>
-                    await DataUtils._executeSql('SELECT * from taharaEvents ORDER BY dateAbs')
-                        .then((results) => {
-                            list = results.list.map(
-                                (te) =>
-                                    new TaharaEvent(
-                                        new jDate(te.dateAbs),
-                                        te.taharaEventType,
-                                        te.taharaEventId
-                                    )
-                            );
-                        })
-                        .catch((err) => {
-                            warn('Error trying to get all taharaEvents from the database.');
-                            error(err);
-                        })
-            )
-            .catch((err) => {
-                warn('Error trying to create taharaEvents  table on the database.');
+            );
+            try {
+                const results = await DataUtils._executeSql(
+                    'SELECT * from taharaEvents ORDER BY dateAbs'
+                );
+                list = results.list.map(
+                    (te) =>
+                        new TaharaEvent(new jDate(te.dateAbs), te.taharaEventType, te.taharaEventId)
+                );
+            } catch (err) {
+                warn('Error trying to get all taharaEvents from the database.');
                 error(err);
-            });
+            }
+        } catch (err) {
+            warn('Error trying to create taharaEvents table on the database.');
+            error(err);
+        }
+
         return list;
     }
     static async KavuahToDatabase(kavuah) {
         if (!(kavuah.settingEntry && kavuah.settingEntry.hasId)) {
-            throw "A kavuah can not be saved to the database unless it's setting entry is already in the database.";
+            throw 'A kavuah can not be saved to the database unless it\'s setting entry is already in the database.';
         }
         const params = [
             kavuah.kavuahType,
@@ -480,32 +468,31 @@ export default class DataUtils {
             kavuah.active,
             kavuah.ignore,
         ];
-
         if (kavuah.hasId) {
-            await DataUtils._executeSql(
-                `UPDATE kavuahs SET
-                    kavuahType=?,
-                    settingEntryId=?,
-                    specialNumber=?,
-                    cancelsOnahBeinunis=?,
-                    active=?,
-                    [ignore]=?
-                WHERE kavuahId=?`,
-                [...params, kavuah.kavuahId]
-            )
-                .then(() => {
-                    log(`Updated Kavuah Id ${kavuah.kavuahId.toString()}`);
-                    AppData.updateGlobalProbs();
-                })
-                .catch((err) => {
-                    warn(
-                        `Error trying to update Kavuah Id ${kavuah.kavuahId.toString()} to the database.`
-                    );
-                    error(err);
-                });
+            try {
+                await DataUtils._executeSql(
+                    `UPDATE kavuahs SET
+                        kavuahType=?,
+                        settingEntryId=?,
+                        specialNumber=?,
+                        cancelsOnahBeinunis=?,
+                        active=?,
+                        [ignore]=?
+                    WHERE kavuahId=?`,
+                    [...params, kavuah.kavuahId]
+                );
+                log(`Updated Kavuah Id ${kavuah.kavuahId.toString()}`);
+                AppData.updateGlobalProbs();
+            } catch (err) {
+                warn(
+                    `Error trying to update Kavuah Id ${kavuah.kavuahId.toString()} to the database.`
+                );
+                error(err);
+            }
         } else {
-            await DataUtils._executeSql(
-                `INSERT INTO kavuahs (
+            try {
+                const results = await DataUtils._executeSql(
+                    `INSERT INTO kavuahs (
                         kavuahType,
                         settingEntryId,
                         specialNumber,
@@ -513,83 +500,81 @@ export default class DataUtils {
                         active,
                         [ignore])
                     VALUES (?,?,?,?,?,?)`,
-                params
-            )
-                .then((results) => {
-                    kavuah.kavuahId = results.id;
-                    AppData.updateGlobalProbs(kavuah);
-                })
-                .catch((err) => {
-                    warn('Error trying to insert kavuah into the database.');
-                    error(err);
-                });
+                    params
+                );
+                kavuah.kavuahId = results.id;
+                AppData.updateGlobalProbs(kavuah);
+            } catch (err) {
+                warn('Error trying to insert kavuah into the database.');
+                error(err);
+            }
         }
     }
     static async DeleteKavuah(kavuah) {
         if (!kavuah.hasId) {
             throw 'Kavuahs can only be deleted from the database if they have an id';
         }
-        await DataUtils._executeSql('DELETE from kavuahs where kavuahId=?', [kavuah.kavuahId])
-            .then(() => AppData.updateGlobalProbs(kavuah, true))
-            .catch((err) => {
-                warn(`Error trying to delete kavuah id ${kavuah.kavuahId} from the database`);
-                error(err);
-            });
+        try {
+            await DataUtils._executeSql('DELETE from kavuahs where kavuahId=?', [kavuah.kavuahId]);
+            AppData.updateGlobalProbs(kavuah, true);
+        } catch (err) {
+            warn(`Error trying to delete kavuah id ${kavuah.kavuahId} from the database`);
+            error(err);
+        }
     }
     static async EntryToDatabase(entry) {
         if (entry.hasId) {
-            await DataUtils._executeSql(
-                'UPDATE entries SET dateAbs=?, day=?, ignoreForFlaggedDates=?, ignoreForKavuah=?, comments=? WHERE entryId=?',
-                [
-                    entry.date.Abs,
-                    entry.nightDay === NightDay.Day,
-                    entry.ignoreForFlaggedDates,
-                    entry.ignoreForKavuah,
-                    entry.comments,
-                    entry.entryId,
-                ]
-            )
-                .then(() => {
-                    log(`Updated Entry Id ${entry.entryId.toString()}`);
-                    AppData.updateGlobalProbs();
-                })
-                .catch((err) => {
-                    warn(
-                        `Error trying to update entry id ${entry.entryId.toString()} to the database.`
-                    );
-                    error(err);
-                });
+            try {
+                await DataUtils._executeSql(
+                    'UPDATE entries SET dateAbs=?, day=?, ignoreForFlaggedDates=?, ignoreForKavuah=?, comments=? WHERE entryId=?',
+                    [
+                        entry.date.Abs,
+                        entry.nightDay === NightDay.Day,
+                        entry.ignoreForFlaggedDates,
+                        entry.ignoreForKavuah,
+                        entry.comments,
+                        entry.entryId,
+                    ]
+                );
+                log(`Updated Entry Id ${entry.entryId.toString()}`);
+                AppData.updateGlobalProbs();
+            } catch (err) {
+                warn(
+                    `Error trying to update entry id ${entry.entryId.toString()} to the database.`
+                );
+                error(err);
+            }
         } else {
-            await DataUtils._executeSql(
-                'INSERT INTO entries (dateAbs, day, ignoreForFlaggedDates, ignoreForKavuah, comments) VALUES (?, ?, ?, ?, ?)',
-                [
-                    entry.date.Abs,
-                    entry.nightDay === NightDay.Day,
-                    entry.ignoreForFlaggedDates,
-                    entry.ignoreForKavuah,
-                    entry.comments,
-                ]
-            )
-                .then((results) => {
-                    entry.entryId = results.id;
-                    AppData.updateGlobalProbs(entry);
-                })
-                .catch((err) => {
-                    warn('Error trying to insert entry into the database.');
-                    error(err);
-                });
+            try {
+                const results = await DataUtils._executeSql(
+                    'INSERT INTO entries (dateAbs, day, ignoreForFlaggedDates, ignoreForKavuah, comments) VALUES (?, ?, ?, ?, ?)',
+                    [
+                        entry.date.Abs,
+                        entry.nightDay === NightDay.Day,
+                        entry.ignoreForFlaggedDates,
+                        entry.ignoreForKavuah,
+                        entry.comments,
+                    ]
+                );
+                entry.entryId = results.id;
+                AppData.updateGlobalProbs(entry);
+            } catch (err) {
+                warn('Error trying to insert entry into the database.');
+                error(err);
+            }
         }
     }
     static async DeleteEntry(entry) {
         if (!entry.hasId) {
             throw 'Entries can only be deleted from the database if they have an id';
         }
-        await DataUtils._executeSql('DELETE from entries where entryId=?', [entry.entryId])
-            .then(() => AppData.updateGlobalProbs(entry, true))
-            .catch((err) => {
-                warn(`Error trying to delete entry id ${entry.entryId} from the database`);
-                error(err);
-            });
+        try {
+            await DataUtils._executeSql('DELETE from entries where entryId=?', [entry.entryId]);
+            AppData.updateGlobalProbs(entry, true);
+        } catch (err) {
+            warn(`Error trying to delete entry id ${entry.entryId} from the database`);
+            error(err);
+        }
     }
     static async TaharaEventToDatabase(taharaEvent) {
         if (taharaEvent.hasId) {
@@ -638,12 +623,13 @@ export default class DataUtils {
      */
     static async GetTableFields(tableName) {
         let list = [];
-        await DataUtils._executeSql(`PRAGMA table_info(${tableName})`)
-            .then((results) => (list = results.list))
-            .catch((err) => {
-                warn(`Error trying to get fields of ${tableName} table from the database`);
-                error(err);
-            });
+        try {
+            const results = await DataUtils._executeSql(`PRAGMA table_info(${tableName})`);
+            list = results.list;
+        } catch (err) {
+            warn(`Error trying to get fields of ${tableName} table from the database`);
+            error(err);
+        }
         return list;
     }
     /**
@@ -660,7 +646,7 @@ export default class DataUtils {
                     newField.defaultValue
                         ? 'DEFAULT ' +
                           (typeof newField.defaultValue === 'string'
-                              ? "'" + newField.defaultValue + "'"
+                              ? '\'' + newField.defaultValue + '\''
                               : newField.defaultValue.toString())
                         : ''
                 }`
