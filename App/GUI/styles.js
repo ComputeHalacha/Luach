@@ -136,6 +136,7 @@ const GeneralStyles = StyleSheet.create({
         height: 150,
     },
     divider: { backgroundColor: '#777', margin: 10 },
+    monoFont: { fontFamily: 'DMMono-Medium',fontSize: 25 },
 });
 
 export { GeneralStyles };

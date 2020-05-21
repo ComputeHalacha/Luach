@@ -151,7 +151,7 @@ export default class RemoteBackupScreen extends React.Component {
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Remote backup user name</Text>
                             <TextInput
-                                style={GeneralStyles.textInput}
+                                style={[GeneralStyles.textInput, GeneralStyles.monoFont]}
                                 multiline={false}
                                 onEndEditing={(e) => this.changeUsername(e.nativeEvent.text)}
                                 onChangeText={(val) =>
@@ -165,7 +165,7 @@ export default class RemoteBackupScreen extends React.Component {
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Remote backup password</Text>
                             <TextInput
-                                style={GeneralStyles.textInput}
+                                style={[GeneralStyles.textInput, GeneralStyles.monoFont]}
                                 multiline={false}
                                 onEndEditing={(e) => this.changePassword(e.nativeEvent.text)}
                                 onChangeText={(val) =>

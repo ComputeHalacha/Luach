@@ -64,6 +64,7 @@
 		E6D693E7D5BC45149DEA302D /* libRNDeviceInfo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10C9FF710FD04F7B884C568D /* libRNDeviceInfo-tvOS.a */; };
 		F2889F96AF734512BCA3E6EF /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 44F867F346E847CD962943E7 /* libRNDeviceInfo.a */; };
 		1EE8045361E8436FAA0420BC /* libRNCAsyncStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 384CD438D578427993E11A27 /* libRNCAsyncStorage.a */; };
+		F49127466CC741C3B0DF512D /* DMMono-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5579F7BD2B2140B89E1AC1C1 /* DMMono-Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -481,6 +482,7 @@
 		FA4FFB2640CA493E96DE2FFD /* libRNCWebView.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNCWebView.a; sourceTree = "<group>"; };
 		E9D231F7BBA048AAAC91E56C /* RNCAsyncStorage.xcodeproj */ = {isa = PBXFileReference; name = "RNCAsyncStorage.xcodeproj"; path = "../node_modules/@react-native-community/async-storage/ios/RNCAsyncStorage.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		384CD438D578427993E11A27 /* libRNCAsyncStorage.a */ = {isa = PBXFileReference; name = "libRNCAsyncStorage.a"; path = "libRNCAsyncStorage.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		5579F7BD2B2140B89E1AC1C1 /* DMMono-Medium.ttf */ = {isa = PBXFileReference; name = "DMMono-Medium.ttf"; path = "../Assets/Fonts/DMMono-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -858,6 +860,7 @@
 		E34920F5F8924895B9BB0625 /* Resources */ = {
 			isa = "PBXGroup";
 			children = (
+				5579F7BD2B2140B89E1AC1C1 /* DMMono-Medium.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1442,6 +1445,7 @@
 				264D7B62228DD6DA003A1687 /* scroll_512.png in Resources */,
 				E34BE92044C54BA297966CB4 /* Zocial.ttf in Resources */,
 				3851BF9F8399465EB9DE4E47 /* Feather.ttf in Resources */,
+				F49127466CC741C3B0DF512D /* DMMono-Medium.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

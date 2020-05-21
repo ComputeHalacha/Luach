@@ -510,7 +510,7 @@ export default class SettingsScreen extends Component {
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Remote backup user name</Text>
                             <TextInput
-                                style={GeneralStyles.textInput}
+                                style={[GeneralStyles.textInput, GeneralStyles.monoFont]}
                                 returnKeyType='next'
                                 onSubmitEditing={(e) => this.changeUsername(e.nativeEvent.text)}
                                 onChangeText={(val) =>
@@ -524,7 +524,7 @@ export default class SettingsScreen extends Component {
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Remote backup password</Text>
                             <TextInput
-                                style={GeneralStyles.textInput}
+                                style={[GeneralStyles.textInput, GeneralStyles.monoFont]}
                                 returnKeyType='next'
                                 onSubmitEditing={(e) => this.changePassword(e.nativeEvent.text)}
                                 onChangeText={(val) =>
@@ -774,7 +774,7 @@ export default class SettingsScreen extends Component {
                                 </Text>
                             </View>
                             <TextInput
-                                style={GeneralStyles.textInput}
+                                style={[GeneralStyles.textInput, GeneralStyles.monoFont]}
                                 keyboardType='numeric'
                                 returnKeyType='next'
                                 onSubmitEditing={(e) => {

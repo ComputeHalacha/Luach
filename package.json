@@ -37,5 +37,10 @@
         "eslint-plugin-react-perf": "^2.0.9",
         "jetifier": "^1.6.4",
         "metro-react-native-babel-preset": "^0.54.1"
+    },
+    "rnpm": {
+        "assets": [
+            "./Assets/Fonts/"
+        ]
     }
 }
