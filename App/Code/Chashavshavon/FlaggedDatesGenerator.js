@@ -186,8 +186,10 @@ export default class FlaggedDatesGenerator {
         if (this.settings.keepLongerHaflagah) {
             const probs = [];
             //Go through all earlier entries in the list that have a longer haflaga than this one
+            //and that are not kept anyway due to onah beinois,
             for (let e of this.entries.filter(
-                en => en.date.Abs < entry.date.Abs && en.haflaga > entry.haflaga
+                    en => en.date.Abs < entry.date.Abs && en.haflaga > entry.haflaga && 
+                    en.haflaga !== 30 && (en.haflaga !== 31 || !this.settings.keepThirtyOne)
             )) {
                 //See if their haflaga was never surpassed by an Entry after them
                 if (
@@ -208,7 +210,7 @@ export default class FlaggedDatesGenerator {
                             entry.nightDay,
                             'Yom Haflaga (' +
                                 e.haflaga.toString() +
-                                ' days) which was never overided'
+                                ' days) which was never overrided'
                         );
                         //As there can be more than single longer haflaga'd Entry with the same haflaga,
                         //we want to prevent doubles.
