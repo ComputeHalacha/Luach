@@ -5,7 +5,9 @@ import { log, warn, error, getFileName, getRandomString } from './GeneralUtils';
 import AppData from './Data/AppData';
 import DataUtils from './Data/DataUtils';
 
-const serverURL = __DEV__ ? 'http://10.0.2.2:81/api/luach' : 'https://www.compute.co.il/api/luach';
+const serverURL = __DEV__
+    ? 'http://10.0.2.2:82/api/luach'
+    : 'https://www.compute.co.il/api/luach';
 
 export default class RemoteBackup {
     constructor() {
@@ -46,6 +48,7 @@ export default class RemoteBackup {
         ).toString('base64');
     }
     async request(url, method, data) {
+        let responseData;
         try {
             url = serverURL + (url ? '/' + url : '');
             const headers = await this.getReqHeaders(),
@@ -55,20 +58,31 @@ export default class RemoteBackup {
                     headers: new Headers(headers),
                 },
                 response = await fetch(url, options);
-            log(`Http Request: ${method || 'GET'}  ${url}`);
-            const responseData = await response.json(),
-                succeeded = responseData && responseData.Succeeded;
-            if (succeeded) {
+            log(`Http Request: ${method || 'GET'}  ${url}`, response);
+
+            responseData = await response.json();
+            if (responseData && responseData.Succeeded) {
                 log(
-                    `${options.method} ${url} - Response Succeeded: ${JSON.stringify(responseData)}`
+                    `${
+                        options.method
+                    } ${url} - Response Succeeded: ${JSON.stringify(
+                        responseData
+                    )}`, responseData
                 );
             } else {
-                warn(`Response did NOT Succeed: ${JSON.stringify(responseData)}`);
+                warn(
+                    `Response did NOT Succeed: ${JSON.stringify(responseData)}`, responseData
+                );
             }
-            return responseData;
         } catch (err) {
-            error(`${method || 'GET'} ${url} - Http request error: ${JSON.stringify(err)}`);
+            error(
+                `${
+                    method || 'GET'
+                } ${url} - Http request error: ${JSON.stringify(err)}`,
+                err, responseData
+            );
         }
+        return responseData;
     }
     async createAccount() {
         const response = await this.request('account');
@@ -110,16 +124,25 @@ export default class RemoteBackup {
                 const responseData = await response.json();
                 success = responseData && responseData.Succeeded;
                 if (success) {
-                    log(`PUT ${url} - Response.Succeeded = true: ${JSON.stringify(responseData)}`);
-                    message = 'Your data has been successfully backed up to the Luach server.';
+                    log(
+                        `PUT ${url} - Response.Succeeded = true: ${JSON.stringify(
+                            responseData
+                        )}`
+                    );
+                    message =
+                        'Your data has been successfully backed up to the Luach server.';
                 } else {
                     warn(
-                        `PUT ${url} - Response.Succeeded = false: ${JSON.stringify(responseData)}`
+                        `PUT ${url} - Response.Succeeded = false: ${JSON.stringify(
+                            responseData
+                        )}`
                     );
                     message = `Luach was not able to back up your data to the Luach server.\\n${responseData.ErrorMessage}`;
                 }
             } catch (err) {
-                error(`PUT ${url} - Http request error: ${JSON.stringify(err)}`);
+                error(
+                    `PUT ${url} - Http request error: ${JSON.stringify(err)}`
+                );
                 message = `Luach was not able to back up your data to the Luach server.\\n${err.message}`;
             }
         } else {
@@ -142,15 +165,19 @@ export default class RemoteBackup {
             response = await this.request();
         if (response.Succeeded) {
             try {
-                log(`GET ${serverURL} - Successfully acquired backup file from server`);
+                log(
+                    `GET ${serverURL} - Successfully acquired backup file from server`
+                );
                 const prevPath = localStorage.databasePath,
                     //The database file is put in a folder where both android and IOS have access
-                    newPath = `${RNFS.DocumentDirectoryPath}/${this.getNewDatabaseName()}`,
+                    newPath = `${
+                        RNFS.DocumentDirectoryPath
+                    }/${this.getNewDatabaseName()}`,
                     newDbName = getFileName(newPath);
-                log(`The existing database is named ${getFileName(prevPath)} 
+                log(`The existing database is named ${getFileName(prevPath)}
                         and was found at ${prevPath}`);
                 log(
-                    `The NEW database will be named${newDbName} 
+                    `The NEW database will be named${newDbName}
                         and its pre-populated file will be placed at ${newPath}`
                 );
                 //Write the file data to disc.
@@ -158,7 +185,10 @@ export default class RemoteBackup {
                 await RNFS.writeFile(newPath, response.FileData, 'base64');
                 log(`Successfully copied backup file to ${newPath}`);
                 //Save the new database path to the local storage
-                await LocalStorage.setLocalStorageValue('DATABASE_PATH', newPath);
+                await LocalStorage.setLocalStorageValue(
+                    'DATABASE_PATH',
+                    newPath
+                );
                 //Set the data base utilities to access the new database path
                 DataUtils._databasePath = newPath;
                 log(`Set the DataUtils database path to ${newPath}`);
@@ -216,7 +246,9 @@ export default class RemoteBackup {
         }
         const response = await remoteBackup.createAccount();
         if (!response.success) {
-            log(`Luach was unable to restore from the online backup.\\n${response.message}`);
+            log(
+                `Luach was unable to restore from the online backup.\\n${response.message}`
+            );
             warn(JSON.stringify(response));
         }
         return response.success;

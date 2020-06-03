@@ -19,7 +19,7 @@ import {
 } from '../GeneralUtils';
 
 function get() {
-    var locations = 
+    var locations =
         `name: string,
         israel: bool,
         latitude: number,
@@ -29,7 +29,7 @@ function get() {
         candles: number
         locationId: number`;
 
-    var settings = 
+    var settings =
         `locationId: number,
         showOhrZeruah: bool,
         keepThirtyOne: bool,
@@ -55,7 +55,7 @@ function get() {
         requirePIN: bool,
         PIN: number`;
 
-    var occasions = 
+    var occasions =
         `title: string,
         type:{
             OneTime: 1,
@@ -69,7 +69,7 @@ function get() {
         comments: string,
         occasionId: number`;
 
-    var entries = 
+    var entries =
         `date: number,
         nightDay:{
             Night: -1,
@@ -79,7 +79,7 @@ function get() {
         ignoreForKavuah: bool,
         comments: string,
         entryId: number`;
-    
+
     var kavuahs =
         `kavuahType:{
             Haflagah: 1,
@@ -90,15 +90,15 @@ function get() {
             DilugDayOfMonth: 32,
             HaflagaMaayanPasuach: 64,
             DayOfMonthMaayanPasuach: 128,
-            HafalagaOnahs: 256}, 
+            HafalagaOnahs: 256},
         settingEntryId: number,
         specialNumber: number,
         cancelsOnahBeinunis: bool,
         active: bool,
         ignore: bool
         kavuahId: number`;
-    
-    var taharaEvents = 
+
+    var taharaEvents =
         `taharaEventId: number,
         dateAbs: number,
         taharaEventType:{
@@ -107,5 +107,5 @@ function get() {
             Shailah: 4,
             Mikvah: 8,
         }`;
-    
+
 }
