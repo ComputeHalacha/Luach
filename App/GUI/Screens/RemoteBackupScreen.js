@@ -65,12 +65,14 @@ export default class RemoteBackupScreen extends React.Component {
     }
 
     async getLastBackupDate() {
-        const lastBackupDate = await this.remoteBackup.getLastBackupDate();
+        //RemoteBackup.getLastBackupDate() returns the last backup date if there was one.
+        //If the account exists but there are no backups, it returns: true.
+        //If the account doesn't exists or if there were other errors,: false;        
+        const lastBackupDate = await this.remoteBackup.getLastBackupDate();        
         if (isValidDate(lastBackupDate)) {
-            this.setState({ lastBackupDate: lastBackupDate.toLocaleString() });
-            return true;
+            this.setState({ lastBackupDate: lastBackupDate.toLocaleString() });            
         }
-        return false;
+        return !!lastBackupDate;
     }
 
     async restoreFromBackup() {
@@ -102,7 +104,7 @@ export default class RemoteBackupScreen extends React.Component {
                     ]
                 );
             } else {
-                popUpMessage(message);
+                inform(message);
             }
         }
     }
@@ -239,7 +241,7 @@ export default class RemoteBackupScreen extends React.Component {
                             <Button
                                 title="Create Account"
                                 onPress={async () =>
-                                    popUpMessage(
+                                    inform(
                                         await (
                                             await this.remoteBackup.createAccount()
                                         ).message
@@ -250,12 +252,10 @@ export default class RemoteBackupScreen extends React.Component {
                             />
                             <Button
                                 title="Login to Account"
-                                onPress={async () =>
-                                    popUpMessage(
-                                        (await this.getLastBackupDate())
-                                            ? 'You have been successfully logged in to the remote account'
-                                            : 'Luach could not find your account. Please check your credentials or create a new account.'
-                                    )
+                                onPress={async () =>                                    
+                                    await this.getLastBackupDate()
+                                            ? popUpMessage('You have been successfully logged in to the remote account')
+                                            : inform('Luach could not find your account. Please check your credentials or create a new account.')                                    
                                 }
                                 accessibilityLabel="Login to Account"
                                 color={GLOBALS.BUTTON_COLOR}
@@ -311,7 +311,7 @@ export default class RemoteBackupScreen extends React.Component {
                             <Button
                                 title="Backup My Data"
                                 onPress={async () => {
-                                    popUpMessage(
+                                    inform(
                                         await (
                                             await this.remoteBackup.uploadBackup()
                                         ).message

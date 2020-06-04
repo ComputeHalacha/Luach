@@ -12,30 +12,11 @@ import NewKavuahScreen from './GUI/Screens/NewKavuahScreen';
 import DateDetailsScreen from './GUI/Screens/DateDetailsScreen';
 import FindKavuahScreen from './GUI/Screens/FindKavuahScreen';
 import FindLocationScreen from './GUI/Screens/FindLocationScreen';
-import MontheViewScreen from './GUI/Screens/MonthViewScreen';
+import MonthViewScreen from './GUI/Screens/MonthViewScreen';
 import BrowserScreen from './GUI/Screens/BrowserScreen';
 import ExportDataScreen from './GUI/Screens/ExportDataScreen';
 import NewLocationScreen from './GUI/Screens/NewLocationScreen';
 import RemoteBackupScreen from './GUI/Screens/RemoteBackupScreen';
-
-if (__DEV__) {
-    // To see all the requests in the chrome Dev tools in the network tab.
-    XMLHttpRequest = GLOBAL.originalXMLHttpRequest
-        ? GLOBAL.originalXMLHttpRequest
-        : GLOBAL.XMLHttpRequest;
-
-    // fetch logger
-    global._fetch = fetch;
-    global.fetch = function (uri, options, ...args) {
-        return global._fetch(uri, options, ...args).then((response) => {
-            console.log('Fetch', {
-                request: { uri, options, ...args },
-                response,
-            });
-            return response;
-        });
-    };
-}
 
 AppRegistry.registerComponent('LuachAndroid', () =>
     StackNavigator(
@@ -52,7 +33,7 @@ AppRegistry.registerComponent('LuachAndroid', () =>
             DateDetails: { screen: DateDetailsScreen },
             FindKavuahs: { screen: FindKavuahScreen },
             FindLocation: { screen: FindLocationScreen },
-            MonthView: { screen: MontheViewScreen },
+            MonthView: { screen: MonthViewScreen },
             Browser: { screen: BrowserScreen },
             ExportData: { screen: ExportDataScreen },
             NewLocation: { screen: NewLocationScreen },
