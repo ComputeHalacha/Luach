@@ -165,7 +165,7 @@ export function range(start, end) {
         return Array.from({ length: end - start + 1 }, (v, i) => start + i);
     }
 }
-export function getRandomString(len) {    
+export function getRandomString(len) {
     return Array(len + 1)
         .join((Math.random().toString(36) + '00000000000000000').slice(2, 18))
         .slice(0, len);
@@ -174,27 +174,27 @@ export function getRandomString(len) {
  * Log message to console
  * @param {*} txt
  */
-export function log(txt) {
+export function log(txt, ...other) {
     if (__DEV__) {
-        console.log(txt);
+        console.log(txt, ...other);
     }
 }
 /**
  * Warn message to console
  * @param {*} txt
  */
-export function warn(txt) {
+export function warn(txt, ...other) {
     if (__DEV__) {
-        console.warn(txt);
+        console.warn(txt, ...other);
     }
 }
 /**
  * Error message to console
  * @param {*} txt
  */
-export function error(txt) {
+export function error(txt, ...other) {
     if (__DEV__) {
-        console.error(txt);
+        console.error(txt, ...other);
     }
 }
 /**

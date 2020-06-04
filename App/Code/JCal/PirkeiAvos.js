@@ -47,8 +47,9 @@ export default class PirkeiAvos {
             jMonth = jd.Month,
             jDay = jd.Day,
             pes1 = new jDate(jYear, 1, 15),
+            pes1Dow = pes1.getDayOfWeek(),
             //How many days after the first day of pesach was the first shabbos after pesach
-            shb1 = (israel ? 7 : 8) + (6 - pes1.getDayOfWeek()),
+            shb1 = (!israel && pes1Dow === 6 ? 20 :  13) - pes1Dow,
             //What number shabbos after pesach is the current date
             cShb =
                 jMonth === 1 && jDay === shb1 + 15
@@ -62,14 +63,14 @@ export default class PirkeiAvos {
         //Pesach can never come out on Friday, so in E. Yisroel Shavuos is never on Shabbos.
         if (
             !israel &&
-            pes1.getDayOfWeek() === 4 &&
+            pes1Dow === 4 &&
             (jMonth > 3 || (jMonth === 3 && jDay > 6))
         ) {
             prk = prk === 1 ? 6 : prk - 1;
         }
         //If Tisha B'Av was on Shabbos, we missed a week. The first day of Pesach is always the same day of the week as Tisha b'av.
         if (
-            pes1.getDayOfWeek() === 6 &&
+            pes1Dow === 6 &&
             (jMonth > 5 || (jMonth === 5 && jDay > 9))
         ) {
             prk = prk === 1 ? 6 : prk - 1;

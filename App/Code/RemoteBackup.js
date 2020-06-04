@@ -5,7 +5,36 @@ import { log, warn, error, getFileName, getRandomString } from './GeneralUtils';
 import AppData from './Data/AppData';
 import DataUtils from './Data/DataUtils';
 
-const serverURL = __DEV__ ? 'http://10.0.2.2:81/api/luach' : 'https://www.compute.co.il/api/luach';
+/*
+To enable the domain compute.dev on a localhost windows machine:
+ 1: On the host machine, open C:\Windows\System32\drivers\etc\hosts as an admin and add the line:
+        127.0.0.1  compute.dev
+ 2: You probably need an ssl for that, so run in an admin powershell:  
+        New-SelfSignedCertificate  -DnsName compute.dev -CertStoreLocation cert:\LocalMachine\My  -FriendlyName "Compute.dev" -NotAfter (get-date).AddYears(5)
+ 3: In IIS (inetmgr) for the site containing the compute luach api, 
+    set the host name to compute.dev (for both http and https), 
+    and set the https binding to use the "Compute.dev" certificate you created in the previous step.
+ 4: If running compute.dev in the browser gives you an ssl error, open mmc, 
+    add the "Certificates" snap-in for the computer account 
+    and copy the compute.dev certificate from 
+    the Personal store to Trusted Root Certification Authority.
+ 
+To enable the domain compute.dev for use from an android device:
+    NOTE: For an android emulator, you need to be running Android Pie in a "Google API" image - NOT Google Play image
+    Also, you need to run the emulator using: ...Android\sdk\emulator\emulator.exe -avd Pixel_2_API_28 -writable-system
+    (The important part is the -writable-system The rest should be tweaked as needed of course)
+ 1: Create a host file somewhere on the host machine containing the line: 10.0.2.2  compute.dev
+    Make sure to add a blank line after the last line of the file. 
+    Also make sure that the file uses LF line breaks. (Unix style, not CRLF which is the windows default)
+ 2: Run: adb root 
+         adb remount
+         adb push HOST_FILE_PATH /etc/hosts  (replace "HOST_FILE_PATH" with the path to above hosts file)
+ 3: Back in the Android device or emulator, open the browser and navigate to compute.dev. 
+    If you get your local site then, Mazel Tov.
+ */
+const serverURL = __DEV__
+    ? 'http://10.0.2.2:980/api/luach' /*'http://compute.dev/api/luach'*/
+    : 'https://www.compute.co.il/api/luach';
 
 export default class RemoteBackup {
     constructor() {
@@ -17,8 +46,8 @@ export default class RemoteBackup {
     }
     async getLastBackupDate() {
         const response = await this.request('date');
-        if (response && response.Succeeded && response.Date) {
-            return new Date(response.Date);
+        if (response && response.Succeeded) {            
+            return response.HasBackup ? new Date(response.Date) : true;
         } else {
             warn(response.ErrorMessage);
         }
@@ -46,6 +75,7 @@ export default class RemoteBackup {
         ).toString('base64');
     }
     async request(url, method, data) {
+        let responseData;
         try {
             url = serverURL + (url ? '/' + url : '');
             const headers = await this.getReqHeaders(),
@@ -55,20 +85,31 @@ export default class RemoteBackup {
                     headers: new Headers(headers),
                 },
                 response = await fetch(url, options);
-            log(`Http Request: ${method || 'GET'}  ${url}`);
-            const responseData = await response.json(),
-                succeeded = responseData && responseData.Succeeded;
-            if (succeeded) {
+            log(`Http Request: ${method || 'GET'}  ${url}`, response);
+
+            responseData = await response.json();
+            if (responseData && responseData.Succeeded) {
                 log(
-                    `${options.method} ${url} - Response Succeeded: ${JSON.stringify(responseData)}`
+                    `${
+                        options.method
+                    } ${url} - Response Succeeded: ${JSON.stringify(
+                        responseData
+                    )}`, responseData
                 );
             } else {
-                warn(`Response did NOT Succeed: ${JSON.stringify(responseData)}`);
+                warn(
+                    `Response did NOT Succeed: ${JSON.stringify(responseData)}`, responseData
+                );
             }
-            return responseData;
         } catch (err) {
-            error(`${method || 'GET'} ${url} - Http request error: ${JSON.stringify(err)}`);
+            error(
+                `${
+                    method || 'GET'
+                } ${url} - Http request error: ${JSON.stringify(err)}`,
+                err, responseData
+            );
         }
+        return responseData;
     }
     async createAccount() {
         const response = await this.request('account');
@@ -110,16 +151,25 @@ export default class RemoteBackup {
                 const responseData = await response.json();
                 success = responseData && responseData.Succeeded;
                 if (success) {
-                    log(`PUT ${url} - Response.Succeeded = true: ${JSON.stringify(responseData)}`);
-                    message = 'Your data has been successfully backed up to the Luach server.';
+                    log(
+                        `PUT ${url} - Response.Succeeded = true: ${JSON.stringify(
+                            responseData
+                        )}`
+                    );
+                    message =
+                        'Your data has been successfully backed up to the Luach server.';
                 } else {
                     warn(
-                        `PUT ${url} - Response.Succeeded = false: ${JSON.stringify(responseData)}`
+                        `PUT ${url} - Response.Succeeded = false: ${JSON.stringify(
+                            responseData
+                        )}`
                     );
                     message = `Luach was not able to back up your data to the Luach server.\\n${responseData.ErrorMessage}`;
                 }
             } catch (err) {
-                error(`PUT ${url} - Http request error: ${JSON.stringify(err)}`);
+                error(
+                    `PUT ${url} - Http request error: ${JSON.stringify(err)}`
+                );
                 message = `Luach was not able to back up your data to the Luach server.\\n${err.message}`;
             }
         } else {
@@ -142,15 +192,19 @@ export default class RemoteBackup {
             response = await this.request();
         if (response.Succeeded) {
             try {
-                log(`GET ${serverURL} - Successfully acquired backup file from server`);
+                log(
+                    `GET ${serverURL} - Successfully acquired backup file from server`
+                );
                 const prevPath = localStorage.databasePath,
                     //The database file is put in a folder where both android and IOS have access
-                    newPath = `${RNFS.DocumentDirectoryPath}/${this.getNewDatabaseName()}`,
+                    newPath = `${
+                        RNFS.DocumentDirectoryPath
+                    }/${this.getNewDatabaseName()}`,
                     newDbName = getFileName(newPath);
-                log(`The existing database is named ${getFileName(prevPath)} 
+                log(`The existing database is named ${getFileName(prevPath)}
                         and was found at ${prevPath}`);
                 log(
-                    `The NEW database will be named${newDbName} 
+                    `The NEW database will be named${newDbName}
                         and its pre-populated file will be placed at ${newPath}`
                 );
                 //Write the file data to disc.
@@ -158,7 +212,10 @@ export default class RemoteBackup {
                 await RNFS.writeFile(newPath, response.FileData, 'base64');
                 log(`Successfully copied backup file to ${newPath}`);
                 //Save the new database path to the local storage
-                await LocalStorage.setLocalStorageValue('DATABASE_PATH', newPath);
+                await LocalStorage.setLocalStorageValue(
+                    'DATABASE_PATH',
+                    newPath
+                );
                 //Set the data base utilities to access the new database path
                 DataUtils._databasePath = newPath;
                 log(`Set the DataUtils database path to ${newPath}`);
@@ -216,7 +273,9 @@ export default class RemoteBackup {
         }
         const response = await remoteBackup.createAccount();
         if (!response.success) {
-            log(`Luach was unable to restore from the online backup.\\n${response.message}`);
+            log(
+                `Luach was unable to restore from the online backup.\\n${response.message}`
+            );
             warn(JSON.stringify(response));
         }
         return response.success;
