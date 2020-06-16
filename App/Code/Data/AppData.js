@@ -2,10 +2,13 @@ import DataUtils from './DataUtils';
 import Settings from '../Settings';
 import Entry from '../Chashavshavon/Entry';
 import { Kavuah } from '../Chashavshavon/Kavuah';
-import { NightDay } from '../Chashavshavon/Onah';
 import EntryList from '../Chashavshavon/EntryList';
-import Utils from '../JCal/Utils';
-import { resetDayOnahReminders, resetNightOnahReminders } from '../Notifications';
+import {
+    resetDayOnahReminders,
+    resetNightOnahReminders,
+    removeAllDayOnahReminders,
+    removeAllNightOnahReminders,
+} from '../Notifications';
 import {
     log,
     error,
@@ -146,7 +149,8 @@ const addedFields = [
         type: 'BOOLEAN',
         allowNull: true,
         defaultValue: '1',
-        afterAddCallback: async () => await RemoteBackup.createFreshUserNewAccount(),
+        afterAddCallback: async () =>
+            await RemoteBackup.createFreshUserNewAccount(),
     },
 ];
 
@@ -163,7 +167,14 @@ export default class AppData {
      * @param {[ProblemOnah]} problemOnahs
      * @param {[TaharaEvent]} taharaEvents
      */
-    constructor(settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents) {
+    constructor(
+        settings,
+        occasions,
+        entryList,
+        kavuahList,
+        problemOnahs,
+        taharaEvents
+    ) {
         this.Settings = settings || new Settings({});
         this.UserOccasions = occasions || [];
         this.EntryList = entryList || new EntryList();
@@ -178,7 +189,10 @@ export default class AppData {
         this.EntryList.calculateHaflagas();
         let probs = [];
         if (this.EntryList.list.length > 0) {
-            probs = this.EntryList.getProblemOnahs(this.KavuahList, this.Settings);
+            probs = this.EntryList.getProblemOnahs(
+                this.KavuahList,
+                this.Settings
+            );
         }
         this.ProblemOnahs = probs;
     }
@@ -267,31 +281,16 @@ export default class AppData {
                 }
             }
             appData.updateProbs(appData);
-            if (
-                !isNullishOrFalse(appData.Settings.remindDayOnahHour) ||
-                !isNullishOrFalse(appData.Settings.remindNightOnahHour)
-            ) {
-                const now = Utils.nowAtLocation(appData.Settings.location);
-                if (!isNullishOrFalse(appData.Settings.remindDayOnahHour)) {
-                    resetDayOnahReminders(
-                        appData.ProblemOnahs.filter(
-                            (po) => po.NightDay === NightDay.Day && po.jdate.Abs >= now.Abs
-                        ),
-                        appData.Settings.remindDayOnahHour,
-                        appData.Settings.location,
-                        appData.Settings.discreet
-                    );
-                }
-                if (!isNullishOrFalse(appData.Settings.remindNightOnahHour)) {
-                    resetNightOnahReminders(
-                        appData.ProblemOnahs.filter(
-                            (po) => po.NightDay === NightDay.Day && po.jdate.Abs >= now.Abs
-                        ),
-                        appData.Settings.remindDayOnahHour,
-                        appData.Settings.location,
-                        appData.Settings.discreet
-                    );
-                }
+
+            if (isNullishOrFalse(appData.Settings.remindDayOnahHour)) {
+                removeAllDayOnahReminders();
+            } else {
+                resetDayOnahReminders(appData);
+            }
+            if (isNullishOrFalse(appData.Settings.remindNightOnahHour)) {
+                removeAllNightOnahReminders();
+            } else {
+                resetNightOnahReminders(appData);
             }
         });
     }
@@ -328,7 +327,12 @@ export default class AppData {
      * Returns an appData instance containing all the user data from the local database file.
      */
     static async fromDatabase() {
-        let settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents;
+        let settings,
+            occasions,
+            entryList,
+            kavuahList,
+            problemOnahs,
+            taharaEvents;
 
         //Before getting data from database, make sure that the local database schema is up to date.
         await AppData.upgradeDatabase();
@@ -357,6 +361,13 @@ export default class AppData {
         //After getting all the data, the problem onahs are set.
         problemOnahs = entryList.getProblemOnahs(kavuahList, settings);
 
-        return new AppData(settings, occasions, entryList, kavuahList, problemOnahs, taharaEvents);
+        return new AppData(
+            settings,
+            occasions,
+            entryList,
+            kavuahList,
+            problemOnahs,
+            taharaEvents
+        );
     }
 }

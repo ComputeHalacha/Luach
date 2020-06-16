@@ -1,6 +1,7 @@
 import PushNotification from 'react-native-push-notification';
 import DeviceInfo from 'react-native-device-info';
 import Utils from './JCal/Utils';
+import { NightDay } from './Chashavshavon/Onah';
 import { GLOBALS, log, range } from './GeneralUtils';
 
 const NotificationEventType = Object.freeze({
@@ -17,7 +18,7 @@ export function configureNotifier(onRegister, onNotification) {
 
     PushNotification.configure({
         // (optional) Called when Token is generated (iOS and Android)
-        onRegister: function(token) {
+        onRegister: function (token) {
             log('PushNotification.onRegister called: TOKEN: ', token);
             if (onRegister) {
                 onRegister(token);
@@ -25,7 +26,7 @@ export function configureNotifier(onRegister, onNotification) {
         },
 
         // (required) Called when a remote or local notification is opened or received
-        onNotification: async function(notification) {
+        onNotification: async function (notification) {
             log(
                 'PushNotification.OnNotification being called: NOTIFICATION: ' +
                     JSON.stringify(notification)
@@ -33,7 +34,11 @@ export function configureNotifier(onRegister, onNotification) {
             if (onNotification) {
                 onNotification(notification);
             }
-            if (GLOBALS.IS_IOS && PushNotification.FetchResult && PushNotification.FetchResult) {
+            if (
+                GLOBALS.IS_IOS &&
+                PushNotification.FetchResult &&
+                PushNotification.FetchResult
+            ) {
                 notification.finish(PushNotification.FetchResult.NoData);
             }
         },
@@ -299,18 +304,17 @@ export function addMikvaAlarm(jdate, time, sunset, discreet) {
     );
 }
 /**
- *
- * @param {[ProblemOnah]} problemOnahs
- * @param {Number} remindDayOnahHour
- * @param {Location} location
- * @param {Boolean} discreet
+ * @param {AppData} appData
  */
-export function resetDayOnahReminders(
-    problemOnahs,
-    remindDayOnahHour,
-    location,
-    discreet
-) {
+export function resetDayOnahReminders(appData) {
+    const now = Utils.nowAtLocation(appData.Settings.location),
+        problemOnahs = appData.ProblemOnahs.filter(
+            (po) => po.NightDay === NightDay.Day && po.jdate.Abs >= now.Abs
+        ),
+        remindDayOnahHour = appData.Settings.remindDayOnahHour,
+        location = appData.Settings.location,
+        discreet = appData.Settings.discreet;
+
     removeAllDayOnahReminders();
     let counter = 1;
     for (let po of problemOnahs) {
@@ -334,18 +338,16 @@ export function resetDayOnahReminders(
     }
 }
 /**
- *
- * @param {[ProblemOnah]} problemOnahs
- * @param {Number} remindNightOnahHour
- * @param {Location} location
- * @param {Boolean} discreet
+ * @param {AppData} appData
  */
-export function resetNightOnahReminders(
-    problemOnahs,
-    remindNightOnahHour,
-    location,
-    discreet
-) {
+export function resetNightOnahReminders(appData) {
+    const now = Utils.nowAtLocation(appData.Settings.location),
+        problemOnahs = appData.ProblemOnahs.filter(
+            (po) => po.NightDay === NightDay.Night && po.jdate.Abs >= now.Abs
+        ),
+        remindNightOnahHour = appData.Settings.remindNightOnahHour,
+        location = appData.Settings.location,
+        discreet = appData.Settings.discreet;
     removeAllNightOnahReminders();
     let counter = 1;
     for (let po of problemOnahs) {
