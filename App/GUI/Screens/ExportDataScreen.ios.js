@@ -186,7 +186,7 @@ export default class ExportData extends React.Component {
         let counter = 0,
             html = `<html><head><title>Luach - Export Data</title></head>
                     <body style="font-family:Verdana, Arial, Tahoma;padding:15px;background-color:#f5f5ff;">
-                        <img src="http://compute.co.il/luach/app/Images/Feature.png" />
+                        <img src="https://compute.co.il/luach/app/Images/Feature.png" />
                         <br />
                         <h1 style="color:#7777bb;">
                             ${this.state.dataSet} -
