@@ -120,7 +120,7 @@ export default class RemoteBackup {
             message = 'Account has been successfully created';
         } else {
             warn(response);
-            message = `Luach could not create the account.\\n${response.ErrorMessage}`;
+            message = `Luach could not create the account.\n${response.ErrorMessage}`;
         }
         return { success, message };
     }
@@ -164,17 +164,17 @@ export default class RemoteBackup {
                             responseData
                         )}`
                     );
-                    message = `Luach was not able to back up your data to the Luach server.\\n${responseData.ErrorMessage}`;
+                    message = `Luach was not able to back up your data to the Luach server.\n${responseData.ErrorMessage}`;
                 }
             } catch (err) {
                 error(
                     `PUT ${url} - Http request error: ${JSON.stringify(err)}`
                 );
-                message = `Luach was not able to back up your data to the Luach server.\\n${err.message}`;
+                message = `Luach was not able to back up your data to the Luach server.\n${err.message}`;
             }
         } else {
             warn(`Current database not found at ${dbAbsolutePath}`);
-            message = `Luach was not able to back up your data to the Luach server.\\n
+            message = `Luach was not able to back up your data to the Luach server.\n
                         Your local data could not be accessed for upload`;
         }
         return { success, message };
@@ -230,11 +230,11 @@ export default class RemoteBackup {
                 success = true;
             } catch (e) {
                 error(e.message);
-                message = `Luach was unable to restore from the online backup.\\n${e.message}`;
+                message = `Luach was unable to restore from the online backup.\n${e.message}`;
             }
         } else {
             warn(JSON.stringify(response));
-            message = `Luach was unable to restore from the online backup.\\n${response.ErrorMessage}`;
+            message = `Luach was unable to restore from the online backup.\n${response.ErrorMessage}`;
         }
         return { success, appData, message };
     }
@@ -274,7 +274,7 @@ export default class RemoteBackup {
         const response = await remoteBackup.createAccount();
         if (!response.success) {
             log(
-                `Luach was unable to restore from the online backup.\\n${response.message}`
+                `Luach was unable to restore from the online backup.\n${response.message}`
             );
             warn(JSON.stringify(response));
         }
