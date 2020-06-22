@@ -33,6 +33,7 @@ function get() {
         `locationId: number,
         showOhrZeruah: bool,
         keepThirtyOne: bool,
+        fourDaysHefsek: bool,
         onahBeinunis24Hours: bool,
         numberMonthsAheadToWarn: number,
         keepLongerHaflagah: bool,

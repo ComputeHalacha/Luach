@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppState, FlatList, View } from 'react-native';
-import { Icon } from 'react-native-elements';
+import {AppState, FlatList, View} from 'react-native';
+import {Icon} from 'react-native-elements';
 import SingleDayDisplay from '../Components/SingleDayDisplay';
 import Login from '../Components/Login';
 import Flash from '../Components/Flash';
@@ -16,34 +16,34 @@ import {
 import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
 import AppData from '../../Code/Data/AppData';
-import { TaharaEventType } from '../../Code/Chashavshavon/TaharaEvent';
+import {TaharaEventType} from '../../Code/Chashavshavon/TaharaEvent';
 import LocalStorage from '../../Code/Data/LocalStorage';
 
 export default class HomeScreen extends React.Component {
-    static navigationOptions = ({ navigation }) =>
+    static navigationOptions = ({navigation}) =>
         //Only IOS gets the header on the today screen.
         GLOBALS.IS_IOS
             ? {
-                  title: 'Luach',
-                  headerRight: (
-                      <Icon
-                          name="calendar"
-                          type="octicon"
-                          color="#77c"
-                          onPress={() =>
-                              AppData.getAppData().then((ad) =>
-                                  navigation.navigate('MonthView', {
-                                      appData: ad,
-                                      jdate: getTodayJdate(ad),
-                                  })
-                              )
-                          }
-                      />
-                  ),
-              }
-            : { header: null };
+                title: 'Luach',
+                headerRight: (
+                    <Icon
+                        name="calendar"
+                        type="octicon"
+                        color="#77c"
+                        onPress={() =>
+                            AppData.getAppData().then((ad) =>
+                                navigation.navigate('MonthView', {
+                                    appData: ad,
+                                    jdate: getTodayJdate(ad),
+                                })
+                            )
+                        }
+                    />
+                ),
+            }
+            : {header: null};
 
-    constructor(props) {
+    constructor (props) {
         super(props);
 
         this.navigator = props.navigation;
@@ -81,7 +81,7 @@ export default class HomeScreen extends React.Component {
 
         //Every minute, we check if the current day has changed
         this.checkToday = setInterval(() => {
-            let { appData, today, systemDate, daysList, currDate } = this.state;
+            let {appData, today, systemDate, daysList, currDate} = this.state;
             //Get the proper Jewish today for the current location
             const nowJ = getTodayJdate(appData),
                 nowS = new Date();
@@ -210,11 +210,11 @@ export default class HomeScreen extends React.Component {
             GLOBALS.VALID_PIN.test(localStorage.PIN)
         ) {
             //Next time the app is activated, it will ask for the PIN
-            this.setState({ showLogin: true });
+            this.setState({showLogin: true});
         }
     }
     updateAppData(appData) {
-        let { currDate, daysList, today } = this.state;
+        let {currDate, daysList, today} = this.state;
         const lastRegularEntry = appData.EntryList.lastRegularEntry(),
             lastEntry = appData.EntryList.lastEntry(),
             //Were we displaying "Today" before this refresh?
@@ -329,7 +329,7 @@ export default class HomeScreen extends React.Component {
             lastEntry,
         };
         LocalStorage.loadAll().then((localStorage) =>
-            this.setState({ localStorage })
+            this.setState({localStorage})
         );
     }
     /**
@@ -343,18 +343,18 @@ export default class HomeScreen extends React.Component {
                 log(
                     '******      setting showFlash to false             *******'
                 );
-                this.setState({ showFlash: false });
+                this.setState({showFlash: false});
             }, 1500);
         }
     }
     onLoggedIn() {
-        this.setState({ showLogin: false });
+        this.setState({showLogin: false});
         this.setFlash();
     }
     scrollToTop() {
         //scrollToOffset may not scroll all the way to the top without the setTimeout.
         setTimeout(
-            () => this.flatList.scrollToOffset({ x: 0, y: 0, animated: true }),
+            () => this.flatList.scrollToOffset({x: 0, y: 0, animated: true}),
             1
         );
     }
@@ -386,7 +386,7 @@ export default class HomeScreen extends React.Component {
         });
     }
     prevDay() {
-        this.setState({ refreshing: true });
+        this.setState({refreshing: true});
         this._goToDate(this.state.currDate.addDays(-1));
     }
     nextDay() {
@@ -429,50 +429,50 @@ export default class HomeScreen extends React.Component {
                 pin={this.state.localStorage.PIN}
             />
         ) : (
-            <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: 'row', flex: 1 }}>
-                    <SideMenu
-                        onUpdate={this.updateAppData}
-                        appData={this.state.appData}
-                        navigator={this.props.navigation}
-                        currDate={this.state.currDate}
-                        isDataLoading={!this.state.loadingDone}
-                        onGoToday={this.goToday}
-                        onGoPrevious={this.prevDay}
-                        onGoNext={this.nextDay}
-                        helpUrl="index.html"
-                        helpTitle="Help"
-                    />
-                    <FlatList
-                        ref={(flatList) => (this.flatList = flatList)}
-                        style={{ flex: 1 }}
-                        data={this.state.daysList}
-                        renderItem={this.renderItem}
-                        keyExtractor={(item) =>
-                            this.state.daysList.indexOf(item).toString()
-                        }
-                        onEndReached={this._addDaysToEnd}
-                        onRefresh={this.prevDay}
-                        refreshing={this.state.refreshing}
-                    />
+                <View style={{flex: 1}}>
+                    <View style={{flexDirection: 'row', flex: 1}}>
+                        <SideMenu
+                            onUpdate={this.updateAppData}
+                            appData={this.state.appData}
+                            navigator={this.props.navigation}
+                            currDate={this.state.currDate}
+                            isDataLoading={!this.state.loadingDone}
+                            onGoToday={this.goToday}
+                            onGoPrevious={this.prevDay}
+                            onGoNext={this.nextDay}
+                            helpUrl="index.html"
+                            helpTitle="Help"
+                        />
+                        <FlatList
+                            ref={(flatList) => (this.flatList = flatList)}
+                            style={{flex: 1}}
+                            data={this.state.daysList}
+                            renderItem={this.renderItem}
+                            keyExtractor={(item) =>
+                                this.state.daysList.indexOf(item).toString()
+                            }
+                            onEndReached={this._addDaysToEnd}
+                            onRefresh={this.prevDay}
+                            refreshing={this.state.refreshing}
+                        />
+                    </View>
+                    {this.state.showFlash && <Flash />}
+                    {this.state.showFirstTimeModal && (
+                        <FirstTimeModal
+                            locationName={this.state.appData.Settings.location.Name}
+                            onClose={() =>
+                                this.setState({showFirstTimeModal: false})
+                            }
+                        />
+                    )}
                 </View>
-                {this.state.showFlash && <Flash />}
-                {this.state.showFirstTimeModal && (
-                    <FirstTimeModal
-                        locationName={this.state.appData.Settings.location.Name}
-                        onClose={() =>
-                            this.setState({ showFirstTimeModal: false })
-                        }
-                    />
-                )}
-            </View>
-        );
+            );
     }
     /**
      * Render a single day
      * @param {{item:jDate}} param0 item will be a single jDate
      */
-    renderItem({ item }) {
+    renderItem({item}) {
         const isToday = Utils.isSameJdate(this.state.today, item),
             lastRegularEntry = this.state.lastRegularEntry,
             lastEntry = this.state.lastEntry,
@@ -480,8 +480,9 @@ export default class HomeScreen extends React.Component {
                 lastRegularEntry &&
                 item.Abs > lastRegularEntry.date.Abs &&
                 lastRegularEntry.date,
+            fourDaysHefsek = this.state.appData.Settings.fourDaysHefsek,
             isHefsekDay =
-                lastEntry && Utils.isSameJdate(item, lastEntry.hefsekDate);
+                lastEntry && Utils.isSameJdate(item, lastEntry.getHefsekDate(fourDaysHefsek));
         return (
             <SingleDayDisplay
                 key={item.Abs}
@@ -498,6 +499,6 @@ export default class HomeScreen extends React.Component {
         );
     }
     render() {
-        return <View style={{ flex: 1 }}>{this.getElementsToRender()}</View>;
+        return <View style={{flex: 1}}>{this.getElementsToRender()}</View>;
     }
 }

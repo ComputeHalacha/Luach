@@ -89,7 +89,7 @@ export default class ExportData extends React.Component {
                 break;
             case 'Settings': {
                 csv =
-                    '"Location","Ohr Zeruah","Onah Beinunis 24 Hours","Day Thirty One",' +
+                    '"Location","Ohr Zeruah","Onah Beinunis 24 Hours","Day Thirty One","4 Days till Hefsek",' +
                     '"Shorter Haflagah - No Cancel","Dilug Yom Hachodesh Kavuahs Another Month",' +
                     '"Haflaga Of Onahs","Haflaga of Diff Onahs","Months Ahead To Warn","Calc Kavuahs New Entry",' +
                     '"Show Entries On Main Screen","Show Flags On Main Screen","Calendar Displays Current",' +
@@ -99,6 +99,8 @@ export default class ExportData extends React.Component {
                     )}"` +
                     `,"${yon(settings.onahBeinunis24Hours)}","${yon(
                         settings.keepThirtyOne
+                    )}","${yon(
+                        settings.fourDaysHefsek
                     )}","${yon(settings.keepLongerHaflagah)}"` +
                     `,"${yon(settings.dilugChodeshPastEnds)}","${yon(
                         settings.haflagaOfOnahs
@@ -239,6 +241,9 @@ export default class ExportData extends React.Component {
                     )}<hr /></p>` +
                     `<p><b>Keep day Thirty One for Onah Beinonis</b><br />${yon(
                         settings.keepThirtyOne
+                    )}<hr /></p>` +
+                    `<p><b>4 days until Hefsek</b><br />${yon(
+                        settings.fourDaysHefsek
                     )}<hr /></p>` +
                     `<p><b>Haflaga is only cancelled by a longer one</b><br />${yon(
                         settings.keepLongerHaflagah

@@ -243,6 +243,7 @@ export default class SettingsScreen extends Component {
             location = settings.location || Location.getLakewood(),
             showOhrZeruah = setDefault(settings.showOhrZeruah, true),
             keepThirtyOne = setDefault(settings.keepThirtyOne, true),
+            fourDaysHefsek = !!settings.fourDaysHefsek,,
             onahBeinunis24Hours = settings.onahBeinunis24Hours,
             numberMonthsAheadToWarn = settings.numberMonthsAheadToWarn || 12,
             keepLongerHaflagah = setDefault(settings.keepLongerHaflagah, true),
@@ -378,6 +379,18 @@ export default class SettingsScreen extends Component {
                                     this.changeSetting('keepThirtyOne', value)
                                 }
                                 value={!!keepThirtyOne}
+                            />
+                        </View>
+                        <View style={GeneralStyles.formRow}>
+                            <Text style={GeneralStyles.label}>
+                                Only 4 Days until Hefsek
+                            </Text>
+                            <Switch
+                                style={GeneralStyles.switch}
+                                onValueChange={(value) =>
+                                    this.changeSetting('fourDaysHefsek', value)
+                                }
+                                value={!!fourDaysHefsek}
                             />
                         </View>
                         <View style={GeneralStyles.formRow}>

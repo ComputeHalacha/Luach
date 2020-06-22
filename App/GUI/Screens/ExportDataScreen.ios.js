@@ -1,8 +1,8 @@
 import React from 'react';
-import { ScrollView, View, Text, Button } from 'react-native';
+import {ScrollView, View, Text, Button} from 'react-native';
 import RNFS from 'react-native-fs';
 import Mailer from 'react-native-mail';
-import { Select, Option } from 'react-native-chooser';
+import {Select, Option} from 'react-native-chooser';
 import SideMenu from '../Components/SideMenu';
 import {
     popUpMessage,
@@ -11,10 +11,10 @@ import {
     error,
     GLOBALS,
 } from '../../Code/GeneralUtils';
-import { NightDay } from '../../Code/Chashavshavon/Onah';
+import {NightDay} from '../../Code/Chashavshavon/Onah';
 import jDate from '../../Code/JCal/jDate';
 import Utils from '../../Code/JCal/Utils';
-import { GeneralStyles } from '../styles';
+import {GeneralStyles} from '../styles';
 
 const exportPath = RNFS.DocumentDirectoryPath;
 
@@ -22,11 +22,11 @@ export default class ExportData extends React.Component {
     static navigationOptions = {
         title: 'Export Data',
     };
-    constructor(props) {
+    constructor (props) {
         super(props);
         this.navigator = this.props.navigation;
 
-        const { appData, dataSet, jdate, sdate } = this.navigator.state.params;
+        const {appData, dataSet, jdate, sdate} = this.navigator.state.params;
 
         this.appData = appData;
         this.jdate =
@@ -36,7 +36,7 @@ export default class ExportData extends React.Component {
             Utils.sMonthsEng[this.sdate.getMonth()] +
             ' ' +
             this.sdate.getFullYear().toString();
-        this.state = { dataSet: dataSet || 'Entries' };
+        this.state = {dataSet: dataSet || 'Entries'};
         this.getFileName = this.getFileName.bind(this);
         this.doExport = this.doExport.bind(this);
         this.doEmail = this.doEmail.bind(this);
@@ -61,11 +61,11 @@ export default class ExportData extends React.Component {
                         entry.date.getDate().toLocaleDateString()
                     )}","${
                         entry.nightDay === NightDay.Night ? 'Night' : 'Day'
-                    }","${
+                        }","${
                         entry.haflaga ? entry.haflaga.toString() : ' - '
-                    }","${yon(entry.ignoreForFlaggedDates)}","${yon(
-                        entry.ignoreForKavuah
-                    )}","${entry.comments}"\r\n`;
+                        }","${yon(entry.ignoreForFlaggedDates)}","${yon(
+                            entry.ignoreForKavuah
+                        )}","${entry.comments}"\r\n`;
                 }
                 break;
             case 'Events':
@@ -91,7 +91,7 @@ export default class ExportData extends React.Component {
             case 'Settings': {
                 const settings = this.appData.Settings;
                 csv =
-                    '"Location","Ohr Zeruah","Onah Beinunis 24 Hours","Day Thirty One",' +
+                    '"Location","Ohr Zeruah","Onah Beinunis 24 Hours","Day Thirty One","4 Days Hefsek"' +
                     '"Shorter Haflagah - No Cancel","Dilug Yom Hachodesh Kavuahs Another Month",' +
                     '"Haflaga Of Onahs","Haflaga of Diff Onahs","Months Ahead To Warn","Calc Kavuahs New Entry",' +
                     '"Show Entries On Main Screen","Show Flags On Main Screen","Calendar Displays Current",' +
@@ -101,6 +101,8 @@ export default class ExportData extends React.Component {
                     )}"` +
                     `,"${yon(settings.onahBeinunis24Hours)}","${yon(
                         settings.keepThirtyOne
+                    )}","${yon(
+                        settings.fourDaysHefsek
                     )}","${yon(settings.keepLongerHaflagah)}"` +
                     `,"${yon(settings.dilugChodeshPastEnds)}","${yon(
                         settings.haflagaOfOnahs
@@ -112,7 +114,7 @@ export default class ExportData extends React.Component {
                         settings.showEntryFlagOnHome
                     )}"` +
                     `,"${yon(settings.showProbFlagOnHome)}","${
-                        settings.navigateBySecularDate ? 'Secular' : 'Jewish'
+                    settings.navigateBySecularDate ? 'Secular' : 'Jewish'
                     } Date"` +
                     `,"${yon(settings.showIgnoredKavuahs)}","${yon(
                         settings.noProbsAfterEntry
@@ -129,7 +131,7 @@ export default class ExportData extends React.Component {
                         .getDate()
                         .toLocaleDateString()}","${
                         probOnah.nightDay === NightDay.Night ? 'Night' : 'Day'
-                    }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
+                        }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
                 }
                 break;
             case 'Zmanim - ' + this.jdate.toShortString(): {
@@ -163,8 +165,8 @@ export default class ExportData extends React.Component {
             case 'Zmanim - ' + this.sdateString: {
                 const month = this.sdate.getMonth();
                 let currDate = new jDate(
-                        new Date(this.sdate.getFullYear(), month, 1)
-                    ),
+                    new Date(this.sdate.getFullYear(), month, 1)
+                ),
                     details = currDate.getAllDetailsList(settings.location);
                 csv += `"Location: ${settings.location.Name}"\r\n${details
                     .map(d => '"' + d.title + '"')
@@ -215,10 +217,10 @@ export default class ExportData extends React.Component {
                         true
                     )}</td>
                                  <td>${
-                                     entry.nightDay === NightDay.Night
-                                         ? 'Night'
-                                         : 'Day'
-                                 }</td>
+                        entry.nightDay === NightDay.Night
+                            ? 'Night'
+                            : 'Day'
+                        }</td>
                                  <td>${entry.haflaga.toString()}</td>
                                  <td>${yon(entry.ignoreForFlaggedDates)}</td>
                                  <td>${yon(entry.ignoreForKavuah)}</td>
@@ -241,8 +243,8 @@ export default class ExportData extends React.Component {
                     html += `<tr>
                                 <td><b>${counter.toString()}</b></td>
                                 <td style="background-color:${
-                                    occ.color
-                                };color:#fff;">${occ.title}</td>
+                        occ.color
+                        };color:#fff;">${occ.title}</td>
                                 <td>${occ.jdate.toShortString(false)}</td>
                                 <td>${occ.sdate.toLocaleDateString()}</td>
                                 <td>${occ.toString(true)}</td>
@@ -276,7 +278,7 @@ export default class ExportData extends React.Component {
                 html +=
                     '<tr><td>' +
                     `<p><b>Location</b><br />${
-                        settings.location.Name
+                    settings.location.Name
                     }<hr /></p>` +
                     `<p><b>Flag previous onah (The "Ohr Zaruah")</b><br />${yon(
                         settings.showOhrZeruah
@@ -286,6 +288,9 @@ export default class ExportData extends React.Component {
                     )}<hr /></p>` +
                     `<p><b>Keep day Thirty One for Onah Beinonis</b><br />${yon(
                         settings.keepThirtyOne
+                    )}<hr /></p>` +
+                    `<p><b>4 days until Hefsek</b><br />${yon(
+                        settings.fourDaysHefsek
                     )}<hr /></p>` +
                     `<p><b>Haflaga is only cancelled by a longer one</b><br />${yon(
                         settings.keepLongerHaflagah
@@ -310,7 +315,7 @@ export default class ExportData extends React.Component {
                         settings.showProbFlagOnHome
                     )}<hr /></p>` +
                     `<p><b>Calendar displays current</b><br />${
-                        settings.navigateBySecularDate ? 'Secular' : 'Jewish'
+                    settings.navigateBySecularDate ? 'Secular' : 'Jewish'
                     } Date<hr /></p>` +
                     `<p><b>Show explicitly ignored Kavuahs in the Kavuah list</b><br />${yon(
                         settings.showIgnoredKavuahs
@@ -348,13 +353,13 @@ export default class ExportData extends React.Component {
                         true
                     )}</td>
                                 <td>${
-                                    probOnah.nightDay === NightDay.Night
-                                        ? 'Night'
-                                        : 'Day'
-                                }</td>
+                        probOnah.nightDay === NightDay.Night
+                            ? 'Night'
+                            : 'Day'
+                        }</td>
                                 <td><ul>${probOnah.flagsList
-                                    .map(f => '<li>' + f + '</li>')
-                                    .join('')}</ul></td>
+                            .map(f => '<li>' + f + '</li>')
+                            .join('')}</ul></td>
                             </tr>`;
                 }
                 break;
@@ -369,7 +374,7 @@ export default class ExportData extends React.Component {
                         .map(
                             d =>
                                 `<tr><td><b>${d.title}</b></td><td>${
-                                    d.value
+                                d.value
                                 }</td></tr>`
                         )
                         .join('');
@@ -388,14 +393,14 @@ export default class ExportData extends React.Component {
                         </tr>
                         <tr style="background-color:#e1e1ff;">
                             ${details
-                                .map(d => '<td>' + d.title + '</td>')
-                                .join('')}
+                        .map(d => '<td>' + d.title + '</td>')
+                        .join('')}
                         </tr>`;
                 while (currDate.Month === month) {
                     html += `<tr>
                                     ${details
-                                        .map(d => '<td>' + d.value + '</td>')
-                                        .join('')}
+                            .map(d => '<td>' + d.value + '</td>')
+                            .join('')}
                                 </tr>`;
                     currDate = currDate.addDays(1);
                     details = currDate.getAllDetailsList(settings.location);
@@ -405,28 +410,28 @@ export default class ExportData extends React.Component {
             case 'Zmanim - ' + this.sdateString: {
                 const month = this.sdate.getMonth();
                 let currDate = new jDate(
-                        new Date(this.sdate.getFullYear(), month, 1)
-                    ),
+                    new Date(this.sdate.getFullYear(), month, 1)
+                ),
                     details = currDate.getAllDetailsList(settings.location);
 
                 html += `<tr><td colspan="${details.length.toString()}">
                             <p style="text-align:center;">
                                 Zmanim for the month of <b>${
-                                    this.sdateString
-                                }</b> for
+                    this.sdateString
+                    }</b> for
                                 <b>${settings.location.Name}</b>
                             </p></td>
                         </tr>
                         <tr style="background-color:#e1e1ff;">
                             ${details
-                                .map(d => '<td>' + d.title + '</td>')
-                                .join('')}
+                        .map(d => '<td>' + d.title + '</td>')
+                        .join('')}
                         </tr>`;
                 while (currDate.getDate().getMonth() === month) {
                     html += `<tr>
                                     ${details
-                                        .map(d => '<td>' + d.value + '</td>')
-                                        .join('')}
+                            .map(d => '<td>' + d.value + '</td>')
+                            .join('')}
                                 </tr>`;
                     currDate = currDate.addDays(1);
                     details = currDate.getAllDetailsList(settings.location);
@@ -489,7 +494,7 @@ export default class ExportData extends React.Component {
 
         return (
             <View style={GeneralStyles.container}>
-                <View style={{ flexDirection: 'row', flex: 1 }}>
+                <View style={{flexDirection: 'row', flex: 1}}>
                     <SideMenu
                         onUpdate={this.onUpdate}
                         appData={this.appData}
@@ -497,14 +502,14 @@ export default class ExportData extends React.Component {
                         helpUrl="Settings.html"
                         helpTitle="Settings"
                     />
-                    <ScrollView style={{ flex: 1 }}>
+                    <ScrollView style={{flex: 1}}>
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>
                                 Data to Export
                             </Text>
                             <Select
                                 onSelect={value =>
-                                    this.setState({ dataSet: value })
+                                    this.setState({dataSet: value})
                                 }
                                 defaultText={this.state.dataSet}
                                 style={GeneralStyles.select}

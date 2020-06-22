@@ -1,6 +1,6 @@
-import { Onah, NightDay } from '../Code/Chashavshavon/Onah';
-import { Kavuah, KavuahTypes } from '../Code/Chashavshavon/Kavuah';
-import { ProblemOnah } from '../Code/Chashavshavon/ProblemOnah';
+import {Onah, NightDay} from '../Code/Chashavshavon/Onah';
+import {Kavuah, KavuahTypes} from '../Code/Chashavshavon/Kavuah';
+import {ProblemOnah} from '../Code/Chashavshavon/ProblemOnah';
 import Entry from '../Code/Chashavshavon/Entry';
 import EntryList from '../Code/Chashavshavon/EntryList';
 import FlaggedDatesGenerator from '../Code/Chashavshavon/FlaggedDatesGenerator';
@@ -10,17 +10,18 @@ import Settings from '../Code/Settings';
 
 export function testFlaggedDates() {
     const settings = new Settings({
-            location: Location.getLakewood(),
-            showOhrZeruah: true,
-            keepThirtyOne: true,
-            onahBeinunis24Hours: true,
-            numberMonthsAheadToWarn: 12,
-            keepLongerHaflagah: true,
-            dilugChodeshPastEnds: false,
-            haflagaOfOnahs: false,
-            kavuahDiffOnahs: false,
-            noProbsAfterEntry: false,
-        }),
+        location: Location.getLakewood(),
+        showOhrZeruah: true,
+        keepThirtyOne: true,
+        fourDaysHefsek: false,
+        onahBeinunis24Hours: true,
+        numberMonthsAheadToWarn: 12,
+        keepLongerHaflagah: true,
+        dilugChodeshPastEnds: false,
+        haflagaOfOnahs: false,
+        kavuahDiffOnahs: false,
+        noProbsAfterEntry: false,
+    }),
         entryList = new EntryList(settings, [
             new Entry(new Onah(new jDate(5777, 7, 1), NightDay.Day)),
             new Entry(new Onah(new jDate(5777, 8, 1), NightDay.Day)),

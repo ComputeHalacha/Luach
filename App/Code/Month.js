@@ -114,7 +114,7 @@ export default class Month {
                 this.appData.EntryList.list.length > 0 &&
                 Utils.isSameJdate(
                     jdate,
-                    this.appData.EntryList.lastEntry().hefsekDate
+                    this.appData.EntryList.lastEntry().getHefsekDate(this.appData.Settings.fourDaysHefsek)
                 ),
             taharaEvents = this.appData.TaharaEvents.filter(te =>
                 Utils.isSameJdate(jdate, te.jdate)

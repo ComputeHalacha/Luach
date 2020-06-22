@@ -1,4 +1,4 @@
-import { NightDay } from './Onah';
+import {NightDay} from './Onah';
 import Utils from '../JCal/Utils';
 
 export default class Entry {
@@ -10,7 +10,7 @@ export default class Entry {
      * @param {Boolean} ignoreForKavuah Ignore this Entry while calculating possible Kavuahs
      * @param {String} comment
      */
-    constructor(
+    constructor (
         onah,
         entryId,
         ignoreForFlaggedDates,
@@ -59,7 +59,7 @@ export default class Entry {
     toString() {
         let str = `${
             this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'
-        } of ${this.date.toShortString()}`;
+            } of ${this.date.toShortString()}`;
         if (this.haflaga) {
             str += ` [Haflaga of ${this.haflaga.toString()}]`;
         }
@@ -106,7 +106,7 @@ export default class Entry {
         }
         str += `Entry for ${
             this.nightDay === NightDay.Night ? 'Night-time' : 'Day-time'
-        }`;
+            }`;
         if (this.haflaga) {
             str += ` [Haflaga of ${this.haflaga.toString()}]`;
         }
@@ -126,6 +126,9 @@ export default class Entry {
         entry._haflaga = this.haflaga;
         return entry;
     }
+    getHefsekDate(fourDaysHefsek) {
+        return this.date.addDays(fourDaysHefsek ? 3 : 4);
+    }
     get nightDay() {
         return this.onah.nightDay;
     }
@@ -143,9 +146,6 @@ export default class Entry {
     }
     get dayOfWeek() {
         return this.date.DayOfWeek;
-    }
-    get hefsekDate() {
-        return this.date.addDays(4);
     }
     get hasId() {
         return !!this.entryId;

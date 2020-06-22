@@ -152,6 +152,13 @@ const addedFields = [
         afterAddCallback: async () =>
             await RemoteBackup.createFreshUserNewAccount(),
     },
+    //Added 6/23/20
+    {
+        table: 'settings',
+        name: 'fourDaysHefsek',
+        type: 'BOOLEAN',
+        allowNull: true,
+    },
 ];
 
 /**

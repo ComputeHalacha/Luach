@@ -8,6 +8,7 @@ export default class Settings {
         this.location = args.location || Location.getLakewood();
         this.showOhrZeruah = setDefault(args.showOhrZeruah, true);
         this.keepThirtyOne = setDefault(args.keepThirtyOne, true);
+        this.fourDaysHefsek = !!args.fourDaysHefsek;
         this.onahBeinunis24Hours = setDefault(args.onahBeinunis24Hours, true);
         this.numberMonthsAheadToWarn = setDefault(
             args.numberMonthsAheadToWarn,
@@ -60,6 +61,7 @@ export default class Settings {
             (this.location === other.location &&
                 this.showOhrZeruah === other.showOhrZeruah &&
                 this.keepThirtyOne === other.keepThirtyOne &&
+                this.fourDaysHefsek === other.fourDaysHefsek &&
                 this.onahBeinunis24Hours === other.onahBeinunis24Hours &&
                 this.numberMonthsAheadToWarn ===
                     other.numberMonthsAheadToWarn &&
