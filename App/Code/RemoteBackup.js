@@ -32,9 +32,9 @@ To enable the domain compute.dev for use from an android device:
  3: Back in the Android device or emulator, open the browser and navigate to compute.dev.
     If you get your local site then, Mazel Tov.
  */
-const serverURL = __DEV__
-    ? /*'http://10.0.2.2:980/api/luach' /**/'http://compute.dev/api/luach'/**/
-    : 'https://www.compute.co.il/api/luach';
+const serverURL = /*__DEV__
+    ? 'http://compute.dev/api/luach'
+    : */'https://www.compute.co.il/api/luach';
 
 export default class RemoteBackup {
     constructor() {
