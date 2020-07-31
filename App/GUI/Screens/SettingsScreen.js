@@ -17,7 +17,6 @@ import {
     setDefault,
     isNullishOrFalse,
     GLOBALS,
-    popUpMessage,
     inform,
 } from '../../Code/GeneralUtils';
 import NumberPicker from '../Components/NumberPicker';
@@ -155,39 +154,17 @@ export default class SettingsScreen extends Component {
                 }
                 break;
             case 'remindDayOnahHour':
-                if (value) {
-                    const now = Utils.nowAtLocation(settings.location);
-
-                    resetDayOnahReminders(
-                        this.appData.ProblemOnahs.filter(
-                            (po) =>
-                                po.NightDay === NightDay.Day &&
-                                po.jdate.Abs >= now.Abs
-                        ),
-                        value,
-                        settings.location,
-                        settings.discreet
-                    );
-                } else {
+                if (isNullishOrFalse(value)) {
                     removeAllDayOnahReminders();
+                } else {
+                    resetDayOnahReminders(this.appData);
                 }
                 break;
             case 'remindNightOnahHour':
-                if (value) {
-                    const now = Utils.nowAtLocation(settings.location);
-
-                    resetNightOnahReminders(
-                        this.appData.ProblemOnahs.filter(
-                            (po) =>
-                                po.NightDay === NightDay.Night &&
-                                po.jdate.Abs >= now.Abs
-                        ),
-                        value,
-                        settings.location,
-                        settings.discreet
-                    );
-                } else {
+                if (isNullishOrFalse(value)) {
                     removeAllNightOnahReminders();
+                } else {
+                    resetNightOnahReminders(this.appData);
                 }
                 break;
             case 'autoBackup': {

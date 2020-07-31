@@ -9,32 +9,32 @@ import DataUtils from './Data/DataUtils';
 To enable the domain compute.dev on a localhost windows machine:
  1: On the host machine, open C:\Windows\System32\drivers\etc\hosts as an admin and add the line:
         127.0.0.1  compute.dev
- 2: You probably need an ssl for that, so run in an admin powershell:  
+ 2: You probably need an ssl for that, so run in an admin powershell:
         New-SelfSignedCertificate  -DnsName compute.dev -CertStoreLocation cert:\LocalMachine\My  -FriendlyName "Compute.dev" -NotAfter (get-date).AddYears(5)
- 3: In IIS (inetmgr) for the site containing the compute luach api, 
-    set the host name to compute.dev (for both http and https), 
+ 3: In IIS (inetmgr) for the site containing the compute luach api,
+    set the host name to compute.dev (for both http and https),
     and set the https binding to use the "Compute.dev" certificate you created in the previous step.
- 4: If running compute.dev in the browser gives you an ssl error, open mmc, 
-    add the "Certificates" snap-in for the computer account 
-    and copy the compute.dev certificate from 
+ 4: If running compute.dev in the browser gives you an ssl error, open mmc,
+    add the "Certificates" snap-in for the computer account
+    and copy the compute.dev certificate from
     the Personal store to Trusted Root Certification Authority.
- 
+
 To enable the domain compute.dev for use from an android device:
     NOTE: For an android emulator, you need to be running Android Pie in a "Google API" image - NOT Google Play image
     Also, you need to run the emulator using: ...Android\sdk\emulator\emulator.exe -avd Pixel_2_API_28 -writable-system
     (The important part is the -writable-system The rest should be tweaked as needed of course)
  1: Create a host file somewhere on the host machine containing the line: 10.0.2.2  compute.dev
-    Make sure to add a blank line after the last line of the file. 
+    Make sure to add a blank line after the last line of the file.
     Also make sure that the file uses LF line breaks. (Unix style, not CRLF which is the windows default)
- 2: Run: adb root 
+ 2: Run: adb root
          adb remount
          adb push HOST_FILE_PATH /etc/hosts  (replace "HOST_FILE_PATH" with the path to above hosts file)
- 3: Back in the Android device or emulator, open the browser and navigate to compute.dev. 
+ 3: Back in the Android device or emulator, open the browser and navigate to compute.dev.
     If you get your local site then, Mazel Tov.
  */
-const serverURL = __DEV__
-    ? 'http://10.0.2.2:980/api/luach' /*'http://compute.dev/api/luach'*/
-    : 'https://www.compute.co.il/api/luach';
+const serverURL = /*__DEV__
+    ? 'http://compute.dev/api/luach'
+    : */'https://www.compute.co.il/api/luach';
 
 export default class RemoteBackup {
     constructor() {
@@ -46,7 +46,7 @@ export default class RemoteBackup {
     }
     async getLastBackupDate() {
         const response = await this.request('date');
-        if (response && response.Succeeded) {            
+        if (response && response.Succeeded) {
             return response.HasBackup ? new Date(response.Date) : true;
         } else {
             warn(response.ErrorMessage);
@@ -120,7 +120,7 @@ export default class RemoteBackup {
             message = 'Account has been successfully created';
         } else {
             warn(response);
-            message = `Luach could not create the account.\\n${response.ErrorMessage}`;
+            message = `Luach could not create the account.\n${response.ErrorMessage}`;
         }
         return { success, message };
     }
@@ -164,17 +164,17 @@ export default class RemoteBackup {
                             responseData
                         )}`
                     );
-                    message = `Luach was not able to back up your data to the Luach server.\\n${responseData.ErrorMessage}`;
+                    message = `Luach was not able to back up your data to the Luach server.\n${responseData.ErrorMessage}`;
                 }
             } catch (err) {
                 error(
                     `PUT ${url} - Http request error: ${JSON.stringify(err)}`
                 );
-                message = `Luach was not able to back up your data to the Luach server.\\n${err.message}`;
+                message = `Luach was not able to back up your data to the Luach server.\n${err.message}`;
             }
         } else {
             warn(`Current database not found at ${dbAbsolutePath}`);
-            message = `Luach was not able to back up your data to the Luach server.\\n
+            message = `Luach was not able to back up your data to the Luach server.\n
                         Your local data could not be accessed for upload`;
         }
         return { success, message };
@@ -230,11 +230,11 @@ export default class RemoteBackup {
                 success = true;
             } catch (e) {
                 error(e.message);
-                message = `Luach was unable to restore from the online backup.\\n${e.message}`;
+                message = `Luach was unable to restore from the online backup.\n${e.message}`;
             }
         } else {
             warn(JSON.stringify(response));
-            message = `Luach was unable to restore from the online backup.\\n${response.ErrorMessage}`;
+            message = `Luach was unable to restore from the online backup.\n${response.ErrorMessage}`;
         }
         return { success, appData, message };
     }
@@ -274,7 +274,7 @@ export default class RemoteBackup {
         const response = await remoteBackup.createAccount();
         if (!response.success) {
             log(
-                `Luach was unable to restore from the online backup.\\n${response.message}`
+                `Luach was unable to restore from the online backup.\n${response.message}`
             );
             warn(JSON.stringify(response));
         }
