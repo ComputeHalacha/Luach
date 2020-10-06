@@ -18,6 +18,19 @@ To enable the domain compute.dev on a localhost windows machine:
     add the "Certificates" snap-in for the computer account
     and copy the compute.dev certificate from
     the Personal store to Trusted Root Certification Authority.
+After the above, to enable running the site from a Mac in the same network:
+    1. Open a terminal, and run sudo nano /etc/hosts
+    2. Add the following line:
+        10.0.0.#     compute.dev
+        Of course, replace the ip adress with the LAN address of the Windows machine above.
+    3. Type cntrl+o ENTER (save in nano) cntrl+x (exit in nano)
+    4. To clear the DNS cache, in the terminal, run sudo killall -HUP mDNSResponder
+    5. Now on the windows machine, run MMC and add the certificates snap-in. Then choose th local machine.
+    6. Open the Trusted Root Certification Authority store, right-click on the compute.dev certficate > tasks > export.
+    7. Choose to export with private key and when asked, create a password.
+    8. Copy the whatever.pfx file to the mac and double click on it to add it to the keychain using the password created in the above step.
+    9. Go to the added cert in the keychain, open it, and set it as fully trusted (or at least with ssl authorization).
+    10. Check https://compute.dev in the browser.
 
 To enable the domain compute.dev for use from an android device:
     NOTE: For an android emulator, you need to be running Android Pie in a "Google API" image - NOT Google Play image
@@ -32,9 +45,9 @@ To enable the domain compute.dev for use from an android device:
  3: Back in the Android device or emulator, open the browser and navigate to compute.dev.
     If you get your local site then, Mazel Tov.
  */
-const serverURL = /*__DEV__
-    ? 'http://compute.dev/api/luach'
-    : */'https://www.compute.co.il/api/luach';
+const serverURL = __DEV__
+    ? 'https://compute.dev/api/luach'
+    : 'https://www.compute.co.il/api/luach';
 
 export default class RemoteBackup {
     constructor() {
