@@ -5,7 +5,7 @@ import PirkeiAvos from './PirkeiAvos.js';
 import Zmanim from './Zmanim.js';
 import DafYomi from './Dafyomi';
 
-/** Keeps a memcached "repository" of years that have had their elapsed days previously calculated. 
+/** Keeps a memcached "repository" of years that have had their elapsed days previously calculated.
  * Format: { year:5776, elapsed:2109283 } */
 const _yearCache = [],
     //The "absolute date" for the zero hour of all javascript Date objects - 1/1/1970 0:00:00 UTC
@@ -18,7 +18,7 @@ const _yearCache = [],
 
 /* ****************************************************************************************************************
  * Many of the date conversion algorithms in the jDate class are based on the C code -
- * which was translated from the Lisp code in "Calendrical Calculations" 
+ * which was translated from the Lisp code in "Calendrical Calculations"
  * by Nachum Dershowitz and Edward M. Reingold in Software---Practice & Experience, vol. 20, no. 9 (September, 1990), pp. 899--928.
  * ****************************************************************************************************************/
 
@@ -1079,7 +1079,7 @@ export default class jDate {
             } else if (jMonth === 5 && jDay > 2 && jDay < 10) {
                 list.push(!hebrew ? 'Shabbos Chazon' : 'שבת חזון');
             } else if (
-                (jMonth === (isLeapYear ? 12 : 11) && jDay > 23 && jDay < 30) ||
+                (jMonth === (isLeapYear ? 12 : 11) && jDay > 24) ||
                 (jMonth === (isLeapYear ? 13 : 12) && jDay === 1)
             ) {
                 list.push(!hebrew ? 'Parshas Shkalim' : 'פרשת שקלים');

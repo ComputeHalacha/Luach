@@ -44,7 +44,7 @@ class Kavuah {
             DilugHaflaga - number of days to increment (can be negative) number
             DilugDayOfMonth - number of days to increment (can be negative) number
             HaflagaMaayanPasuach and DayOfMonthMaayanPasuach the same as their regular couterparts.
-            HafalagaOnahs - the number of Onahs between the Entries */
+            HaflagaOnahs - the number of Onahs between the Entries */
         this.specialNumber = specialNumber;
         //Does this Kavuah cancel the onah beinonis?
         this.cancelsOnahBeinunis = !!cancelsOnahBeinunis;
@@ -55,7 +55,7 @@ class Kavuah {
     /**
      * Returns true if this Kavuahs type is not dependent on its entries being 3 in a row
      */
-    get isIndepedent() {
+    get isIndependent() {
         return [
             KavuahTypes.DayOfMonth,
             KavuahTypes.DayOfMonthMaayanPasuach,
@@ -232,7 +232,7 @@ class Kavuah {
      */
     static getIndependentIterations(kavuah, jdate, dilugChodeshPastEnds) {
         let iterations = [];
-        if (kavuah.isIndepedent) {
+        if (kavuah.isIndependent) {
             if (kavuah.kavuahType === KavuahTypes.DayOfWeek) {
                 iterations = Kavuah.getDayOfWeekIterations(kavuah, jdate);
             } else if (kavuah.kavuahType === KavuahTypes.DilugDayOfMonth) {
@@ -712,7 +712,7 @@ class Kavuah {
             k =>
                 k.active &&
                 !k.ignore &&
-                k.isIndepedent &&
+                k.isIndependent &&
                 k.settingEntry.date.Abs < jdate.Abs
         )) {
             //Get the last three "iterations" of the Kavuah - up to the given date
@@ -749,7 +749,7 @@ class Kavuah {
                 k =>
                     k.active &&
                     !k.ignore &&
-                    !k.isIndepedent &&
+                    !k.isIndependent &&
                     lastThree.every(e => e.Abs > k.settingEntry.date.Abs)
             )) {
                 if (!lastThree.some(e => kavuah.isEntryInPattern(e, entries))) {
@@ -778,7 +778,7 @@ class Kavuah {
                 k.active &&
                 !k.ignore &&
                 //"Independent" Kavuahs are not considered "out of pattern" if there is an Entry in middle
-                !k.isIndepedent &&
+                !k.isIndependent &&
                 k.settingEntry.date.Abs < entry.date.Abs
         )) {
             if (!kavuah.isEntryInPattern(entry, entries, settings)) {

@@ -45,7 +45,9 @@ export default class DataUtils {
             databasePath = path && path.replace('~', '');
         return path
             ? GLOBALS.IS_ANDROID
-                ? `/data/data/${getAppBundleIdAndroid()}/databases/${getFileName(databasePath)}`
+                ? `/data/data/${getAppBundleIdAndroid()}/databases/${getFileName(
+                      databasePath
+                  )}`
                 : databasePath
             : null;
     }
@@ -53,9 +55,13 @@ export default class DataUtils {
     static async SettingsFromDatabase() {
         let settings;
         try {
-            const results = await DataUtils._executeSql('SELECT * from settings'),
+            const results = await DataUtils._executeSql(
+                    'SELECT * from settings'
+                ),
                 dbSet = results.list[0],
-                location = await DataUtils.LocationFromDatabase(dbSet.locationId);
+                location = await DataUtils.LocationFromDatabase(
+                    dbSet.locationId
+                );
             settings = new Settings({
                 location: location,
                 showOhrZeruah: !!dbSet.showOhrZeruah,
@@ -87,7 +93,7 @@ export default class DataUtils {
                 remindNightOnahHour: dbSet.remindNightOnahHour,
             });
             /*********************************************************************************
-                If this is the first run after version 1.73 - 
+                If this is the first run after version 1.73 -
                 where the requirePIN and PIN were moved out from the database into local storage,
                 AND the databasePath was moved from a static string to local storage,
                 we will move those values over from the database into local storage.
@@ -211,12 +217,16 @@ export default class DataUtils {
             throw 'locationId parameter cannot be empty. Use GetAllLocations to retrieve all locations.';
         }
         try {
-            const ls = await DataUtils._queryLocations('locationId=?', [locationId]);
+            const ls = await DataUtils._queryLocations('locationId=?', [
+                locationId,
+            ]);
             if (ls.length > 0) {
                 location = ls[0];
             }
         } catch (err) {
-            warn(`Error loading location id ${locationId} from the database: ${err.message}`);
+            warn(
+                `Error loading location id ${locationId} from the database: ${err.message}`
+            );
         }
         return location;
     }
@@ -285,11 +295,14 @@ export default class DataUtils {
             throw 'Locations can only be deleted from the database if they have an id';
         }
         try {
-            await DataUtils._executeSql('DELETE from locations where locationId=?', [
-                location.locationId,
-            ]);
+            await DataUtils._executeSql(
+                'DELETE from locations where locationId=?',
+                [location.locationId]
+            );
         } catch (err) {
-            warn(`Error trying to delete location id ${location.locationId} from the database`);
+            warn(
+                `Error trying to delete location id ${location.locationId} from the database`
+            );
             error(err);
         }
     }
@@ -319,10 +332,19 @@ export default class DataUtils {
     static async GetAllUserOccasions() {
         let list = [];
         try {
-            const results = await DataUtils._executeSql('SELECT * from occasions ORDER BY dateAbs');
+            const results = await DataUtils._executeSql(
+                'SELECT * from occasions ORDER BY dateAbs'
+            );
             list = results.list.map(
                 (o) =>
-                    new UserOccasion(o.title, o.type, o.dateAbs, o.color, o.comments, o.occasionId)
+                    new UserOccasion(
+                        o.title,
+                        o.type,
+                        o.dateAbs,
+                        o.color,
+                        o.comments,
+                        o.occasionId
+                    )
             );
         } catch (err) {
             warn('Error trying to get all occasions from the database.');
@@ -385,11 +407,14 @@ export default class DataUtils {
             throw 'Occasions can only be deleted from the database if they have an id';
         }
         try {
-            await DataUtils._executeSql('DELETE from occasions where occasionId=?', [
-                occasion.occasionId,
-            ]);
+            await DataUtils._executeSql(
+                'DELETE from occasions where occasionId=?',
+                [occasion.occasionId]
+            );
         } catch (err) {
-            warn(`Error trying to delete occasion id ${occasion.occasionId} from the database`);
+            warn(
+                `Error trying to delete occasion id ${occasion.occasionId} from the database`
+            );
             error(err);
         }
     }
@@ -403,12 +428,14 @@ export default class DataUtils {
         }
         let list = [];
         try {
-            const results = await DataUtils._executeSql('SELECT * from kavuahs');
+            const results = await DataUtils._executeSql(
+                'SELECT * from kavuahs'
+            );
             list = results.list.map(
                 (k) =>
                     new Kavuah(
                         k.kavuahType,
-                        (k.settingEntry = entries.find((e) => e.entryId === k.settingEntryId)),
+                        entries.find((e) => e.entryId === k.settingEntryId),
                         k.specialNumber,
                         !!k.cancelsOnahBeinunis,
                         !!k.active,
@@ -443,7 +470,11 @@ export default class DataUtils {
                 );
                 list = results.list.map(
                     (te) =>
-                        new TaharaEvent(new jDate(te.dateAbs), te.taharaEventType, te.taharaEventId)
+                        new TaharaEvent(
+                            new jDate(te.dateAbs),
+                            te.taharaEventType,
+                            te.taharaEventId
+                        )
                 );
             } catch (err) {
                 warn('Error trying to get all taharaEvents from the database.');
@@ -515,10 +546,15 @@ export default class DataUtils {
             throw 'Kavuahs can only be deleted from the database if they have an id';
         }
         try {
-            await DataUtils._executeSql('DELETE from kavuahs where kavuahId=?', [kavuah.kavuahId]);
+            await DataUtils._executeSql(
+                'DELETE from kavuahs where kavuahId=?',
+                [kavuah.kavuahId]
+            );
             AppData.updateGlobalProbs(kavuah, true);
         } catch (err) {
-            warn(`Error trying to delete kavuah id ${kavuah.kavuahId} from the database`);
+            warn(
+                `Error trying to delete kavuah id ${kavuah.kavuahId} from the database`
+            );
             error(err);
         }
     }
@@ -569,10 +605,14 @@ export default class DataUtils {
             throw 'Entries can only be deleted from the database if they have an id';
         }
         try {
-            await DataUtils._executeSql('DELETE from entries where entryId=?', [entry.entryId]);
+            await DataUtils._executeSql('DELETE from entries where entryId=?', [
+                entry.entryId,
+            ]);
             AppData.updateGlobalProbs(entry, true);
         } catch (err) {
-            warn(`Error trying to delete entry id ${entry.entryId} from the database`);
+            warn(
+                `Error trying to delete entry id ${entry.entryId} from the database`
+            );
             error(err);
         }
     }
@@ -581,9 +621,15 @@ export default class DataUtils {
             try {
                 await DataUtils._executeSql(
                     'UPDATE taharaEvents SET dateAbs=?, taharaEventType=? WHERE taharaEventId=?',
-                    [taharaEvent.jdate.Abs, taharaEvent.taharaEventType, taharaEvent.taharaEventId]
+                    [
+                        taharaEvent.jdate.Abs,
+                        taharaEvent.taharaEventType,
+                        taharaEvent.taharaEventId,
+                    ]
                 );
-                log(`Updated TaharaEvent Id ${taharaEvent.taharaEventId.toString()}`);
+                log(
+                    `Updated TaharaEvent Id ${taharaEvent.taharaEventId.toString()}`
+                );
             } catch (err) {
                 warn(
                     `Error trying to update taharaEvent id ${taharaEvent.taharaEventId.toString()} to the database.`
@@ -607,9 +653,10 @@ export default class DataUtils {
         if (!taharaEvent.hasId) {
             throw 'TaharaEvents can only be deleted from the database if they have an id';
         }
-        await DataUtils._executeSql('DELETE from taharaEvents where taharaEventId=?', [
-            taharaEvent.taharaEventId,
-        ]).catch((err) => {
+        await DataUtils._executeSql(
+            'DELETE from taharaEvents where taharaEventId=?',
+            [taharaEvent.taharaEventId]
+        ).catch((err) => {
             warn(
                 `Error trying to delete taharaEvent id ${taharaEvent.taharaEventId} from the database`
             );
@@ -624,10 +671,14 @@ export default class DataUtils {
     static async GetTableFields(tableName) {
         let list = [];
         try {
-            const results = await DataUtils._executeSql(`PRAGMA table_info(${tableName})`);
+            const results = await DataUtils._executeSql(
+                `PRAGMA table_info(${tableName})`
+            );
             list = results.list;
         } catch (err) {
-            warn(`Error trying to get fields of ${tableName} table from the database`);
+            warn(
+                `Error trying to get fields of ${tableName} table from the database`
+            );
             error(err);
         }
         return list;
@@ -714,7 +765,12 @@ export default class DataUtils {
             db = database;
             log('0120 - database is open. Starting transaction...');
             const results = await db.executeSql(sql, values);
-            if (!!results && results.length > 0 && !!results[0].rows && !!results[0].rows.item) {
+            if (
+                !!results &&
+                results.length > 0 &&
+                !!results[0].rows &&
+                !!results[0].rows.item
+            ) {
                 log(
                     `0121 - the sql was executed successfully - ${results[0].rows.length.toString()} rows returned`
                 );
@@ -726,7 +782,9 @@ export default class DataUtils {
                     `0122 - sql executed successfully - ${results.rowsAffected.toString()} rows affected`
                 );
             } else {
-                log('0123 - sql executed successfully - Results information is not available');
+                log(
+                    '0123 - sql executed successfully - Results information is not available'
+                );
             }
             if (!!results && results.length) {
                 insertId = results[0].insertId;
