@@ -24,7 +24,7 @@
         "react-native-sqlite-storage": "^3.3.9",
         "react-native-swipe-gestures": "^1.0.3",
         "react-native-vector-icons": "^4.6.0",
-        "react-native-webview": "^5.8.1",
+        "react-native-webview": "^11.0.0",
         "react-navigation": "^1.6.1"
     },
     "devDependencies": {
