@@ -84,7 +84,7 @@ export default class RemoteBackup {
     async getAccountName() {
         const localStorage = await this.getLocalStorage();
         return Buffer.from(
-            `${localStorage.remoteUserName}:~:${localStorage.remotePassword}`
+            `${localStorage.remoteUserName}:~~~~~~~~~~~~~:${localStorage.remotePassword}`
         ).toString('base64');
     }
     async request(url, method, data) {
