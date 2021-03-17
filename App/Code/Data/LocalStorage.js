@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { log, error, GLOBALS } from '../GeneralUtils';
 
 const AllKeys = ['REQUIRE_PIN', 'PIN', 'REMOTE_USERNAME', 'REMOTE_PASSWORD', 'DATABASE_PATH'];

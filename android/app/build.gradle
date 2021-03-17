@@ -99,6 +99,7 @@ android {
         versionCode 73
         versionName "1.73"
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
+        multiDexEnabled true
     }
     signingConfigs {
         release {
@@ -141,7 +142,7 @@ android {
 }
 
 dependencies {
-    implementation project(':@react-native-community_async-storage')
+    implementation project(':@react-native-async-storage_async-storage')
     implementation project(':react-native-push-notification')
     implementation project(':react-native-webview')
     implementation project(':react-native-device-info')

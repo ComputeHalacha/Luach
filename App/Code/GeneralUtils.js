@@ -1,6 +1,11 @@
-import { PixelRatio, Dimensions, Platform, ToastAndroid, Alert } from 'react-native';
+import {
+    PixelRatio,
+    Dimensions,
+    Platform,
+    ToastAndroid,
+    Alert,
+} from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import RNFS from 'react-native-fs';
 import DeviceInfo from 'react-native-device-info';
 import firstTime from 'react-native-catch-first-time';
 import jDate from './JCal/jDate';
@@ -21,7 +26,11 @@ export const GLOBALS = Object.freeze({
 
 export function popUpMessage(message, optionalTitle) {
     if (GLOBALS.IS_ANDROID) {
-        ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
+        ToastAndroid.showWithGravity(
+            message,
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER
+        );
     } else {
         Alert.alert(optionalTitle, message);
     }
@@ -221,7 +230,11 @@ export function goHomeToday(navigator, appData) {
  * @param {AppData} appData
  */
 export function getTodayJdate(appData) {
-    if (appData && appData.Settings && !appData.Settings.navigateBySecularDate) {
+    if (
+        appData &&
+        appData.Settings &&
+        !appData.Settings.navigateBySecularDate
+    ) {
         return Utils.nowAtLocation(appData.Settings.location);
     } else {
         return new jDate();
@@ -294,7 +307,9 @@ export async function isFirstTimeRun() {
  * @param {Number} length
  */
 export function getRandomNumber(length) {
-    return Math.floor(10 ** (length - 1) + Math.random() * (9 * 10 ** (length - 1)));
+    return Math.floor(
+        10 ** (length - 1) + Math.random() * (9 * 10 ** (length - 1))
+    );
 }
 
 /**
@@ -309,10 +324,9 @@ export function getFileName(path) {
 }
 
 /**
- * An ugly hack to get the current apps internal name on Android.
+ * Get the current apps internal name.
  */
-export function getAppBundleIdAndroid() {
-    if (GLOBALS.IS_ANDROID) {
-        return RNFS.DocumentDirectoryPath.replace(/.+\/(.+?)\/files/, '$1');
-    }
+export function getAppBundleId() {
+    const bundleId = DeviceInfo.getBundleId();
+    return bundleId;
 }

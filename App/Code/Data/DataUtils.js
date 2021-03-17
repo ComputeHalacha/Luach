@@ -5,7 +5,7 @@ import {
     error,
     warn,
     getFileName,
-    getAppBundleIdAndroid,
+    getAppBundleId,
     GLOBALS,
 } from '../GeneralUtils';
 import AppData from './AppData';
@@ -42,14 +42,16 @@ export default class DataUtils {
      */
     static async getDatabaseAbsolutePath() {
         const path = await this.getDatabasePath(),
-            databasePath = path && path.replace('~', '');
-        return path
-            ? GLOBALS.IS_ANDROID
-                ? `/data/data/${getAppBundleIdAndroid()}/databases/${getFileName(
-                      databasePath
-                  )}`
-                : databasePath
-            : null;
+            databasePath = path && path.replace('~', ''),
+            absPath = path
+                ? GLOBALS.IS_ANDROID
+                    ? `/data/data/${getAppBundleId()}/databases/${getFileName(
+                          databasePath
+                      )}`
+                    : databasePath
+                : null;
+
+        return absPath;
     }
 
     static async SettingsFromDatabase() {
