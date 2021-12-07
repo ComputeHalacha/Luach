@@ -38,7 +38,7 @@ export default class NewEntry extends React.Component {
             headerRight: entry && (
                 <TouchableOpacity
                     onPress={() =>
-                        NewEntry.deleteEntry(entry, appData, (ad) => {
+                        NewEntry.deleteEntry(entry, appData, ad => {
                             if (onUpdate) {
                                 onUpdate(ad);
                             }
@@ -120,7 +120,7 @@ export default class NewEntry extends React.Component {
                 this.state.ignoreForKavuah,
                 this.state.comments
             );
-        if (entryList.list.find((e) => e.isSameEntry(entry))) {
+        if (entryList.list.find(e => e.isSameEntry(entry))) {
             popUpMessage(
                 `The entry for ${entry.toString()} is already in the list.`,
                 'Entry already exists'
@@ -183,7 +183,7 @@ export default class NewEntry extends React.Component {
                     this.dispatch(NavigationActions.back());
                 }
             })
-            .catch((err) => {
+            .catch(err => {
                 warn('Error trying to add entry to the database.');
                 error(err);
             });
@@ -199,7 +199,7 @@ export default class NewEntry extends React.Component {
         entry.ignoreForKavuah = this.state.ignoreForKavuah;
         entry.comments = this.state.comments;
 
-        if (entryList.list.find((e) => e !== entry && e.isSameEntry(entry))) {
+        if (entryList.list.find(e => e !== entry && e.isSameEntry(entry))) {
             popUpMessage(
                 `The entry for ${entry.toString()} is already in the list.`,
                 'Entry already exists'
@@ -247,7 +247,7 @@ export default class NewEntry extends React.Component {
                     this.dispatch(NavigationActions.back());
                 }
             })
-            .catch((err) => {
+            .catch(err => {
                 popUpMessage(
                     'We are sorry, Luach is unable to save the changes to this Entry.\nPlease contact luach@compute.co.il.'
                 );
@@ -269,12 +269,12 @@ export default class NewEntry extends React.Component {
     static deleteEntry(entry, appData, onUpdate) {
         let kavuahList = appData.KavuahList;
 
-        const kavuahs = kavuahList.filter((k) => k.settingEntry.isSameEntry(entry));
+        const kavuahs = kavuahList.filter(k => k.settingEntry.isSameEntry(entry));
         Alert.alert(
             'Confirm Entry Removal',
             kavuahs.length > 0
                 ? `The following Kavuah/s were set by this Entry and will need to be removed if you remove this Entry:
-                        ${kavuahs.map((k) => '\n\t* ' + k.toString())}
+                        ${kavuahs.map(k => '\n\t* ' + k.toString())}
                         Are you sure that you want to remove this/these Kavuah/s together with this entry?`
                 : 'Are you sure that you want to completely remove this Entry?',
             [
@@ -291,7 +291,7 @@ export default class NewEntry extends React.Component {
                     text: 'OK',
                     onPress: () => {
                         for (let k of kavuahs) {
-                            DataUtils.DeleteKavuah(k).catch((err) => {
+                            DataUtils.DeleteKavuah(k).catch(err => {
                                 warn('Error trying to delete a Kavuah from the database.');
                                 error(err);
                             });
@@ -306,7 +306,7 @@ export default class NewEntry extends React.Component {
                                     onUpdate(appData);
                                 }
                             })
-                            .catch((err) => {
+                            .catch(err => {
                                 warn('Error trying to delete an entry from the database.');
                                 error(err);
                             });
@@ -370,7 +370,7 @@ export default class NewEntry extends React.Component {
                                         this.onUpdate(appData);
                                     }
                                 })
-                                .catch((err) => {
+                                .catch(err => {
                                     warn(
                                         'Error trying to deactivate a broken pattern kavuah on the database.'
                                     );
@@ -406,7 +406,7 @@ export default class NewEntry extends React.Component {
                                         this.onUpdate(appData);
                                     }
                                 })
-                                .catch((err) => {
+                                .catch(err => {
                                     warn(
                                         'Error trying to activate an in-pattern-kavuah on the database.'
                                     );
@@ -441,7 +441,7 @@ export default class NewEntry extends React.Component {
                                         this.onUpdate(appData);
                                     }
                                 })
-                                .catch((err) => {
+                                .catch(err => {
                                     warn(
                                         'Error trying to set a Kavuah to cancelsOnahBeinunis = false on the database.'
                                     );
@@ -459,6 +459,7 @@ export default class NewEntry extends React.Component {
     }
     render() {
         const sdate = this.state.jdate.getDate();
+        const sdateBefore = new Date(sdate.valueOf() - 86400000);
         return (
             <View style={GeneralStyles.container}>
                 <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -475,7 +476,7 @@ export default class NewEntry extends React.Component {
                             <Text style={GeneralStyles.label}>Jewish Date</Text>
                             <JdateChooser
                                 jdate={this.state.jdate}
-                                setDate={(jdate) => this.setState({ jdate })}
+                                setDate={jdate => this.setState({ jdate })}
                             />
                         </View>
                         <View style={{ padding: 10 }}>
@@ -513,7 +514,7 @@ export default class NewEntry extends React.Component {
                                 <Text>Night</Text>
                                 <Switch
                                     style={GeneralStyles.switch}
-                                    onValueChange={(value) =>
+                                    onValueChange={value =>
                                         this.setState({
                                             nightDay: value ? NightDay.Day : NightDay.Night,
                                         })
@@ -522,6 +523,18 @@ export default class NewEntry extends React.Component {
                                 />
                                 <Text>Day</Text>
                             </View>
+                            {this.state.nightDay === NightDay.Night && (
+                                <View style={{ padding: 10, marginTop: 7 }}>
+                                    <Text>
+                                        Please make sure that the Entry occurred on
+                                        {Utils.dowEng[sdateBefore.getDay() - 1]} night after sunset
+                                        ({this.sunsetText}), but before sunrise ({this.sunsetText})
+                                        on
+                                        {Utils.dowEng[sdate.getDay()]} morning.
+                                    </Text>
+                                </View>
+                            )}
+                            }
                         </View>
                         <View style={{ padding: 10, marginTop: 7 }}>
                             <Text style={{ fontSize: 12 }}>
@@ -554,7 +567,7 @@ export default class NewEntry extends React.Component {
                             <Text style={GeneralStyles.label}>Comments</Text>
                             <TextInput
                                 style={GeneralStyles.textInput}
-                                onEndEditing={(event) =>
+                                onEndEditing={event =>
                                     this.setState({
                                         comments: event.nativeEvent.text,
                                     })
@@ -586,7 +599,7 @@ export default class NewEntry extends React.Component {
                                     </Text>
                                     <Switch
                                         style={GeneralStyles.switch}
-                                        onValueChange={(value) =>
+                                        onValueChange={value =>
                                             this.setState({
                                                 ignoreForFlaggedDates: value,
                                             })
@@ -600,7 +613,7 @@ export default class NewEntry extends React.Component {
                                     </Text>
                                     <Switch
                                         style={GeneralStyles.switch}
-                                        onValueChange={(value) =>
+                                        onValueChange={value =>
                                             this.setState({
                                                 ignoreForKavuah: value,
                                             })
@@ -621,7 +634,7 @@ export default class NewEntry extends React.Component {
                                 <Text>Don't add reminder</Text>
                                 <Switch
                                     style={GeneralStyles.switch}
-                                    onValueChange={(value) =>
+                                    onValueChange={value =>
                                         this.setState({
                                             addReminder: value,
                                         })
@@ -643,14 +656,12 @@ export default class NewEntry extends React.Component {
                                         unitName='day'
                                         suffixed={true}
                                         value={this.state.reminderDay}
-                                        onChange={(reminderDay) => this.setState({ reminderDay })}
+                                        onChange={reminderDay => this.setState({ reminderDay })}
                                     />
                                     <Text> at </Text>
                                     <TimeInput
                                         selectedTime={this.state.reminderTime}
-                                        onConfirm={(reminderTime) =>
-                                            this.setState({ reminderTime })
-                                        }
+                                        onConfirm={reminderTime => this.setState({ reminderTime })}
                                     />
                                 </View>
                             )}
