@@ -350,7 +350,7 @@ export default class NewEntry extends React.Component {
             Alert.alert(
                 'Kavuah Pattern Broken',
                 `This Entry is the third Entry in a row that is not in the Kavuah pattern of "${brokenKavuah.toString()}".` +
-                    '\nDo you wish to set this Kavuah to inactive?',
+                '\nDo you wish to set this Kavuah to inactive?',
                 [
                     //Button 1
                     {
@@ -421,7 +421,7 @@ export default class NewEntry extends React.Component {
             Alert.alert(
                 'Kavuah Pattern Break',
                 `This Entry does not seem to match the Kavuah pattern of "${outOfPatternKavuah.toString()}".` +
-                    '\nDo you wish to set this Kavuah to NOT Cancel Onah Beinonis?',
+                '\nDo you wish to set this Kavuah to NOT Cancel Onah Beinonis?',
                 [
                     //Button 1
                     {
@@ -524,17 +524,14 @@ export default class NewEntry extends React.Component {
                                 <Text>Day</Text>
                             </View>
                             {this.state.nightDay === NightDay.Night && (
-                                <View style={{ padding: 10, marginTop: 7 }}>
+                                <View style={{ padding: 10, marginTop: 3 }}>
+                                    <Text>You have selected the night Onah.</Text>
                                     <Text>
-                                        Please make sure that the Entry occurred on
-                                        {Utils.dowEng[sdateBefore.getDay() - 1]} night after sunset
-                                        ({this.sunsetText}), but before sunrise ({this.sunsetText})
-                                        on
-                                        {Utils.dowEng[sdate.getDay()]} morning.
+                                        <Text style={{ fontWeight: 'bold', color: '#a66' }}>Please make sure </Text>
+                                        {`that the Period began on ${Utils.toStringDow(sdateBefore, NightDay.Night)} after sunset (${this.sunsetText}), but before sunrise (${this.sunriseText}) on ${Utils.dowEng[sdate.getDay()]} morning.`}
                                     </Text>
                                 </View>
                             )}
-                            }
                         </View>
                         <View style={{ padding: 10, marginTop: 7 }}>
                             <Text style={{ fontSize: 12 }}>
@@ -591,38 +588,38 @@ export default class NewEntry extends React.Component {
                                 </Text>
                             </TouchableOpacity>
                         )) || (
-                            <View>
-                                <View style={GeneralStyles.formRow}>
-                                    <Text style={[GeneralStyles.label, { fontSize: 11 }]}>
-                                        [Advanced] Not a halachic Vesset period. Should not generate
-                                        Flagged Dates
-                                    </Text>
-                                    <Switch
-                                        style={GeneralStyles.switch}
-                                        onValueChange={value =>
-                                            this.setState({
-                                                ignoreForFlaggedDates: value,
-                                            })
-                                        }
-                                        value={!!this.state.ignoreForFlaggedDates}
-                                    />
+                                <View>
+                                    <View style={GeneralStyles.formRow}>
+                                        <Text style={[GeneralStyles.label, { fontSize: 11 }]}>
+                                            [Advanced] Not a halachic Vesset period. Should not generate
+                                            Flagged Dates
+                                        </Text>
+                                        <Switch
+                                            style={GeneralStyles.switch}
+                                            onValueChange={value =>
+                                                this.setState({
+                                                    ignoreForFlaggedDates: value,
+                                                })
+                                            }
+                                            value={!!this.state.ignoreForFlaggedDates}
+                                        />
+                                    </View>
+                                    <View style={GeneralStyles.formRow}>
+                                        <Text style={[GeneralStyles.label, { fontSize: 11 }]}>
+                                            [Advanced] Ignore this Entry in Kavuah calculations
+                                        </Text>
+                                        <Switch
+                                            style={GeneralStyles.switch}
+                                            onValueChange={value =>
+                                                this.setState({
+                                                    ignoreForKavuah: value,
+                                                })
+                                            }
+                                            value={!!this.state.ignoreForKavuah}
+                                        />
+                                    </View>
                                 </View>
-                                <View style={GeneralStyles.formRow}>
-                                    <Text style={[GeneralStyles.label, { fontSize: 11 }]}>
-                                        [Advanced] Ignore this Entry in Kavuah calculations
-                                    </Text>
-                                    <Switch
-                                        style={GeneralStyles.switch}
-                                        onValueChange={value =>
-                                            this.setState({
-                                                ignoreForKavuah: value,
-                                            })
-                                        }
-                                        value={!!this.state.ignoreForKavuah}
-                                    />
-                                </View>
-                            </View>
-                        )}
+                            )}
                         <View style={GeneralStyles.formRow}>
                             <Text style={GeneralStyles.label}>Add a Hefsek Tahara Reminder</Text>
                             <View

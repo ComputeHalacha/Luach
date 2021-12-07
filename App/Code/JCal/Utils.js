@@ -1,5 +1,6 @@
 import Zmanim from './Zmanim';
 import jDate from './jDate';
+import { NightDay } from '../Chashavshavon/Onah';
 
 export default class Utils {
     static jMonthsEng = [
@@ -155,6 +156,22 @@ export default class Utils {
             ' ' +
             date.getFullYear().toString()
         );
+    }
+
+    /**
+    * Returns the javascript date in the format: Thursday, the 3rd of January 2018.
+    * @param {Date} date
+    * @param {NightDay} nightDay
+    */
+    static toStringDow(date, nightDay) {
+        const dow = date.getDay();
+        if (dow === 6 && nightDay === NightDay.Night) {
+            return 'Motza\'ai Shabbos';
+        }
+        else if (dow === 5 && nightDay === NightDay.Night) {
+            return 'Friday night';
+        }
+        return Utils.dowEng[date.getDay()] + (nightDay === NightDay.Night ? ' night' : '');
     }
 
     /**
@@ -315,9 +332,8 @@ export default class Utils {
                 'Utils.getSimpleTimeString - hm is not an object of type {hour:Number, minute:Number}'
             );
         if (hm && hm.hour >= 0) {
-            return `${hm.hour < 10 ? '0' : ''}${hm.hour}:${
-                hm.minute < 10 ? '0' : ''
-            }${hm.minute}:00`;
+            return `${hm.hour < 10 ? '0' : ''}${hm.hour}:${hm.minute < 10 ? '0' : ''
+                }${hm.minute}:00`;
         }
     }
     /**

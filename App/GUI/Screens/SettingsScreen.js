@@ -243,7 +243,7 @@ export default class SettingsScreen extends Component {
             location = settings.location || Location.getLakewood(),
             showOhrZeruah = setDefault(settings.showOhrZeruah, true),
             keepThirtyOne = setDefault(settings.keepThirtyOne, true),
-            fourDaysHefsek = !!settings.fourDaysHefsek,,
+            fourDaysHefsek = !!settings.fourDaysHefsek,
             onahBeinunis24Hours = settings.onahBeinunis24Hours,
             numberMonthsAheadToWarn = settings.numberMonthsAheadToWarn || 12,
             keepLongerHaflagah = setDefault(settings.keepLongerHaflagah, true),
