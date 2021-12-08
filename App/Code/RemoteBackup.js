@@ -46,7 +46,7 @@ To enable the domain compute.dev for use from an android device:
     If you get your local site then, Mazel Tov.
  */
 const serverURL = __DEV__
-    ? 'http://127.0.0.1:83/api/luach'
+    ? 'http://localhost:83/api/luach'
     : 'https://www.compute.co.il/api/luach';
 
 export default class RemoteBackup {

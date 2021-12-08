@@ -159,7 +159,7 @@ export default class Utils {
     }
 
     /**
-    * Returns the javascript date in the format: Thursday, the 3rd of January 2018.
+    * Returns the name of the day of the week for the given javascript date.
     * @param {Date} date
     * @param {NightDay} nightDay
     */
