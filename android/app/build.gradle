@@ -94,7 +94,7 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.luachandroid"
-        minSdkVersion 22
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 74
         versionName "1.74"

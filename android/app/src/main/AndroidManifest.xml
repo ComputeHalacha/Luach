@@ -1,21 +1,20 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" 
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools" package="com.luachandroid">
-
 
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" />
   <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove" />
   <uses-permission android:name="android.permission.WAKE_LOCK" />
   <permission android:name="${applicationId}.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-  <uses-permission android:name="android.permission.VIBRATE" />
-  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
+  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+  <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
-  <application android:name=".MainApplication" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:allowBackup="false" android:theme="@style/AppTheme">
-    <meta-data android:name="com.dieam.reactnativepushnotification.notification_channel_name" android:value="Luach Reminders" />
-    <meta-data android:name="com.dieam.reactnativepushnotification.notification_channel_description" android:value="System notification alerts for Luach App reminders" />
-    <meta-data android:name="com.dieam.reactnativepushnotification.notification_color" android:resource="@color/scroll" />
+  <application android:name=".MainApplication" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:allowBackup="false" android:theme="@style/AppTheme" android:networkSecurityConfig="@xml/network_security_config">
+    <meta-data android:name="com.dieam.reactnativepushnotification.notification_channel_name" android:value="Luach Reminders"/>
+    <meta-data android:name="com.dieam.reactnativepushnotification.notification_channel_description" android:value="System notification alerts for Luach App reminders"/>
+    <meta-data android:name="com.dieam.reactnativepushnotification.notification_color" android:resource="@color/scroll"/>
 
     <activity android:name=".MainActivity" android:label="@string/app_name" android:configChanges="keyboard|keyboardHidden|orientation|screenSize" android:windowSoftInputMode="adjustResize">
       <intent-filter>
@@ -38,7 +37,7 @@
         <action android:name="android.intent.action.BOOT_COMPLETED" />
       </intent-filter>
     </receiver>
-    <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService" />
+    <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
 
     <!-- < Only if you're using GCM or localNotificationSchedule() > -->
     <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerServiceGcm" android:exported="false">

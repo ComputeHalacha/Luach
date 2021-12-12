@@ -142,6 +142,9 @@ export default class RemoteBackup {
         return response.Succeeded && response.Exists;
     }
     async uploadBackup() {
+        DataUtils._closeDatabase();
+        DataUtils._executeSql('PRAGMA wal_checkpoint');
+        DataUtils._closeDatabase();
         const url = `${serverURL}/backup`,
             dbAbsolutePath = await DataUtils.getDatabaseAbsolutePath();
         let success = false,
@@ -202,7 +205,7 @@ export default class RemoteBackup {
         //the server encodes the sqlite file in base64 and returns it as a string.
         //We retrieve that here and decode it back to binary.
         const localStorage = await this.getLocalStorage(),
-            response = await this.request();
+            response = await this.request('restore');
         if (response.Succeeded) {
             try {
                 log(

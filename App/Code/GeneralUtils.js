@@ -19,9 +19,10 @@ export const GLOBALS = Object.freeze({
     VERSION_NAME: DeviceInfo.getReadableVersion().replace(/(.+)\..+/, '$1'),
     IS_IOS: Platform.OS === 'ios',
     IS_ANDROID: Platform.OS === 'android',
+    IS_EMULATOR: DeviceInfo.isEmulator(),
     BUTTON_COLOR: Platform.OS === 'android' ? '#99b' : null,
     VALID_PIN: /^\d{4,}$/,
-    DEFAULT_DB_PATH: '~data/luachAndroidDB.sqlite',
+    DEFAULT_DB_PATH: '~data/luachAndroidDB.sqlite'
 });
 
 export function popUpMessage(message, optionalTitle) {
@@ -184,7 +185,7 @@ export function getRandomString(len) {
  * @param {*} txt
  */
 export function log(txt, ...other) {
-    if (__DEV__) {
+    if (__DEV__ || GLOBALS.IS_EMULATOR) {
         console.log(txt, ...other);
     }
 }
@@ -193,7 +194,7 @@ export function log(txt, ...other) {
  * @param {*} txt
  */
 export function warn(txt, ...other) {
-    if (__DEV__) {
+    if (__DEV__|| GLOBALS.IS_EMULATOR) {
         console.warn(txt, ...other);
     }
 }
@@ -202,7 +203,7 @@ export function warn(txt, ...other) {
  * @param {*} txt
  */
 export function error(txt, ...other) {
-    if (__DEV__) {
+    if (__DEV__ || GLOBALS.IS_EMULATOR) {
         console.error(txt, ...other);
     }
 }

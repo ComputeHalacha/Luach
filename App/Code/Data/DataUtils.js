@@ -767,7 +767,7 @@ export default class DataUtils {
         }
         try {
             const database = await SQLite.openDatabase(options);
-            db = database;
+            db = database;            
             log('0120 - database is open. Starting transaction...');
             const results = await db.executeSql(sql, values);
             if (
