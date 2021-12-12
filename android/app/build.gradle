@@ -91,13 +91,13 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = true
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.luachandroid"
         minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 74
-        versionName "1.74"
+        targetSdkVersion 30
+        versionCode 80
+        versionName "1.80"
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
         multiDexEnabled true
     }
