@@ -298,7 +298,7 @@ class Kavuah {
                 );
                 if (
                     nextIteration.Abs > jdate.Abs ||
-                    nextIteration.Abs <= kavuah.settingEntry.date.Abs
+                    nextIteration.Abs <= kavuah.settingEntry.abs
                 ) {
                     break;
                 }
@@ -538,7 +538,7 @@ class Kavuah {
         for (let firstFind of entryList.filter(
             e =>
                 (settings.kavuahDiffOnahs || e.nightDay === entry.nightDay) &&
-                e.date.Abs > entry.date.Abs &&
+                e.abs > entry.abs &&
                 e.dayOfWeek === entry.dayOfWeek
         )) {
             //We get the interval in days between the found entry and the given entry
@@ -713,7 +713,7 @@ class Kavuah {
                 k.active &&
                 !k.ignore &&
                 k.isIndependent &&
-                k.settingEntry.date.Abs < jdate.Abs
+                k.settingEntry.abs < jdate.Abs
         )) {
             //Get the last three "iterations" of the Kavuah - up to the given date
             const last3Iters = Kavuah.getIndependentIterations(
@@ -750,7 +750,7 @@ class Kavuah {
                     k.active &&
                     !k.ignore &&
                     !k.isIndependent &&
-                    lastThree.every(e => e.Abs > k.settingEntry.date.Abs)
+                    lastThree.every(e => e.Abs > k.settingEntry.abs)
             )) {
                 if (!lastThree.some(e => kavuah.isEntryInPattern(e, entries))) {
                     brokens.push(kavuah);
@@ -779,7 +779,7 @@ class Kavuah {
                 !k.ignore &&
                 //"Independent" Kavuahs are not considered "out of pattern" if there is an Entry in middle
                 !k.isIndependent &&
-                k.settingEntry.date.Abs < entry.date.Abs
+                k.settingEntry.abs < entry.abs
         )) {
             if (!kavuah.isEntryInPattern(entry, entries, settings)) {
                 list.push(kavuah);
@@ -802,7 +802,7 @@ class Kavuah {
             k =>
                 !k.active &&
                 !k.ignore &&
-                k.settingEntry.date.Abs < entry.date.Abs
+                k.settingEntry.abs < entry.abs
         )) {
             if (kavuah.isEntryInPattern(entry, entries, settings)) {
                 awakened.push(kavuah);

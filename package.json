@@ -4,9 +4,10 @@
     "private": true,
     "scripts": {
         "start": "node node_modules/react-native/local-cli/cli.js start",
-        "build": "cd android ; ./gradlew assembleRelease ; cd ../",
-        "install": "cd android ; ./gradlew installRelease ; cd ../",
-        "bundle": "cd android ; ./gradlew bundleRelease ; cd ../",
+        "build": "cd android & \"./gradlew\" assembleRelease & cd ../",
+        "install": "cd android \"./gradlew\" installRelease; cd ../",
+        "bundle-android": "cd android & \"./gradlew\" bundleRelease & cd ../",
+        "nvm": "nvm use 12.0.0",
         "postinstall": "npx jetify"
     },
     "dependencies": {

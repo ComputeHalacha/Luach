@@ -569,7 +569,7 @@ export default class DataUtils {
                 await DataUtils._executeSql(
                     'UPDATE entries SET dateAbs=?, day=?, ignoreForFlaggedDates=?, ignoreForKavuah=?, comments=? WHERE entryId=?',
                     [
-                        entry.date.Abs,
+                        entry.abs,
                         entry.nightDay === NightDay.Day,
                         entry.ignoreForFlaggedDates,
                         entry.ignoreForKavuah,
@@ -590,7 +590,7 @@ export default class DataUtils {
                 const results = await DataUtils._executeSql(
                     'INSERT INTO entries (dateAbs, day, ignoreForFlaggedDates, ignoreForKavuah, comments) VALUES (?, ?, ?, ?, ?)',
                     [
-                        entry.date.Abs,
+                        entry.abs,
                         entry.nightDay === NightDay.Day,
                         entry.ignoreForFlaggedDates,
                         entry.ignoreForKavuah,

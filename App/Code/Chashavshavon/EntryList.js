@@ -87,7 +87,7 @@ export default class EntryList {
     lastEntry() {
         let latest;
         for (let entry of this.list) {
-            if (!latest || entry.date.Abs > latest.date.Abs) {
+            if (!latest || entry.abs > latest.abs) {
                 latest = entry;
             }
         }
@@ -135,9 +135,9 @@ export default class EntryList {
      */
     static sortEntries(list) {
         return list.sort((a, b) => {
-            if (a.date.Abs < b.date.Abs) {
+            if (a.abs < b.abs) {
                 return -1;
-            } else if (a.date.Abs > b.date.Abs) {
+            } else if (a.abs > b.abs) {
                 return 1;
             } else {
                 return a.nightDay - b.nightDay;

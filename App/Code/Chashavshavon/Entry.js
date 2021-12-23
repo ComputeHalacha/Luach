@@ -144,6 +144,9 @@ export default class Entry {
     get year() {
         return this.date.Year;
     }
+    get abs() {
+        return this.date.Abs;
+    }
     get dayOfWeek() {
         return this.date.DayOfWeek;
     }

@@ -478,7 +478,7 @@ export default class HomeScreen extends React.Component {
             lastEntry = this.state.lastEntry,
             lastEntryDate =
                 lastRegularEntry &&
-                item.Abs > lastRegularEntry.date.Abs &&
+                item.Abs > lastRegularEntry.abs &&
                 lastRegularEntry.date,
             fourDaysHefsek = this.state.appData.Settings.fourDaysHefsek,
             isHefsekDay =
