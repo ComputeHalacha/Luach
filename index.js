@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import './App/app';
 import { configureNotifier } from './App/Code/Notifications';
 configureNotifier(token =>
