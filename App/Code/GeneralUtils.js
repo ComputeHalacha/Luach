@@ -24,7 +24,7 @@ export const GLOBALS = Object.freeze({
   BUTTON_COLOR: Platform.OS === 'android' ? '#99b' : null,
   VALID_PIN: /^\d{4,}$/,
   DEFAULT_DB_PATH: '~data/luachAndroidDB.sqlite',
-  IS_24_HOUR: HourFormat.is24HourFormat()
+  IS_24_HOUR: DeviceInfo.is24Hour()
 });
 
 export function popUpMessage(message, optionalTitle) {

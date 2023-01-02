@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
-import DeviceInfo from 'react-native-device-info';
 import Utils from '../../Code/JCal/Utils';
 import Zmanim from '../../Code/JCal/Zmanim';
 import {
@@ -31,7 +30,7 @@ import {
   cancelMikvaAlarm,
 } from '../../Code/Notifications';
 import HefsekNotificationModal from './HefsekNotificationModal';
-import { GLOBALS } from "../../Code/GeneralUtils";
+import { GLOBALS } from '../../Code/GeneralUtils';
 
 /**
  * Display a home screen box for a single jewish date.

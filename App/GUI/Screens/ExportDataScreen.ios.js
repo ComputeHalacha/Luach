@@ -1,26 +1,26 @@
-import React from "react";
-import { ScrollView, View, Text, Button } from "react-native";
-import RNFS from "react-native-fs";
-import Mailer from "react-native-mail";
-import { Select, Option } from "react-native-chooser";
-import SideMenu from "../Components/SideMenu";
+import React from 'react';
+import { ScrollView, View, Text, Button } from 'react-native';
+import RNFS from 'react-native-fs';
+import Mailer from 'react-native-mail';
+import { Select, Option } from 'react-native-chooser';
+import SideMenu from '../Components/SideMenu';
 import {
   popUpMessage,
   log,
   warn,
   error,
   GLOBALS
-} from "../../Code/GeneralUtils";
-import { NightDay } from "../../Code/Chashavshavon/Onah";
-import jDate from "../../Code/JCal/jDate";
-import Utils from "../../Code/JCal/Utils";
-import { GeneralStyles } from "../styles";
+} from '../../Code/GeneralUtils';
+import { NightDay } from '../../Code/Chashavshavon/Onah';
+import jDate from '../../Code/JCal/jDate';
+import Utils from '../../Code/JCal/Utils';
+import { GeneralStyles } from '../styles';
 
 const exportPath = RNFS.DocumentDirectoryPath;
 
 export default class ExportData extends React.Component {
   static navigationOptions = {
-    title: "Export Data"
+    title: 'Export Data'
   };
   constructor(props) {
     super(props);
@@ -33,9 +33,9 @@ export default class ExportData extends React.Component {
     this.sdate = sdate || this.jdate.getDate();
     this.sdateString =
       Utils.sMonthsEng[this.sdate.getMonth()] +
-      " " +
+      ' ' +
       this.sdate.getFullYear().toString();
-    this.state = { dataSet: dataSet || "Entries" };
+    this.state = { dataSet: dataSet || 'Entries' };
     this.getFileName = this.getFileName.bind(this);
     this.doExport = this.doExport.bind(this);
     this.doEmail = this.doEmail.bind(this);
@@ -43,27 +43,27 @@ export default class ExportData extends React.Component {
     this.getHtmlText = this.getHtmlText.bind(this);
   }
   getFileName() {
-    const dateString = this.sdate.toLocaleString().replace(/[\/,: ]/gi, "-");
+    const dateString = this.sdate.toLocaleString().replace(/[\/,: ]/gi, '-');
     return `${this.state.dataSet}-${dateString}.csv`;
   }
   getCsvText() {
     const settings = this.appData.Settings;
-    let csv = "";
+    let csv = '';
     switch (this.state.dataSet) {
-      case "Entries":
+      case 'Entries':
         csv =
           '"Jewish Date","Secular Date",Onah","Haflaga","Ignore For Flagged Dates","Ignore For Kavuahs","Comments"\r\n';
         for (let entry of this.appData.EntryList.list) {
           csv += `"${entry.date.toString()}","${yon(
             entry.date.getDate().toLocaleDateString()
-          )}","${entry.nightDay === NightDay.Night ? "Night" : "Day"}","${
-            entry.haflaga ? entry.haflaga.toString() : " - "
+          )}","${entry.nightDay === NightDay.Night ? 'Night' : 'Day'}","${
+            entry.haflaga ? entry.haflaga.toString() : ' - '
           }","${yon(entry.ignoreForFlaggedDates)}","${yon(
             entry.ignoreForKavuah
           )}","${entry.comments}"\r\n`;
         }
         break;
-      case "Events":
+      case 'Events':
         csv =
           '"Jewish Date","Secular Date","Description","Comments","Color"\r\n';
         for (let occ of this.appData.UserOccasions) {
@@ -74,7 +74,7 @@ export default class ExportData extends React.Component {
           }","${occ.color}"\r\n`;
         }
         break;
-      case "Kavuahs":
+      case 'Kavuahs':
         csv =
           '"Description","Setting Entry","Cancels Onah Beinunis","Active","Ignored"\r\n';
         for (let kavuah of this.appData.KavuahList) {
@@ -83,7 +83,7 @@ export default class ExportData extends React.Component {
           )}","${yon(kavuah.active)}","${yon(kavuah.ignore)}"\r\n`;
         }
         break;
-      case "Settings": {
+      case 'Settings': {
         const settings = this.appData.Settings;
         csv =
           '"Location","Ohr Zeruah","Onah Beinunis 24 Hours","Day Thirty One","4 Days Hefsek"' +
@@ -107,7 +107,7 @@ export default class ExportData extends React.Component {
             settings.showEntryFlagOnHome
           )}"` +
           `,"${yon(settings.showProbFlagOnHome)}","${
-            settings.navigateBySecularDate ? "Secular" : "Jewish"
+            settings.navigateBySecularDate ? 'Secular' : 'Jewish'
           } Date"` +
           `,"${yon(settings.showIgnoredKavuahs)}","${yon(
             settings.noProbsAfterEntry
@@ -117,49 +117,49 @@ export default class ExportData extends React.Component {
           )}"\r\n`;
         break;
       }
-      case "Flagged Dates":
+      case 'Flagged Dates':
         csv = '"Jewish Date","Secular Date","Onah","Description"\r\n';
         for (let probOnah of this.appData.ProblemOnahs) {
           csv += `"${probOnah.jdate.toString()}","${probOnah.jdate
             .getDate()
             .toLocaleDateString()}","${
-            probOnah.nightDay === NightDay.Night ? "Night" : "Day"
-          }","The ${probOnah.flagsList.join(" and the ")}"\r\n`;
+            probOnah.nightDay === NightDay.Night ? 'Night' : 'Day'
+          }","The ${probOnah.flagsList.join(' and the ')}"\r\n`;
         }
         break;
-      case "Zmanim - " + this.jdate.toShortString(): {
+      case 'Zmanim - ' + this.jdate.toShortString(): {
         const details = this.jdate.getAllDetails(settings.location);
         csv +=
-          `"Location",${details.map(d => '"' + d.title + '"').join(",")}` +
-          "\r\n" +
+          `"Location",${details.map(d => '"' + d.title + '"').join(',')}` +
+          '\r\n' +
           `"${settings.location.Name}",${details
             .map(d => '"' + d.value + '"')
-            .join(",")}`;
+            .join(',')}`;
         break;
       }
-      case "Zmanim - " + this.jdate.monthName(): {
+      case 'Zmanim - ' + this.jdate.monthName(): {
         const month = this.jdate.Month;
         let currDate = new jDate(this.jdate.Year, month, 1),
           details = currDate.getAllDetailsList(settings.location);
         csv += `"Location: ${settings.location.Name}"\r\n${details
           .map(d => '"' + d.title + '"')
-          .join(",")}\r\n`;
+          .join(',')}\r\n`;
         while (currDate.Month === month) {
-          csv += details.map(d => '"' + d.value + '"').join(",") + "\r\n";
+          csv += details.map(d => '"' + d.value + '"').join(',') + '\r\n';
           currDate = currDate.addDays(1);
           details = currDate.getAllDetailsList(settings.location);
         }
         break;
       }
-      case "Zmanim - " + this.sdateString: {
+      case 'Zmanim - ' + this.sdateString: {
         const month = this.sdate.getMonth();
         let currDate = new jDate(new Date(this.sdate.getFullYear(), month, 1)),
           details = currDate.getAllDetailsList(settings.location);
         csv += `"Location: ${settings.location.Name}"\r\n${details
           .map(d => '"' + d.title + '"')
-          .join(",")}\r\n`;
+          .join(',')}\r\n`;
         while (currDate.getDate().getMonth() === month) {
-          csv += details.map(d => '"' + d.value + '"').join(",") + "\r\n";
+          csv += details.map(d => '"' + d.value + '"').join(',') + '\r\n';
           currDate = currDate.addDays(1);
           details = currDate.getAllDetailsList(settings.location);
         }
@@ -181,7 +181,7 @@ export default class ExportData extends React.Component {
                         </h1>
                         <table width="100%" cellspacing="0" cellpadding="5" border="1" style="border-collapse:collapse;border-color:#7777bb;">`;
     switch (this.state.dataSet) {
-      case "Entries":
+      case 'Entries':
         html +=
           '<tr style="background-color:#e1e1ff;"> \
                             <td style="background-color:#7777bb;">&nbsp;</td> \
@@ -203,8 +203,8 @@ export default class ExportData extends React.Component {
           )}</td>
                                  <td>${
                                    entry.nightDay === NightDay.Night
-                                     ? "Night"
-                                     : "Day"
+                                     ? 'Night'
+                                     : 'Day'
                                  }</td>
                                  <td>${entry.haflaga.toString()}</td>
                                  <td>${yon(entry.ignoreForFlaggedDates)}</td>
@@ -213,7 +213,7 @@ export default class ExportData extends React.Component {
                             </tr>`;
         }
         break;
-      case "Events":
+      case 'Events':
         html +=
           '<tr style="background-color:#e1e1ff;"> \
                             <td style="background-color:#7777bb;">&nbsp;</td> \
@@ -237,7 +237,7 @@ export default class ExportData extends React.Component {
                             </tr>`;
         }
         break;
-      case "Kavuahs":
+      case 'Kavuahs':
         html +=
           '<tr style="background-color:#e1e1ff;"> \
                             <td style="background-color:#7777bb;">&nbsp;</td> \
@@ -259,9 +259,9 @@ export default class ExportData extends React.Component {
                             </tr>`;
         }
         break;
-      case "Settings": {
+      case 'Settings': {
         html +=
-          "<tr><td>" +
+          '<tr><td>' +
           `<p><b>Location</b><br />${settings.location.Name}<hr /></p>` +
           `<p><b>Flag previous onah (The "Ohr Zaruah")</b><br />${yon(
             settings.showOhrZeruah
@@ -298,7 +298,7 @@ export default class ExportData extends React.Component {
             settings.showProbFlagOnHome
           )}<hr /></p>` +
           `<p><b>Calendar displays current</b><br />${
-            settings.navigateBySecularDate ? "Secular" : "Jewish"
+            settings.navigateBySecularDate ? 'Secular' : 'Jewish'
           } Date<hr /></p>` +
           `<p><b>Show explicitly ignored Kavuahs in the Kavuah list</b><br />${yon(
             settings.showIgnoredKavuahs
@@ -313,10 +313,10 @@ export default class ExportData extends React.Component {
           `<p><b>Require PIN to open application?</b><br />${yon(
             settings.requirePIN
           )}<hr /></p>` +
-          "</td></tr>";
+          '</td></tr>';
         break;
       }
-      case "Flagged Dates":
+      case 'Flagged Dates':
         html +=
           '<tr style="background-color:#e1e1ff;"> \
                         <td style="background-color:#7777bb;">&nbsp;</td> \
@@ -335,28 +335,28 @@ export default class ExportData extends React.Component {
           )}</td>
                                 <td>${
                                   probOnah.nightDay === NightDay.Night
-                                    ? "Night"
-                                    : "Day"
+                                    ? 'Night'
+                                    : 'Day'
                                 }</td>
                                 <td><ul>${probOnah.flagsList
-                                  .map(f => "<li>" + f + "</li>")
-                                  .join("")}</ul></td>
+                                  .map(f => '<li>' + f + '</li>')
+                                  .join('')}</ul></td>
                             </tr>`;
         }
         break;
-      case "Zmanim - " + this.jdate.toShortString(): {
+      case 'Zmanim - ' + this.jdate.toShortString(): {
         const details = this.jdate.getAllDetails(settings.location);
         html +=
           '<tr style="background-color:#e1e1ff;"><td colspan="2">' +
-          "<b>Zmanim for " +
+          '<b>Zmanim for ' +
           settings.location.Name +
-          "</b></td></tr>" +
+          '</b></td></tr>' +
           details
             .map(d => `<tr><td><b>${d.title}</b></td><td>${d.value}</td></tr>`)
-            .join("");
+            .join('');
         break;
       }
-      case "Zmanim - " + this.jdate.monthName(): {
+      case 'Zmanim - ' + this.jdate.monthName(): {
         const month = this.jdate.Month;
         let currDate = new jDate(this.jdate.Year, month, 1),
           details = currDate.getAllDetailsList(settings.location);
@@ -369,21 +369,21 @@ export default class ExportData extends React.Component {
                         </tr>
                         <tr style="background-color:#e1e1ff;">
                             ${details
-                              .map(d => "<td>" + d.title + "</td>")
-                              .join("")}
+                              .map(d => '<td>' + d.title + '</td>')
+                              .join('')}
                         </tr>`;
         while (currDate.Month === month) {
           html += `<tr>
                                     ${details
-                                      .map(d => "<td>" + d.value + "</td>")
-                                      .join("")}
+                                      .map(d => '<td>' + d.value + '</td>')
+                                      .join('')}
                                 </tr>`;
           currDate = currDate.addDays(1);
           details = currDate.getAllDetailsList(settings.location);
         }
         break;
       }
-      case "Zmanim - " + this.sdateString: {
+      case 'Zmanim - ' + this.sdateString: {
         const month = this.sdate.getMonth();
         let currDate = new jDate(new Date(this.sdate.getFullYear(), month, 1)),
           details = currDate.getAllDetailsList(settings.location);
@@ -398,14 +398,14 @@ export default class ExportData extends React.Component {
                         </tr>
                         <tr style="background-color:#e1e1ff;">
                             ${details
-                              .map(d => "<td>" + d.title + "</td>")
-                              .join("")}
+                              .map(d => '<td>' + d.title + '</td>')
+                              .join('')}
                         </tr>`;
         while (currDate.getDate().getMonth() === month) {
           html += `<tr>
                                     ${details
-                                      .map(d => "<td>" + d.value + "</td>")
-                                      .join("")}
+                                      .map(d => '<td>' + d.value + '</td>')
+                                      .join('')}
                                 </tr>`;
           currDate = currDate.addDays(1);
           details = currDate.getAllDetailsList(settings.location);
@@ -413,7 +413,7 @@ export default class ExportData extends React.Component {
         break;
       }
     }
-    html += "</table></body></html>";
+    html += '</table></body></html>';
     return html;
   }
   async doExport() {
@@ -421,7 +421,7 @@ export default class ExportData extends React.Component {
       csv = this.getCsvText();
     log(csv);
     await RNFS.writeFile(filePath, csv).catch(err => {
-      warn("Error trying to create " + this.state.fileName);
+      warn('Error trying to create ' + this.state.fileName);
       error(err);
     });
     return filePath;
@@ -429,9 +429,9 @@ export default class ExportData extends React.Component {
   async doEmail() {
     const filePath = await this.doExport(),
       subject =
-        "Luach - Export Data - " +
+        'Luach - Export Data - ' +
         this.state.dataSet +
-        " - " +
+        ' - ' +
         this.sdate.toLocaleDateString(),
       html = this.getHtmlText();
     log(html);
@@ -445,28 +445,28 @@ export default class ExportData extends React.Component {
         isHTML: true,
         attachment: {
           path: filePath,
-          type: "csv",
+          type: 'csv',
           name: this.getFileName()
         }
       },
       error => {
         if (error) {
-          popUpMessage("We are very sorry, but the email could not be sent.");
+          popUpMessage('We are very sorry, but the email could not be sent.');
         }
       }
     );
   }
   render() {
-    const dateStr = "Zmanim - " + this.jdate.toShortString(),
-      jMonthStr = "Zmanim - " + this.jdate.monthName(),
-      sMonthStr = "Zmanim - " + this.sdateString,
-      dataDesc = this.state.dataSet.startsWith("Zmanim")
-        ? "the Zmanim for " + this.state.dataSet.replace(/Zmanim -/, "")
-        : "all of your " + this.state.dataSet + " data";
+    const dateStr = 'Zmanim - ' + this.jdate.toShortString(),
+      jMonthStr = 'Zmanim - ' + this.jdate.monthName(),
+      sMonthStr = 'Zmanim - ' + this.sdateString,
+      dataDesc = this.state.dataSet.startsWith('Zmanim')
+        ? 'the Zmanim for ' + this.state.dataSet.replace(/Zmanim -/, '')
+        : 'all of your ' + this.state.dataSet + ' data';
 
     return (
       <View style={GeneralStyles.container}>
-        <View style={{ flexDirection: "row", flex: 1 }}>
+        <View style={{ flexDirection: 'row', flex: 1 }}>
           <SideMenu
             onUpdate={this.onUpdate}
             appData={this.appData}
@@ -499,28 +499,28 @@ export default class ExportData extends React.Component {
             <View
               style={{
                 padding: 10,
-                backgroundColor: "#f1f1ff",
+                backgroundColor: '#f1f1ff',
                 borderRadius: 6,
                 margin: 10,
                 fontSize: 9,
                 borderWidth: 1,
-                borderColor: "#88b"
+                borderColor: '#88b'
               }}
             >
               <Text>
                 When you press on "Export to Email" below, the email app will
                 open in "compose" mode, with an email containing {dataDesc}.
-                {"\n\n"}
+                {'\n\n'}
                 In addition, a spreadsheet with {dataDesc} will be attached to
                 the email.
-                {!this.state.dataSet.startsWith("Zmanim") && (
+                {!this.state.dataSet.startsWith('Zmanim') && (
                   <Text>
-                    {"\n\n"}
+                    {'\n\n'}
                     It is advisable to send this email to yourself and to keep
                     it as a backup of your data.
-                    {"\n\n"}
+                    {'\n\n'}
                     NOTE: It is not (yet) possible to IMPORT data into Luach.
-                    {"\n"}
+                    {'\n'}
                     If you need to restore your data, it will need to be done
                     manually.
                   </Text>
@@ -543,5 +543,5 @@ export default class ExportData extends React.Component {
 }
 
 function yon(bool) {
-  return bool ? "Yes" : "No";
+  return bool ? 'Yes' : 'No';
 }

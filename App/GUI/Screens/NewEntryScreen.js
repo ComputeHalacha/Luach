@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   ScrollView,
   View,
@@ -8,38 +8,38 @@ import {
   TextInput,
   TouchableOpacity,
   Alert
-} from "react-native";
-import { NavigationActions } from "react-navigation";
-import { Icon } from "react-native-elements";
-import DateTimePicker from "react-native-modal-datetime-picker";
-import SideMenu from "../Components/SideMenu";
-import JdateChooser from "../Components/JdateChooser";
-import OnahSynopsis from "../Components/OnahSynopsis";
-import TimeInput from "../Components/TimeInput";
-import Entry from "../../Code/Chashavshavon/Entry";
-import { Kavuah } from "../../Code/Chashavshavon/Kavuah";
-import Utils from "../../Code/JCal/Utils";
-import jDate from "../../Code/JCal/jDate";
-import { NightDay, Onah } from "../../Code/Chashavshavon/Onah";
-import DataUtils from "../../Code/Data/DataUtils";
+} from 'react-native';
+import { NavigationActions } from 'react-navigation';
+import { Icon } from 'react-native-elements';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import SideMenu from '../Components/SideMenu';
+import JdateChooser from '../Components/JdateChooser';
+import OnahSynopsis from '../Components/OnahSynopsis';
+import TimeInput from '../Components/TimeInput';
+import Entry from '../../Code/Chashavshavon/Entry';
+import { Kavuah } from '../../Code/Chashavshavon/Kavuah';
+import Utils from '../../Code/JCal/Utils';
+import jDate from '../../Code/JCal/jDate';
+import { NightDay, Onah } from '../../Code/Chashavshavon/Onah';
+import DataUtils from '../../Code/Data/DataUtils';
 import {
   warn,
   error,
   popUpMessage,
   GLOBALS,
   inform
-} from "../../Code/GeneralUtils";
-import { GeneralStyles } from "../styles";
-import { addHefsekTaharaAlarm } from "../../Code/Notifications";
-import NumberPicker from "../Components/NumberPicker";
-import LocalStorage from "../../Code/Data/LocalStorage";
-import RemoteBackup from "../../Code/RemoteBackup";
+} from '../../Code/GeneralUtils';
+import { GeneralStyles } from '../styles';
+import { addHefsekTaharaAlarm } from '../../Code/Notifications';
+import NumberPicker from '../Components/NumberPicker';
+import LocalStorage from '../../Code/Data/LocalStorage';
+import RemoteBackup from '../../Code/RemoteBackup';
 
 export default class NewEntry extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { entry, appData, onUpdate } = navigation.state.params;
     return {
-      title: entry ? "Edit Entry" : "New Entry",
+      title: entry ? 'Edit Entry' : 'New Entry',
       headerRight: entry && (
         <TouchableOpacity
           onPress={() =>
@@ -53,8 +53,8 @@ export default class NewEntry extends React.Component {
         >
           <View
             style={{
-              alignItems: "center",
-              justifyContent: "center",
+              alignItems: 'center',
+              justifyContent: 'center',
               marginRight: 5
             }}
           >
@@ -62,7 +62,7 @@ export default class NewEntry extends React.Component {
             <Text
               style={{
                 fontSize: 9,
-                color: "#a33"
+                color: '#a33'
               }}
             >
               Remove
@@ -100,17 +100,17 @@ export default class NewEntry extends React.Component {
 
     this.sunriseText = sunrise
       ? Utils.getTimeString(sunrise, GLOBALS.IS_24_HOUR)
-      : "Never";
+      : 'Never';
     this.sunsetText = sunset
       ? Utils.getTimeString(sunset, GLOBALS.IS_24_HOUR)
-      : "Never";
+      : 'Never';
 
     this.state = {
       jdate: jdate,
       nightDay: isNight ? NightDay.Night : NightDay.Day,
       ignoreForFlaggedDates: entry && entry.ignoreForFlaggedDates,
       ignoreForKavuah: entry && entry.ignoreForKavuah,
-      comments: (entry && entry.comments) || "",
+      comments: (entry && entry.comments) || '',
       addReminder: !entry,
       reminderDay: 5,
       reminderTime: Utils.addMinutes(sunset, -60),
@@ -136,7 +136,7 @@ export default class NewEntry extends React.Component {
     if (entryList.list.find(e => e.isSameEntry(entry))) {
       popUpMessage(
         `The entry for ${entry.toString()} is already in the list.`,
-        "Entry already exists"
+        'Entry already exists'
       );
       return;
     }
@@ -145,7 +145,7 @@ export default class NewEntry extends React.Component {
         appData.EntryList = entryList;
         popUpMessage(
           `The entry for ${entry.toString()} has been successfully added.`,
-          "Add Entry"
+          'Add Entry'
         );
         if (this.state.addReminder) {
           const { jdate, reminderDay, reminderTime } = this.state,
@@ -186,7 +186,7 @@ export default class NewEntry extends React.Component {
             appData.Settings
           );
           if (possList.length) {
-            this.navigate("FindKavuahs", {
+            this.navigate('FindKavuahs', {
               appData: appData,
               onUpdate: this.onUpdate,
               possibleKavuahList: possList
@@ -199,7 +199,7 @@ export default class NewEntry extends React.Component {
         }
       })
       .catch(err => {
-        warn("Error trying to add entry to the database.");
+        warn('Error trying to add entry to the database.');
         error(err);
       });
   }
@@ -217,7 +217,7 @@ export default class NewEntry extends React.Component {
     if (entryList.list.find(e => e !== entry && e.isSameEntry(entry))) {
       popUpMessage(
         `The entry for ${entry.toString()} is already in the list.`,
-        "Entry already exists"
+        'Entry already exists'
       );
       return;
     }
@@ -228,7 +228,7 @@ export default class NewEntry extends React.Component {
         }
         popUpMessage(
           `The entry for ${entry.toString()} has been successfully saved.`,
-          "Change Entry"
+          'Change Entry'
         );
         if (this.state.addReminder) {
           const { jdate, reminderDay, reminderTime } = this.state,
@@ -250,7 +250,7 @@ export default class NewEntry extends React.Component {
             appData.Settings
           );
           if (possList.length) {
-            this.navigate("FindKavuahs", {
+            this.navigate('FindKavuahs', {
               appData: appData,
               onUpdate: this.onUpdate,
               possibleKavuahList: possList
@@ -264,9 +264,9 @@ export default class NewEntry extends React.Component {
       })
       .catch(err => {
         popUpMessage(
-          "We are sorry, Luach is unable to save the changes to this Entry.\nPlease contact luach@compute.co.il."
+          'We are sorry, Luach is unable to save the changes to this Entry.\nPlease contact luach@compute.co.il.'
         );
-        warn("Error trying to add save the changes to the database.");
+        warn('Error trying to add save the changes to the database.');
         error(err);
         //Revert changes
         entry.onah = origEntry.onah;
@@ -286,28 +286,28 @@ export default class NewEntry extends React.Component {
 
     const kavuahs = kavuahList.filter(k => k.settingEntry.isSameEntry(entry));
     Alert.alert(
-      "Confirm Entry Removal",
+      'Confirm Entry Removal',
       kavuahs.length > 0
         ? `The following Kavuah/s were set by this Entry and will need to be removed if you remove this Entry:
-                        ${kavuahs.map(k => "\n\t* " + k.toString())}
+                        ${kavuahs.map(k => '\n\t* ' + k.toString())}
                         Are you sure that you want to remove this/these Kavuah/s together with this entry?`
-        : "Are you sure that you want to completely remove this Entry?",
+        : 'Are you sure that you want to completely remove this Entry?',
       [
         //Button 1
         {
-          text: "Cancel",
+          text: 'Cancel',
           onPress: () => {
             return;
           },
-          style: "cancel"
+          style: 'cancel'
         },
         //Button 2
         {
-          text: "OK",
+          text: 'OK',
           onPress: () => {
             for (let k of kavuahs) {
               DataUtils.DeleteKavuah(k).catch(err => {
-                warn("Error trying to delete a Kavuah from the database.");
+                warn('Error trying to delete a Kavuah from the database.');
                 error(err);
               });
             }
@@ -315,14 +315,14 @@ export default class NewEntry extends React.Component {
               .then(() => {
                 popUpMessage(
                   `The entry for ${entry.toString()} has been successfully removed.`,
-                  "Remove entry"
+                  'Remove entry'
                 );
                 if (onUpdate) {
                   onUpdate(appData);
                 }
               })
               .catch(err => {
-                warn("Error trying to delete an entry from the database.");
+                warn('Error trying to delete an entry from the database.');
                 error(err);
               });
           }
@@ -368,20 +368,20 @@ export default class NewEntry extends React.Component {
 
     for (let brokenKavuah of brokenKavuahs) {
       Alert.alert(
-        "Kavuah Pattern Broken",
+        'Kavuah Pattern Broken',
         `This Entry is the third Entry in a row that is not in the Kavuah pattern of "${brokenKavuah.toString()}".` +
-          "\nDo you wish to set this Kavuah to inactive?",
+        '\nDo you wish to set this Kavuah to inactive?',
         [
           //Button 1
           {
-            text: "No",
+            text: 'No',
             onPress: () => {
               return;
             }
           },
           //Button 2
           {
-            text: "Yes",
+            text: 'Yes',
             onPress: () => {
               brokenKavuah.active = false;
               DataUtils.KavuahToDatabase(brokenKavuah)
@@ -392,7 +392,7 @@ export default class NewEntry extends React.Component {
                 })
                 .catch(err => {
                   warn(
-                    "Error trying to deactivate a broken pattern kavuah on the database."
+                    'Error trying to deactivate a broken pattern kavuah on the database.'
                   );
                   error(err);
                 });
@@ -403,21 +403,21 @@ export default class NewEntry extends React.Component {
     }
     for (let reawakenedKavuah of reawakenedKavuahs) {
       Alert.alert(
-        "Inactive Kavuah Pattern Matched",
+        'Inactive Kavuah Pattern Matched',
         `This Entry seems to match the inactive Kavuah pattern of "${reawakenedKavuah.toString(
           true
-        )}".` + "\nDo you wish to set this Kavuah to active?",
+        )}".` + '\nDo you wish to set this Kavuah to active?',
         [
           //Button 1
           {
-            text: "No",
+            text: 'No',
             onPress: () => {
               return;
             }
           },
           //Button 2
           {
-            text: "Yes",
+            text: 'Yes',
             onPress: () => {
               reawakenedKavuah.active = true;
               DataUtils.KavuahToDatabase(reawakenedKavuah)
@@ -428,7 +428,7 @@ export default class NewEntry extends React.Component {
                 })
                 .catch(err => {
                   warn(
-                    "Error trying to activate an in-pattern-kavuah on the database."
+                    'Error trying to activate an in-pattern-kavuah on the database.'
                   );
                   error(err);
                 });
@@ -439,20 +439,20 @@ export default class NewEntry extends React.Component {
     }
     for (let outOfPatternKavuah of outOfPatternKavuahs) {
       Alert.alert(
-        "Kavuah Pattern Break",
+        'Kavuah Pattern Break',
         `This Entry does not seem to match the Kavuah pattern of "${outOfPatternKavuah.toString()}".` +
-          "\nDo you wish to set this Kavuah to NOT Cancel Onah Beinonis?",
+        '\nDo you wish to set this Kavuah to NOT Cancel Onah Beinonis?',
         [
           //Button 1
           {
-            text: "No",
+            text: 'No',
             onPress: () => {
               return;
             }
           },
           //Button 2
           {
-            text: "Yes",
+            text: 'Yes',
             onPress: () => {
               outOfPatternKavuah.cancelsOnahBeinunis = false;
               DataUtils.KavuahToDatabase(outOfPatternKavuah)
@@ -463,7 +463,7 @@ export default class NewEntry extends React.Component {
                 })
                 .catch(err => {
                   warn(
-                    "Error trying to set a Kavuah to cancelsOnahBeinunis = false on the database."
+                    'Error trying to set a Kavuah to cancelsOnahBeinunis = false on the database.'
                   );
                   error(err);
                 });
@@ -482,7 +482,7 @@ export default class NewEntry extends React.Component {
     const sdateBefore = new Date(sdate.valueOf() - 86400000);
     return (
       <View style={GeneralStyles.container}>
-        <View style={{ flexDirection: "row", flex: 1 }}>
+        <View style={{ flexDirection: 'row', flex: 1 }}>
           <SideMenu
             onUpdate={this.onUpdate}
             appData={this.appData}
@@ -503,7 +503,7 @@ export default class NewEntry extends React.Component {
               <Text
                 style={{
                   fontSize: 12,
-                  color: "#955"
+                  color: '#955'
                 }}
               >
                 You can choose by either Jewish or Secular Date
@@ -529,8 +529,8 @@ export default class NewEntry extends React.Component {
               <Text style={GeneralStyles.label}>Onah - Day or Night?</Text>
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
+                  flexDirection: 'row',
+                  alignItems: 'center',
                   paddingLeft: 15
                 }}
               >
@@ -550,15 +550,14 @@ export default class NewEntry extends React.Component {
                 <View style={{ padding: 10, marginTop: 3 }}>
                   <Text>You have selected the night Onah.</Text>
                   <Text>
-                    <Text style={{ fontWeight: "bold", color: "#a66" }}>
-                      Please make sure{" "}
+                    <Text style={{ fontWeight: 'bold', color: '#a66' }}>
+                      Please make sure{' '}
                     </Text>
                     {`that the Period began on ${Utils.toStringDow(
                       sdateBefore,
                       NightDay.Night
-                    )} after sunset (${this.sunsetText}), but before sunrise (${
-                      this.sunriseText
-                    }) on ${Utils.dowEng[sdate.getDay()]} morning.`}
+                    )} after sunset (${this.sunsetText}), but before sunrise (${this.sunriseText
+                      }) on ${Utils.dowEng[sdate.getDay()]} morning.`}
                   </Text>
                 </View>
               )}
@@ -566,28 +565,28 @@ export default class NewEntry extends React.Component {
             <View style={{ padding: 10, marginTop: 7 }}>
               <Text style={{ fontSize: 12 }}>
                 {`On ${sdate.toLocaleDateString()} in `}
-                <Text style={{ fontWeight: "bold" }}>{this.location.Name}</Text>
-                ,{"\nSunrise: "}
+                <Text style={{ fontWeight: 'bold' }}>{this.location.Name}</Text>
+                ,{'\nSunrise: '}
                 <Text
                   style={{
-                    fontWeight: "bold",
-                    color: "#668"
+                    fontWeight: 'bold',
+                    color: '#668'
                   }}
                 >
                   {this.sunriseText}
                 </Text>
-                {"    Sunset: "}
+                {'    Sunset: '}
                 <Text
                   style={{
-                    fontWeight: "bold",
-                    color: "#668"
+                    fontWeight: 'bold',
+                    color: '#668'
                   }}
                 >
                   {this.sunsetText}
                 </Text>
-                <Text style={{ fontStyle: "italic" }}>
+                <Text style={{ fontStyle: 'italic' }}>
                   {
-                    "\n\nDo not forget that after sunset, the Jewish Date changes."
+                    '\n\nDo not forget that after sunset, the Jewish Date changes.'
                   }
                 </Text>
               </Text>
@@ -614,7 +613,7 @@ export default class NewEntry extends React.Component {
               >
                 <Text
                   style={{
-                    color: "#66b",
+                    color: '#66b',
                     fontSize: 13
                   }}
                 >
@@ -622,46 +621,46 @@ export default class NewEntry extends React.Component {
                 </Text>
               </TouchableOpacity>
             )) || (
-              <View>
-                <View style={GeneralStyles.formRow}>
-                  <Text style={[GeneralStyles.label, { fontSize: 11 }]}>
-                    [Advanced] Not a halachic Vesset period. Should not generate
-                    Flagged Dates
-                  </Text>
-                  <Switch
-                    style={GeneralStyles.switch}
-                    onValueChange={value =>
-                      this.setState({
-                        ignoreForFlaggedDates: value
-                      })
-                    }
-                    value={!!this.state.ignoreForFlaggedDates}
-                  />
+                <View>
+                  <View style={GeneralStyles.formRow}>
+                    <Text style={[GeneralStyles.label, { fontSize: 11 }]}>
+                      [Advanced] Not a halachic Vesset period. Should not generate
+                      Flagged Dates
+                    </Text>
+                    <Switch
+                      style={GeneralStyles.switch}
+                      onValueChange={value =>
+                        this.setState({
+                          ignoreForFlaggedDates: value
+                        })
+                      }
+                      value={!!this.state.ignoreForFlaggedDates}
+                    />
+                  </View>
+                  <View style={GeneralStyles.formRow}>
+                    <Text style={[GeneralStyles.label, { fontSize: 11 }]}>
+                      [Advanced] Ignore this Entry in Kavuah calculations
+                    </Text>
+                    <Switch
+                      style={GeneralStyles.switch}
+                      onValueChange={value =>
+                        this.setState({
+                          ignoreForKavuah: value
+                        })
+                      }
+                      value={!!this.state.ignoreForKavuah}
+                    />
+                  </View>
                 </View>
-                <View style={GeneralStyles.formRow}>
-                  <Text style={[GeneralStyles.label, { fontSize: 11 }]}>
-                    [Advanced] Ignore this Entry in Kavuah calculations
-                  </Text>
-                  <Switch
-                    style={GeneralStyles.switch}
-                    onValueChange={value =>
-                      this.setState({
-                        ignoreForKavuah: value
-                      })
-                    }
-                    value={!!this.state.ignoreForKavuah}
-                  />
-                </View>
-              </View>
-            )}
+              )}
             <View style={GeneralStyles.formRow}>
               <Text style={GeneralStyles.label}>
                 Add a Hefsek Tahara Reminder
               </Text>
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
+                  flexDirection: 'row',
+                  alignItems: 'center',
                   paddingLeft: 15
                 }}
               >
@@ -680,8 +679,8 @@ export default class NewEntry extends React.Component {
               {this.state.addReminder && (
                 <View
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
+                    flexDirection: 'row',
+                    alignItems: 'center',
                     paddingLeft: 15
                   }}
                 >
@@ -703,11 +702,11 @@ export default class NewEntry extends React.Component {
             </View>
             <Text
               style={{
-                fontWeight: "bold",
+                fontWeight: 'bold',
                 fontSize: 11,
-                color: "#444",
+                color: '#444',
                 padding: 20,
-                textAlign: "center"
+                textAlign: 'center'
               }}
             >
               Before continuing, please review the Date and Onah....
@@ -718,12 +717,12 @@ export default class NewEntry extends React.Component {
             />
             <View style={GeneralStyles.btnAddNew}>
               <Button
-                title={this.entry ? "Save Changes" : "Add This Entry"}
+                title={this.entry ? 'Save Changes' : 'Add This Entry'}
                 onPress={this.entry ? this.updateEntry : this.addEntry}
                 accessibilityLabel={
                   this.entry
-                    ? "Save Changes to this Entry"
-                    : "Add this new Entry"
+                    ? 'Save Changes to this Entry'
+                    : 'Add this new Entry'
                 }
                 color={GLOBALS.BUTTON_COLOR}
               />

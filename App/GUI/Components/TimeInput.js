@@ -1,9 +1,9 @@
 import React from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import Utils from "../../Code/JCal/Utils";
 import { GeneralStyles } from "../styles";
 import { GLOBALS } from "../../Code/GeneralUtils";
+import { GLOBALS } from '../../Code/GeneralUtils';
 
 export default class TimeInput extends React.Component {
   constructor(props) {
@@ -27,8 +27,8 @@ export default class TimeInput extends React.Component {
     return (
       <View
         style={{
-          flexDirection: "row",
-          alignItems: "center"
+          flexDirection: 'row',
+          alignItems: 'center'
         }}
       >
         <TouchableOpacity

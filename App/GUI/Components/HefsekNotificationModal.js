@@ -1,23 +1,23 @@
-import React from "react";
-import { Modal, Text, View, TouchableOpacity, Button } from "react-native";
-import { Divider, Icon } from "react-native-elements";
-import TimeInput from "./TimeInput";
-import AddButton from "./AddButton";
-import NumberPicker from "../Components/NumberPicker";
+import React from 'react';
+import { Modal, Text, View, TouchableOpacity, Button } from 'react-native';
+import { Divider, Icon } from 'react-native-elements';
+import TimeInput from './TimeInput';
+import AddButton from './AddButton';
+import NumberPicker from '../Components/NumberPicker';
 import {
   addMorningBedikaAlarms,
   addAfternoonBedikaAlarms,
   addMikvaAlarm,
   cancelAllBedikaAlarms,
   cancelMikvaAlarm
-} from "../../Code/Notifications";
+} from '../../Code/Notifications';
 import {
   GLOBALS,
   popUpMessage,
   isErevYomKippurOrTishBav
-} from "../../Code/GeneralUtils";
-import Utils from "../../Code/JCal/Utils";
-import { GeneralStyles } from "../styles";
+} from '../../Code/GeneralUtils';
+import Utils from '../../Code/JCal/Utils';
+import { GeneralStyles } from '../styles';
 
 const armyTime = GLOBALS.IS_24_HOUR;
 
@@ -55,7 +55,7 @@ export default class HefsekNotificationModal extends React.Component {
       this.discreet
     );
     popUpMessage(
-      "Bedika reminders have been added for each morning of the Shiva Neki'im"
+      'Bedika reminders have been added for each morning of the Shiva Neki\'im'
     );
   }
   onSetAfternoon() {
@@ -68,7 +68,7 @@ export default class HefsekNotificationModal extends React.Component {
     );
 
     popUpMessage(
-      "Bedika reminders have been added for each afternoon of the Shiva Neki'im"
+      'Bedika reminders have been added for each afternoon of the Shiva Neki\'im'
     );
   }
   onSetMikvah() {
@@ -79,13 +79,13 @@ export default class HefsekNotificationModal extends React.Component {
 
     addMikvaAlarm(reminderJdate, mikvaReminderTime, sunset, this.discreet);
     popUpMessage(
-      "A Mikva reminder has been added for the last day of the Shiva Neki'im"
+      'A Mikva reminder has been added for the last day of the Shiva Neki\'im'
     );
   }
   render() {
     return (
       <Modal
-        style={{ flex: 1, backgroundColor: "#fff" }}
+        style={{ flex: 1, backgroundColor: '#fff' }}
         animationType="fade"
         transparent={true}
         onRequestClose={() => {
@@ -95,42 +95,42 @@ export default class HefsekNotificationModal extends React.Component {
         <View
           style={{
             flex: 1,
-            justifyContent: "center",
-            alignItems: "center"
+            justifyContent: 'center',
+            alignItems: 'center'
           }}
         >
           <View
             style={{
-              backgroundColor: "#777",
+              backgroundColor: '#777',
               borderRadius: 10,
               padding: 10,
-              width: "90%"
+              width: '90%'
             }}
           >
             <View
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between"
+                flexDirection: 'row',
+                justifyContent: 'space-between'
               }}
             >
               <View
                 style={[
                   GeneralStyles.centeredRow,
                   {
-                    backgroundColor: "#99e",
-                    width: "100%",
+                    backgroundColor: '#99e',
+                    width: '100%',
                     borderTopLeftRadius: 10,
                     borderTopRightRadius: 10,
-                    flexDirection: "row",
-                    justifyContent: "space-between"
+                    flexDirection: 'row',
+                    justifyContent: 'space-between'
                   }
                 ]}
               >
                 <Text
                   style={{
                     fontSize: 20,
-                    color: "#eee",
-                    fontWeight: "bold",
+                    color: '#eee',
+                    fontWeight: 'bold',
                     padding: 10
                   }}
                 >
@@ -140,25 +140,25 @@ export default class HefsekNotificationModal extends React.Component {
             </View>
             <View
               style={{
-                backgroundColor: "#d8d5f1",
+                backgroundColor: '#d8d5f1',
                 borderBottomLeftRadius: 10,
                 borderBottomRightRadius: 10,
                 padding: 10,
-                justifyContent: "center",
-                alignContent: "center",
-                alignItems: "center"
+                justifyContent: 'center',
+                alignContent: 'center',
+                alignItems: 'center'
               }}
             >
               <View
                 style={{
-                  width: "90%"
+                  width: '90%'
                 }}
               >
                 <Text
                   style={{
                     fontSize: 18,
-                    color: "#55a",
-                    fontWeight: "bold"
+                    color: '#55a',
+                    fontWeight: 'bold'
                   }}
                 >
                   Hefsek Tahara was done on {this.jdate.toString()}
@@ -179,21 +179,21 @@ export default class HefsekNotificationModal extends React.Component {
                       cancelAllBedikaAlarms(this.taharaEventId);
                       cancelMikvaAlarm();
                       popUpMessage(
-                        "All system reminders pertaining to this Hefsek Tahara have been removed"
+                        'All system reminders pertaining to this Hefsek Tahara have been removed'
                       );
                     }}
                   >
                     <View
                       style={{
-                        alignItems: "center",
-                        flexDirection: "row"
+                        alignItems: 'center',
+                        flexDirection: 'row'
                       }}
                     >
                       <Icon name="delete-forever" color="#966" size={20} />
                       <Text
                         style={{
                           fontSize: 11,
-                          color: "#966"
+                          color: '#966'
                         }}
                       >
                         Cancel all previous notifications for this Hefsek Tahara
@@ -207,8 +207,8 @@ export default class HefsekNotificationModal extends React.Component {
                   </Text>
                   <View
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center"
+                      flexDirection: 'row',
+                      alignItems: 'center'
                     }}
                   >
                     <Text>at </Text>
@@ -235,8 +235,8 @@ export default class HefsekNotificationModal extends React.Component {
                   </Text>
                   <View
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center"
+                      flexDirection: 'row',
+                      alignItems: 'center'
                     }}
                   >
                     <NumberPicker
@@ -269,8 +269,8 @@ export default class HefsekNotificationModal extends React.Component {
                   </Text>
                   <View
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center"
+                      flexDirection: 'row',
+                      alignItems: 'center'
                     }}
                   >
                     <Text>at </Text>
