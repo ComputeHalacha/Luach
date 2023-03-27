@@ -35,6 +35,7 @@ allprojects {
         resolutionStrategy {
             // Remove this override in 0.65+, as a proper fix is included in react-native itself.
             force "com.facebook.react:react-native:" + REACT_NATIVE_VERSION
+            force "com.facebook.soloader:soloader:0.10.4+"
         }
     }
 }
