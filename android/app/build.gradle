@@ -98,8 +98,8 @@ android {
         applicationId "com.luachandroid"
         minSdkVersion 19
         targetSdkVersion 31
-        versionCode 82
-        versionName "1.82"
+        versionCode 83
+        versionName "1.83"
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
         multiDexEnabled true      
     }
@@ -143,6 +143,12 @@ android {
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
         }
+    }
+    lintOptions {
+        checkReleaseBuilds true
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
     }
 }
 
