@@ -98,8 +98,9 @@ android {
         applicationId "com.luachandroid"
         minSdkVersion 19
         targetSdkVersion 31
-        versionCode 83
-        versionName "1.83"
+        versionCode 84
+        versionName "1.84"        
+        ndkVersion "25.2.9519653"
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
         multiDexEnabled true      
     }
